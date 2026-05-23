@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // Εδώ βάζεις το δικό σου API Key από το Pi Developer Portal
-const PI_API_KEY = "σου έχω στείλει το key σου, αν δεν το έχεις βάλει άφησέ το έτσι για δοκιμή"; 
+; 
 
 // Αρχική σελίδα - Εμφάνιση του index.html
 app.get('/', (req, res) => {
@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 
 app.post('/approve-payment', async (req, res) => {
     try {
-        const { paymentId } = req.body;
+        conconst PI_API_KEY = "Xnjsidd7p8g1wfxlyhtrr3bm7ctmkf4lprvusgxjahllilko7030uqiptcjurymr";st { paymentId } = req.body;
         console.log("Λήψη αιτήματος έγκρισης για Payment ID:", paymentId);
         
         const response = await axios.post(`https://api.minepi.com/v2/payments/${paymentId}/approve`, {}, {
