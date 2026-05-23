@@ -61,11 +61,11 @@
           // ΒΗΜΑ Α: Έγκριση από τον Server (server.js)
           onReadyForServerApproval: function(paymentId) {
             statusDiv.innerText = "Ο Server εγκρίνει την πληρωμή...";
-            fetch(`${SERVER_URL}/approve-payment`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paymentId })
-            })
+            fetch('/api/server?endpoint=approve', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ paymentId: payment.id })
+})
             .then(res => res.json())
             .then(data => console.log("Server Approved!"))
             .catch(err => console.error(err));
@@ -73,11 +73,11 @@
           // ΒΗΜΑ Β: Ολοκλήρωση στο Blockchain
           onReadyForServerCompletion: function(paymentId, txid) {
             statusDiv.innerText = "Ολοκλήρωση στο Blockchain...";
-            fetch(`${SERVER_URL}/complete-payment`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paymentId, txid })
-            })
+           fetch('/api/server?endpoint=complete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ paymentId: payment.id, txid: payment.txid })
+})
             .then(res => res.json())
             .then(data => {
                 statusDiv.innerText = "Η πληρωμή ολοκληρώθηκε! Το κομμάτι ξεκλειδώθηκε!";
