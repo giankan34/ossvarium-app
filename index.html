@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSSVARIUM STREAM</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        body { background-color: #111; color: #fff; font-family: sans-serif; text-align: center; padding: 40px 20px; }
+        .container { max-width: 550px; margin: 0 auto; background: #1a1a1a; padding: 30px; border-radius: 15px; border: 1px solid #333; }
+        h1 { color: #ff4444; margin-bottom: 5px; letter-spacing: 2px; }
+        .subtitle { color: #888; font-size: 14px; margin-bottom: 25px; }
+        .status { margin: 20px 0; font-weight: bold; color: #aaa; }
+        .pi-btn { background-color: #ff4444; color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .pi-btn:hover { background-color: #cc3333; }
+        .player-section { margin-top: 35px; padding-top: 25px; border-top: 1px solid #333; }
+        .bandcamp-iframe { border: 0; width: 100%; height: 120px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>OSSVARIUM STREAM</h1>
+    <div class="subtitle">Web3 Music Player for the Extreme Scene</div>
+    
+    <div id="auth-status" class="status">Έτοιμο για σύνδεση & ακρόαση.</div>
+    
+    <button class="pi-btn" onclick="startPiProcess()">ΞΕΚΛΕΙΔΩΜΑ ΜΕ 0.1 TEST-PI</button>
+    
+    <div class="player-section">
+        <h3>[ Embedded Bandcamp Stream ]</h3>
+        <iframe class="bandcamp-iframe" src="https://bandcamp.com/EmbeddedPlayer/album=1308388713/size=large/bgcol=111111/linkcol=ff4444/tracklist=false/artwork=small/transparent=true/" seamless><a href="https://ossvarium.bandcamp.com/album=1308388713">Ossvarium Album</a></iframe>
+    </div>
+</div>
+
+<script>
+  // Σύνδεση στον Node server του PC σου (IP: 192.168.1.4)
+  const SERVER_URL = "https://ossvarium-server.onrender.com"; 
+
+  // Αρχικοποίηση με το επίσημο App ID σου
+  Pi.init({ 
+    version: "2.0", 
+    sandbox: false,
+    id: "Unj11ign5ijfelie2qccs7gcriqgstguxyvdc0jqwsm510bbexntoljpjgynp2d" 
+  });
+
+  function startPiProcess() {
+    const statusDiv = document.getElementById('auth-status');
+    statusDiv.innerText = "Γίνεται επικοινωνία με το Pi Wallet...";
+
+    Pi.authenticate(['username', 'payments'], onIncompletePaymentFound)
+      .then(function(auth) {
+        statusDiv.innerText = "Έναρξη πληρωμής...";
+        
+        return Pi.createPayment({
+          amount: 0.1,
+          memo: "Υποστήριξη μπάντας στο Ossvarium Stream",
+          metadata: { orderId: "12345" },
+          uid: auth.user.uid
+        }, {
+          // ΒΗΜΑ Α: Έγκριση από τον Server (server.js)
+          onReadyForServerApproval: function(paymentId) {
+            statusDiv.innerText = "Ο Server εγκρίνει την πληρωμή...";
+            fetch(`${SERVER_URL}/approve-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentId })
+            })
+            .then(res => res.json())
+            .then(data => console.log("Server Approved!"))
+            .catch(err => console.error(err));
+          },
+          // ΒΗΜΑ Β: Ολοκλήρωση στο Blockchain
+          onReadyForServerCompletion: function(paymentId, txid) {
+            statusDiv.innerText = "Ολοκλήρωση στο Blockchain...";
+            fetch(`${SERVER_URL}/complete-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentId, txid })
+            })
+            .then(res => res.json())
+            .then(data => {
+                statusDiv.innerText = "Η πληρωμή ολοκληρώθηκε! Το κομμάτι ξεκλειδώθηκε!";
+                statusDiv.style.color = "#00ff00";
+            })
+            .catch(err => console.error(err));
+          },
+          onCancel: function(paymentId) { statusDiv.innerText = "Η πληρωμή ακυρώθηκε."; },
+          onError: function(error, payment) { statusDiv.innerText = "Σφάλμα πληρωμής."; }
+        });
+      })
+      .catch(function(error) { statusDiv.innerText = "Αποτυχία σύνδεσης."; });
+  }
+
+  function onIncompletePaymentFound(payment) { }
+</script>
+
+</body>
+</html>
