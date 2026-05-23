@@ -1,9 +1,13 @@
 {
   "version": 2,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "server.js"
+      "source": "/approve-payment",
+      "destination": "/api/server?endpoint=approve"
+    },
+    {
+      "source": "/complete-payment",
+      "destination": "/api/server?endpoint=complete"
     }
   ]
 }
