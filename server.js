@@ -7,20 +7,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Σερβίρισμα των στατικών αρχείων (index.html, validation-key.txt κλπ) από τον φάκελό σου
+// Σερβίρισμα των στατικών αρχείων
 app.use(express.static(path.join(__dirname)));
 
-// Εδώ βάζεις το δικό σου API Key από το Pi Developer Portal
-; 
+// Το επίσημο Server API Key σου
+const PI_API_KEY = "Xnjsidd7p8g1wfxlyhtrr3bm7ctmkf4lprvusgxjahllilko7030uqiptcjurymr"; 
 
-// Αρχική σελίδα - Εμφάνιση του index.html
+// Αρχική σελίδα
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Endpoint για το validation key
+app.get('/validation-key.txt', (req, res) => {
+    res.sendFile(path.join(__dirname, 'validation-key.txt'));
+});
+
 app.post('/approve-payment', async (req, res) => {
     try {
-        conconst PI_API_KEY = "Xnjsidd7p8g1wfxlyhtrr3bm7ctmkf4lprvusgxjahllilko7030uqiptcjurymr";st { paymentId } = req.body;
+        const { paymentId } = req.body;
         console.log("Λήψη αιτήματος έγκρισης για Payment ID:", paymentId);
         
         const response = await axios.post(`https://api.minepi.com/v2/payments/${paymentId}/approve`, {}, {
@@ -45,13 +50,10 @@ app.post('/complete-payment', async (req, res) => {
         
         res.json(response.data);
     } catch (error) {
-        console.error("Σφάλma στην ολοκλήρωση:", error.message);
+        console.error("Σφάλμα στην ολοκλήρωση:", error.message);
         res.status(500).json({ error: error.message });
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log('=== Ο ΠΥΡΑΥΛΟΣ ΕΚΤΟΞΕΥΘΗΚΕ ===');
-    console.log(`Server running on port ${PORT}`);
-});
+// Αυτό χρειάζεται το Vercel για να μην βγάζει Internal Server Error
+module.exports = app;
