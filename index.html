@@ -7,39 +7,29 @@
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
     <style>
-        :root { --blood-red: #8b0000; --gothic-font: 'UnifrakturMaguntia', cursive; }
-        body { background: #0a0a0a; color: #a89f9f; font-family: var(--gothic-font); text-align: center; padding: 15px; margin: 0; }
+        :root { --blood-red: #8b0000; --bg: #0a0a0a; }
+        body { background: var(--bg); color: #a89f9f; font-family: 'UnifrakturMaguntia', cursive; text-align: center; padding: 15px; margin: 0; }
+        .container { max-width: 400px; margin: 10px auto; background: #0f0f0f; padding: 20px; border: 2px double #444; }
+        h1 { color: #fff; font-size: 32px; text-shadow: 0 0 10px var(--blood-red); }
         
-        .container { max-width: 400px; margin: 10px auto; background: #0f0f0f; padding: 20px; border: 3px double #333; }
-
-        h1 { color: #fff; letter-spacing: 2px; font-size: 32px; text-shadow: 0 0 10px var(--blood-red); }
-        
-        /* Gothic Symbol */
-        .gothic-symbol { width: 120px; height: 120px; margin: 20px auto; border: 2px solid #333; display: flex; align-items: center; justify-content: center; font-size: 50px; color: var(--blood-red); }
-
-        /* EQUALIZER */
-        .eq-container { display: flex; justify-content: center; gap: 5px; height: 30px; margin-bottom: 20px; align-items: flex-end; }
+        /* Equalizer */
+        .eq-container { display: none; justify-content: center; gap: 5px; height: 30px; margin: 20px 0; align-items: flex-end; }
         .bar { width: 6px; background: var(--blood-red); animation: sound 0.8s infinite ease-in-out; }
         @keyframes sound { 0%, 100% { height: 10px; } 50% { height: 30px; } }
-        .bar:nth-child(2) { animation-delay: 0.1s; } .bar:nth-child(3) { animation-delay: 0.2s; } .bar:nth-child(4) { animation-delay: 0.3s; }
 
-        .track-item { border: 1px solid #333; padding: 15px; margin-bottom: 10px; cursor: pointer; font-size: 22px; background: #151515; }
+        .track-item { border: 1px solid #333; padding: 15px; margin-bottom: 10px; cursor: pointer; font-size: 22px; background: #151515; text-align: left; }
         .track-item.active { border-color: var(--blood-red); color: var(--blood-red); }
-        
-        .btn-custom { background: #1a1a1a; border: 1px solid #444; color: #fff; font-family: var(--gothic-font); padding: 10px 20px; cursor: pointer; }
+        .btn-custom { background: #1a1a1a; border: 1px solid #444; color: #fff; font-family: 'UnifrakturMaguntia', cursive; padding: 10px 20px; cursor: pointer; margin: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>OSSVARIUM</h1>
-    <div class="gothic-symbol">♰</div>
-
-    <div class="eq-container" id="eq" style="display:none;">
+    <div class="eq-container" id="eq">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
     </div>
-
-    <div id="now-playing" style="margin-bottom:20px;">ΕΠΙΛΕΞΤΕ ΚΟΜΜΑΤΙ</div>
+    <div id="now-playing" style="margin-bottom:15px;">ΕΠΙΛΕΞΤΕ ΚΟΜΜΑΤΙ</div>
     
     <div class="control-btns">
         <button class="btn-custom" onclick="changeTrack(-1)">⏮</button>
@@ -47,31 +37,47 @@
         <button class="btn-custom" onclick="changeTrack(1)">⏭</button>
     </div>
 
-    <ul class="track-list" style="list-style:none; padding:0; margin-top:20px;">
+    <ul style="list-style:none; padding:0; margin-top:20px;">
         <li class="track-item" id="item-0" onclick="selectTrack(0)">1. Intro (Demo)</li>
         <li class="track-item" id="item-1" onclick="selectTrack(1)">2. Cyber Necrosis</li>
     </ul>
 </div>
 
-<audio id="audio-element" style="display:none;"></audio>
+<audio id="audio-element"></audio>
 
 <script>
-  Pi.init({ version: "2.0", sandbox: false });
-  const audio = document.getElementById('audio-element');
-  const eq = document.getElementById('eq');
+    Pi.init({ version: "2.0", sandbox: false });
+    const audio = document.getElementById('audio-element');
+    const eq = document.getElementById('eq');
+    const playlist = [
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+    ];
+    let currentIdx = 0;
 
-  function selectTrack(index) {
-    // Διατήρησα τη λειτουργικότητα που ήδη είχες
-    eq.style.display = "flex"; // Εμφάνιση equalizer
-    audio.play();
-  }
+    function selectTrack(index) {
+        currentIdx = index;
+        audio.src = playlist[index];
+        audio.play().then(() => {
+            eq.style.display = "flex";
+            document.getElementById('now-playing').innerText = "Playing: " + (index + 1);
+        }).catch(e => console.log("Απαιτείται αλληλεπίδραση χρήστη", e));
+    }
 
-  function togglePlay() {
-    if (audio.paused) { audio.play(); eq.style.display = "flex"; }
-    else { audio.pause(); eq.style.display = "none"; }
-  }
-  
-  // Το υπόλοιπο JS παραμένει όπως το είχες για να δουλεύουν οι πληρωμές
+    function togglePlay() {
+        if (audio.paused) { 
+            audio.play(); 
+            eq.style.display = "flex"; 
+        } else { 
+            audio.pause(); 
+            eq.style.display = "none"; 
+        }
+    }
+
+    function changeTrack(dir) {
+        let newIdx = currentIdx + dir;
+        if (newIdx >= 0 && newIdx < playlist.length) selectTrack(newIdx);
+    }
 </script>
 </body>
 </html>
