@@ -7,123 +7,107 @@
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
         body { 
-            background-color: #0b0b0b; 
-            color: #e0e0e0; 
+            background-color: #0b0a0a; 
+            color: #d1d1d1; 
             font-family: 'Courier New', Courier, monospace; 
             text-align: center; 
-            padding: 20px;
+            padding: 15px;
             margin: 0;
         }
         .container { 
-            max-width: 480px; 
-            margin: 0 auto; 
-            background: #121212; 
-            padding: 25px; 
-            border-radius: 4px; 
-            border: 2px solid #282828; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            max-width: 420px; 
+            margin: 10px auto; 
+            background: #141212; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border: 3px solid #2d2626; 
+            box-shadow: 0 0 25px rgba(0,0,0,0.9);
         }
         h1 { 
-            color: #ff3333; 
-            margin-bottom: 5px; 
-            letter-spacing: 3px; 
-            font-size: 26px;
-            text-shadow: 2px 2px #000;
+            color: #e62222; 
+            margin-bottom: 2px; 
+            letter-spacing: 4px; 
+            font-size: 24px;
+            text-shadow: 3px 3px #000;
+            font-weight: 900;
         }
         .subtitle { 
-            color: #666; 
-            font-size: 11px; 
-            margin-bottom: 20px; 
+            color: #7a6b6b; 
+            font-size: 10px; 
+            margin-bottom: 25px; 
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
         
-        /* Cover Art Section */
+        /* 💿 COVART ART (Lovable Skull Style) */
         .cover-wrapper {
-            width: 220px;
-            height: 220px;
-            margin: 0 auto 20px auto;
-            border: 3px solid #1a1a1a;
-            box-shadow: inset 0 0 10px #000;
-            background: #151515;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 25px auto;
+            border: 4px solid #1a1717;
+            border-radius: 50%; /* Κυκλικό όπως στο screenshot */
+            box-shadow: 0 0 15px #000, inset 0 0 20px #000;
+            background: radial-gradient(circle, #2a0808 0%, #0c0a0a 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            overflow: hidden;
         }
         .cover-art {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 75%;
+            height: 75%;
+            object-fit: contain;
+            filter: drop-shadow(0px 0px 8px #ff0000);
         }
 
-        /* Track List Style */
-        .track-list { 
-            text-align: left; 
-            list-style: none; 
-            padding: 0; 
-            margin: 20px 0; 
-        }
-        .track-item { 
-            padding: 14px 12px; 
-            border: 1px solid #1f1f1f;
-            background: #161616;
-            margin-bottom: 6px;
-            cursor: pointer; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            font-size: 13px;
-        }
-        .track-item:hover { 
-            background: #1c1c1c; 
-            border-color: #333;
-        }
-        .track-item.active { 
-            background: #251111; 
-            border-color: #ff3333; 
-            color: #ff3333;
-            font-weight: bold; 
-        }
-        .badge { 
-            font-size: 10px; 
-            padding: 3px 6px; 
-            border-radius: 2px; 
-            font-weight: bold; 
-            letter-spacing: 1px;
-        }
-        .badge-free { background: #222; color: #888; border: 1px solid #333; }
-        .badge-locked { background: #ff3333; color: #fff; }
-        .badge-unlocked { background: #00ff00; color: #000; }
-
-        /* Custom Audio Controls */
+        /* 🎛️ CUSTOM INDUSTRIAL CONTROLS */
         .controls-box {
-            background: #181818;
+            background: linear-gradient(180deg, #1c1818 0%, #110e0e 100%);
             padding: 15px;
-            border: 1px solid #222;
+            border: 2px solid #262020;
+            border-radius: 6px;
             margin-bottom: 20px;
+            box-shadow: inset 0 0 10px #000;
+        }
+        #now-playing {
+            font-size: 11px; 
+            color: #a69292; 
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            height: 15px;
         }
         .control-btns {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 12px;
             margin-bottom: 15px;
         }
+        
+        /* Μεταλλικά industrial κουμπιά */
         .btn-custom {
-            background: #222;
-            border: 1px solid #444;
-            color: #ff3333;
-            padding: 10px 20px;
+            background: linear-gradient(180deg, #3a3131 0%, #1a1515 100%);
+            border: 2px solid #4a3e3e;
+            border-radius: 4px;
+            color: #e62222;
+            padding: 10px 16px;
             cursor: pointer;
             font-weight: bold;
-            font-family: monospace;
-            text-transform: uppercase;
-            font-size: 12px;
+            font-size: 14px;
+            box-shadow: 0 3px 0 #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .btn-custom:hover {
-            background: #ff3333;
+        .btn-custom:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #000;
+        }
+        .btn-play {
+            background: linear-gradient(180deg, #5e1414 0%, #2b0808 100%);
+            border-color: #801d1d;
             color: #fff;
-            border-color: #ff3333;
+            padding: 10px 24px;
         }
         
         /* Custom Progress Bar */
@@ -132,65 +116,110 @@
             align-items: center;
             gap: 10px;
             font-size: 11px;
-            color: #666;
+            color: #665959;
         }
         .progress-bar {
             flex-grow: 1;
             appearance: none;
-            background: #292929;
+            background: #090808;
             height: 6px;
+            border: 1px solid #262020;
+            border-radius: 3px;
             outline: none;
-            cursor: pointer;
         }
         .progress-bar::-webkit-slider-thumb {
             appearance: none;
-            width: 12px;
-            height: 12px;
-            background: #ff3333;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #e62222;
+            box-shadow: 0 0 6px #ff0000;
             cursor: pointer;
         }
 
-        /* Industrial Unlock Panel */
+        /* 🎶 TRACKLIST (Lovable Style) */
+        .track-list { 
+            text-align: left; 
+            list-style: none; 
+            padding: 0; 
+            margin: 20px 0; 
+        }
+        .track-item { 
+            padding: 14px 12px; 
+            border: 1px solid #211b1b;
+            border-radius: 4px;
+            background: #171414;
+            margin-bottom: 8px;
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        .track-item.active { 
+            background: #2b1212; 
+            border-color: #e62222; 
+            color: #e62222;
+            font-weight: bold; 
+            box-shadow: 0 0 10px rgba(230,34,34,0.2);
+        }
+        .badge { 
+            font-size: 10px; 
+            padding: 4px 8px; 
+            border-radius: 3px; 
+            font-weight: bold; 
+            letter-spacing: 1px;
+        }
+        .badge-free { background: #262020; color: #8c7b7b; border: 1px solid #3b3232; }
+        .badge-locked { background: #e62222; color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .badge-unlocked { background: #00ff66; color: #000; }
+
+        /* 🚨 INDUSTRIAL BOTTOM UNLOCK PANEL */
         .unlock-panel {
-            background: linear-gradient(180deg, #4a1111 0%, #250707 100%);
-            border: 2px solid #ff3333;
-            padding: 20px;
-            margin-top: 15px;
-            display: none; /* Εμφανίζεται μόνο στο κλείδωμα */
+            background: linear-gradient(180deg, #5e1414 0%, #1f0505 100%);
+            border: 2px solid #e62222;
+            border-radius: 6px;
+            padding: 18px;
+            margin-top: 20px;
+            box-shadow: 0 0 15px rgba(230,34,34,0.3);
+            display: none; 
         }
         .unlock-title {
-            color: #ff3333;
+            color: #fff;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 14px;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
+            font-size: 13px;
+            margin-bottom: 4px;
+            letter-spacing: 1.5px;
         }
         .unlock-desc {
             font-size: 11px;
-            color: #bbb;
+            color: #cca3a3;
             margin-bottom: 15px;
         }
         .pay-btn {
-            background: #ff3333;
+            background: linear-gradient(180deg, #e62222 0%, #990000 100%);
             color: #fff;
-            border: none;
-            padding: 12px 24px;
+            border: 1px solid #ff5555;
+            border-radius: 4px;
+            padding: 12px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
             letter-spacing: 1px;
             text-transform: uppercase;
             font-family: monospace;
-            box-shadow: 0 4px #990000;
+            font-size: 13px;
+            box-shadow: 0 4px 0 #5e0000, 0 4px 10px rgba(0,0,0,0.5);
         }
         .pay-btn:active {
-            box-shadow: 0 1px #990000;
+            box-shadow: 0 1px 0 #5e0000;
             transform: translateY(3px);
         }
         .status-text {
-            font-size: 12px;
-            color: #ff3333;
+            font-size: 11px;
+            color: #ff9999;
             margin-top: 10px;
             font-weight: bold;
         }
@@ -203,13 +232,18 @@
     <div class="subtitle">Web3 Music Player for the Extreme Scene</div>
     
     <div class="cover-wrapper">
-        <img class="cover-art" src="https://i.imgur.com/83uXG7k.png" alt="Ossvarium Cover">
+        <svg class="cover-art" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12C2 15.43 3.73 18.45 6.36 20.21C6.72 20.45 7.18 20.19 7.18 19.75V18.12C7.18 17.75 7.38 17.41 7.71 17.25C9.04 16.59 10.48 16.25 12 16.25C13.52 16.25 14.96 16.59 16.29 17.25C16.62 17.41 16.82 17.75 16.82 18.12V19.75C16.82 20.19 17.28 20.45 17.64 20.21C20.27 18.45 22 15.43 22 12C22 6.48 17.52 2 12 2ZM9 11.5C8.17 11.5 7.5 10.83 7.5 10C7.5 9.17 8.17 8.5 9 8.5C9.83 8.5 10.5 9.17 10.5 10C10.5 10.83 9.83 11.5 9 11.5ZM15 11.5C14.17 11.5 13.5 10.83 13.5 10C13.5 9.17 14.17 8.5 15 8.5C15.83 8.5 16.5 9.17 16.5 10C16.5 10.83 15.83 11.5 15 11.5Z" fill="#e62222"/>
+            <path d="M9 14H15V15.5C15 15.78 14.78 16 14.5 16H13.5V17H14.5C14.78 17 15 17.22 15 17.5V18H9V17.5C9 17.22 9.22 17 9.5 17H10.5V16H9.5C9.22 16 9 15.78 9 15.5V14Z" fill="#e62222"/>
+        </svg>
     </div>
 
     <div class="controls-box">
-        <div id="now-playing" style="font-size: 12px; color: #888; margin-bottom: 10px;">ΠΑΤΗΣΤΕ PLAY...</div>
+        <div id="now-playing">ΕΠΙΛΕΞΤΕ ΚΟΜΜΑΤΙ...</div>
         <div class="control-btns">
-            <button class="btn-custom" onclick="togglePlay()">Play / Pause</button>
+            <button class="btn-custom" onclick="changeTrack(-1)">⏮</button>
+            <button class="btn-custom btn-play" onclick="togglePlay()">▶ / ⏸</button>
+            <button class="btn-custom" onclick="changeTrack(1)">⏭</button>
         </div>
         <div class="progress-container">
             <span id="current-time">0:00</span>
@@ -264,11 +298,10 @@
   const unlockDesc = document.getElementById('unlock-desc');
   const statusDiv = document.getElementById('auth-status');
 
-  function onIncompletePaymentFound(payment) {
-    console.log("Incomplete payment found:", payment);
-  }
+  function onIncompletePaymentFound(payment) { console.log(payment); }
 
   function selectTrack(index) {
+    if (index < 0 || index >= playlist.length) return;
     currentTrackIndex = index;
     const track = playlist[index];
     
@@ -281,13 +314,13 @@
         audio.pause();
         unlockDesc.innerText = "UNLOCK " + track.name;
         unlockPanel.style.display = "block";
-        nowPlayingText.innerText = "🔒 ΚΛΕΙΔΩΜΕΝΟ ΚΟΜΜΑΤΙ";
+        nowPlayingText.innerText = "🔒 TRACK LOCKED";
         return;
     }
 
     unlockPanel.style.display = "none";
     audio.src = track.url;
-    nowPlayingText.innerText = "ΤΩΡΑ ΠΑΙΖΕΙ: " + track.name;
+    nowPlayingText.innerText = track.name;
     audio.play();
   }
 
@@ -300,76 +333,71 @@
     }
   }
 
-  // Audio Player Listeners για την Custom Μπάρα
+  function changeTrack(direction) {
+    if (currentTrackIndex !== null) {
+        selectTrack(currentTrackIndex + direction);
+    }
+  }
+
   audio.addEventListener('timeupdate', () => {
     if (audio.duration) {
         const pct = (audio.currentTime / audio.duration) * 100;
         progress.value = pct;
-        
         let mins = Math.floor(audio.currentTime / 60);
         let secs = Math.floor(audio.currentTime % 60);
-        if (secs < 10) secs = '0' + secs;
-        currentTimeText.innerText = mins + ':' + secs;
+        currentTimeText.innerText = mins + ':' + (secs < 10 ? '0' + secs : secs);
     }
   });
 
   audio.addEventListener('loadedmetadata', () => {
     let mins = Math.floor(audio.duration / 60);
     let secs = Math.floor(audio.duration % 60);
-    if (secs < 10) secs = '0' + secs;
-    durationText.innerText = mins + ':' + secs;
+    durationText.innerText = mins + ':' + (secs < 10 ? '0' + secs : secs);
   });
 
   progress.addEventListener('input', () => {
-    if (audio.duration) {
-        audio.currentTime = (progress.value / 100) * audio.duration;
-    }
+    if (audio.duration) audio.currentTime = (progress.value / 100) * audio.duration;
   });
 
-  // Web3 Σύνδεση Πληρωμής
   function triggerPiPayment() {
-    statusDiv.innerText = "ΕΠΙΚΟΙΝΩΝΙΑ ΜΕ PI WALLET...";
-    
+    statusDiv.innerText = "OPENING PI WALLET...";
     Pi.authenticate(['username', 'payments'], onIncompletePaymentFound)
       .then(function(auth) {
         return Pi.createPayment({
           amount: 0.1,
-          memo: "Ξεκλείδωμα Premium Κομματιών - Ossvarium",
+          memo: "Unlock Premium Tracks - Ossvarium",
           metadata: { orderId: "premium_unlock_all" }
         }, {
           onReadyForServerApproval: function(paymentId) {
-            fetch(window.location.origin + '/api/approve-payment?v=' + new Date().getTime(), {
+            fetch('https://ossvarium-server.onrender.com/approve-payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ paymentId: paymentId })
-            }).then(res => res.json());
+            });
           },
           onReadyForServerCompletion: function(paymentId, txid) {
-            fetch(window.location.origin + '/api/complete-payment?v=' + new Date().getTime(), {
+            fetch('https://ossvarium-server.onrender.com/complete-payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ paymentId: paymentId, txid: txid })
             })
             .then(res => res.json())
-            .then(data => {
+            .then(() => {
               hasPaidAndUnlocked = true;
               unlockPanel.style.display = "none";
-              
               document.getElementById('badge-1').className = "badge badge-unlocked";
               document.getElementById('badge-1').innerText = "🔓 UNLOCKED";
               document.getElementById('badge-2').className = "badge badge-unlocked";
               document.getElementById('badge-2').innerText = "🔓 UNLOCKED";
-              
               selectTrack(currentTrackIndex);
             });
           },
-          onCancel: function(paymentId) { statusDiv.innerText = "ΑΚΥΡΩΘΗΚΕ."; },
-          onError: function(error, paymentId) { statusDiv.innerText = "ΣΦΑΛΜΑ."; }
+          onCancel: function(paymentId) { statusDiv.innerText = "CANCELLED."; },
+          onError: function(error, paymentId) { statusDiv.innerText = "ERROR."; }
         });
       })
-      .catch(function(error) { statusDiv.innerText = "ΑΠΟΤΥΧΙΑ."; });
+      .catch(function() { statusDiv.innerText = "AUTH FAILED."; });
   }
 </script>
-
 </body>
 </html>
