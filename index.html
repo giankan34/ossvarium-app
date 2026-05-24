@@ -38,20 +38,16 @@
   const SERVER_URL = "https://ossvarium-server.onrender.com"; 
 
   // Αρχικοποίηση με το επίσημο App ID σου
-  Pi.init({ 
-    version: "2.0", 
-    sandbox: false,
-    id: "Unj11ign5ijfelie2qccs7gcriqgstguxyvdc0jqwsm510bbexntoljpjgynp2d" 
-  });
-  
-  function startPiProcess() {
-    const statusDiv = document.getElementById('auth-status');
-    statusDiv.innerText = "Γίνεται επικοινωνία με το Pi Wallet...";
+ Pi.init({ version: "2.0", sandbox: false });
 
-    Pi.authenticate(['username', 'payments'], onIncompletePaymentFound)
-      .then(function(auth) {
-        statusDiv.innerText = "Έναρξη πληρωμής...";
-        
+function startPiProcess() {
+  const statusDiv = document.getElementById('auth-status');
+  statusDiv.innerText = "Γίνεται επικοινωνία με το Pi Wallet...";
+  
+  Pi.authenticate(['username', 'payments'], onIncompletePaymentFound)
+    .then(function(auth) {
+      alert("Το Authentication πέτυχε! User: " + auth.user.username);
+      statusDiv.innerText = "Έναρξη πληρωμής...";
    return Pi.createPayment({
   amount: 0.1,
   memo: "Υποστήριξη μπάντας στο Ossvarium Stream",
