@@ -14,7 +14,7 @@
         .pi-btn { background-color: #ff4444; color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
         .pi-btn:hover { background-color: #cc3333; }
         .player-section { margin-top: 35px; padding-top: 25px; border-top: 1px solid #333; }
-        .bandcamp-iframe { border: 0; width: 100%; height: 120px; border-radius: 8px; }
+        .bandcamp-iframe { border: 0; width: 100%; height: 120px; border-radius: 8px; display: none; } /* Ξεκινάει κρυμμένο */
     </style>
 </head>
 <body>
@@ -25,33 +25,31 @@
     
     <div id="auth-status" class="status">Έτοιμο για σύνδεση & ακρόαση.</div>
     
-    <button class="pi-btn" onclick="startPiProcess()">EXECUTE PAYMENT (0.1 PI)</button>
+    <button id="pay-button" class="pi-btn" onclick="startPiProcess()">EXECUTE PAYMENT (0.1 PI)</button>
     
     <div class="player-section">
-        <h3>[ Embedded Bandcamp Stream ]</h3>
-        <iframe class="bandcamp-iframe" src="https://bandcamp.com/EmbeddedPlayer/album=1308388713/size=large/bgcol=111111/linkcol=ff4444/tracklist=false/artwork=small/transparent=true/" seamless><a href="https://ossvarium.bandcamp.com/album=1308388713">Ossvarium Album</a></iframe>
+        <div id="player-title" style="display: none;"><h3>[ OSSVARIUM PLAYER UNLOCKED ]</h3></div>
+        <iframe id="bandcamp-player" class="bandcamp-iframe" src="https://bandcamp.com/EmbeddedPlayer/album=1308388713/size=large/bgcol=111111/linkcol=ff4444/tracklist=false/artwork=small/transparent=true/" seamless><a href="https://ossvarium.bandcamp.com/album=1308388713">Ossvarium Album</a></iframe>
     </div>
 </div>
 
 <script>
-  // Αρχικοποίηση Pi SDK
   Pi.init({ version: "2.0", sandbox: false });
 
-  // Αυτή η συνάρτηση χρειάζεται υποχρεωτικά από το SDK αν υπάρχει ημιτελής πληρωμή
   function onIncompletePaymentFound(payment) {
     console.log("Incomplete payment found:", payment);
   }
 
   function startPiProcess() {
-    // Direct Alert για να δούμε αν ακούει το κουμπί!
-    alert("Το κουμπί πατήθηκε επιτυχώς! Ξεκινάει το Authentication...");
-    
     const statusDiv = document.getElementById('auth-status');
+    const payButton = document.getElementById('pay-button');
+    const playerIframe = document.getElementById('bandcamp-player');
+    const playerTitle = document.getElementById('player-title');
+    
     statusDiv.innerText = "Γίνεται επικοινωνία με το Pi Wallet...";
     
     Pi.authenticate(['username', 'payments'], onIncompletePaymentFound)
       .then(function(auth) {
-        alert("Το Authentication πέτυχε! User: " + auth.user.username);
         statusDiv.innerText = "Έναρξη πληρωμής...";
         
         return Pi.createPayment({
@@ -64,9 +62,7 @@
             
             fetch(window.location.origin + '/api/approve-payment?v=' + new Date().getTime(), {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ paymentId: paymentId })
             })
             .then(res => {
@@ -86,9 +82,7 @@
             
             fetch(window.location.origin + '/api/complete-payment?v=' + new Date().getTime(), {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
+              headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ paymentId: paymentId, txid: txid })
             })
             .then(res => {
@@ -97,7 +91,16 @@
             })
             .then(data => {
               console.log("Payment Completed Successfully!", data);
-              statusDiv.innerText = "Η πληρωμή ολοκληρώθηκε επιτυχώς!";
+              
+              // 1. Ενημέρωση κειμένου
+              statusDiv.innerHTML = "<span style='color: #00ff00;'>Η πληρωμή ολοκληρώθηκε επιτυχώς! Καλή ακρόαση!</span>";
+              
+              // 2. Εξαφάνιση του κουμπιού πληρωμής
+              payButton.style.display = "none";
+              
+              // 3. ΕΜΦΑΝΙΣΗ ΤΟΥ PLAYER ΑΥΤΟΜΑΤΑ
+              playerIframe.style.display = "block";
+              playerTitle.style.display = "block";
             })
             .catch(err => {
               console.error(err);
@@ -105,12 +108,10 @@
             });
           },
           onCancel: function(paymentId) {
-            console.log("Payment cancelled", paymentId);
             statusDiv.innerText = "Η πληρωμή ακυρώθηκε.";
           },
           onError: function(error, paymentId) {
-            console.error("Pi SDK Error:", error, paymentId);
-            alert("Pi SDK Error: " + error.message);
+            statusDiv.innerText = "Σφάλμα: " + error.message;
           }
         });
       })
