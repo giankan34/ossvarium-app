@@ -19,11 +19,32 @@
         .controls-box::after { content: '• •'; position: absolute; bottom: 2px; left: 6px; right: 6px; display: flex; justify-content: space-between; color: #423838; font-size: 14px; text-shadow: 1px 1px #000; }
         .screen-display { background: #0a0909; border: 1px solid #211b1b; padding: 8px; border-radius: 4px; font-size: 11px; color: #8c7e7e; margin-bottom: 15px; text-transform: uppercase; box-shadow: inset 0 2px 4px #000; }
         
-        /* Album Vault CSS */
-        #album-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .album-card { cursor: pointer; border: 1px solid #3b3131; padding: 5px; background: #141111; }
-        .album-card img { width: 100%; }
-        .album-card div { font-size: 9px; color: #cc2525; margin-top: 5px; }
+      /* Album Vault CSS - Βελτιωμένο Layout */
+#album-grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 15px; 
+    margin-top: 15px; 
+}
+.album-card { 
+    cursor: pointer; 
+    border: 1px solid #3b3131; 
+    padding: 10px; 
+    background: #0f0c0c; 
+    text-align: center;
+}
+.album-card img { 
+    width: 100%; 
+    height: 100px; /* Σταθερό ύψος για ομοιομορφία */
+    object-fit: cover; /* Για να μην παραμορφώνεται η εικόνα */
+    border: 1px solid #2b2424;
+}
+.album-card div { 
+    font-size: 10px; 
+    color: #a89f9f; 
+    margin-top: 8px; 
+    font-weight: bold;
+}
 
         .eq-container { display: none; justify-content: center; gap: 4px; height: 15px; align-items: flex-end; margin-bottom: 10px; }
         .bar { width: 4px; height: 3px; background: #cc2525; animation: bounce 0.8s infinite ease-in-out; }
@@ -126,21 +147,7 @@
 <script>
     Pi.init({ version: "2.0", sandbox: false });
 
-    // --- ALBUM VAULT LOGIC ---
-    const myAlbums = [
-        { title: "Demo Tape", id: "3742468307", cover: "https://f4.bcbits.com/img/a0123456789_16.jpg" }
-    ];
-    const grid = document.getElementById('album-grid');
-    myAlbums.forEach(album => {
-        const card = document.createElement('div');
-        card.className = "album-card";
-        card.innerHTML = `<img src="${album.cover}"><div>${album.title}</div>`;
-        card.onclick = () => {
-            document.getElementById('bandcamp-embed').innerHTML = `<iframe style="border: 0; width: 100%; height: 120px;" src="https://bandcamp.com/EmbeddedPlayer/album=${album.id}/size=large/bgcol=1a1a1a/linkcol=cc2525/transparent=true/" seamless></iframe>`;
-        };
-        grid.appendChild(card);
-    });
-
+  
     // --- BANDCAMP LOAD FUNCTION ---
     function loadBandcamp() {
         const url = document.getElementById('bandcampUrl').value;
@@ -152,7 +159,30 @@
             alert("Δεν βρέθηκε έγκυρο Bandcamp ID.");
         }
     }
-
+// --- ALBUM VAULT LOGIC ---
+const myAlbums = [
+    { title: "Demo Tape", id: "3742468307", cover: "https://f4.bcbits.com/img/a0123456789_16.jpg" }
+];
+const grid = document.getElementById('album-grid');
+myAlbums.forEach(album => {
+    const card = document.createElement('div');
+    card.className = "album-card";
+    
+    // Αν η εικόνα αποτυγχάνει, βάζουμε ένα fallback text αντί για το "x"
+    card.innerHTML = `
+        <img src="${album.cover}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display:none; padding: 20px 0; border: 1px solid #3b3131;">NO COVER</div>
+        <div>${album.title}</div>
+    `;
+    
+    card.onclick = () => {
+        document.getElementById('bandcamp-embed').innerHTML = `
+            <iframe style="border: 0; width: 100%; height: 120px;" 
+            src="https://bandcamp.com/EmbeddedPlayer/album=${album.id}/size=large/bgcol=1a1a1a/linkcol=cc2525/transparent=true/" 
+            seamless></iframe>`;
+    };
+    grid.appendChild(card);
+});
     // --- ORIGINAL LOGIC ---
     let hasPaidAndUnlocked = false;
     let currentTrackIndex = null;
