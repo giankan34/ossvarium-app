@@ -160,27 +160,24 @@
         }
     }
 // --- ALBUM VAULT LOGIC ---
-const myAlbums = [
-    { title: "Demo Tape", id: "3742468307", cover: "https://f4.bcbits.com/img/a0123456789_16.jpg" }
-];
-const grid = document.getElementById('album-grid');
 myAlbums.forEach(album => {
     const card = document.createElement('div');
     card.className = "album-card";
-    
-    // Αν η εικόνα αποτυγχάνει, βάζουμε ένα fallback text αντί για το "x"
-    card.innerHTML = `
-        <img src="${album.cover}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <div style="display:none; padding: 20px 0; border: 1px solid #3b3131;">NO COVER</div>
-        <div>${album.title}</div>
-    `;
+card.innerHTML = `
+    <img src="${album.cover}" onerror="this.style.display='none'">
+    <div style="margin-top: 5px; min-height: 20px;">${album.title}</div>
+`;
     
     card.onclick = () => {
+        // Εδώ ρυθμίζουμε το iframe να δείχνει το άλμπουμ με τη λίστα των κομματιών
+        // Μπορείς να πειράξεις το 'size=large' σε 'size=small' αν θέλεις πιο compact εμφάνιση
         document.getElementById('bandcamp-embed').innerHTML = `
-            <iframe style="border: 0; width: 100%; height: 120px;" 
-            src="https://bandcamp.com/EmbeddedPlayer/album=${album.id}/size=large/bgcol=1a1a1a/linkcol=cc2525/transparent=true/" 
-            seamless></iframe>`;
+            <iframe style="border: 0; width: 100%; height: 350px;" 
+            src="https://bandcamp.com/EmbeddedPlayer/album=${album.id}/size=large/bgcol=1a1a1a/linkcol=cc2525/artwork=small/transparent=true/" 
+            seamless>
+            </iframe>`;
     };
+
     grid.appendChild(card);
 });
     // --- ORIGINAL LOGIC ---
