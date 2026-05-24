@@ -18,34 +18,6 @@
         .controls-box::before { content: '• •'; position: absolute; top: 2px; left: 6px; right: 6px; display: flex; justify-content: space-between; color: #423838; font-size: 14px; text-shadow: 1px 1px #000; }
         .controls-box::after { content: '• •'; position: absolute; bottom: 2px; left: 6px; right: 6px; display: flex; justify-content: space-between; color: #423838; font-size: 14px; text-shadow: 1px 1px #000; }
         .screen-display { background: #0a0909; border: 1px solid #211b1b; padding: 8px; border-radius: 4px; font-size: 11px; color: #8c7e7e; margin-bottom: 15px; text-transform: uppercase; box-shadow: inset 0 2px 4px #000; }
-        
-      /* Album Vault CSS - Βελτιωμένο Layout */
-#album-grid { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 15px; 
-    margin-top: 15px; 
-}
-.album-card { 
-    cursor: pointer; 
-    border: 1px solid #3b3131; 
-    padding: 10px; 
-    background: #0f0c0c; 
-    text-align: center;
-}
-.album-card img { 
-    width: 100%; 
-    height: 100px; /* Σταθερό ύψος για ομοιομορφία */
-    object-fit: cover; /* Για να μην παραμορφώνεται η εικόνα */
-    border: 1px solid #2b2424;
-}
-.album-card div { 
-    font-size: 10px; 
-    color: #a89f9f; 
-    margin-top: 8px; 
-    font-weight: bold;
-}
-
         .eq-container { display: none; justify-content: center; gap: 4px; height: 15px; align-items: flex-end; margin-bottom: 10px; }
         .bar { width: 4px; height: 3px; background: #cc2525; animation: bounce 0.8s infinite ease-in-out; }
         @keyframes bounce { 0%, 100% { height: 3px; } 50% { height: 15px; } }
@@ -104,17 +76,6 @@
         </div>
     </div>
     
-    <div class="controls-box">
-        <div class="screen-display">ALBUM VAULT</div>
-        <div id="album-grid"></div>
-    </div>
-    <div class="controls-box">
-        <div class="screen-display">BANDCAMP STREAMING</div>
-        <input type="text" id="bandcampUrl" placeholder="Επικόλληση URL άλμπουμ..." style="width: 85%; background: #0a0909; border: 1px solid #3b3131; color: #fff; padding: 8px; margin-bottom: 10px;">
-        <button class="btn-custom" onclick="loadBandcamp()" style="width: 90%;">LOAD STREAM</button>
-        <div id="bandcamp-embed" style="margin-top: 15px;"></div>
-    </div>
-
     <ul class="track-list">
         <li class="track-item free-style" id="item-0" onclick="selectTrack(0)">
             <span>1. Ossvarium - Intro (Demo)</span>
@@ -146,41 +107,6 @@
 
 <script>
     Pi.init({ version: "2.0", sandbox: false });
-
-  
-    // --- BANDCAMP LOAD FUNCTION ---
-    function loadBandcamp() {
-        const url = document.getElementById('bandcampUrl').value;
-        const embedDiv = document.getElementById('bandcamp-embed');
-        const albumId = url.match(/\/album\/(\d+)/)?.[1];
-        if (albumId) {
-            embedDiv.innerHTML = `<iframe style="border: 0; width: 100%; height: 120px;" src="https://bandcamp.com/EmbeddedPlayer/album=${albumId}/size=large/bgcol=1a1a1a/linkcol=cc2525/transparent=true/" seamless></iframe>`;
-        } else {
-            alert("Δεν βρέθηκε έγκυρο Bandcamp ID.");
-        }
-    }
-// --- ALBUM VAULT LOGIC ---
-myAlbums.forEach(album => {
-    const card = document.createElement('div');
-    card.className = "album-card";
-card.innerHTML = `
-    <img src="${album.cover}" onerror="this.style.display='none'">
-    <div style="margin-top: 5px; min-height: 20px;">${album.title}</div>
-`;
-    
-    card.onclick = () => {
-        // Εδώ ρυθμίζουμε το iframe να δείχνει το άλμπουμ με τη λίστα των κομματιών
-        // Μπορείς να πειράξεις το 'size=large' σε 'size=small' αν θέλεις πιο compact εμφάνιση
-        document.getElementById('bandcamp-embed').innerHTML = `
-            <iframe style="border: 0; width: 100%; height: 350px;" 
-            src="https://bandcamp.com/EmbeddedPlayer/album=${album.id}/size=large/bgcol=1a1a1a/linkcol=cc2525/artwork=small/transparent=true/" 
-            seamless>
-            </iframe>`;
-    };
-
-    grid.appendChild(card);
-});
-    // --- ORIGINAL LOGIC ---
     let hasPaidAndUnlocked = false;
     let currentTrackIndex = null;
     const playlist = [
