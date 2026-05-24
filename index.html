@@ -52,49 +52,65 @@
       .then(function(auth) {
         statusDiv.innerText = "Έναρξη πληρωμής...";
         
-        return Pi.createPayment({
-          amount: 0.1,
-          memo: "Υποστήριξη μπάντας στο Ossvarium Stream",
-          metadata: { orderId: "12345" },
-          uid: auth.user.uid
-        }, {
-          // ΒΗΜΑ Α: Έγκριση από τον Server (server.js)
-          onReadyForServerApproval: function(paymentId) {
-            statusDiv.innerText = "Ο Server εγκρίνει την πληρωμή...";
-           fetch('/api/approve-payment?v=100', {
-    method: 'POST',
-    headers: {
+   return Pi.createPayment({
+  amount: 0.1,
+  memo: "Υποστήριξη μπάντας στο Ossvarium Stream",
+  metadata: { orderId: "12345" }
+}, {
+  onReadyForServerApproval: function(paymentId) {
+    statusDiv.innerText = "Ο Server εγκρίνει την πληρωμή...";
+    
+    fetch(window.location.origin + '/api/approve-payment?v=' + new Date().getTime(), {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ paymentId: payment.id })
-})
-            .then(res => res.json())
-            .then(data => console.log("Server Approved!"))
-            .catch(err => console.error(err));
-          },
-          // ΒΗΜΑ Β: Ολοκλήρωση στο Blockchain
-          onReadyForServerCompletion: function(paymentId, txid) {
-            statusDiv.innerText = "Ολοκλήρωση στο Blockchain...";
-           fetch('/api/complete-payment?v=100', {
-    method: 'POST',
-    headers: {
+      },
+      body: JSON.stringify({ paymentId: paymentId })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Server returned ' + res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log("Server Approved!", data);
+    })
+    .catch(err => {
+      console.error(err);
+      statusDiv.innerText = "Σφάλμα έγκρισης server.";
+    });
+  },
+  onReadyForServerCompletion: function(paymentId, txid) {
+    statusDiv.innerText = "Ολοκλήρωση στο Blockchain...";
+    
+    fetch(window.location.origin + '/api/complete-payment?v=' + new Date().getTime(), {
+      method: 'POST',
+      headers: {
         'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ paymentId: payment.id, txid: payment.txid })
-})
-            .then(res => res.json())
-            .then(data => {
-                statusDiv.innerText = "Η πληρωμή ολοκληρώθηκε! Το κομμάτι ξεκλειδώθηκε!";
-                statusDiv.style.color = "#00ff00";
-            })
-            .catch(err => console.error(err));
-          },
-          onCancel: function(paymentId) { statusDiv.innerText = "Η πληρωμή ακυρώθηκε."; },
-          onError: function(error, payment) { statusDiv.innerText = "Σφάλμα πληρωμής."; }
-        });
-      })
-      .catch(function(error) { statusDiv.innerText = "Αποτυχία σύνδεσης."; });
+      },
+      body: JSON.stringify({ paymentId: paymentId, txid: txid })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Server returned ' + res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log("Payment Completed Successfully!", data);
+      statusDiv.innerText = "Η πληρωμή ολοκληρώθηκε επιτυχώς!";
+    })
+    .catch(err => {
+      console.error(err);
+      statusDiv.innerText = "Σφάλμα ολοκλήρωσης πληρωμής.";
+    });
+  },
+  onCancel: function(paymentId) {
+    console.log("Payment cancelled", paymentId);
+    statusDiv.innerText = "Η πληρωμή ακυρώθηκε.";
+  },
+  onError: function(error, paymentId) {
+    console.error("Pi SDK Error:", error, paymentId);
+    alert("Pi SDK Error: " + error.message);
   }
+});
 
   function onIncompletePaymentFound(payment) { }
 </script>
