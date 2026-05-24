@@ -1,6 +1,5 @@
 const axios = require('axios');
-const PI_API_KEY = "Xnjsidd7p8g1wfxlyhtrr3bm7ctmkf4lprvusgxjahllilko7030uqiptcjurymr";
-
+const PI_API_KEY = "g4h2yhzvzddsyprqwyjp5a6rekwqaznwlhwwuh1pjgu9kyb89jyofm7yhxourwyu";
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
