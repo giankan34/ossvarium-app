@@ -11,10 +11,11 @@
         h1 { color: #ff4444; margin-bottom: 5px; letter-spacing: 2px; }
         .subtitle { color: #888; font-size: 14px; margin-bottom: 25px; }
         .status { margin: 20px 0; font-weight: bold; color: #aaa; }
-        .pi-btn { background-color: #ff4444; color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .pi-btn { background-color: #ff4444; color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
         .pi-btn:hover { background-color: #cc3333; }
-        .player-section { margin-top: 35px; padding-top: 25px; border-top: 1px solid #333; }
-        .bandcamp-iframe { border: 0; width: 100%; height: 120px; border-radius: 8px; display: none; } /* Ξεκινάει κρυμμένο */
+        .unlock-btn { background-color: #00ff00; color: #000; }
+        .unlock-btn:hover { background-color: #00cc00; }
+        .player-section { margin-top: 35px; padding-top: 25px; border-top: 1px solid #333; display: none; } /* Κρυφό αρχικά */
     </style>
 </head>
 <body>
@@ -27,9 +28,10 @@
     
     <button id="pay-button" class="pi-btn" onclick="startPiProcess()">EXECUTE PAYMENT (0.1 PI)</button>
     
-    <div class="player-section">
-        <div id="player-title" style="display: none;"><h3>[ OSSVARIUM PLAYER UNLOCKED ]</h3></div>
-        <iframe id="bandcamp-player" class="bandcamp-iframe" src="https://bandcamp.com/EmbeddedPlayer/album=1308388713/size=large/bgcol=111111/linkcol=ff4444/tracklist=false/artwork=small/transparent=true/" seamless><a href="https://ossvarium.bandcamp.com/album=1308388713">Ossvarium Album</a></iframe>
+    <div id="unlocked-section" class="player-section">
+        <h3 style="color: #00ff00; letter-spacing: 1px;">🔓 ΚΟΜΜΑΤΙ ΞΕΚΛΕΙΔΩΘΗΚΕ!</h3>
+        <p style="color: #ccc; font-size: 14px; margin-bottom: 20px;">Ο Pi Browser μπλοκάρει την αναπαραγωγή εντός της εφαρμογής. Πατήστε το παρακάτω κουμπί για να ακούσετε το άλμπουμ απευθείας στο Bandcamp:</p>
+        <a href="https://ossvarium.bandcamp.com/album=1308388713" target="_blank" class="pi-btn unlock-btn">ΑΚΟΥΣΤΕ ΤΟ ΑΛΜΠΟΥΜ ΕΔΩ</a>
     </div>
 </div>
 
@@ -43,8 +45,7 @@
   function startPiProcess() {
     const statusDiv = document.getElementById('auth-status');
     const payButton = document.getElementById('pay-button');
-    const playerIframe = document.getElementById('bandcamp-player');
-    const playerTitle = document.getElementById('player-title');
+    const unlockedSection = document.getElementById('unlocked-section');
     
     statusDiv.innerText = "Γίνεται επικοινωνία με το Pi Wallet...";
     
@@ -92,15 +93,14 @@
             .then(data => {
               console.log("Payment Completed Successfully!", data);
               
-              // 1. Ενημέρωση κειμένου
-              statusDiv.innerHTML = "<span style='color: #00ff00;'>Η πληρωμή ολοκληρώθηκε επιτυχώς! Καλή ακρόαση!</span>";
+              // 1. Ενημέρωση κειμένου κατάστασης
+              statusDiv.innerHTML = "<span style='color: #00ff00;'>Η πληρωμή ολοκληρώθηκε επιτυχώς!</span>";
               
               // 2. Εξαφάνιση του κουμπιού πληρωμής
               payButton.style.display = "none";
               
-              // 3. ΕΜΦΑΝΙΣΗ ΤΟΥ PLAYER ΑΥΤΟΜΑΤΑ
-              playerIframe.style.display = "block";
-              playerTitle.style.display = "block";
+              // 3. Εμφάνιση του Unlocked Section με το κουμπί συνδέσμου
+              unlockedSection.style.display = "block";
             })
             .catch(err => {
               console.error(err);
