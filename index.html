@@ -7,81 +7,175 @@
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
     <style>
-        /* ... (Το υπόλοιπο CSS σου παραμένει ΙΔΙΟ) ... */
-        body { background-color: #121010; background-image: radial-gradient(circle, #1c1818 0%, #0a0909 100%); color: #a89f9f; font-family: 'Courier New', Courier, monospace; text-align: center; padding: 15px; margin: 0; }
+        /* 🎚️ Industrial Σκοτεινό Background */
+        body { 
+            background-color: #121010; 
+            background-image: radial-gradient(circle, #1c1818 0%, #0a0909 100%);
+            color: #a89f9f; 
+            font-family: 'Courier New', Courier, monospace; 
+            text-align: center; 
+            padding: 15px;
+            margin: 0;
+        }
         
-        /* Gothic Font για τίτλους και λίστα */
-        h1, .track-item { font-family: 'UnifrakturMaguntia', cursive !important; }
-        h1 { color: #cc2525; margin: 5px 0 2px 0; letter-spacing: 4px; font-size: 32px; text-shadow: 2px 2px #000; font-weight: 900; }
+        /* 📱 Κεντρικό Container */
+        .container { 
+            max-width: 400px; 
+            margin: 10px auto; 
+            background: #171414; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border: 3px solid #2b2424; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+        }
 
-        /* Equalizer Animation (το προσθέτω εδώ) */
-        .eq-container { display: flex; justify-content: center; gap: 4px; height: 20px; align-items: flex-end; margin: 10px 0; }
-        .bar { width: 5px; height: 5px; background: #cc2525; animation: bounce 0.8s infinite ease-in-out; }
-        @keyframes bounce { 0%, 100% { height: 5px; } 50% { height: 20px; } }
-        .bar:nth-child(2) { animation-delay: 0.1s; } .bar:nth-child(3) { animation-delay: 0.2s; }
+        /* 🤘 Τίτλοι - ΕΦΑΡΜΟΓΗ GOTHIC FONT */
+        h1 { 
+            color: #cc2525; 
+            font-family: 'UnifrakturMaguntia', cursive;
+            margin: 5px 0 2px 0; 
+            letter-spacing: 2px; 
+            font-size: 34px;
+            text-shadow: 2px 2px #000;
+            font-weight: 900;
+        }
+        .subtitle { 
+            color: #544b4b; 
+            font-size: 10px; 
+            margin-bottom: 25px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* 💿 ΑΝΑΓΛΥΦΟ ΜΕΤΑΛΛΙΚΟ ΠΛΑΙΣΙΟ ΜΕ ΑΝΑΠΟΔΟ ΣΤΑΥΡΟ */
+        .cover-wrapper {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 25px auto;
+            border: 4px solid #262020;
+            border-radius: 50%;
+            box-shadow: 0 8px 20px #000, inset 0 0 20px #000;
+            background: radial-gradient(circle, #2e1616 0%, #120d0d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cover-art {
+            width: 85%;
+            height: 85%;
+            filter: drop-shadow(0px 4px 8px #000);
+        }
 
-        /* ... (Το υπόλοιπο CSS σου παραμένει ΙΔΙΟ) ... */
-        .container { max-width: 400px; margin: 10px auto; background: #171414; padding: 20px; border-radius: 8px; border: 3px solid #2b2424; box-shadow: 0 0 30px rgba(0,0,0,0.9); }
-        .cover-wrapper { width: 220px; height: 220px; margin: 0 auto 25px auto; border: 4px solid #262020; border-radius: 50%; box-shadow: 0 8px 20px #000, inset 0 0 20px #000; background: radial-gradient(circle, #2e1616 0%, #120d0d 100%); display: flex; align-items: center; justify-content: center; }
-        .cover-art { width: 85%; height: 85%; filter: drop-shadow(0px 4px 8px #000); }
-        .controls-box { background: linear-gradient(180deg, #2b2424 0%, #141111 100%); padding: 15px; border: 2px solid #3b3131; border-radius: 6px; margin-bottom: 20px; position: relative; }
-        .screen-display { background: #0a0909; border: 1px solid #211b1b; padding: 8px; border-radius: 4px; font-size: 11px; color: #8c7e7e; margin-bottom: 15px; text-transform: uppercase; }
-        .control-btns { display: flex; justify-content: center; gap: 12px; margin-bottom: 12px; }
-        .btn-custom { background: linear-gradient(180deg, #3b3232 0%, #1c1717 100%); border: 2px solid #4a3e3e; border-radius: 4px; color: #cc2525; padding: 8px 16px; cursor: pointer; font-weight: bold; font-size: 14px; }
-        .btn-play { background: linear-gradient(180deg, #7a1818 0%, #3b0a0a 100%); border-color: #992222; color: #fff; padding: 8px 24px; }
-        .track-list { text-align: left; list-style: none; padding: 0; margin: 20px 0; }
-        .track-item { padding: 12px 10px; border: 2px solid #241f1f; background: linear-gradient(180deg, #1f1a1a 0%, #141111 100%); margin-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; font-size: 18px; }
-        .track-item.active { border-color: #a82424; color: #e63535; }
-    </style>
-</head>
-<body>
+        /* 🎛️ ΜΕΤΑΛΛΙΚΟ PANEL ΧΕΙΡΙΣΤΗΡΙΟΥ (Με βίδες στις γωνίες) */
+        .controls-box {
+            background: linear-gradient(180deg, #2b2424 0%, #141111 100%);
+            padding: 15px;
+            border: 2px solid #3b3131;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.05), 0 6px 12px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        /* Προσομοίωση για τις 4 βίδες στις γωνίες */
+        .controls-box::before { content: '• •'; position: absolute; top: 2px; left: 6px; right: 6px; display: flex; justify-content: space-between; color: #423838; font-size: 14px; text-shadow: 1px 1px #000; }
+        .controls-box::after { content: '• •'; position: absolute; bottom: 2px; left: 6px; right: 6px; display: flex; justify-content: space-between; color: #423838; font-size: 14px; text-shadow: 1px 1px #000; }
 
-<div class="container">
-    <h1>OSSVARIUM STREAM</h1>
-    
-    <div class="eq-container" id="eq" style="display:none;">
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-    </div>
+        /* Οθόνη Τίτλου */
+        .screen-display {
+            background: #0a0909;
+            border: 1px solid #211b1b;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #8c7e7e;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            box-shadow: inset 0 2px 4px #000;
+        }
 
-    <div class="cover-wrapper">
-        <svg class="cover-art" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="46" fill="none" stroke="#8a2b2b" stroke-width="2" stroke-dasharray="3,3"/>
-            <text x="50" y="55" font-family="Courier New" font-size="10" fill="#8a2b2b" text-anchor="middle">OSSVARIUM</text>
-        </svg>
-    </div>
+        /* 🎶 INDUSTRIAL EQUALIZER ΜΕΣΑ ΣΤΟ PANEL */
+        .eq-container {
+            display: none;
+            justify-content: center;
+            gap: 4px;
+            height: 15px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+        .bar { width: 4px; height: 3px; background: #cc2525; animation: bounce 0.8s infinite ease-in-out; }
+        @keyframes bounce { 0%, 100% { height: 3px; } 50% { height: 15px; } }
+        .bar:nth-child(2) { animation-delay: 0.15s; }
+        .bar:nth-child(3) { animation-delay: 0.3s; }
+        .bar:nth-child(4) { animation-delay: 0.45s; }
 
-    <div class="controls-box">
-        <div id="now-playing" class="screen-display">ΕΠΙΛΕΞΤΕ ΚΟΜΜΑΤΙ...</div>
-        <div class="control-btns">
-            <button class="btn-custom" onclick="changeTrack(-1)">⏮</button>
-            <button class="btn-custom btn-play" onclick="togglePlay()">▶ / ⏸</button>
-            <button class="btn-custom" onclick="changeTrack(1)">⏭</button>
-        </div>
-    </div>
-    
-    <ul class="track-list">
-        <li class="track-item" onclick="selectTrack(0)">1. Ossvarium - Intro (Demo)</li>
-        <li class="track-item" onclick="selectTrack(1)">2. Ossvarium - Cyber Necrosis</li>
-    </ul>
-</div>
+        /* Κουμπιά */
+        .control-btns {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .btn-custom {
+            background: linear-gradient(180deg, #3b3232 0%, #1c1717 100%);
+            border: 2px solid #4a3e3e;
+            border-radius: 4px;
+            color: #cc2525;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 3px 0 #000;
+        }
+        .btn-custom:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #000;
+        }
+        .btn-play {
+            background: linear-gradient(180deg, #7a1818 0%, #3b0a0a 100%);
+            border-color: #992222;
+            color: #fff;
+            padding: 8px 24px;
+        }
 
-<audio id="audio-element" style="display:none;"></audio>
+        /* Μπάρα Προόδου */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            color: #5c5252;
+        }
+        .progress-bar {
+            flex-grow: 1;
+            appearance: none;
+            background: #070606;
+            height: 5px;
+            border-radius: 3px;
+            outline: none;
+        }
+        .progress-bar::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cc2525;
+            box-shadow: 0 0 4px #ff0000;
+            cursor: pointer;
+        }
 
-<script>
-    const audio = document.getElementById('audio-element');
-    const eq = document.getElementById('eq');
-
-    function selectTrack(index) {
-        eq.style.display = "flex"; // Εμφάνιση equalizer
-        audio.play();
-    }
-    
-    function togglePlay() {
-        if (audio.paused) { audio.play(); eq.style.display = "flex"; }
-        else { audio.pause(); eq.style.display = "none"; }
-    }
-    
-    // ... (κρατάς την υπόλοιπη logic για το Pi SDK που είχες)
-</script>
-</body>
-</html>
+        /* 🎶 ΛΙΣΤΑ ΚΟΜΜΑΤΙΩΝ - ΕΦΑΡΜΟΓΗ GOTHIC FONT */
+        .track-list { 
+            text-align: left; 
+            list-style: none; 
+            padding: 0; 
+            margin: 20px 0; 
+        }
+        .track-item { 
+            padding: 12px 10px; 
+            border: 2px solid #241f1f;
+            border-radius: 4px;
+            background: linear-gradient(180deg, #1f1a1a 0%, #141111 100%);
+            margin-bottom: 8px;
+            cursor: pointer; 
+            display: flex; 
+            justify-content:
