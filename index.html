@@ -61,7 +61,7 @@
           // ΒΗΜΑ Α: Έγκριση από τον Server (server.js)
           onReadyForServerApproval: function(paymentId) {
             statusDiv.innerText = "Ο Server εγκρίνει την πληρωμή...";
-           fetch('/api/approve-payment?v=1', {
+           fetch('/api/approve-payment?v=100', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -75,7 +75,7 @@
           // ΒΗΜΑ Β: Ολοκλήρωση στο Blockchain
           onReadyForServerCompletion: function(paymentId, txid) {
             statusDiv.innerText = "Ολοκλήρωση στο Blockchain...";
-           fetch('/api/complete-payment?v=1', {
+           fetch('/api/complete-payment?v=100', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
