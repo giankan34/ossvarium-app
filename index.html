@@ -178,4 +178,276 @@
             margin-bottom: 8px;
             cursor: pointer; 
             display: flex; 
-            justify-content:
+            justify-content: space-between; 
+            align-items: center; 
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 18px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+        }
+        .track-item.active { 
+            background: linear-gradient(180deg, #421515 0%, #210a0a 100%); 
+            border-color: #a82424; 
+            color: #e63535;
+            font-weight: bold; 
+        }
+        .track-item.free-style {
+            background: linear-gradient(180deg, #471919 0%, #240b0b 100%);
+            border-color: #9c2020;
+            color: #fff;
+        }
+        
+        /* Badges */
+        .badge { 
+            font-family: 'Courier New', monospace;
+            font-size: 10px; 
+            padding: 4px 8px; 
+            border-radius: 3px; 
+            font-weight: bold; 
+        }
+        .badge-free { background: #211c1c; color: #8c8080; border: 1px solid #332b2b; }
+        .badge-locked { background: linear-gradient(180deg, #332b2b 0%, #1a1515 100%); color: #d6af42; border: 1px solid #423838; }
+        .badge-unlocked { background: #1b5e20; color: #fff; }
+
+        /* 🚨 ΠΑΝΕΛ ΠΛΗΡΩΜΗΣ (Lovable Style) */
+        .unlock-panel {
+            background: linear-gradient(180deg, #7a1515 0%, #330707 100%);
+            border: 2px solid #cc2121;
+            border-radius: 5px;
+            padding: 14px;
+            margin-top: 15px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.5);
+            display: none; 
+        }
+        .unlock-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .unlock-title {
+            color: #fff;
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        .unlock-desc {
+            font-size: 13px;
+            color: #ff9999;
+            font-weight: bold;
+            text-align: left;
+        }
+        .pay-btn {
+            background: linear-gradient(180deg, #261f1f 0%, #120f0f 100%);
+            color: #fff;
+            border: 2px solid #3b3232;
+            border-radius: 4px;
+            padding: 8px 18px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 2px 0 #000;
+        }
+        .pay-btn:active {
+            box-shadow: 0 0 0 #000;
+            transform: translateY(2px);
+        }
+        .status-text {
+            font-size: 10px;
+            color: #ffcccc;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>OSSVARIUM STREAM</h1>
+    <div class="subtitle">Web3 Music Player for the Extreme Scene</div>
+    
+    <div class="cover-wrapper">
+        <svg class="cover-art" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#8a2b2b" stroke-width="2" stroke-dasharray="3,3"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#6e2222" stroke-width="1.5"/>
+            <path d="M50 20 L50 80 M30 65 L70 65" stroke="#b03838" stroke-width="5" stroke-linecap="square" fill="none"/>
+            <text x="50" y="93" font-family="Courier New" font-size="6" fill="#8a2b2b" font-weight="bold" text-anchor="middle" letter-spacing="2">OSSVARIUM</text>
+        </svg>
+    </div>
+
+    <div class="controls-box">
+        <div class="eq-container" id="equalizer">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        
+        <div id="now-playing" class="screen-display">ΕΠΙΛΕΞΤΕ ΚΟΜΜΑΤΙ...</div>
+        <div class="control-btns">
+            <button class="btn-custom" onclick="changeTrack(-1)">⏮</button>
+            <button class="btn-custom btn-play" onclick="togglePlay()">▶ / ⏸</button>
+            <button class="btn-custom" onclick="changeTrack(1)">⏭</button>
+        </div>
+        <div class="progress-container">
+            <span id="current-time">0:00</span>
+            <input type="range" id="progress" class="progress-bar" value="0" max="100">
+            <span id="duration">0:00</span>
+        </div>
+    </div>
+    
+    <ul class="track-list">
+        <li class="track-item free-style" id="item-0" onclick="selectTrack(0)">
+            <span>1. Ossvarium - Intro (Demo)</span>
+            <span class="badge badge-free">FREE</span>
+        </li>
+        <li class="track-item" id="item-1" onclick="selectTrack(1)">
+            <span>2. Ossvarium - Cyber Necrosis</span>
+            <span id="badge-1" class="badge badge-locked">🔒 0.1 PI</span>
+        </li>
+        <li class="track-item" id="item-2" onclick="selectTrack(2)">
+            <span>3. Ossvarium - Ritual of Nocturnal Beats</span>
+            <span id="badge-2" class="badge badge-locked">🔒 0.1 PI</span>
+        </li>
+    </ul>
+
+    <div id="unlock-panel" class="unlock-panel">
+        <div class="unlock-flex">
+            <div>
+                <div class="unlock-title">ACTIVATE LOCKED TRACK</div>
+                <div id="unlock-desc" class="unlock-desc">0.1 PI</div>
+            </div>
+            <button class="pay-btn" onclick="triggerPiPayment()">PAY</button>
+        </div>
+        <div id="auth-status" class="status-text"></div>
+    </div>
+</div>
+
+<audio id="audio-element" controlsList="nodownload" style="display:none;"></audio>
+
+<script>
+  Pi.init({ version: "2.0", sandbox: false });
+
+  let hasPaidAndUnlocked = false;
+  let currentTrackIndex = null;
+
+  const playlist = [
+    { name: "1. Ossvarium - Intro (Demo)", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", isLocked: false },
+    { name: "2. Ossvarium - Cyber Necrosis", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", isLocked: true },
+    { name: "3. Ossvarium - Ritual of Nocturnal Beats", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", isLocked: true }
+  ];
+
+  const audio = document.getElementById('audio-element');
+  const progress = document.getElementById('progress');
+  const currentTimeText = document.getElementById('current-time');
+  const durationText = document.getElementById('duration');
+  const nowPlayingText = document.getElementById('now-playing');
+  const unlockPanel = document.getElementById('unlock-panel');
+  const unlockDesc = document.getElementById('unlock-desc');
+  const statusDiv = document.getElementById('auth-status');
+  const equalizer = document.getElementById('equalizer');
+
+  function onIncompletePaymentFound(payment) { console.log(payment); }
+
+  function selectTrack(index) {
+    if (index < 0 || index >= playlist.length) return;
+    currentTrackIndex = index;
+    const track = playlist[index];
+    
+    document.querySelectorAll('.track-item').forEach((item, i) => {
+        if(i === index) item.classList.add('active');
+        else item.classList.remove('active');
+    });
+
+    if (track.isLocked && !hasPaidAndUnlocked) {
+        audio.pause();
+        equalizer.style.display = "none";
+        unlockDesc.innerText = "0.1 PI";
+        unlockPanel.style.display = "block";
+        nowPlayingText.innerText = "🔒 TRACK LOCKED";
+        return;
+    }
+
+    unlockPanel.style.display = "none";
+    audio.src = track.url;
+    nowPlayingText.innerText = track.name;
+    audio.play();
+    equalizer.style.display = "flex";
+  }
+
+  function togglePlay() {
+    if (currentTrackIndex === null) selectTrack(0);
+    else {
+        if (audio.paused) {
+            audio.play();
+            if (nowPlayingText.innerText !== "🔒 TRACK LOCKED") {
+                equalizer.style.display = "flex";
+            }
+        } else {
+            audio.pause();
+            equalizer.style.display = "none";
+        }
+    }
+  }
+
+  function changeTrack(direction) {
+    if (currentTrackIndex !== null) selectTrack(currentTrackIndex + direction);
+  }
+
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progress.value = pct;
+        let mins = Math.floor(audio.currentTime / 60);
+        let secs = Math.floor(audio.currentTime % 60);
+        currentTimeText.innerText = mins + ':' + (secs < 10 ? '0' + secs : secs);
+    }
+  });
+
+  audio.addEventListener('loadedmetadata', () => {
+    let mins = Math.floor(audio.duration / 60);
+    let secs = Math.floor(audio.duration % 60);
+    durationText.innerText = mins + ':' + (secs < 10 ? '0' + secs : secs);
+  });
+
+  progress.addEventListener('input', () => {
+    if (audio.duration) audio.currentTime = (progress.value / 100) * audio.duration;
+  });
+
+  function triggerPiPayment() {
+    statusDiv.innerText = "CONNECTING TO PI WALLET...";
+    Pi.authenticate(['username', 'payments'], onIncompletePaymentFound)
+      .then(function(auth) {
+        return Pi.createPayment({
+          amount: 0.1,
+          memo: "Unlock Premium Tracks - Ossvarium",
+          metadata: { orderId: "premium_unlock_all" }
+        }, {
+          onReadyForServerApproval: function(paymentId) {
+            fetch('https://ossvarium-server.onrender.com/approve-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paymentId: paymentId })
+            });
+          },
+          onReadyForServerCompletion: function(paymentId, txid) {
+            fetch('https://ossvarium-server.onrender.com/complete-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paymentId: paymentId, txid: txid })
+            })
+            .then(res => res.json())
+            .then(() => {
+              hasPaidAndUnlocked = true;
+              unlockPanel.style.display = "none";
+              document.getElementById('badge-1').className = "badge badge-unlocked";
+              document.getElementById('badge-1').innerText = "🔓 UNLOCKED";
+              document.getElementById('badge-2').className = "badge badge-unlocked";
+              document.getElementById('badge-2').innerText = "🔓 UNLOCKED";
+              selectTrack(currentTrackIndex);
+            });
+          },
+          onCancel: function(paymentId) { statusDiv.innerText = "CANCELLED."; },
+          onError: function(error, paymentId) { statusDiv.innerText = "ERROR."; }
+        });
+      })
+      .catch(function() { statusDiv.innerText = "AUTH FAILED."; });
+  }
+</script>
+</body>
+</html>
