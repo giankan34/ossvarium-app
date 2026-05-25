@@ -126,7 +126,7 @@
     const statusDiv = document.getElementById('auth-status');
     const equalizer = document.getElementById('equalizer');
 
-    function selectTrack(index) {
+   function selectTrack(index) {
         if (index < 0 || index >= playlist.length) return;
         currentTrackIndex = index;
         const track = playlist[index];
@@ -134,14 +134,18 @@
             if(i === index) item.classList.add('active');
             else item.classList.remove('active');
         });
-       if (track.isLocked && !hasPaidAndUnlocked) {
-            audio.pause(); 
-            equalizer.style.display = "none";
+        if (track.isLocked && !hasPaidAndUnlocked) {
+            audio.pause(); equalizer.style.display = "none";
             unlockPanel.style.display = "block";
             nowPlayingText.innerText = "🔒 TRACK LOCKED"; 
             return;
-        } 
         }
+        unlockPanel.style.display = "none"; 
+        audio.src = track.url;
+        nowPlayingText.innerText = track.name; 
+        audio.play(); 
+        equalizer.style.display = "flex";
+    }
         unlockPanel.style.display = "none"; audio.src = track.url;
         nowPlayingText.innerText = track.name; audio.play(); equalizer.style.display = "flex";
     }
