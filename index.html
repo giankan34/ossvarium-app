@@ -477,32 +477,111 @@ document.getElementById("duration").innerText = mins + ":" + secs;
 
 });
 
-function triggerPiPayment(){
+function triggerPiPayment() {
 
-paymentStatus.innerText = "CONNECTING TO TESTNET...";
+    paymentStatus.innerText = "CONNECTING TO PI...";
 
-Pi.authenticate(['payments'], function(){})
-.then(function(){
+    Pi.authenticate(['payments'], function(){})
+    .then(function(auth) {
 
-setTimeout(()=>{
+        Pi.createPayment({
 
-unlocked = true;
+            amount: 0.1,
+            memo: "Unlock Ossvarium Track",
+            metadata: {
+                type: "track_unlock"
+            }
 
-paymentStatus.innerText = "UNLOCK SUCCESSFUL";
+        }, {
 
-unlockPanel.style.display = "none";
+            onReadyForServerApproval: async function(paymentId) {
 
-document.getElementById("badge1").className = "badge badge-unlocked";
-document.getElementById("badge1").innerText = "UNLOCKED";
+                paymentStatus.innerText = "APPROVING PAYMENT...";
 
-document.getElementById("badge2").className = "badge badge-unlocked";
-document.getElementById("badge2").innerText = "NFT ACCESS";
+                await fetch('/api/approve-payment', {
 
-selectTrack(currentTrack);
+                    method: 'POST',
 
-},1500);
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
 
-})
+                    body: JSON.stringify({
+                        paymentId
+                    })
+
+                });
+
+            },
+
+            onReadyForServerCompletion: async function(paymentId, txid) {
+
+                paymentStatus.innerText = "COMPLETING PAYMENT...";
+
+                await fetch('/api/complete-payment', {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        paymentId,
+                        txid
+                    })
+
+                });
+
+                unlocked = true;
+
+                unlockPanel.style.display = "none";
+
+                document.getElementById("badge1").className =
+                    "badge badge-unlocked";
+
+                document.getElementById("badge1").innerText =
+                    "UNLOCKED";
+
+                document.getElementById("badge2").className =
+                    "badge badge-unlocked";
+
+                document.getElementById("badge2").innerText =
+                    "NFT ACCESS";
+
+                paymentStatus.innerText = "PAYMENT SUCCESSFUL";
+
+                selectTrack(currentTrack);
+
+            },
+
+            onCancel: function(paymentId) {
+
+                paymentStatus.innerText = "PAYMENT CANCELLED";
+
+            },
+
+            onError: function(error, paymentId) {
+
+                paymentStatus.innerText =
+                    "ERROR: " + JSON.stringify(error);
+
+                console.error(error);
+
+            }
+
+        });
+
+    })
+    .catch(function(error){
+
+        paymentStatus.innerText = "AUTH FAILED";
+
+        console.error(error);
+
+    });
+
+}
 .catch(function(){
 paymentStatus.innerText = "AUTH FAILED";
 });
