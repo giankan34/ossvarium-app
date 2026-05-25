@@ -134,10 +134,13 @@
             if(i === index) item.classList.add('active');
             else item.classList.remove('active');
         });
-        if (track.isLocked && !hasPaidAndUnlocked) {
-            audio.pause(); equalizer.style.display = "none";
-            unlockDesc.innerText = "0.1 PI"; unlockPanel.style.display = "block";
-            nowPlayingText.innerText = "🔒 TRACK LOCKED"; return;
+       if (track.isLocked && !hasPaidAndUnlocked) {
+            audio.pause(); 
+            equalizer.style.display = "none";
+            unlockPanel.style.display = "block";
+            nowPlayingText.innerText = "🔒 TRACK LOCKED"; 
+            return;
+        } 
         }
         unlockPanel.style.display = "none"; audio.src = track.url;
         nowPlayingText.innerText = track.name; audio.play(); equalizer.style.display = "flex";
