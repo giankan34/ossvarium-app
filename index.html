@@ -7,7 +7,6 @@
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
     <style>
-        /* 🎚️ Industrial Σκοτεινό Background */
         body { background-color: #121010; background-image: radial-gradient(circle, #1c1818 0%, #0a0909 100%); color: #a89f9f; font-family: 'Courier New', Courier, monospace; text-align: center; padding: 15px; margin: 0; }
         .container { max-width: 400px; margin: 10px auto; background: #171414; padding: 20px; border-radius: 8px; border: 3px solid #2b2424; box-shadow: 0 0 30px rgba(0,0,0,0.9); }
         h1 { color: #cc2525; font-family: 'UnifrakturMaguntia', cursive; margin: 5px 0 2px 0; letter-spacing: 2px; font-size: 34px; text-shadow: 2px 2px #000; font-weight: 900; }
@@ -90,12 +89,14 @@
             <span id="badge-2" class="badge badge-locked">🔒 0.1 PI</span>
         </li>
     </ul>
-<div class="controls-box">
+
+    <div class="controls-box">
         <div class="screen-display">BANDCAMP PLAYER</div>
         <input type="text" id="bc-url-input" placeholder="Επικόλληση Bandcamp URL..." style="width: 85%; background: #0a0909; border: 1px solid #3b3131; color: #fff; padding: 8px; margin-bottom: 10px;">
         <button class="btn-custom" onclick="loadBandcampAlbum()" style="width: 90%;">LOAD PLAYER</button>
         <div id="bandcamp-container" style="margin-top: 15px;"></div>
     </div>
+
     <div id="unlock-panel" class="unlock-panel">
         <div class="unlock-flex">
             <div>
@@ -177,53 +178,42 @@
     });
 
     function triggerPiPayment() {
-    statusDiv.innerText = "CONNECTING TO PI WALLET...";
-    Pi.authenticate(['username', 'payments'], () => {})
-    .then(function(auth) {
-        return Pi.createPayment({
-            amount: 0.1, 
-            memo: "Unlock Premium Tracks - Ossvarium", 
-            metadata: { orderId: "premium_unlock_all" }
-        }, {
-            onReadyForServerApproval: async function(paymentId) {
-                // Διορθωμένο URL για Vercel
-                const res = await fetch('/api/approve-payment', {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paymentId: paymentId })
-                });
-                return await res.json();
-            },
-            onReadyForServerCompletion: async function(paymentId, txid) {
-                // Διορθωμένο URL για Vercel
-                const res = await fetch('/api/complete-payment', {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paymentId: paymentId, txid: txid })
-                });
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    hasPaidAndUnlocked = true; 
-                    unlockPanel.style.display = "none";
+        statusDiv.innerText = "CONNECTING TO PI WALLET...";
+        Pi.authenticate(['username', 'payments'], () => {})
+        .then(function(auth) {
+            return Pi.createPayment({
+                amount: 0.1, memo: "Unlock Premium Tracks - Ossvarium", metadata: { orderId: "premium_unlock_all" }
+            }, {
+                onReadyForServerApproval: async function(paymentId) {
+                    const res = await fetch('/api/approve-payment', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentId: paymentId })
+                    });
+                    return await res.json();
+                },
+                onReadyForServerCompletion: async function(paymentId, txid) {
+                    const res = await fetch('/api/complete-payment', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentId: paymentId, txid: txid })
+                    });
+                    const data = await res.json();
+                    hasPaidAndUnlocked = true; unlockPanel.style.display = "none";
                     document.getElementById('badge-1').className = "badge badge-unlocked";
                     document.getElementById('badge-1').innerText = "🔓 UNLOCKED";
                     document.getElementById('badge-2').className = "badge badge-unlocked";
                     document.getElementById('badge-2').innerText = "🔓 UNLOCKED";
                     selectTrack(currentTrackIndex);
-                }
-            },
-            onCancel: function(paymentId) { statusDiv.innerText = "CANCELLED."; },
-            onError: function(error, paymentId) { statusDiv.innerText = "ERROR: " + error; }
-        });
-    }).catch(function(err) { statusDiv.innerText = "AUTH FAILED: " + err; });
-}
+                },
+                onCancel: function(paymentId) { statusDiv.innerText = "CANCELLED."; },
+                onError: function(error, paymentId) { statusDiv.innerText = "ERROR: " + error; }
+            });
         }).catch(function() { statusDiv.innerText = "AUTH FAILED."; });
-    }function loadBandcampAlbum() {
+    }
+
+    function loadBandcampAlbum() {
         const url = document.getElementById('bc-url-input').value;
         const container = document.getElementById('bandcamp-container');
         const albumId = url.match(/\/album\/(\d+)/)?.[1];
-        
         if (albumId) {
             container.innerHTML = `<iframe style="border: 0; width: 100%; height: 120px;" src="https://bandcamp.com/EmbeddedPlayer/album=${albumId}/size=large/bgcol=1a1a1a/linkcol=cc2525/transparent=true/" seamless></iframe>`;
         } else {
