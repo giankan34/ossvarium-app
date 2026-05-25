@@ -477,7 +477,8 @@ document.getElementById("duration").innerText = mins + ":" + secs;
 
 });
 
-function triggerPiPayment() {
+
+   function triggerPiPayment() {
 
     paymentStatus.innerText = "CONNECTING TO PI...";
 
@@ -572,6 +573,16 @@ function triggerPiPayment() {
 
         });
 
+    })
+    .catch(function(error){
+
+        paymentStatus.innerText = "AUTH FAILED";
+
+        console.error(error);
+
+    });
+
+} 
     })
     .catch(function(error){
 
