@@ -1,1 +1,28 @@
+[
+  {
+    "artist": "OSSVARIUM",
+    "release": "Intro Ritual",
+    "description": "Free underground ritual demo release for the OSSVARIUM platform.",
+    "price": "FREE",
+    "locked": false,
+    "bandcamp": "https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+  },
 
+  {
+    "artist": "OSSVARIUM",
+    "release": "Cyber Necrosis",
+    "description": "Industrial cyber death ritual transmission.",
+    "price": "0.1",
+    "locked": true,
+    "bandcamp": "https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+  },
+
+  {
+    "artist": "OSSVARIUM",
+    "release": "Nocturnal Beats",
+    "description": "Dark electronic underground frequencies from the void.",
+    "price": "0.1",
+    "locked": true,
+    "bandcamp": "https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+  }
+]
