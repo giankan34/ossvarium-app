@@ -1,645 +1,747 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>OSSVARIUM STREAM</title>
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 
 <style>
 
 *{
+    margin:0;
+    padding:0;
     box-sizing:border-box;
 }
 
 body{
-    margin:0;
-    padding:15px;
-    background:#0b0909;
-    background-image:radial-gradient(circle,#1d1515 0%,#080707 100%);
-    color:#c4baba;
+
+    background:#090707;
+    background-image:
+    radial-gradient(circle at top,#2a1111 0%,#090707 60%);
+
+    color:#d3c7c7;
+
     font-family:'Courier New',monospace;
-    text-align:center;
+
     overflow-x:hidden;
+
+    padding:20px;
+
 }
 
 .container{
-    max-width:430px;
+
+    max-width:460px;
+
     margin:auto;
-    background:#151111;
+
+    background:#120f0f;
+
     border:2px solid #2d2424;
-    border-radius:14px;
+
+    border-radius:18px;
+
     padding:20px;
-    box-shadow:0 0 35px rgba(0,0,0,0.95);
+
+    box-shadow:
+    0 0 40px rgba(0,0,0,0.95),
+    inset 0 0 20px rgba(255,0,0,0.03);
+
 }
 
 h1{
+
     font-family:'UnifrakturMaguntia',cursive;
-    color:#cf2c2c;
-    font-size:36px;
-    margin:0;
+
+    color:#d93030;
+
+    font-size:38px;
+
+    text-align:center;
+
     text-shadow:2px 2px #000;
+
 }
 
 .subtitle{
+
+    text-align:center;
+
+    margin-top:8px;
+
+    margin-bottom:28px;
+
+    color:#776868;
+
     font-size:11px;
-    color:#7b6969;
-    margin-top:5px;
-    margin-bottom:25px;
+
     text-transform:uppercase;
+
+    letter-spacing:2px;
+
 }
 
 .cover-wrapper{
+
     width:240px;
+
     height:240px;
-    margin:0 auto 25px auto;
+
+    margin:0 auto 30px auto;
+
     border-radius:50%;
-    background:radial-gradient(circle,#391515 0%,#110d0d 100%);
+
+    background:
+    radial-gradient(circle,#401515 0%,#110d0d 100%);
+
     border:4px solid #2c2323;
+
     display:flex;
-    align-items:center;
+
     justify-content:center;
-    animation:rotateDisc 16s linear infinite;
-    box-shadow:0 0 25px #000,inset 0 0 30px #000;
+
+    align-items:center;
+
+    animation:spin 18s linear infinite;
+
+    box-shadow:
+    0 0 30px #000,
+    inset 0 0 40px #000;
+
 }
 
-@keyframes rotateDisc{
-    from{transform:rotate(0deg);}
-    to{transform:rotate(360deg);}
+@keyframes spin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
 }
 
 .cover-art{
+
     width:100%;
     height:100%;
+
 }
 
-.controls-box{
-    background:linear-gradient(180deg,#231c1c 0%,#100d0d 100%);
-    border:2px solid #352c2c;
-    border-radius:10px;
-    padding:15px;
+.visualizer-box{
+
+    background:
+    linear-gradient(180deg,#211818 0%,#0d0a0a 100%);
+
+    border:2px solid #312727;
+
+    border-radius:12px;
+
+    padding:16px;
+
     margin-bottom:20px;
+
 }
 
-.screen-display{
+.screen{
+
     background:#080707;
-    border:1px solid #241d1d;
+
+    border:1px solid #251d1d;
+
     padding:10px;
-    border-radius:5px;
-    color:#998585;
+
+    border-radius:6px;
+
+    color:#988686;
+
+    text-align:center;
+
     margin-bottom:15px;
+
     font-size:11px;
+
     text-transform:uppercase;
+
 }
 
-.control-btns{
+canvas{
+
+    width:100%;
+
+    height:120px;
+
+    background:#050404;
+
+    border-radius:8px;
+
+    border:1px solid #241b1b;
+
+}
+
+.controls{
+
     display:flex;
+
     justify-content:center;
+
     gap:10px;
-    margin-bottom:15px;
+
+    margin-top:15px;
+
 }
 
 .btn{
-    background:linear-gradient(180deg,#3b3131 0%,#181313 100%);
-    border:2px solid #473b3b;
+
+    background:
+    linear-gradient(180deg,#382d2d 0%,#151111 100%);
+
+    border:2px solid #483b3b;
+
     color:#fff;
+
     padding:10px 16px;
-    border-radius:6px;
+
+    border-radius:7px;
+
     cursor:pointer;
+
     font-weight:bold;
+
 }
 
-.btn-play{
-    background:linear-gradient(180deg,#912020 0%,#490909 100%);
+.btn-main{
+
+    background:
+    linear-gradient(180deg,#9d2323 0%,#470808 100%);
+
 }
 
-.progress-wrap{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:11px;
+.release-list{
+
+    margin-top:20px;
+
 }
 
-.progress{
-    flex-grow:1;
+.release-card{
+
+    background:
+    linear-gradient(180deg,#1d1818 0%,#120f0f 100%);
+
+    border:2px solid #2c2323;
+
+    border-radius:12px;
+
+    padding:16px;
+
+    margin-bottom:15px;
+
 }
 
-.track-list{
-    list-style:none;
-    padding:0;
-    margin:20px 0;
-}
+.release-title{
 
-.track-item{
-    background:linear-gradient(180deg,#1d1818 0%,#120f0f 100%);
-    border:2px solid #292121;
-    border-radius:8px;
-    padding:12px;
-    margin-bottom:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    cursor:pointer;
     font-family:'UnifrakturMaguntia',cursive;
-    font-size:18px;
+
+    color:#ff5555;
+
+    font-size:24px;
+
+    margin-bottom:10px;
+
 }
 
-.track-item.active{
-    border-color:#b72828;
-    color:#ff5050;
+.release-desc{
+
+    font-size:12px;
+
+    color:#9e8e8e;
+
+    margin-bottom:15px;
+
+    line-height:1.5;
+
 }
 
 .badge{
+
+    display:inline-block;
+
+    padding:5px 10px;
+
+    border-radius:5px;
+
     font-size:10px;
-    font-family:monospace;
-    padding:5px 8px;
-    border-radius:4px;
+
     font-weight:bold;
+
+    margin-bottom:15px;
+
 }
 
 .badge-free{
-    background:#252020;
+
+    background:#222;
+
+    color:#aaa;
+
 }
 
-.badge-locked{
-    background:#3a2c2c;
-    color:#ffd24d;
+.badge-premium{
+
+    background:#4a2222;
+
+    color:#ffd966;
+
 }
 
-.badge-unlocked{
-    background:#185b18;
-    color:#fff;
-}
+.unlock-box{
 
-.unlock-panel{
-    display:none;
-    background:linear-gradient(180deg,#7a1818 0%,#310707 100%);
-    border:2px solid #cf2a2a;
-    border-radius:10px;
-    padding:15px;
     margin-top:15px;
-}
 
-.pay-btn{
-    background:#111;
-    color:#fff;
-    border:2px solid #433737;
-    padding:10px 16px;
-    border-radius:5px;
-    cursor:pointer;
-    margin:5px;
-    font-weight:bold;
-}
+    padding:15px;
 
-.eq{
+    border-radius:10px;
+
+    border:2px solid #7b2424;
+
+    background:
+    linear-gradient(180deg,#651818 0%,#2a0808 100%);
+
     display:none;
-    justify-content:center;
-    gap:4px;
-    height:18px;
-    margin-bottom:12px;
-    align-items:flex-end;
+
 }
 
-.bar{
-    width:4px;
-    height:4px;
-    background:#cf2c2c;
-    animation:bounce 0.7s infinite ease-in-out;
-}
+.payment-status{
 
-@keyframes bounce{
-    0%,100%{height:4px;}
-    50%{height:18px;}
-}
+    margin-top:10px;
 
-.bar:nth-child(2){animation-delay:0.15s;}
-.bar:nth-child(3){animation-delay:0.3s;}
-.bar:nth-child(4){animation-delay:0.45s;}
+    font-size:12px;
 
-.bandcamp-box{
-    margin-top:20px;
-}
-
-input{
-    width:100%;
-    padding:10px;
-    background:#0c0a0a;
-    border:1px solid #332b2b;
     color:#fff;
-    border-radius:5px;
-    margin-bottom:10px;
+
+}
+
+.bandcamp-frame{
+
+    margin-top:15px;
+
 }
 
 iframe{
+
     width:100%;
+
     border:0;
+
+    border-radius:8px;
+
 }
 
-@media(max-width:480px){
+.footer{
 
-.track-item{
-    flex-direction:column;
-    align-items:flex-start;
-}
+    margin-top:25px;
 
-h1{
-    font-size:28px;
-}
+    text-align:center;
 
-.cover-wrapper{
-    width:200px;
-    height:200px;
-}
+    font-size:11px;
+
+    color:#6f6262;
 
 }
 
 </style>
+
 </head>
+
 <body>
 
 <div class="container">
 
-<h1>OSSVARIUM STREAM</h1>
-<div class="subtitle">Web3 Extreme Music Platform</div>
+<h1>OSSVARIUM</h1>
+
+<div class="subtitle">
+Underground Extreme Music Platform
+</div>
 
 <div class="cover-wrapper">
 
 <svg class="cover-art" viewBox="0 0 100 100">
 
-<circle cx="50" cy="50" r="46" fill="none" stroke="#8a2b2b" stroke-width="2" stroke-dasharray="3,3"/>
+<circle cx="50" cy="50" r="46"
+fill="none"
+stroke="#8a2b2b"
+stroke-width="2"
+stroke-dasharray="3,3"/>
 
-<circle cx="50" cy="50" r="40" fill="none" stroke="#6e2222" stroke-width="1.5"/>
+<circle cx="50" cy="50" r="40"
+fill="none"
+stroke="#6e2222"
+stroke-width="1.5"/>
 
-<path d="M50 20 L50 80 M30 65 L70 65" stroke="#b03838" stroke-width="5" fill="none"/>
+<path
+d="M50 20 L50 80 M30 65 L70 65"
+stroke="#b03838"
+stroke-width="5"
+fill="none"/>
 
 </svg>
 
 </div>
 
-<div class="controls-box">
+<div class="visualizer-box">
 
-<div class="eq" id="eq">
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
+<div class="screen" id="screenText">
+OSSVARIUM SYSTEM READY
 </div>
 
-<div class="screen-display" id="nowPlaying">
-SELECT TRACK...
-</div>
+<canvas id="visualizer"></canvas>
 
-<div class="control-btns">
-<button class="btn" onclick="prevTrack()">⏮</button>
-<button class="btn btn-play" onclick="togglePlay()">▶ / ⏸</button>
-<button class="btn" onclick="nextTrack()">⏭</button>
-</div>
+<div class="controls">
 
-<div class="progress-wrap">
-<span id="currentTime">0:00</span>
-<input type="range" min="0" max="100" value="0" id="progress" class="progress">
-<span id="duration">0:00</span>
-</div>
-
-</div>
-
-<ul class="track-list">
-
-<li class="track-item" onclick="selectTrack(0)">
-<span>Intro Ritual</span>
-<span class="badge badge-free">FREE</span>
-</li>
-
-<li class="track-item" onclick="selectTrack(1)">
-<span>Cyber Necrosis</span>
-<span id="badge1" class="badge badge-locked">🔒 0.1 PI</span>
-</li>
-
-<li class="track-item" onclick="selectTrack(2)">
-<span>Nocturnal Beats</span>
-<span id="badge2" class="badge badge-locked">🔒 NFT</span>
-</li>
-
-</ul>
-
-<div id="unlockPanel" class="unlock-panel">
-
-<div>
-Premium Release Locked
-</div>
-
-<button class="pay-btn" onclick="triggerPiPayment()">
-Unlock with Test Pi
+<button class="btn" onclick="toggleVisualizer()">
+START VISUALIZER
 </button>
 
-<div id="paymentStatus" style="margin-top:10px;font-size:12px;"></div>
+</div>
 
 </div>
 
-<div class="controls-box bandcamp-box">
+<div class="release-list">
 
-<div class="screen-display">
-BANDCAMP RELEASE
+<!-- RELEASE 1 -->
+
+<div class="release-card">
+
+<div class="release-title">
+Intro Ritual
 </div>
 
-<input type="text" id="bcInput" placeholder="Paste Bandcamp Embed URL">
+<div class="release-desc">
 
-<button class="btn" onclick="loadBandcamp()" style="width:100%;">
-LOAD BANDCAMP
+Free demo stream for the OSSVARIUM underground archive.
+
+</div>
+
+<div class="badge badge-free">
+FREE DEMO
+</div>
+
+<div class="bandcamp-frame">
+
+<iframe
+style="height:120px;"
+src="https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+seamless>
+</iframe>
+
+</div>
+
+</div>
+
+<!-- RELEASE 2 -->
+
+<div class="release-card">
+
+<div class="release-title">
+Cyber Necrosis
+</div>
+
+<div class="release-desc">
+
+Premium underground release unlocked through Pi Testnet payment.
+
+</div>
+
+<div id="premiumBadge" class="badge badge-premium">
+🔒 0.1 TEST PI
+</div>
+
+<button class="btn btn-main" onclick="openUnlock()">
+UNLOCK RELEASE
 </button>
 
-<div id="bandcampContainer" style="margin-top:15px;"></div>
+<div id="unlockBox" class="unlock-box">
+
+<button class="btn btn-main" onclick="triggerPiPayment()">
+PAY WITH TEST PI
+</button>
+
+<div id="paymentStatus" class="payment-status"></div>
+
+</div>
+
+<div
+id="premiumPlayer"
+class="bandcamp-frame"
+style="display:none;">
+
+<iframe
+style="height:120px;"
+src="https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+seamless>
+</iframe>
 
 </div>
 
 </div>
 
-<audio id="audio"></audio>
+</div>
+
+<div class="footer">
+
+Powered by Pi • Bandcamp • OSSVARIUM
+
+</div>
+
+</div>
 
 <script>
 
 Pi.init({
-version:"2.0",
-sandbox:true,
-appId:"ossvarium-ed737fc4fd8ffa85"
-});
 
-const playlist = [
-{
-name:"Intro Ritual",
-url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-locked:false
-},
-{
-name:"Cyber Necrosis",
-url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-locked:true
-},
-{
-name:"Nocturnal Beats",
-url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-locked:true
-}
-];
+    version:"2.0",
 
-let currentTrack = 0;
-let unlocked = false;
+    sandbox:true,
 
-const audio = document.getElementById("audio");
-const progress = document.getElementById("progress");
-const nowPlaying = document.getElementById("nowPlaying");
-const eq = document.getElementById("eq");
-const unlockPanel = document.getElementById("unlockPanel");
-const paymentStatus = document.getElementById("paymentStatus");
-
-function selectTrack(index){
-
-currentTrack = index;
-
-const track = playlist[index];
-
-if(track.locked && !unlocked){
-
-unlockPanel.style.display = "block";
-nowPlaying.innerText = "LOCKED RELEASE";
-return;
-
-}
-
-unlockPanel.style.display = "none";
-
-nowPlaying.innerText = track.name;
-
-audio.src = track.url;
-audio.play();
-
-eq.style.display = "flex";
-
-}
-
-function togglePlay(){
-
-if(audio.paused){
-audio.play();
-eq.style.display = "flex";
-}else{
-audio.pause();
-eq.style.display = "none";
-}
-
-}
-
-function prevTrack(){
-if(currentTrack > 0){
-selectTrack(currentTrack - 1);
-}
-}
-
-function nextTrack(){
-if(currentTrack < playlist.length - 1){
-selectTrack(currentTrack + 1);
-}
-}
-
-progress.addEventListener("input",()=>{
-if(audio.duration){
-audio.currentTime = (progress.value / 100) * audio.duration;
-}
-});
-
-audio.addEventListener("timeupdate",()=>{
-
-if(audio.duration){
-
-progress.value = (audio.currentTime / audio.duration) * 100;
-
-let mins = Math.floor(audio.currentTime / 60);
-let secs = Math.floor(audio.currentTime % 60);
-
-if(secs < 10) secs = "0" + secs;
-
-document.getElementById("currentTime").innerText = mins + ":" + secs;
-
-}
+    appId:"ossvarium-ed737fc4fd8ffa85"
 
 });
 
-audio.addEventListener("loadedmetadata",()=>{
+const screenText =
+document.getElementById("screenText");
 
-let mins = Math.floor(audio.duration / 60);
-let secs = Math.floor(audio.duration % 60);
+const paymentStatus =
+document.getElementById("paymentStatus");
 
-if(secs < 10) secs = "0" + secs;
+const unlockBox =
+document.getElementById("unlockBox");
 
-document.getElementById("duration").innerText = mins + ":" + secs;
+const premiumPlayer =
+document.getElementById("premiumPlayer");
 
-});
+const premiumBadge =
+document.getElementById("premiumBadge");
 
-async function triggerPiPayment() {
+function openUnlock(){
 
-    try {
+    unlockBox.style.display = "block";
 
-        paymentStatus.innerText = "STARTING PAYMENT...";
+}
 
-        console.log("PI OBJECT:", Pi);
+if(localStorage.getItem("ossvarium_paid") === "true"){
+
+    premiumPlayer.style.display = "block";
+
+    premiumBadge.innerText = "UNLOCKED";
+
+    premiumBadge.style.background = "#1d6b1d";
+
+}
+
+async function triggerPiPayment(){
+
+    try{
+
+        paymentStatus.innerText =
+        "AUTHENTICATING...";
 
         const scopes = ['payments'];
 
-        const auth = await Pi.authenticate(
+        await Pi.authenticate(
             scopes,
-            function(payment) {
+            function(payment){
                 console.log(payment);
             }
         );
 
-        console.log("AUTH SUCCESS:", auth);
-
-        paymentStatus.innerText = "OPENING PAYMENT WINDOW...";
+        paymentStatus.innerText =
+        "OPENING PAYMENT...";
 
         await Pi.createPayment({
 
-            amount: 0.1,
+            amount:0.1,
 
-            memo: "Unlock Ossvarium Track",
+            memo:"Unlock OSSVARIUM Release",
 
-            metadata: {
-                type: "track_unlock"
+            metadata:{
+                type:"premium_unlock"
             }
 
-        }, {
+        },{
 
-            onReadyForServerApproval: async function(paymentId) {
+            onReadyForServerApproval:
+            async function(paymentId){
 
-                console.log("APPROVE:", paymentId);
+                paymentStatus.innerText =
+                "APPROVING PAYMENT...";
 
-                paymentStatus.innerText = "APPROVING PAYMENT...";
+                await fetch(
+                    '/api/approve-payment',
+                    {
 
-                await fetch('/api/approve-payment', {
+                        method:'POST',
 
-                    method: 'POST',
+                        headers:{
+                            'Content-Type':
+                            'application/json'
+                        },
 
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                        body:JSON.stringify({
+                            paymentId
+                        })
 
-                    body: JSON.stringify({
-                        paymentId
-                    })
-
-                });
-
-            },
-
-            onReadyForServerCompletion: async function(paymentId, txid) {
-
-                console.log("COMPLETE:", paymentId, txid);
-
-                paymentStatus.innerText = "COMPLETING PAYMENT...";
-
-                await fetch('/api/complete-payment', {
-
-                    method: 'POST',
-
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-
-                    body: JSON.stringify({
-                        paymentId,
-                        txid
-                    })
-
-                });
-
-                unlocked = true;
-
-                unlockPanel.style.display = "none";
-
-                paymentStatus.innerText = "UNLOCK SUCCESS";
-
-                selectTrack(currentTrack);
+                    }
+                );
 
             },
 
-            onCancel: function(paymentId) {
+            onReadyForServerCompletion:
+            async function(paymentId,txid){
 
-                console.log("CANCELLED");
+                paymentStatus.innerText =
+                "COMPLETING PAYMENT...";
 
-                paymentStatus.innerText = "PAYMENT CANCELLED";
+                await fetch(
+                    '/api/complete-payment',
+                    {
+
+                        method:'POST',
+
+                        headers:{
+                            'Content-Type':
+                            'application/json'
+                        },
+
+                        body:JSON.stringify({
+                            paymentId,
+                            txid
+                        })
+
+                    }
+                );
+
+                localStorage.setItem(
+                    "ossvarium_paid",
+                    "true"
+                );
+
+                paymentStatus.innerText =
+                "UNLOCK SUCCESS";
+
+                premiumPlayer.style.display =
+                "block";
+
+                premiumBadge.innerText =
+                "UNLOCKED";
+
+                premiumBadge.style.background =
+                "#1d6b1d";
+
+                unlockBox.style.display =
+                "none";
 
             },
 
-            onError: function(error, paymentId) {
+            onCancel:function(paymentId){
+
+                paymentStatus.innerText =
+                "PAYMENT CANCELLED";
+
+            },
+
+            onError:function(error,paymentId){
 
                 console.error(error);
 
                 paymentStatus.innerText =
-                    "ERROR: " + JSON.stringify(error);
+                "ERROR";
 
             }
 
         });
 
-    } catch(error) {
+    }catch(error){
 
         console.error(error);
 
         paymentStatus.innerText =
-            "AUTH ERROR: " + JSON.stringify(error);
+        "AUTH FAILED";
 
     }
 
 }
-  
 
-        });
+const canvas =
+document.getElementById("visualizer");
 
-    })
-    .catch(function(error){
+const ctx =
+canvas.getContext("2d");
 
-        paymentStatus.innerText = "AUTH FAILED";
+canvas.width = 400;
+canvas.height = 120;
 
-        console.error(error);
+let running = false;
 
-    });
+function drawVisualizer(){
 
-} 
-    })
-    .catch(function(error){
+    if(!running) return;
 
-        paymentStatus.innerText = "AUTH FAILED";
+    requestAnimationFrame(drawVisualizer);
 
-        console.error(error);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    });
+    for(let i=0;i<40;i++){
+
+        const height =
+        Math.random() * 100;
+
+        const x = i * 10;
+
+        ctx.fillStyle =
+        `rgb(${150 + Math.random()*100},30,30)`;
+
+        ctx.fillRect(
+            x,
+            canvas.height - height,
+            6,
+            height
+        );
+
+    }
 
 }
-.catch(function(){
-paymentStatus.innerText = "AUTH FAILED";
-});
 
-}
+function toggleVisualizer(){
 
-function loadBandcamp(){
+    running = !running;
 
-const url = document.getElementById("bcInput").value;
+    if(running){
 
-if(!url){
-alert("Paste Bandcamp URL");
-return;
-}
+        screenText.innerText =
+        "SIGNAL DETECTED";
 
-const container = document.getElementById("bandcampContainer");
+        drawVisualizer();
 
-container.innerHTML = `
-<iframe
-style="height:120px;"
-src="${url}"
-seamless>
-</iframe>
-`;
+    }else{
+
+        screenText.innerText =
+        "SYSTEM READY";
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+    }
 
 }
 
