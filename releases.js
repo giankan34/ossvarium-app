@@ -1,389 +1,120 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+const releaseContainer =
+document.getElementById("releaseContainer");
+
+async function loadReleases(){
+
+    try{
+
+        const response =
+        await fetch('./data/releases.json');
 
-body{
+        const releases =
+        await response.json();
 
-    background:#090707;
+        releases.forEach((release,index)=>{
 
-    background-image:
-    radial-gradient(circle at top,#2a1111 0%,#090707 60%);
+            const card =
+            document.createElement("div");
 
-    color:#d3c7c7;
+            card.className =
+            "release-card";
 
-    font-family:'Courier New',monospace;
+            const badgeClass =
+            release.locked
+            ? "badge-premium"
+            : "badge-free";
 
-    overflow-x:hidden;
+            const badgeText =
+            release.locked
+            ? `🔒 ${release.price} TEST PI`
+            : "FREE DEMO";
 
-    padding:20px;
+            card.innerHTML = `
 
-}
+                <div class="release-title">
+                    ${release.release}
+                </div>
 
-.container{
+                <div class="release-artist">
+                    ${release.artist}
+                </div>
 
-    max-width:480px;
+                <div class="release-desc">
+                    ${release.description}
+                </div>
 
-    margin:auto;
+                <div
+                id="badge-${index}"
+                class="badge ${badgeClass}">
+                    ${badgeText}
+                </div>
 
-    background:#120f0f;
+                ${
+                    release.locked
+                    ?
+                    `
+                    <button
+                    class="btn btn-main"
+                    onclick="openUnlock(${index})">
+                    UNLOCK RELEASE
+                    </button>
+                    `
+                    :
+                    ''
+                }
 
-    border:2px solid #2d2424;
+                <div
+                id="unlock-${index}"
+                class="unlock-box">
 
-    border-radius:18px;
+                    <button
+                    class="btn btn-main"
+                    onclick="triggerPiPayment(${index})">
 
-    padding:20px;
+                    PAY WITH TEST PI
 
-    box-shadow:
-    0 0 40px rgba(0,0,0,0.95),
-    inset 0 0 20px rgba(255,0,0,0.03);
+                    </button>
 
-}
+                    <div
+                    id="payment-${index}"
+                    class="payment-status">
 
-h1{
+                    </div>
 
-    font-family:'UnifrakturMaguntia',cursive;
+                </div>
 
-    color:#d93030;
+                <div
+                id="player-${index}"
+                class="bandcamp-frame"
+                style="
+                display:
+                ${
+                    release.locked
+                    ? "none"
+                    : "block"
+                };
+                ">
 
-    font-size:40px;
+                    <iframe
+                    style="height:120px;"
+                    src="${release.bandcamp}"
+                    seamless>
+                    </iframe>
 
-    text-align:center;
+                </div>
 
-    text-shadow:2px 2px #000;
+            `;
 
-}
+            releaseContainer.appendChild(card);
 
-.subtitle{
+        });
 
-    text-align:center;
+    }catch(error){
 
-    margin-top:8px;
-
-    margin-bottom:28px;
-
-    color:#776868;
-
-    font-size:11px;
-
-    text-transform:uppercase;
-
-    letter-spacing:2px;
-
-}
-
-.cover-wrapper{
-
-    width:240px;
-
-    height:240px;
-
-    margin:0 auto 30px auto;
-
-    border-radius:50%;
-
-    background:
-    radial-gradient(circle,#401515 0%,#110d0d 100%);
-
-    border:4px solid #2c2323;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    animation:spin 18s linear infinite;
-
-    box-shadow:
-    0 0 30px #000,
-    inset 0 0 40px #000;
-
-}
-
-@keyframes spin{
-
-    from{
-        transform:rotate(0deg);
-    }
-
-    to{
-        transform:rotate(360deg);
-    }
-
-}
-
-.cover-art{
-
-    width:100%;
-    height:100%;
-
-}
-
-.visualizer-box{
-
-    background:
-    linear-gradient(180deg,#211818 0%,#0d0a0a 100%);
-
-    border:2px solid #312727;
-
-    border-radius:12px;
-
-    padding:16px;
-
-    margin-bottom:25px;
-
-}
-
-.screen{
-
-    background:#080707;
-
-    border:1px solid #251d1d;
-
-    padding:10px;
-
-    border-radius:6px;
-
-    color:#988686;
-
-    text-align:center;
-
-    margin-bottom:15px;
-
-    font-size:11px;
-
-    text-transform:uppercase;
-
-    letter-spacing:1px;
-
-}
-
-canvas{
-
-    width:100%;
-
-    height:120px;
-
-    background:#050404;
-
-    border-radius:8px;
-
-    border:1px solid #241b1b;
-
-}
-
-.controls{
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:10px;
-
-    margin-top:15px;
-
-}
-
-.btn{
-
-    background:
-    linear-gradient(180deg,#382d2d 0%,#151111 100%);
-
-    border:2px solid #483b3b;
-
-    color:#fff;
-
-    padding:10px 16px;
-
-    border-radius:7px;
-
-    cursor:pointer;
-
-    font-weight:bold;
-
-    transition:0.2s;
-
-}
-
-.btn:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:0 0 12px rgba(255,0,0,0.25);
-
-}
-
-.btn-main{
-
-    background:
-    linear-gradient(180deg,#9d2323 0%,#470808 100%);
-
-}
-
-.release-card{
-
-    background:
-    linear-gradient(180deg,#1d1818 0%,#120f0f 100%);
-
-    border:2px solid #2c2323;
-
-    border-radius:14px;
-
-    padding:18px;
-
-    margin-bottom:20px;
-
-    box-shadow:
-    0 0 18px rgba(0,0,0,0.4);
-
-}
-
-.release-title{
-
-    font-family:'UnifrakturMaguntia',cursive;
-
-    color:#ff5555;
-
-    font-size:28px;
-
-    margin-bottom:10px;
-
-}
-
-.release-artist{
-
-    color:#9c8888;
-
-    font-size:12px;
-
-    margin-bottom:10px;
-
-    text-transform:uppercase;
-
-}
-
-.release-desc{
-
-    font-size:12px;
-
-    color:#a49393;
-
-    line-height:1.6;
-
-    margin-bottom:15px;
-
-}
-
-.badge{
-
-    display:inline-block;
-
-    padding:5px 10px;
-
-    border-radius:5px;
-
-    font-size:10px;
-
-    font-weight:bold;
-
-    margin-bottom:15px;
-
-}
-
-.badge-free{
-
-    background:#222;
-
-    color:#aaa;
-
-}
-
-.badge-premium{
-
-    background:#4a2222;
-
-    color:#ffd966;
-
-}
-
-.badge-unlocked{
-
-    background:#1d6b1d;
-
-    color:#fff;
-
-}
-
-.unlock-box{
-
-    margin-top:15px;
-
-    padding:15px;
-
-    border-radius:10px;
-
-    border:2px solid #7b2424;
-
-    background:
-    linear-gradient(180deg,#651818 0%,#2a0808 100%);
-
-    display:none;
-
-}
-
-.payment-status{
-
-    margin-top:10px;
-
-    font-size:12px;
-
-    color:#fff;
-
-}
-
-.bandcamp-frame{
-
-    margin-top:15px;
-
-}
-
-iframe{
-
-    width:100%;
-
-    border:0;
-
-    border-radius:8px;
-
-}
-
-.footer{
-
-    margin-top:30px;
-
-    text-align:center;
-
-    font-size:11px;
-
-    color:#6f6262;
-
-}
-
-@media(max-width:480px){
-
-    .cover-wrapper{
-
-        width:200px;
-        height:200px;
-
-    }
-
-    h1{
-
-        font-size:32px;
+        console.error(error);
 
     }
 
 }
+
+loadReleases();
