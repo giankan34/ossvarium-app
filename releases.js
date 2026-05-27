@@ -18,10 +18,7 @@ async function loadReleases(){
         releaseContainer.innerHTML = "";
 
         releases.forEach(
-        (release,index)=>{
-
-            const unlocked =
-            isUnlocked(index);
+        (release)=>{
 
             const card =
             document.createElement(
@@ -31,25 +28,12 @@ async function loadReleases(){
             card.className =
             "release-card";
 
-            const badgeClass =
-            release.locked
-            ? (
-                unlocked
-                ? "badge-unlocked"
-                : "badge-premium"
-            )
-            : "badge-free";
-
-            const badgeText =
-            release.locked
-            ? (
-                unlocked
-                ? "UNLOCKED"
-                : `🔒 ${release.price} TEST PI`
-            )
-            : "FREE DEMO";
-
             card.innerHTML = `
+
+                <img
+                class="release-cover"
+                src="${release.cover}"
+                alt="${release.release}">
 
                 <div class="release-title">
 
@@ -77,66 +61,34 @@ async function loadReleases(){
 
                 </div>
 
-                <div
-                id="badge-${index}"
-                class="badge ${badgeClass}">
-
-                    ${badgeText}
-
-                </div>
-
                 ${
-                    release.locked &&
-                    !unlocked
+                    release.bandcamp
                     ?
                     `
-                    <button
-                    class="btn"
-                    onclick="openUnlock(${index})">
+                    <div class="bandcamp-frame">
 
-                    UNLOCK RELEASE
+                        <iframe
+                        style="height:120px;"
+                        src="${release.bandcamp}"
+                        seamless>
 
-                    </button>
-                    `
-                    :
-                    ''
-                }
-
-                <div
-                id="unlock-${index}"
-                class="unlock-box">
-
-                    <button
-                    class="btn"
-                    onclick="triggerPiPayment(${index})">
-
-                    PAY WITH TEST PI
-
-                    </button>
-
-                    <div
-                    id="payment-${index}"
-                    class="payment-status">
+                        </iframe>
 
                     </div>
+                    `
+                    :
+                    `
+                    <audio
+                    class="audio-player"
+                    controls>
 
-                </div>
+                        <source
+                        src="${release.audio}"
+                        type="audio/mpeg">
 
-                <audio
-                class="audio-player"
-                controls
-                ${
-                    release.locked &&
-                    !unlocked
-                    ? "style='display:none;'"
-                    : ""
-                }>
-
-                    <source
-                    src="${release.audio}"
-                    type="audio/mpeg">
-
-                </audio>
+                    </audio>
+                    `
+                }
 
             `;
 
