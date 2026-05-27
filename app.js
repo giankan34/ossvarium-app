@@ -1,192 +1,112 @@
-Pi.init({
+const releaseContainer =
+document.getElementById(
+    "releaseContainer"
+);
 
-    version:"2.0",
-
-    sandbox:true,
-
-    appId:"ossvarium-ed737fc4fd8ffa85"
-
-});
-
-const unlockedReleases =
-JSON.parse(
-    localStorage.getItem(
-        "ossvarium_unlocks"
-    )
-) || [];
-
-function isUnlocked(index){
-
-    return unlockedReleases.includes(index);
-
-}
-
-function saveUnlock(index){
-
-    if(
-        !unlockedReleases.includes(index)
-    ){
-
-        unlockedReleases.push(index);
-
-        localStorage.setItem(
-
-            "ossvarium_unlocks",
-
-            JSON.stringify(
-                unlockedReleases
-            )
-
-        );
-
-    }
-
-}
-
-function openUnlock(index){
-
-    const box =
-    document.getElementById(
-        `unlock-${index}`
-    );
-
-    if(
-        box.style.display === "block"
-    ){
-
-        box.style.display = "none";
-
-    }else{
-
-        box.style.display = "block";
-
-    }
-
-}
-
-async function triggerPiPayment(index){
-
-    const status =
-    document.getElementById(
-        `payment-${index}`
-    );
+async function loadReleases(){
 
     try{
 
-        status.innerText =
-        "AUTHENTICATING...";
-
-        await Pi.authenticate(
-
-            ['payments'],
-
-            function(payment){
-
-                console.log(payment);
-
-            }
-
+        const response =
+        await fetch(
+            './data/releases.json'
         );
 
-        status.innerText =
-        "OPENING PAYMENT...";
+        const releases =
+        await response.json();
 
-        await Pi.createPayment({
+        releaseContainer.innerHTML = "";
 
-            amount:0.1,
+        releases.forEach(
+        (release)=>{
 
-            memo:"Unlock OSSVARIUM Release",
+            const card =
+            document.createElement(
+                "div"
+            );
 
-            metadata:{
+            card.className =
+            "release-card";
 
-                release:index
+            card.innerHTML = `
 
-            }
+                <img
+                class="release-cover"
+                src="${release.cover}"
+                alt="${release.release}">
 
-        },{
+                <div class="release-title">
 
-            onReadyForServerApproval:
-            async function(paymentId){
+                    ${release.release}
 
-                status.innerText =
-                "APPROVING...";
+                </div>
 
-                await fetch(
-                    '/api/approve-payment',
-                    {
+                <div class="release-artist">
 
-                        method:'POST',
+                    ${release.artist}
 
-                        headers:{
-                            'Content-Type':
-                            'application/json'
-                        },
+                </div>
 
-                        body:JSON.stringify({
-                            paymentId
-                        })
+                <div class="release-desc">
 
-                    }
-                );
+                    ${release.genre}
+                    •
+                    ${release.year}
 
-            },
+                </div>
 
-            onReadyForServerCompletion:
-            async function(
-                paymentId,
-                txid
-            ){
+                <div class="release-desc">
 
-                status.innerText =
-                "COMPLETING...";
+                    ${release.description}
 
-                await fetch(
-                    '/api/complete-payment',
-                    {
+                </div>
 
-                        method:'POST',
+                ${
+                    release.bandcamp
+                    ?
+                    `
+                    <div class="bandcamp-frame">
 
-                        headers:{
-                            'Content-Type':
-                            'application/json'
-                        },
+                        <iframe
+                        style="height:120px;"
+                        src="${release.bandcamp}"
+                        seamless>
 
-                        body:JSON.stringify({
-                            paymentId,
-                            txid
-                        })
+                        </iframe>
 
-                    }
-                );
+                    </div>
+                    `
+                    :
+                    `
+                    <audio
+                    class="audio-player"
+                    controls>
 
-                saveUnlock(index);
+                        <source
+                        src="${release.audio}"
+                        type="audio/mpeg">
 
-                location.reload();
+                    </audio>
+                    `
+                }
 
-            },
+            `;
 
-            onCancel:function(){
-
-                status.innerText =
-                "PAYMENT CANCELLED";
-
-            },
-
-            onError:function(error){
-
-                console.error(error);
-
-                status.innerText =
-                "PAYMENT ERROR";
-
-            }
+            releaseContainer.appendChild(
+                card
+            );
 
         });
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Release loading error:",
+            error
+        );
 
     }
 
 }
+
+loadReleases();
