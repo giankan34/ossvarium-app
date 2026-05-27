@@ -4,11 +4,10 @@
     "release": "Ritual Transmission",
     "genre": "Dark Ambient",
     "year": "2026",
-    "description": "Atmospheric underground transmission for OSSVARIUM testing.",
+    "description": "Atmospheric underground transmission.",
     "price": "FREE",
     "locked": false,
-    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    "bandcamp": ""
+    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
   },
 
   {
@@ -16,22 +15,9 @@
     "release": "Cyber Necrosis",
     "genre": "Industrial Death",
     "year": "2026",
-    "description": "Cybernetic decay frequencies from the void.",
+    "description": "Cybernetic decay frequencies.",
     "price": "0.1",
     "locked": true,
-    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    "bandcamp": ""
-  },
-
-  {
-    "artist": "OSSVARIUM",
-    "release": "Nocturnal Grinder",
-    "genre": "Death / Grind",
-    "year": "2026",
-    "description": "Underground blast transmission.",
-    "price": "0.1",
-    "locked": true,
-    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-    "bandcamp": ""
+    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
   }
 ]
