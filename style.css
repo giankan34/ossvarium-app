@@ -1,0 +1,321 @@
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+body{
+
+    background:#090707;
+
+    background-image:
+    radial-gradient(
+        circle at top,
+        #2a1111 0%,
+        #090707 60%
+    );
+
+    color:#d3c7c7;
+
+    font-family:
+    'Courier New',
+    monospace;
+
+    padding:20px;
+
+    overflow-x:hidden;
+
+}
+
+.container{
+
+    max-width:520px;
+
+    margin:auto;
+
+    background:#120f0f;
+
+    border:2px solid #2c2323;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    box-shadow:
+    0 0 40px rgba(0,0,0,0.9);
+
+}
+
+h1{
+
+    font-family:
+    'UnifrakturMaguntia',
+    cursive;
+
+    text-align:center;
+
+    color:#d93434;
+
+    font-size:42px;
+
+    text-shadow:2px 2px #000;
+
+}
+
+.subtitle{
+
+    text-align:center;
+
+    margin-top:8px;
+
+    margin-bottom:25px;
+
+    color:#7d6d6d;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:2px;
+
+}
+
+.visualizer-box{
+
+    background:
+    linear-gradient(
+        180deg,
+        #1c1515 0%,
+        #0c0909 100%
+    );
+
+    border:2px solid #2b2323;
+
+    border-radius:14px;
+
+    padding:15px;
+
+    margin-bottom:25px;
+
+}
+
+.screen{
+
+    background:#080707;
+
+    border:1px solid #241d1d;
+
+    border-radius:8px;
+
+    padding:10px;
+
+    text-align:center;
+
+    color:#9a8787;
+
+    margin-bottom:15px;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+}
+
+#visualizer{
+
+    width:100%;
+
+    height:140px;
+
+    background:#050404;
+
+    border-radius:10px;
+
+    border:1px solid #241b1b;
+
+}
+
+.release-card{
+
+    background:
+    linear-gradient(
+        180deg,
+        #1b1515 0%,
+        #110d0d 100%
+    );
+
+    border:2px solid #2d2424;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    margin-bottom:20px;
+
+}
+
+.release-title{
+
+    font-family:
+    'UnifrakturMaguntia',
+    cursive;
+
+    color:#ff5a5a;
+
+    font-size:30px;
+
+    margin-bottom:10px;
+
+}
+
+.release-artist{
+
+    color:#998888;
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    margin-bottom:10px;
+
+}
+
+.release-desc{
+
+    color:#b1a0a0;
+
+    font-size:13px;
+
+    line-height:1.6;
+
+    margin-bottom:15px;
+
+}
+
+.badge{
+
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:6px;
+
+    font-size:10px;
+
+    font-weight:bold;
+
+    margin-bottom:15px;
+
+}
+
+.badge-free{
+
+    background:#222;
+
+    color:#aaa;
+
+}
+
+.badge-premium{
+
+    background:#4c2222;
+
+    color:#ffd966;
+
+}
+
+.badge-unlocked{
+
+    background:#1d6924;
+
+    color:#fff;
+
+}
+
+.btn{
+
+    width:100%;
+
+    background:
+    linear-gradient(
+        180deg,
+        #992424 0%,
+        #470808 100%
+    );
+
+    border:2px solid #5c2424;
+
+    color:#fff;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    margin-top:10px;
+
+}
+
+.unlock-box{
+
+    display:none;
+
+    margin-top:15px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #601717 0%,
+        #240707 100%
+    );
+
+    border:2px solid #7d2525;
+
+    border-radius:10px;
+
+    padding:15px;
+
+}
+
+.payment-status{
+
+    margin-top:10px;
+
+    font-size:12px;
+
+}
+
+.audio-player{
+
+    width:100%;
+
+    margin-top:15px;
+
+}
+
+.footer{
+
+    margin-top:30px;
+
+    text-align:center;
+
+    font-size:11px;
+
+    color:#746565;
+
+}
+
+@media(max-width:480px){
+
+    h1{
+
+        font-size:34px;
+
+    }
+
+}
