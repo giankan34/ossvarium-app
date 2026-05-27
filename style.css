@@ -81,7 +81,61 @@ h1{
     letter-spacing:2px;
 
 }
+.cover-wrapper{
 
+    width:240px;
+
+    height:240px;
+
+    margin:0 auto 30px auto;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle,
+        #401515 0%,
+        #110d0d 100%
+    );
+
+    border:4px solid #2c2323;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    animation:spin 18s linear infinite;
+
+    box-shadow:
+    0 0 30px #000,
+    inset 0 0 40px #000;
+
+}
+
+.cover-art{
+
+    width:100%;
+    height:100%;
+
+}
+
+@keyframes spin{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
 .visualizer-box{
 
     background:
