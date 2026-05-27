@@ -15,6 +15,8 @@ async function loadReleases(){
         const releases =
         await response.json();
 
+        releaseContainer.innerHTML = "";
+
         releases.forEach(
         (release,index)=>{
 
@@ -125,40 +127,18 @@ async function loadReleases(){
                 };
                 ">
 
-                    ${
-                        release.audio
-                        ?
-                        `
-                        <audio
-                        controls
-                        style="
-                        width:100%;
-                        margin-top:10px;
-                        ">
+                    <audio
+                    controls
+                    style="
+                    width:100%;
+                    margin-top:10px;
+                    ">
 
-                            <source
-                            src="${release.audio}"
-                            type="audio/mpeg">
+                        <source
+                        src="${release.audio}"
+                        type="audio/mpeg">
 
-                        </audio>
-                        `
-                        :
-                        ''
-                    }
-
-                    ${
-                        release.bandcamp
-                        ?
-                        `
-                        <iframe
-                        style="height:120px;margin-top:15px;"
-                        src="${release.bandcamp}"
-                        seamless>
-                        </iframe>
-                        `
-                        :
-                        ''
-                    }
+                    </audio>
 
                 </div>
 
