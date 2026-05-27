@@ -1,28 +1,37 @@
 [
   {
     "artist": "OSSVARIUM",
-    "release": "Intro Ritual",
-    "description": "Free underground ritual demo release for the OSSVARIUM platform.",
+    "release": "Ritual Transmission",
+    "genre": "Dark Ambient",
+    "year": "2026",
+    "description": "Atmospheric underground transmission for OSSVARIUM testing.",
     "price": "FREE",
     "locked": false,
-    "bandcamp": "https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    "bandcamp": ""
   },
 
   {
     "artist": "OSSVARIUM",
     "release": "Cyber Necrosis",
-    "description": "Industrial cyber death ritual transmission.",
+    "genre": "Industrial Death",
+    "year": "2026",
+    "description": "Cybernetic decay frequencies from the void.",
     "price": "0.1",
     "locked": true,
-    "bandcamp": "https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    "bandcamp": ""
   },
 
   {
     "artist": "OSSVARIUM",
-    "release": "Nocturnal Beats",
-    "description": "Dark electronic underground frequencies from the void.",
+    "release": "Nocturnal Grinder",
+    "genre": "Death / Grind",
+    "year": "2026",
+    "description": "Underground blast transmission.",
     "price": "0.1",
     "locked": true,
-    "bandcamp": "https://bandcamp.com/EmbeddedPlayer/album=0000000000/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    "bandcamp": ""
   }
 ]
