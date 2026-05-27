@@ -8,7 +8,6 @@ canvas.getContext("2d");
 
 let audioContext;
 let analyser;
-let source;
 let dataArray;
 let animationId;
 
@@ -29,14 +28,28 @@ window.addEventListener(
     resizeCanvas
 );
 
-function connectAudio(){
+function initVisualizer(){
 
     const audio =
-    document.querySelector("audio");
+    document.querySelector(
+        "audio"
+    );
 
-    if(!audio) return;
+    if(!audio){
 
-    if(audioContext) return;
+        console.log(
+            "No audio element found yet"
+        );
+
+        return;
+
+    }
+
+    if(audioContext){
+
+        return;
+
+    }
 
     audioContext =
     new AudioContext();
@@ -46,16 +59,9 @@ function connectAudio(){
 
     analyser.fftSize = 256;
 
-    const bufferLength =
-    analyser.frequencyBinCount;
-
-    dataArray =
-    new Uint8Array(
-        bufferLength
-    );
-
-    source =
-    audioContext.createMediaElementSource(
+    const source =
+    audioContext
+    .createMediaElementSource(
         audio
     );
 
@@ -63,6 +69,14 @@ function connectAudio(){
 
     analyser.connect(
         audioContext.destination
+    );
+
+    const bufferLength =
+    analyser.frequencyBinCount;
+
+    dataArray =
+    new Uint8Array(
+        bufferLength
     );
 
     drawVisualizer();
@@ -91,7 +105,7 @@ function drawVisualizer(){
     (
         canvas.width /
         dataArray.length
-    ) * 2.2;
+    ) * 2.5;
 
     let x = 0;
 
@@ -102,7 +116,7 @@ function drawVisualizer(){
     ){
 
         const barHeight =
-        dataArray[i] * 0.9;
+        dataArray[i];
 
         const gradient =
         ctx.createLinearGradient(
@@ -115,12 +129,12 @@ function drawVisualizer(){
 
         gradient.addColorStop(
             0,
-            "#ff4040"
+            "#ff3c3c"
         );
 
         gradient.addColorStop(
             1,
-            "#2b0606"
+            "#200404"
         );
 
         ctx.fillStyle =
@@ -134,21 +148,8 @@ function drawVisualizer(){
             barHeight
         );
 
-        x +=
-        barWidth + 2;
+        x += barWidth + 2;
 
     }
 
 }
-
-window.addEventListener(
-    "click",
-    ()=>{
-
-        connectAudio();
-
-    },
-    {
-        once:true
-    }
-);
