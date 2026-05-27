@@ -1,11 +1,16 @@
 const canvas =
-document.getElementById("visualizer");
+document.getElementById(
+    "visualizer"
+);
+
 const ctx =
 canvas.getContext("2d");
 
-let animationId = null;
-
-let visualizerEnabled = true;
+let audioContext;
+let analyser;
+let source;
+let dataArray;
+let animationId;
 
 function resizeCanvas(){
 
@@ -24,14 +29,56 @@ window.addEventListener(
     resizeCanvas
 );
 
-function randomBar(min,max){
+function connectAudio(){
 
-    return Math.random() *
-    (max - min) + min;
+    const audio =
+    document.querySelector("audio");
+
+    if(!audio) return;
+
+    if(audioContext) return;
+
+    audioContext =
+    new AudioContext();
+
+    analyser =
+    audioContext.createAnalyser();
+
+    analyser.fftSize = 256;
+
+    const bufferLength =
+    analyser.frequencyBinCount;
+
+    dataArray =
+    new Uint8Array(
+        bufferLength
+    );
+
+    source =
+    audioContext.createMediaElementSource(
+        audio
+    );
+
+    source.connect(analyser);
+
+    analyser.connect(
+        audioContext.destination
+    );
+
+    drawVisualizer();
 
 }
 
 function drawVisualizer(){
+
+    animationId =
+    requestAnimationFrame(
+        drawVisualizer
+    );
+
+    analyser.getByteFrequencyData(
+        dataArray
+    );
 
     ctx.clearRect(
         0,
@@ -40,29 +87,28 @@ function drawVisualizer(){
         canvas.height
     );
 
-    const bars = 48;
-
     const barWidth =
-    canvas.width / bars;
+    (
+        canvas.width /
+        dataArray.length
+    ) * 2.2;
 
-    for(let i=0;i<bars;i++){
+    let x = 0;
 
-        const height =
-        randomBar(
-            10,
-            canvas.height
-        );
+    for(
+        let i = 0;
+        i < dataArray.length;
+        i++
+    ){
 
-        const x =
-        i * barWidth;
-
-        const y =
-        canvas.height - height;
+        const barHeight =
+        dataArray[i] * 0.9;
 
         const gradient =
         ctx.createLinearGradient(
             0,
-            y,
+            canvas.height -
+            barHeight,
             0,
             canvas.height
         );
@@ -74,7 +120,7 @@ function drawVisualizer(){
 
         gradient.addColorStop(
             1,
-            "#3a0909"
+            "#2b0606"
         );
 
         ctx.fillStyle =
@@ -82,54 +128,27 @@ function drawVisualizer(){
 
         ctx.fillRect(
             x,
-            y,
-            barWidth - 3,
-            height
+            canvas.height -
+            barHeight,
+            barWidth,
+            barHeight
         );
 
-    }
-
-    animationId =
-    requestAnimationFrame(
-        drawVisualizer
-    );
-
-}
-
-function toggleVisualizer(){
-
-    visualizerEnabled =
-    !visualizerEnabled;
-
-    if(visualizerEnabled){
-
-        drawVisualizer();
-
-        document.getElementById(
-            "screenText"
-        ).innerText =
-        "VISUALIZER ACTIVE";
-
-    }else{
-
-        cancelAnimationFrame(
-            animationId
-        );
-
-        ctx.clearRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        document.getElementById(
-            "screenText"
-        ).innerText =
-        "VISUALIZER DISABLED";
+        x +=
+        barWidth + 2;
 
     }
 
 }
 
-drawVisualizer();
+window.addEventListener(
+    "click",
+    ()=>{
+
+        connectAudio();
+
+    },
+    {
+        once:true
+    }
+);
