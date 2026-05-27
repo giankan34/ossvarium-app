@@ -4,7 +4,7 @@
     "release": "Ritual Transmission",
     "genre": "Dark Ambient",
     "year": "2026",
-    "description": "Atmospheric underground transmission.",
+    "description": "Atmospheric underground transmission from the void.",
     "price": "FREE",
     "locked": false,
     "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
@@ -15,9 +15,20 @@
     "release": "Cyber Necrosis",
     "genre": "Industrial Death",
     "year": "2026",
-    "description": "Cybernetic decay frequencies.",
+    "description": "Cybernetic decay frequencies and mechanical death atmospheres.",
     "price": "0.1",
     "locked": true,
     "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+  },
+
+  {
+    "artist": "OSSVARIUM",
+    "release": "Nocturnal Beats",
+    "genre": "Dark Electronic",
+    "year": "2026",
+    "description": "Dark underground electronic ritual frequencies.",
+    "price": "0.1",
+    "locked": true,
+    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
   }
 ]
