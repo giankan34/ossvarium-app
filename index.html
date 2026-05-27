@@ -68,9 +68,13 @@ fill="none"
 </div>
 
 <div class="visualizer-box">
-<div id="releaseContainer"></div>
-<div class="screen" id="screenText">
+
+<div
+class="screen"
+id="screenText">
+
 OSSVARIUM SYSTEM READY
+
 </div>
 
 <canvas id="visualizer"></canvas>
@@ -79,18 +83,17 @@ OSSVARIUM SYSTEM READY
 
 <button
 class="btn"
-onclick="toggleVisualizer()"
->
-TOGGLE VISUALIZER
+onclick="connectAudio()">
+
+ACTIVATE VISUALIZER
+
 </button>
 
 </div>
 
 </div>
 
-<div id="releaseContainer">
-
-</div>
+<div id="releaseContainer"></div>
 
 <div class="footer">
 
@@ -100,9 +103,9 @@ Powered by Pi • Bandcamp • OSSVARIUM
 
 </div>
 
-<script src="releases.js"></script>
-<script src="visualizer.js"></script>
 <script src="app.js"></script>
+<script src="visualizer.js"></script>
+<script src="releases.js"></script>
 
 </body>
 </html>
