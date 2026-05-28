@@ -1,34 +1,31 @@
 [
   {
-    "artist": "OSSVARIUM",
-    "release": "Ritual Transmission",
-    "genre": "Dark Ambient",
-    "year": "2026",
-    "description": "Atmospheric underground transmission from the void.",
-    "price": "FREE",
-    "locked": false,
-    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    "artist": "Coffin Rot",
+    "release": "Demo MMXXV",
+    "genre": "Death Metal",
+    "year": "2025",
+    "description": "Rotten underground death metal from the abyss.",
+    "cover":"assets/covers/ritual.jpg",
+    "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=3232623408/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
   },
 
   {
-    "artist": "OSSVARIUM",
-    "release": "Cyber Necrosis",
-    "genre": "Industrial Death",
-    "year": "2026",
-    "description": "Cybernetic decay frequencies and mechanical death atmospheres.",
-    "price": "0.1",
-    "locked": true,
-    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+    "artist": "Necrovoid",
+    "release": "Grind Ritual",
+    "genre": "Grindcore",
+    "year": "2025",
+    "description": "Fast chaotic grinding violence.",
+    "cover":"assets/covers/cyber.jpg",
+    "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=4052180328/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
   },
 
   {
-    "artist": "OSSVARIUM",
-    "release": "Nocturnal Beats",
-    "genre": "Dark Electronic",
-    "year": "2026",
-    "description": "Dark underground electronic ritual frequencies.",
-    "price": "0.1",
-    "locked": true,
-    "audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+    "artist": "Cryptic Shrine",
+    "release": "Temple of Dust",
+    "genre": "Black Metal",
+    "year": "2025",
+    "description": "Cold ritualistic black metal atmospheres.",
+    "cover":"assets/covers/nocturnal.jpg",
+    "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=2412017896/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
   }
 ]
