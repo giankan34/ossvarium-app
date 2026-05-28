@@ -455,3 +455,22 @@ h1{
     0 0 15px rgba(255,0,0,0.3);
 
 }
+.genre-title{
+
+    margin-top:35px;
+
+    margin-bottom:18px;
+
+    font-family:
+    'UnifrakturMaguntia',
+    cursive;
+
+    font-size:34px;
+
+    color:#d32f2f;
+
+    text-align:center;
+
+    text-shadow:2px 2px #000;
+
+}
