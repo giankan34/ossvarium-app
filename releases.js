@@ -17,54 +17,82 @@ async function loadReleases(){
 
         releaseContainer.innerHTML = "";
 
-        releases.forEach(
-        (release)=>{
+        const genres = {};
 
-            const card =
-            document.createElement(
-                "div"
-            );
+        releases.forEach((release)=>{
 
-            card.className =
-            "release-card";
+            if(!genres[release.genre]){
 
-            card.innerHTML = `
+                genres[release.genre] = [];
 
-                <img
-                class="release-cover"
-                src="${release.cover}"
-                alt="${release.release}">
+            }
 
-                <div class="release-title">
+            genres[release.genre]
+            .push(release);
 
-                    ${release.release}
+        });
 
-                </div>
+        Object.keys(genres)
+        .forEach((genre)=>{
 
-                <div class="release-artist">
+            const section =
+            document.createElement("div");
 
-                    ${release.artist}
+            section.innerHTML = `
 
-                </div>
+                <div class="genre-title">
 
-                <div class="release-desc">
-
-                    ${release.genre}
-                    •
-                    ${release.year}
+                    ${genre}
 
                 </div>
 
-                <div class="release-desc">
+            `;
 
-                    ${release.description}
+            releaseContainer
+            .appendChild(section);
 
-                </div>
+            genres[genre]
+            .forEach((release)=>{
 
-                ${
-                    release.bandcamp
-                    ?
-                    `
+                const card =
+                document.createElement(
+                    "div"
+                );
+
+                card.className =
+                "release-card";
+
+                card.innerHTML = `
+
+                    <img
+                    class="release-cover"
+                    src="${release.cover}"
+                    alt="${release.release}">
+
+                    <div class="release-title">
+
+                        ${release.release}
+
+                    </div>
+
+                    <div class="release-artist">
+
+                        ${release.artist}
+
+                    </div>
+
+                    <div class="release-desc">
+
+                        ${release.year}
+
+                    </div>
+
+                    <div class="release-desc">
+
+                        ${release.description}
+
+                    </div>
+
                     <div class="bandcamp-frame">
 
                         <iframe
@@ -75,35 +103,19 @@ async function loadReleases(){
                         </iframe>
 
                     </div>
-                    `
-                    :
-                    `
-                    <audio
-                    class="audio-player"
-                    controls>
 
-                        <source
-                        src="${release.audio}"
-                        type="audio/mpeg">
+                `;
 
-                    </audio>
-                    `
-                }
+                releaseContainer
+                .appendChild(card);
 
-            `;
-
-            releaseContainer.appendChild(
-                card
-            );
+            });
 
         });
 
     }catch(error){
 
-        console.error(
-            "Release loading error:",
-            error
-        );
+        console.error(error);
 
     }
 
