@@ -15,7 +15,36 @@ async function loadReleases(){
         const releases =
         await response.json();
 
-        releaseContainer.innerHTML = "";
+        releaseContainer.innerHTML = `
+
+<div class="featured-release">
+
+    <div class="featured-label">
+
+        FEATURED RELEASE
+
+    </div>
+
+    <img
+    class="featured-cover"
+    src="${releases[0].cover}"
+    alt="${releases[0].release}">
+
+    <div class="featured-title">
+
+        ${releases[0].release}
+
+    </div>
+
+    <div class="featured-artist">
+
+        ${releases[0].artist}
+
+    </div>
+
+</div>
+
+`;
 
         const genres = {};
 
