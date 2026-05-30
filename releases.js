@@ -108,11 +108,15 @@ async function loadReleases(){
 
                         ${release.artist}
 
+                    <div class="release-meta">
+ 
+                    ${release.genre} • ${release.year}
+   
                     </div>
 
-                    <div class="release-desc">
+                   <div class="release-desc">
 
-                        ${release.year}
+                  ${release.description}
 
                     </div>
 
