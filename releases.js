@@ -128,10 +128,11 @@ async function loadReleases(){
 
                     <div class="bandcamp-frame">
 
-                        <iframe
-                        style="height:120px;"
+                       <iframe
+                       style="width:100%;height:42px;border:0;"
                         src="${release.bandcamp}"
-                        seamless>
+                        loading="lazy">
+                        </iframe> 
 
                         </iframe>
 
