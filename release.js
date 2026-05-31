@@ -13,8 +13,16 @@ async function loadRelease(){
     const releases =
     await response.json();
 
-    const release =
-    releases[0];
+    const params =
+new URLSearchParams(
+    window.location.search
+);
+
+const id =
+params.get("id") || 0;
+
+const release =
+releases[id];
 
     releasePage.innerHTML = `
 
