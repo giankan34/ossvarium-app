@@ -635,3 +635,83 @@ img{
     line-height:1.6;
 
 }
+.release-meta{
+
+    color:#8d7d7d;
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    margin-bottom:15px;
+
+}
+
+.featured-release{
+
+    margin-bottom:30px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #1b1515 0%,
+        #110d0d 100%
+    );
+
+    border:2px solid #2d2424;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    text-align:center;
+
+}
+
+.featured-cover{
+
+    width:100%;
+
+    height:280px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+    margin-top:15px;
+
+    margin-bottom:15px;
+
+}
+
+.featured-label{
+
+    color:#ffd966;
+
+    font-size:11px;
+
+    letter-spacing:2px;
+
+    margin-bottom:10px;
+
+}
+
+.featured-title{
+
+    font-family:
+    'UnifrakturMaguntia',
+    cursive;
+
+    font-size:32px;
+
+    color:#d93434;
+
+}
+
+.featured-artist{
+
+    color:#a89595;
+
+    margin-top:8px;
+
+}
