@@ -129,12 +129,13 @@ async function loadReleases(){
 
                 </div>
 
-                <button
-                class="btn view-release-btn">
+                <a
+                 class="submit-btn"
+                 href="release.html">
 
-                    VIEW RELEASE
+                VIEW RELEASE
 
-                </button>
+                </a>
 
                 `;
 
