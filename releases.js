@@ -1,39 +1,159 @@
-card.innerHTML = `
+const releaseContainer =
+document.getElementById(
+    "releaseContainer"
+);
 
-    <img
-    class="release-cover"
-    src="${release.cover}"
-    alt="${release.release}">
+async function loadReleases(){
 
-    <div class="release-title">
+    try{
 
-        ${release.release}
+        const response =
+        await fetch(
+            "./data/releases.json"
+        );
 
-    </div>
+        const releases =
+        await response.json();
 
-    <div class="release-artist">
+        releaseContainer.innerHTML = "";
 
-        ${release.artist}
+        // Featured Release
 
-    </div>
+        if(releases.length > 0){
 
-    <div class="release-meta">
+            releaseContainer.innerHTML += `
 
-        ${release.genre} • ${release.year}
+            <div class="featured-release">
 
-    </div>
+                <div class="featured-label">
 
-    <div class="release-desc">
+                    FEATURED RELEASE
 
-        ${release.description}
+                </div>
 
-    </div>
+                <img
+                class="featured-cover"
+                src="${releases[0].cover}"
+                alt="${releases[0].release}">
 
-    <button
-    class="btn view-release-btn">
+                <div class="featured-title">
 
-        VIEW RELEASE
+                    ${releases[0].release}
 
-    </button>
+                </div>
 
-`;
+                <div class="featured-artist">
+
+                    ${releases[0].artist}
+
+                </div>
+
+            </div>
+
+            `;
+
+        }
+
+        // Genres
+
+        const genres = {};
+
+        releases.forEach((release)=>{
+
+            if(!genres[release.genre]){
+
+                genres[release.genre] = [];
+
+            }
+
+            genres[release.genre].push(
+                release
+            );
+
+        });
+
+        Object.keys(genres)
+        .forEach((genre)=>{
+
+            releaseContainer.innerHTML += `
+
+            <div class="genre-title">
+
+                ${genre}
+
+            </div>
+
+            `;
+
+            genres[genre]
+            .forEach((release)=>{
+
+                const card =
+                document.createElement(
+                    "div"
+                );
+
+                card.className =
+                "release-card";
+
+                card.innerHTML = `
+
+                <img
+                class="release-cover"
+                src="${release.cover}"
+                alt="${release.release}">
+
+                <div class="release-title">
+
+                    ${release.release}
+
+                </div>
+
+                <div class="release-artist">
+
+                    ${release.artist}
+
+                </div>
+
+                <div class="release-meta">
+
+                    ${release.genre}
+                    •
+                    ${release.year}
+
+                </div>
+
+                <div class="release-desc">
+
+                    ${release.description}
+
+                </div>
+
+                <button
+                class="btn view-release-btn">
+
+                    VIEW RELEASE
+
+                </button>
+
+                `;
+
+                releaseContainer
+                .appendChild(card);
+
+            });
+
+        });
+
+    }catch(error){
+
+        console.error(
+            "Release loading error:",
+            error
+        );
+
+    }
+
+}
+
+loadReleases();
