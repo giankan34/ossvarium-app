@@ -591,3 +591,47 @@ img{
     letter-spacing:1px;
 
 }
+.hero-box{
+
+    margin-bottom:25px;
+
+    padding:18px;
+
+    border:2px solid #2c2323;
+
+    border-radius:12px;
+
+    background:
+    linear-gradient(
+        180deg,
+        #1b1414 0%,
+        #0f0b0b 100%
+    );
+
+    text-align:center;
+
+}
+
+.hero-title{
+
+    color:#d93434;
+
+    font-weight:bold;
+
+    font-size:13px;
+
+    letter-spacing:2px;
+
+    margin-bottom:10px;
+
+}
+
+.hero-text{
+
+    color:#a89595;
+
+    font-size:12px;
+
+    line-height:1.6;
+
+}
