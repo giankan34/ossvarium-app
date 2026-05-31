@@ -131,7 +131,8 @@ async function loadReleases(){
 
                 <a
                  class="submit-btn"
-                 href="release.html">
+                href="release.html?id=$
+                {releases.indexOf(release)}">
 
                 VIEW RELEASE
 
