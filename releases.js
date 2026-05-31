@@ -29,13 +29,11 @@ card.innerHTML = `
 
     </div>
 
-    <a
-    class="submit-btn"
-    href="${release.bandcamp}"
-    target="_blank">
+    <button
+    class="btn view-release-btn">
 
-        LISTEN ON BANDCAMP
+        VIEW RELEASE
 
-    </a>
+    </button>
 
 `;
