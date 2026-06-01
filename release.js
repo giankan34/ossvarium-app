@@ -18,8 +18,16 @@ new URLSearchParams(
     window.location.search
 );
 
+const params =
+new URLSearchParams(
+    window.location.search
+);
+
+const id =
+params.get("id") || 0;
+
 const release =
-releases[1];
+releases[id];
 
     releasePage.innerHTML = `
 
