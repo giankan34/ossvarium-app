@@ -20,8 +20,7 @@ async function loadRelease(){
             window.location.search
         );
 
-        const id =
-        Number(params.get("id") || 0);
+        const id = 0;
 
         const release =
         releases[id];
