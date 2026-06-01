@@ -5,111 +5,116 @@ document.getElementById(
 
 async function loadRelease(){
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
+    try{
 
-    const releases =
-    await response.json();
+        const response =
+        await fetch(
+            "./data/releases.json"
+        );
 
-    const params =
-new URLSearchParams(
-    window.location.search
-);
+        const releases =
+        await response.json();
 
-const params =
-new URLSearchParams(
-    window.location.search
-);
+        const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
-const id =
-params.get("id") || 0;
+        const id =
+        Number(params.get("id") || 0);
 
-const release =
-releases[id];
+        const release =
+        releases[id];
 
-    releasePage.innerHTML = `
+        if(!release){
 
-    <div class="release-card">
+            releasePage.innerHTML =
+            "RELEASE NOT FOUND";
 
-        <img
-        class="release-cover"
-        src="${release.cover}"
-        alt="${release.release}">
+            return;
 
-        <div class="release-title">
+        }
 
-            ${release.release}
+        releasePage.innerHTML = `
 
-        </div>
+        <div class="release-card">
 
-        <div class="release-artist">
+            <img
+            class="release-cover"
+            src="${release.cover}"
+            alt="${release.release}">
 
-            ${release.artist}
+            <div class="release-title">
 
-        </div>
+                ${release.release}
 
-        <div class="release-meta">
+            </div>
 
-            ${release.genre}
-            •
-            ${release.year}
+            <div class="release-artist">
 
-        </div>
+                ${release.artist}
 
-        <div class="release-desc">
+            </div>
 
-            ${release.description}
+            <div class="release-meta">
 
-        </div>
+                ${release.genre}
+                •
+                ${release.year}
 
-    </div>
+            </div>
 
-    <div class="submission-box">
+            <div class="release-desc">
 
-        <h2>PRICE</h2>
+                ${release.description}
 
-        <div class="submission-text">
-
-            1 TEST PI
+            </div>
 
         </div>
 
-        <button class="btn">
+        <div class="submission-box">
 
-            BUY WITH PI
+            <h2>PRICE</h2>
 
-        </button>
+            <div class="submission-text">
 
-    </div>
+                1 TEST PI
 
-    <div class="submission-box">
+            </div>
 
-        <h2>ARTIST LINKS</h2>
+            <button class="btn">
 
-        <a
-        class="submit-btn"
-        href="${release.bandcamp}"
-        target="_blank">
+                BUY WITH PI
 
-            BANDCAMP
+            </button>
 
-        </a>
+        </div>
 
-    </div>
+        <div class="submission-box">
 
-    <br>
+            <h2>ARTIST LINKS</h2>
 
-    <a
-    class="submit-btn"
-    href="index.html">
+            <a
+            class="submit-btn"
+            href="${release.bandcamp}"
+            target="_blank">
 
-        ← BACK TO OSSVARIUM
+                BANDCAMP
 
-    </a>
+            </a>
 
-    `;
+        </div>
+
+        `;
+
+    }catch(error){
+
+        console.error(error);
+
+        releasePage.innerHTML =
+        "ERROR LOADING RELEASE";
+
+    }
 
 }
 
