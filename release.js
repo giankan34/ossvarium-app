@@ -4,7 +4,7 @@ document.getElementById(
 );
 
 async function loadRelease(){
-
+console.log("release.js started");
     try{
 
         const response =
@@ -14,7 +14,7 @@ async function loadRelease(){
 
         const releases =
         await response.json();
-
+        console.log(releases);
         
         const params =
         new URLSearchParams(
@@ -23,7 +23,7 @@ async function loadRelease(){
 
         β.const id =
         Number(params.get("id") || 0);
-
+        console.log("ID =", id);
         const release =
         releases[id];
 
