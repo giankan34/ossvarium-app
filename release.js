@@ -21,7 +21,7 @@ console.log("release.js started");
             window.location.search
         );
 
-        β.const id =
+        const id =
         Number(params.get("id") || 0);
         console.log("ID =", id);
         const release =
