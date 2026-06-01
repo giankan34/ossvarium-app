@@ -23,6 +23,7 @@ console.log("release.js started");
 
         const id =
         Number(params.get("id") || 0);
+        alert("ID = " + id);
         console.log("ID =", id);
         const release =
         releases[id];
