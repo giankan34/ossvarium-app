@@ -86,7 +86,7 @@ async function loadReleases(){
             `;
 
             genres[genre]
-            .forEach((release)=>{
+            .forEach((release,index)=>{
 
                 const card =
                 document.createElement(
@@ -130,9 +130,8 @@ async function loadReleases(){
                 </div>
 
                 <a
-                 class="submit-btn"
-                href="release.html?id=$
-                {releases.indexOf(release)}">
+                class="submit-btn"
+                href="release.html?id=${index}">
 
                 VIEW RELEASE
 
