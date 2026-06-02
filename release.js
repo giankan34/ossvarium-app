@@ -29,10 +29,10 @@ console.log("release.js started");
 
         if(!release){
 
-            releasePage.innerHTML =
-            "RELEASE NOT FOUND";
+        releasePage.innerHTML =
+        "RELEASE NOT FOUND - ID = " + id;
 
-            return;
+        return;
 
         }
 
