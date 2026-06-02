@@ -4,7 +4,18 @@
     "release":"Aldrig i livet",
     "genre":"Death Metal",
     "year":"2020",
+    "country":"Denmark",
+    "price":"1",
+    "supporters":"32",
     "description":"Putrid old school death metal from Denmark.",
+    "bio":"Undergang is one of the strongest names in modern old school death metal, known for filthy riffs and oppressive atmosphere.",
+    "tracks":[
+      "Indledning",
+      "Aldrig i livet",
+      "Døden læger alle sår",
+      "Menneskeæder",
+      "Af med hovedet"
+    ],
     "cover":"assets/covers/undergang.jpg",
     "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=3601075996/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
   },
@@ -14,7 +25,18 @@
     "release":"Devious Persecution",
     "genre":"Grindcore",
     "year":"2022",
+    "country":"USA",
+    "price":"1",
+    "supporters":"18",
     "description":"Chaotic blasting grindcore violence.",
+    "bio":"P.L.F. delivers relentless grindcore with extreme speed, aggression and political intensity.",
+    "tracks":[
+      "Devious Persecution",
+      "Forced Compliance",
+      "Corporate Slaughter",
+      "Scorched Earth",
+      "Endless Collapse"
+    ],
     "cover":"assets/covers/plf.jpg",
     "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=1264201620/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
   },
@@ -24,7 +46,18 @@
     "release":"Endless Wound",
     "genre":"Black / Death Metal",
     "year":"2020",
+    "country":"USA",
+    "price":"2",
+    "supporters":"27",
     "description":"Bestial blackened death chaos.",
+    "bio":"Black Curse combines black metal darkness and death metal brutality into a violent and dissonant sound.",
+    "tracks":[
+      "Charnel Rift",
+      "Seared Eyes",
+      "Endless Wound",
+      "Sulphur Invocation",
+      "Final Descent"
+    ],
     "cover":"assets/covers/blackcurse.jpg",
     "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=2409876945/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
   }
