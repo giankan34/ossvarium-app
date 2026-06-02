@@ -71,7 +71,54 @@ console.log("release.js started");
                 ${release.description}
 
             </div>
+<div class="submission-box">
 
+    <h2>ABOUT THE ARTIST</h2>
+
+    <div class="submission-text">
+
+        ${release.bio}
+
+    </div>
+
+</div>
+
+<div class="submission-box">
+
+    <h2>ORIGIN</h2>
+
+    <div class="submission-text">
+
+        ${release.country}
+
+    </div>
+
+</div>
+
+<div class="submission-box">
+
+    <h2>TRACKLIST</h2>
+
+    <div class="submission-text">
+
+        ${release.tracks.join("<br>")}
+
+    </div>
+
+</div>
+
+<div class="submission-box">
+
+    <h2>SUPPORTERS</h2>
+
+    <div class="submission-text">
+
+        ${release.supporters}
+        Pioneers supported this release
+
+    </div>
+
+</div>
         </div>
 
         <div class="submission-box">
