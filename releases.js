@@ -131,11 +131,12 @@ async function loadReleases(){
 
                 <a
                 class="submit-btn"
-                href="release.html?id=${index}">
+                href="release.html?id=$
+                {releases.indexOf(release)}">
 
                 VIEW RELEASE
 
-                </a>
+                 </a>
 
                 `;
 
