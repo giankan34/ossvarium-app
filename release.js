@@ -142,6 +142,8 @@ console.log("release.js started");
 
             </button>
 
+        </div>
+        
         <div class="submission-box">
 
             <h2>ARTIST LINKS</h2>
