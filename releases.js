@@ -16,7 +16,21 @@ async function loadReleases(){
         await response.json();
 
         releaseContainer.innerHTML = "";
+        releaseContainer.innerHTML += `
 
+        <div class="submission-box">
+
+            <h2>RELEASES</h2>
+
+            <div class="submission-text">
+
+                ${releases.length} RELEASES AVAILABLE
+
+            </div>
+
+        </div>
+
+`;
         // Featured Release
 
         if(releases.length > 0){
@@ -98,10 +112,15 @@ async function loadReleases(){
 
                 card.innerHTML = `
 
+                <a
+                href="release.html?id=${releases.indexOf(release)}">
+
                 <img
                 class="release-cover"
                 src="${release.cover}"
                 alt="${release.release}">
+
+                </a>
 
                 <div class="release-title">
 
