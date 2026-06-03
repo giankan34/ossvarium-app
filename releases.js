@@ -175,5 +175,36 @@ async function loadReleases(){
     }
 
 }
+document.addEventListener(
+    "input",
+    (e)=>{
 
+        if(
+            e.target.id !==
+            "searchInput"
+        ) return;
+
+        const search =
+        e.target.value
+        .toLowerCase();
+
+        document
+        .querySelectorAll(
+            ".release-card"
+        )
+        .forEach((card)=>{
+
+            const text =
+            card.innerText
+            .toLowerCase();
+
+            card.style.display =
+            text.includes(search)
+            ? "block"
+            : "none";
+
+        });
+
+    }
+);
 loadReleases();
