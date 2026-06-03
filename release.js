@@ -40,10 +40,15 @@ console.log("release.js started");
 
         <div class="release-card">
 
+            <a
+            href="release.html?id=${releases.indexOf(release)}">
+
             <img
             class="release-cover"
             src="${release.cover}"
             alt="${release.release}">
+
+            </a>
 
             <div class="release-title">
 
@@ -112,8 +117,7 @@ console.log("release.js started");
 
     <div class="submission-text">
 
-        ${release.supporters}
-        Pioneers supported this release
+        🔥 ${release.supporters} PIONEERS
 
     </div>
 
@@ -130,9 +134,11 @@ console.log("release.js started");
 
             </div>
 
-            <button class="btn">
+            <button
+            class="btn"
+            onclick="alert('Pi payments coming soon')">
 
-                BUY WITH PI
+            BUY WITH PI
 
             </button>
 
