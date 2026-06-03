@@ -136,19 +136,20 @@ console.log("release.js started");
 
             </button>
 
-        </div>
-
         <div class="submission-box">
 
             <h2>ARTIST LINKS</h2>
 
-            <iframe
-            
-            style="width:100%;height:120px;border:0;"
-                src="${release.bandcamp}"
-                loading="lazy">
-           
-            </iframe>
+            <a
+            class="submit-btn"
+            href="${release.bandcamp}"
+            target="_blank">
+
+                VISIT BANDCAMP
+
+            </a>
+
+         </div>
 
         `;
 
