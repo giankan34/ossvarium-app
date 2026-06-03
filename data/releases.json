@@ -17,8 +17,7 @@
       "Af med hovedet"
     ],
     "cover":"assets/covers/undergang.jpg",
-    "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=3601075996/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
-  },
+    "bandcamp":"https://undergang.bandcamp.com/album/maddikehavets-dans"
 
   {
     "artist":"P.L.F.",
@@ -38,8 +37,7 @@
       "Endless Collapse"
     ],
     "cover":"assets/covers/plf.jpg",
-    "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=1264201620/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
-  },
+    "bandcamp":https://poweritupplf.bandcamp.com/album/crushing-fury-of-bastardization
 
   {
     "artist":"Black Curse",
@@ -59,6 +57,6 @@
       "Final Descent"
     ],
     "cover":"assets/covers/blackcurse.jpg",
-    "bandcamp":"https://bandcamp.com/EmbeddedPlayer/album=2409876945/size=large/bgcol=111111/linkcol=e32c2c/transparent=true/"
+    "bandcamp":"https://blackcurse-svr.bandcamp.com/album/burning-in-celestial-poison"
   }
 ]
