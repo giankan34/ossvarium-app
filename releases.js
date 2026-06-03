@@ -30,6 +30,50 @@ async function loadReleases(){
 
         </div>
 
+`;const topRelease =
+releases.reduce(
+    (top,current)=>
+    Number(current.supporters) >
+    Number(top.supporters)
+    ? current
+    : top
+);
+
+releaseContainer.innerHTML += `
+
+<div class="featured-release">
+
+    <div class="featured-label">
+
+        🔥 TOP SUPPORTED RELEASE
+
+    </div>
+
+    <img
+    class="featured-cover"
+    src="${topRelease.cover}"
+    alt="${topRelease.release}">
+
+    <div class="featured-title">
+
+        ${topRelease.release}
+
+    </div>
+
+    <div class="featured-artist">
+
+        ${topRelease.artist}
+
+    </div>
+
+    <div class="submission-text">
+
+        🔥 ${topRelease.supporters} PIONEERS
+
+    </div>
+
+</div>
+
 `;
         // Featured Release
 
