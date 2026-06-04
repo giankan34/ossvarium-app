@@ -171,6 +171,55 @@ releaseContainer.innerHTML += `
 </div>
 
 `;
+     const featuredArtist =
+     releases[0];
+
+     releaseContainer.innerHTML += `
+
+     <div class="featured-release">
+
+         <div class="featured-label">
+
+             🎭 FEATURED ARTIST
+
+         </div>
+
+         <img
+         class="featured-cover"
+         src="${featuredArtist.cover}"
+         alt="${featuredArtist.artist}">
+
+         <div class="featured-title">${featuredArtist.artist}
+
+         </div>
+
+        <div class="featured-artist">${featuredArtist.country}
+
+            •
+
+            ${featuredArtist.genre}
+
+         </div>
+
+         <div class="submission-text">
+
+            ${featuredArtist.bio}
+
+         </div>
+
+          <br>
+
+          <a
+          class="submit-btn"
+          href="release.html?id=${releases.indexOf(featuredArtist)}">
+
+              VIEW RELEASE
+
+          </a>
+
+           </div>
+
+`;
         }
 
         // Genres
