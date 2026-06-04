@@ -117,7 +117,48 @@ style="text-decoration:none;">
             </a>
 
             `;
+const topThree =
+[...releases]
+.sort(
+    (a,b)=>
+    Number(b.supporters) -
+    Number(a.supporters)
+)
+.slice(0,3);
 
+releaseContainer.innerHTML += `
+
+<div class="submission-box">
+
+    <h2>
+
+        🏆 HALL OF FAME
+
+    </h2>
+
+    <div class="submission-text">
+
+        🥇 ${topThree[0]?.release}
+        (${topThree[0]?.supporters}
+        PIONEERS)
+
+        <br><br>
+
+        🥈 ${topThree[1]?.release}
+        (${topThree[1]?.supporters}
+        PIONEERS)
+
+        <br><br>
+
+        🥉 ${topThree[2]?.release}
+        (${topThree[2]?.supporters}
+        PIONEERS)
+
+    </div>
+
+</div>
+
+`;
         }
 
         // Genres
