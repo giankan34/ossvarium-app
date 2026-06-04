@@ -41,6 +41,10 @@ releases.reduce(
 
 releaseContainer.innerHTML += `
 
+<a
+href="release.html?id=${releases.indexOf(topRelease)}"
+style="text-decoration:none;">
+
 <div class="featured-release">
 
     <div class="featured-label">
@@ -74,6 +78,8 @@ releaseContainer.innerHTML += `
 
 </div>
 
+</a>
+
 `;
         // Featured Release
 
@@ -81,32 +87,34 @@ releaseContainer.innerHTML += `
 
             releaseContainer.innerHTML += `
 
+            <a
+            href="release.html?id=0"
+            style="text-decoration:none;">
+
             <div class="featured-release">
 
                 <div class="featured-label">
 
                     FEATURED RELEASE
 
-                </div>
+               </div>
 
-                <img
-                class="featured-cover"
-                src="${releases[0].cover}"
-                alt="${releases[0].release}">
+               <img
+               class="featured-cover"
+               src="${releases[0].cover}"
+               alt="${releases[0].release}">
 
-                <div class="featured-title">
+               <div class="featured-title">${releases[0].release}
 
-                    ${releases[0].release}
+               </div>
 
-                </div>
+               <div class="featured-artist">${releases[0].artist}
 
-                <div class="featured-artist">
-
-                    ${releases[0].artist}
-
-                </div>
+               </div>
 
             </div>
+
+            </a>
 
             `;
 
