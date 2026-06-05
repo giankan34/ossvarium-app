@@ -15,7 +15,58 @@ async function loadReleases(){
         const releases =
         await response.json();
 
+        const totalReleases =
+        releases.length;
+
+        const totalGenres =
+        new Set(
+            releases.map(
+                release =>
+                release.genre
+            )
+        ).size;
+
+        const totalSupporters =
+        releases.reduce(
+            (sum,release)=>
+            sum +
+            Number(
+                release.supporters || 0
+            ),
+            0
+         );
+        
         releaseContainer.innerHTML = "";
+        releaseContainer.innerHTML += `
+
+<div class="submission-box">
+
+    <h2>
+
+        📊 OSSVARIUM STATS
+
+    </h2>
+
+    <div class="submission-text">
+
+        📀 RELEASES:
+        ${totalReleases}
+
+        <br><br>
+
+        🎵 GENRES:
+        ${totalGenres}
+
+        <br><br>
+
+        🔥 PIONEERS:
+        ${totalSupporters}
+
+    </div>
+
+</div>
+
+`;
         releaseContainer.innerHTML += `
 
         <div class="submission-box">
