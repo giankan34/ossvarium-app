@@ -172,8 +172,12 @@ releaseContainer.innerHTML += `
 
 `;
      const featuredArtist =
-     releases[0];
-
+releases[
+    Math.floor(
+        Math.random() *
+        releases.length
+    )
+];
      releaseContainer.innerHTML += `
 
      <div class="featured-release">
