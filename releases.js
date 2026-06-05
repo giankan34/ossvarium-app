@@ -35,7 +35,19 @@ async function loadReleases(){
             ),
             0
          );
-        
+        const genreCounts = {};
+
+releases.forEach((release)=>{
+
+    if(!genreCounts[release.genre]){
+
+        genreCounts[release.genre] = 0;
+
+    }
+
+    genreCounts[release.genre]++;
+
+});
         releaseContainer.innerHTML = "";
         releaseContainer.innerHTML += `
 
@@ -61,6 +73,33 @@ async function loadReleases(){
 
         🔥 PIONEERS:
         ${totalSupporters}
+
+    </div>
+
+</div>
+
+`;
+  releaseContainer.innerHTML += `
+
+<div class="submission-box">
+
+    <h2>
+
+        🎵 BROWSE GENRES
+
+    </h2>
+
+    <div class="submission-text">
+
+        ${Object.keys(genreCounts)
+        .map(genre => `
+
+            ${genre}
+            (${genreCounts[genre]})
+
+            <br><br>
+
+        `).join("")}
 
     </div>
 
