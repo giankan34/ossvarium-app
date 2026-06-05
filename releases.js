@@ -14,7 +14,14 @@ async function loadReleases(){
 
         const releases =
         await response.json();
+        const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
+        const selectedGenre =
+        params.get("genre");
+        
         const totalReleases =
         releases.length;
 
@@ -91,11 +98,27 @@ releases.forEach((release)=>{
 
     <div class="submission-text">
 
+        <a
+        class="submit-btn"
+        href="index.html">
+
+            ALL
+
+        </a>
+
+        <br><br>
+
         ${Object.keys(genreCounts)
         .map(genre => `
 
-            ${genre}
-            (${genreCounts[genre]})
+            <a
+            class="submit-btn"
+            href="?genre=${encodeURIComponent(genre)}">
+
+                ${genre}
+                (${genreCounts[genre]})
+
+            </a>
 
             <br><br>
 
@@ -355,10 +378,19 @@ releases[
         }
 
         // Genres
+        const filteredReleases =
+        selectedGenre
 
+        ? releases.filter(
+            release =>
+            release.genre === selectedGenre
+        )
+
+        : releases;
+        
         const genres = {};
 
-        releases.forEach((release)=>{
+        filteredReleases.forEach((release)=>{
 
             if(!genres[release.genre]){
 
@@ -373,6 +405,7 @@ releases[
         });
 
         Object.keys(genres)
+        .sort()
         .forEach((genre)=>{
 
             releaseContainer.innerHTML += `
