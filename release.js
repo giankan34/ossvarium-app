@@ -56,11 +56,17 @@ console.log("release.js started");
 
             </div>
 
-            <div class="release-artist">
+           <div class="release-artist">
 
-                ${release.artist}
+               <a
+               href="artist.html?artist=${encodeURIComponent(release.artist)}"
+               class="submit-btn">
 
-            </div>
+                   ${release.artist}
+
+               </a>
+
+           </div> 
 
             <div class="release-meta">
 
