@@ -67,6 +67,44 @@ async function loadReleases(){
 </div>
 
 `;
+        const latestReleases =
+[...releases]
+.slice(-3)
+.reverse();
+
+releaseContainer.innerHTML += `
+
+<div class="submission-box">
+
+    <h2>
+
+        ⚡ LATEST ADDITIONS
+
+    </h2>
+
+    <div class="submission-text">
+
+        ${latestReleases.map(
+            release => `
+            <a
+            class="submit-btn"
+            href="release.html?id=${releases.indexOf(release)}">
+
+                ${release.artist}
+                -
+                ${release.release}
+
+            </a>
+
+            <br><br>
+            `
+        ).join("")}
+
+    </div>
+
+</div>
+
+`;
         releaseContainer.innerHTML += `
 
         <div class="submission-box">
