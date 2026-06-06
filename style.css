@@ -50,20 +50,20 @@ body{
 
 h1{
 
-    font-family:'Cinzel', serif;
+    font-family:
+    'Cormorant Garamond',
+    serif;
 
-    font-size:64px;
+    font-size:72px;
 
     font-weight:700;
 
-    letter-spacing:4px;
-
-    text-align:center;
+    font-style:italic;
 
     color:#d93434;
 
-    text-shadow:
-        0 0 10px rgba(217,52,52,0.3);
+    text-align:center;
+
 }
 
 .subtitle{
