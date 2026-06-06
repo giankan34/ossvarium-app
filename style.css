@@ -213,14 +213,18 @@ h1{
 .release-title{
 
     font-family:
-    'UnifrakturMaguntia',
-    cursive;
+    'Cinzel',
+    serif;
 
-    color:#ff5a5a;
+    font-size:42px;
 
-    font-size:30px;
+    font-weight:700;
 
-    margin-bottom:10px;
+    color:#d93434;
+
+    text-align:center;
+
+    margin-bottom:15px;
 
 }
 
@@ -400,14 +404,17 @@ h1{
     'Cinzel',
     serif;
 
+    font-size:32px;
+
+    font-weight:700;
+
     color:#d93434;
+
+    text-align:center;
 
     margin-bottom:15px;
 
-    font-size:28px;
-
 }
-
 .submission-text{
 
     color:#a89595;
@@ -580,15 +587,17 @@ img{
 }
 .release-meta{
 
-    color:#c9a060;
+    color:#b8a0a0;
 
-    font-size:12px;
+    font-size:14px;
 
-    margin-bottom:12px;
+    letter-spacing:2px;
 
     text-transform:uppercase;
 
-    letter-spacing:1px;
+    text-align:center;
+
+    margin-bottom:20px;
 
 }
 .hero-box{
