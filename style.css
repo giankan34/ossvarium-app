@@ -51,14 +51,12 @@ body{
 h1{
 
     font-family:
-    'Cormorant Garamond',
-    serif;
+    'Pirata One',
+    cursive;
 
-    font-size:78px;
+    font-size:72px;
 
-    font-weight:700;
-
-    font-style:italic;
+    font-weight:normal;
 
     letter-spacing:2px;
 
@@ -67,7 +65,9 @@ h1{
     text-align:center;
 
     text-shadow:
-    0 0 10px rgba(217,52,52,0.25);
+    0 0 12px rgba(217,52,52,0.25);
+
+    margin-bottom:5px;
 
 }
 
