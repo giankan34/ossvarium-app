@@ -60,13 +60,17 @@ h1{
 
     font-style:italic;
 
+    letter-spacing:2px;
+
     color:#d93434;
 
     text-align:center;
 
-    letter-spacing:2px;
+    text-shadow:
+    0 0 10px rgba(217,52,52,0.25);
 
 }
+
 .subtitle{
 
     text-align:center;
