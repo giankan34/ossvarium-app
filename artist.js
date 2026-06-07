@@ -47,6 +47,11 @@ async function loadArtist(){
 
         <div class="release-card">
 
+            <img
+            class="artist-image"
+            src="${artist.artistImage}"
+            alt="${artist.artist}">
+
             <div class="release-title">
 
                 ${artist.artist}
