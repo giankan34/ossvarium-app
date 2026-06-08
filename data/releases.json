@@ -18,6 +18,7 @@
     ],
     "cover":"assets/covers/undergang.jpg",
     "artistImage":"assets/artists/undergang.jpg",
+    "banner":"assets/banners/undergang-banner.jpg",
     "bandcamp":"https://undergang.bandcamp.com/album/maddikehavets-dans"
   },
 
@@ -40,6 +41,7 @@
     ],
     "cover":"assets/covers/plf.jpg",
     "artistImage":"assets/artists/plf.jpg",
+    "banner":"assets/banners/undergang-banner.jpg",
     "bandcamp":"https://poweritupplf.bandcamp.com/album/crushing-fury-of-bastardization"
   },
 
@@ -62,6 +64,7 @@
     ],
     "cover":"assets/covers/blackcurse.jpg",
     "artistImage":"assets/artists/blackcurse.jpg",
+    "banner":"assets/banners/undergang-banner.jpg",
     "bandcamp":"https://blackcurse-svr.bandcamp.com/album/burning-in-celestial-poison"
   }
 ]
