@@ -71,7 +71,41 @@ async function loadArtist(){
                 ${artist.bio}
 
             </div>
+<div class="artist-stats">
 
+    <div class="stat-row">
+
+        <span>RELEASES</span>
+
+        <span>1</span>
+
+    </div>
+
+    <div class="stat-row">
+
+        <span>COUNTRY</span>
+
+        <span>${artist.country}</span>
+
+    </div>
+
+    <div class="stat-row">
+
+        <span>GENRE</span>
+
+        <span>${artist.genre}</span>
+
+    </div>
+
+    <div class="stat-row">
+
+        <span>SUPPORTERS</span>
+
+        <span>${artist.supporters}</span>
+
+    </div>
+
+</div>
         </div>
 
         <div class="submission-box">
