@@ -149,23 +149,24 @@ async function loadArtist(){
         <div class="submission-box">
 
             <h2>
-${artist.similar ? `
 
-<div class="artist-box">
+        ${artist.similar ? `
 
-    <h2>☠ SIMILAR ARTISTS</h2>
+        <div class="artist-box">
 
-    ${artist.similar.map(name => `
+            <h2>☠ SIMILAR ARTISTS</h2>
 
-        <div class="similar-item">
-            ${name}
+            ${artist.similar.map(name => `
+
+                <div class="similar-item">
+                    ${name}
+                </div>
+
+            `).join('')}
+
         </div>
 
-    `).join('')}
-
-</div>
-
-` : ''}
+        ` : ''}
                 🔗 BANDCAMP
 
             </h2>
