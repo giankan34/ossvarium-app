@@ -748,3 +748,46 @@ img{
     border:2px solid #2d2424;
 
 }
+.artist-stats{
+
+    margin-top:20px;
+
+    background:#120d0d;
+
+    border:2px solid #2d2424;
+
+    border-radius:12px;
+
+    padding:15px;
+
+}
+
+.stat-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:8px 0;
+
+    color:#b5a0a0;
+
+    border-bottom:1px solid #2a2020;
+
+    font-size:13px;
+
+}
+
+.stat-row:last-child{
+
+    border-bottom:none;
+
+}
+
+.stat-row span:first-child{
+
+    color:#d93434;
+
+    font-weight:bold;
+
+}
