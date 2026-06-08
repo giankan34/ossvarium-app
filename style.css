@@ -820,3 +820,22 @@ img{
     display:block;
 
 }
+.similar-item{
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+    background:#161111;
+
+    border:1px solid #322424;
+
+    border-radius:8px;
+
+    color:#d93434;
+
+    text-align:center;
+
+    font-weight:bold;
+
+}
