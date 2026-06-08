@@ -1,3 +1,4 @@
+
 [
   {
     "artist":"Undergang",
@@ -46,7 +47,7 @@
     ],
     "cover":"assets/covers/plf.jpg",
     "artistImage":"assets/artists/plf.jpg",
-    "banner":"assets/banners/undergang-banner.jpg",
+    "banner":"assets/banners/plf-banner.jpg",
     "bandcamp":"https://poweritupplf.bandcamp.com/album/crushing-fury-of-bastardization",
    
       "similar":[
@@ -74,7 +75,7 @@
     ],
     "cover":"assets/covers/blackcurse.jpg",
     "artistImage":"assets/artists/blackcurse.jpg",
-    "banner":"assets/banners/undergang-banner.jpg",
+    "banner":"assets/banners/blackcurse-banner.jpg",
     "bandcamp":"https://blackcurse-svr.bandcamp.com/album/burning-in-celestial-poison",
     
       "similar":[
