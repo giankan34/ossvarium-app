@@ -854,3 +854,20 @@ img{
     color:#ff6666;
 
 }
+.genre-stats{
+
+    text-align:center;
+
+    color:#8a7777;
+
+    font-size:13px;
+
+    letter-spacing:3px;
+
+    margin-top:-10px;
+
+    margin-bottom:25px;
+
+    text-transform:uppercase;
+
+}
