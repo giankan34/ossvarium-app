@@ -70,9 +70,16 @@ async function loadArtist(){
 
                 ${artist.country}
                 •
-                ${artist.genre}
 
-            </div>
+                <a
+                href="genre.html?genre=${encodeURIComponent(artist.genre)}"
+                class="genre-link">
+
+                    ${artist.genre}
+
+                </a>
+
+             </div>
 
             <div class="release-desc">
 
