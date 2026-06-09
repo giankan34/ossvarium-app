@@ -871,3 +871,49 @@ img{
     text-transform:uppercase;
 
 }
+.genre-hub-link{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
+.genre-hub-card{
+
+    background:
+    linear-gradient(
+        180deg,
+        #1a1414 0%,
+        #0d0909 100%
+    );
+
+    border:2px solid #2f2424;
+
+    border-radius:12px;
+
+    padding:18px;
+
+    margin-bottom:12px;
+
+    text-align:center;
+
+    font-family:
+    'IM Fell English SC',
+    serif;
+
+    font-size:24px;
+
+    color:#d93434;
+
+    transition:0.25s;
+}
+
+.genre-hub-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 0 15px rgba(217,52,52,0.25);
+
+}
