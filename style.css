@@ -839,3 +839,18 @@ img{
     font-weight:bold;
 
 }
+.genre-link{
+
+    color:#d93434;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+}
+
+.genre-link:hover{
+
+    color:#ff6666;
+
+}
