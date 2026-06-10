@@ -27,6 +27,20 @@ console.log("release.js started");
         const release =
         releases[id];
 
+        const prevRelease =
+        id > 0
+        ?
+        id - 1
+        :
+        releases.length - 1;
+
+        const nextRelease =
+        id < releases.length - 1
+        ?
+        id + 1
+        :
+        0;
+     
         if(!release){
 
         releasePage.innerHTML =
@@ -188,6 +202,31 @@ console.log("release.js started");
       :
       "No similar artists"
       } 
+
+    </div>
+
+</div>
+<div class="submission-box">
+
+    <h2>EXPLORE MORE</h2>
+
+    <div class="release-navigation">
+
+        <a
+        href="release.html?id=${prevRelease}"
+        class="submit-btn">
+
+            ← PREVIOUS
+
+        </a>
+
+        <a
+        href="release.html?id=${nextRelease}"
+        class="submit-btn">
+
+            NEXT →
+
+        </a>
 
     </div>
 
