@@ -165,8 +165,6 @@ console.log("release.js started");
 
          </div>
 
-        `;
-
         <div class="submission-box">
 
             <h2>YOU MAY ALSO LIKE</h2>
@@ -184,9 +182,11 @@ console.log("release.js started");
             </div>
 
         </div>
+       
+        ';
    
     }catch(error){
-
+    
         console.error(error);
 
         releasePage.innerHTML =
