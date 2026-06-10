@@ -932,7 +932,17 @@ img{
     letter-spacing:1px;
 
 }
+.release-navigation{
 
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    margin-top:15px;
+
+}
 .similar-link:hover{
 
     color:#ff6666;
