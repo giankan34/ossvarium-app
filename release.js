@@ -171,13 +171,23 @@ console.log("release.js started");
 
     <div class="submission-text">
 
-        ${
-        release.similar
-        ?
-        release.similar.join("<br>")
-        :
-        "No similar artists"
-        }
+       ${
+       release.similar
+       ?
+       release.similar.map(artist => `
+
+      <a
+      href="artist.html?artist=${encodeURIComponent(artist)}"
+      class="similar-link">
+
+      ${artist}
+
+      </a>
+
+      `).join("<br>")
+      :
+      "No similar artists"
+      } 
 
     </div>
 
