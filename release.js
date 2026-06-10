@@ -150,40 +150,40 @@ console.log("release.js started");
 
         </div>
         
-        <div class="submission-box">
+      <div class="submission-box">
 
-            <h2>ARTIST LINKS</h2>
+    <h2>ARTIST LINKS</h2>
 
-            <a
-            class="submit-btn"
-            href="${release.bandcamp}"
-            target="_blank">
+    <a
+    class="submit-btn"
+    href="${release.bandcamp}"
+    target="_blank">
 
-                VISIT BANDCAMP
+        VISIT BANDCAMP
 
-            </a>
+    </a>
 
-         </div>
+</div>
 
-        <div class="submission-box">
+<div class="submission-box">
 
-            <h2>YOU MAY ALSO LIKE</h2>
+    <h2>YOU MAY ALSO LIKE</h2>
 
-            <div class="submission-text">
+    <div class="submission-text">
 
-                ${
-                release.similar
-                ?
-                release.similar.join("<br>")
-                :
-                "No similar artists"
-                }
+        ${
+        release.similar
+        ?
+        release.similar.join("<br>")
+        :
+        "No similar artists"
+        }
 
-            </div>
+    </div>
 
-        </div>
-       
-        ';
+</div>
+
+`;  
    
     }catch(error){
     
