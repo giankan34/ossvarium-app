@@ -167,6 +167,24 @@ console.log("release.js started");
 
         `;
 
+        <div class="submission-box">
+
+            <h2>YOU MAY ALSO LIKE</h2>
+
+            <div class="submission-text">
+
+                ${
+                release.similar
+                ?
+                release.similar.join("<br>")
+                :
+                "No similar artists"
+                }
+
+            </div>
+
+        </div>
+   
     }catch(error){
 
         console.error(error);
