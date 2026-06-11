@@ -969,3 +969,66 @@ img{
     border-radius:8px;
 
 }
+.search-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+    background:#171212;
+
+    border:1px solid #2f2424;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    transition:0.25s;
+
+}
+
+.search-card:hover{
+
+    transform:translateY(-2px);
+
+    border-color:#8a2b2b;
+
+}
+
+.search-cover{
+
+    width:60px;
+
+    height:60px;
+
+    object-fit:cover;
+
+    border-radius:8px;
+
+}
+
+.search-title{
+
+    color:#d93434;
+
+    font-weight:bold;
+
+    letter-spacing:1px;
+
+}
+
+.search-meta{
+
+    color:#9a8a8a;
+
+    font-size:12px;
+
+    margin-top:4px;
+
+}
