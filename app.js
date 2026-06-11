@@ -92,3 +92,7 @@ class="search-card">
 </a>
 
 `).join("");
+
+});
+
+}
