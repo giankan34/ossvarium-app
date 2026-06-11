@@ -948,3 +948,24 @@ img{
     color:#ff6666;
 
 }
+#searchResults{
+
+    margin-top:15px;
+
+}
+
+#searchResults a{
+
+    display:block;
+
+    padding:10px;
+
+    margin-bottom:8px;
+
+    background:#1a1414;
+
+    border:1px solid #2f2424;
+
+    border-radius:8px;
+
+}
