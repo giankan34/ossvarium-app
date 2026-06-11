@@ -110,3 +110,23 @@ class="search-card">
 });
 
 }
+async function discoverRelease(){
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const randomId =
+    Math.floor(
+        Math.random() *
+        releases.length
+    );
+
+    window.location.href =
+    `release.html?id=${randomId}`;
+
+}
