@@ -57,6 +57,18 @@ item.release
 .toLowerCase()
 .includes(query)
 
+||
+
+item.genre
+.toLowerCase()
+.includes(query)
+
+||
+
+item.country
+.toLowerCase()
+.includes(query)
+
 );
 
 resultsBox.innerHTML =
@@ -81,9 +93,11 @@ class="search-card">
 
         <div class="search-meta">
 
-            ${item.release}
-            •
-            ${item.genre}
+           ${item.release}
+           •
+           ${item.genre}
+           •
+           ${item.country} 
 
         </div>
 
