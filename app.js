@@ -65,15 +65,30 @@ matches.map((item,index)=>`
 
 <a
 href="release.html?id=${index}"
-class="similar-link">
+class="search-card">
 
-${item.artist}
-<br>
-<small>${item.release}</small>
+    <img
+    src="${item.cover}"
+    class="search-cover">
+
+    <div>
+
+        <div class="search-title">
+
+            ${item.artist}
+
+        </div>
+
+        <div class="search-meta">
+
+            ${item.release}
+            •
+            ${item.genre}
+
+        </div>
+
+    </div>
 
 </a>
 
 `).join("");
-
-});
-}
