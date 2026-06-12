@@ -120,6 +120,17 @@ async function discoverRelease(){
     screen.innerText =
     "ENTERING THE CATACOMBS...";
 
+    await new Promise(resolve =>
+        setTimeout(resolve, 1200)
+    );
+
+    screen.innerText =
+    "THE UNDERGROUND CHOOSES...";
+
+    await new Promise(resolve =>
+        setTimeout(resolve, 1800)
+    );
+
     const response =
     await fetch(
         "./data/releases.json"
@@ -134,18 +145,7 @@ async function discoverRelease(){
         releases.length
     );
 
-    setTimeout(()=>{
-
-        screen.innerText =
-        "THE UNDERGROUND CHOOSES...";
-
-    }, 1000);
-
-    setTimeout(()=>{
-
-        window.location.href =
-        `release.html?id=${randomId}`;
-
-    }, 2500);
+    window.location.href =
+    `release.html?id=${randomId}`;
 
 }
