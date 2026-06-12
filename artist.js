@@ -153,41 +153,48 @@ async function loadArtist(){
 
         </div>
 
-        <div class="submission-box">
-
-            <h2>
-
         ${artist.similar ? `
 
-        <div class="artist-box">
+<div class="submission-box">
 
-            <h2>☠ SIMILAR ARTISTS</h2>
+    <h2>☠ SIMILAR ARTISTS</h2>
 
-            ${artist.similar.map(name => `
+    <div class="submission-text">
 
-                <div class="similar-item">
-                    ${name}
-                </div>
-
-            `).join('')}
-
-        </div>
-
-        ` : ''}
-                🔗 BANDCAMP
-
-            </h2>
+        ${artist.similar.map(name => `
 
             <a
             class="submit-btn"
-            href="${artist.bandcamp}"
-            target="_blank">
+            href="artist.html?artist=${encodeURIComponent(name)}">
 
-                VISIT BANDCAMP
+                ${name}
 
             </a>
 
-        </div>
+            <br><br>
+
+        `).join('')}
+
+    </div>
+
+</div>
+
+` : ''}
+
+<div class="submission-box">
+
+    <h2>🔗 BANDCAMP</h2>
+
+    <a
+    class="submit-btn"
+    href="${artist.bandcamp}"
+    target="_blank">
+
+        VISIT BANDCAMP
+
+    </a>
+
+</div>
 
         `;
 
