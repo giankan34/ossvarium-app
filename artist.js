@@ -135,17 +135,17 @@ async function loadArtist(){
 
              ${artist.similar.map(name => `
 
-    <a
-    class="submit-btn"
-    href="artist.html?artist=${encodeURIComponent(name)}">
+              <a
+              class="submit-btn"
+              href="artist.html?artist=${encodeURIComponent(name)}">
 
-        ${name}
+                     ${name}
 
-    </a>
+                </a>
 
-    <br><br>
+               <br><br>
 
-`).join('')}  
+           `).join('')}  
 
     </div>
 
