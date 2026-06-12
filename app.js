@@ -112,6 +112,14 @@ class="search-card">
 }
 async function discoverRelease(){
 
+    const screen =
+    document.getElementById(
+        "screenText"
+    );
+
+    screen.innerText =
+    "THE UNDERGROUND CHOOSES...";
+
     const response =
     await fetch(
         "./data/releases.json"
@@ -126,7 +134,11 @@ async function discoverRelease(){
         releases.length
     );
 
-    window.location.href =
-    `release.html?id=${randomId}`;
+    setTimeout(()=>{
+
+        window.location.href =
+        `release.html?id=${randomId}`;
+
+    }, 1500);
 
 }
