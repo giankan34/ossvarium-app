@@ -70,6 +70,21 @@ item.country
 .includes(query)
 
 );
+if(matches.length === 0){
+
+resultsBox.innerHTML = `
+
+<div class="no-results">
+
+    NO RELEASES FOUND IN THE CATACOMBS
+
+</div>
+
+`;
+
+return;
+
+}
 
 resultsBox.innerHTML =
 
