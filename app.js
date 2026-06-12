@@ -112,24 +112,21 @@ class="search-card">
 }
 async function discoverRelease(){
 
-    const screen =
+    const overlay =
     document.getElementById(
-        "screenText"
+        "catacombOverlay"
     );
 
-    screen.innerText =
-    "ENTERING THE CATACOMBS...";
-
-    await new Promise(resolve =>
-        setTimeout(resolve, 1200)
+    const text =
+    document.getElementById(
+        "catacombText"
     );
 
-    screen.innerText =
+    overlay.style.display =
+    "flex";
+
+    text.innerText =
     "THE UNDERGROUND CHOOSES...";
-
-    await new Promise(resolve =>
-        setTimeout(resolve, 1800)
-    );
 
     const response =
     await fetch(
@@ -145,7 +142,11 @@ async function discoverRelease(){
         releases.length
     );
 
-    window.location.href =
-    `release.html?id=${randomId}`;
+    setTimeout(()=>{
+
+        window.location.href =
+        `release.html?id=${randomId}`;
+
+    }, 3000);
 
 }
