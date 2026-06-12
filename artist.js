@@ -133,47 +133,49 @@ async function loadArtist(){
 
             <div class="submission-text">
 
-                ${artistReleases.map(
-                    release => `
+               ${artist.similar.map(name => {
 
-                    <a
-                    class="submit-btn"
-                    href="release.html?id=${releases.indexOf(release)}">
+    const similarArtist =
+    releases.find(
+        r => r.artist === name
+    );
 
-                        ${release.release}
+    if(!similarArtist) return "";
 
-                    </a>
+    return `
 
-                    <br><br>
+    <a
+    href="artist.html?artist=${encodeURIComponent(name)}"
+    style="text-decoration:none;">
 
-                    `
-                ).join("")}
+        <div class="release-card">
+
+            <img
+            src="${similarArtist.artistImage}"
+            class="artist-image"
+            alt="${similarArtist.artist}">
+
+            <div class="release-title">
+
+                ${similarArtist.artist}
+
+            </div>
+
+            <div class="release-meta">
+
+                ${similarArtist.genre}
+                •
+                ${similarArtist.country}
 
             </div>
 
         </div>
 
-        ${artist.similar ? `
+    </a>
 
-<div class="submission-box">
+    `;
 
-    <h2>☠ SIMILAR ARTISTS</h2>
-
-    <div class="submission-text">
-
-        ${artist.similar.map(name => `
-
-            <a
-            class="submit-btn"
-            href="artist.html?artist=${encodeURIComponent(name)}">
-
-                ${name}
-
-            </a>
-
-            <br><br>
-
-        `).join('')}
+}).join('')} 
 
     </div>
 
