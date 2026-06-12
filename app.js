@@ -118,7 +118,7 @@ async function discoverRelease(){
     );
 
     screen.innerText =
-    "THE UNDERGROUND CHOOSES...";
+    "ENTERING THE CATACOMBS...";
 
     const response =
     await fetch(
@@ -136,9 +136,16 @@ async function discoverRelease(){
 
     setTimeout(()=>{
 
+        screen.innerText =
+        "THE UNDERGROUND CHOOSES...";
+
+    }, 1000);
+
+    setTimeout(()=>{
+
         window.location.href =
         `release.html?id=${randomId}`;
 
-    }, 1500);
+    }, 2500);
 
 }
