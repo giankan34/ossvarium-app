@@ -284,7 +284,7 @@ function addToCollection(id){
 
         alert(
             "ADDED TO YOUR COLLECTION"
-        ); //
+        ); 
 
     }else{
 
