@@ -169,6 +169,15 @@ console.log("release.js started");
             ⭐ ADD TO COLLECTION
 
              </button>
+           
+            <button
+            class="btn"
+            onclick="removeFromCollection(${id})">
+
+            ❌ REMOVE FROM COLLECTION
+
+            </button> 
+      
         </div>
         
       <div class="submission-box">
@@ -284,5 +293,28 @@ function addToCollection(id){
         );
 
     }
+ function removeFromCollection(id){
 
+    let collection =
+    JSON.parse(
+        localStorage.getItem(
+            "ossvariumCollection"
+        ) || "[]"
+    );
+
+    collection =
+    collection.filter(
+        item => item !== id
+    );
+
+    localStorage.setItem(
+        "ossvariumCollection",
+        JSON.stringify(collection)
+    );
+
+    alert(
+        "REMOVED FROM COLLECTION"
+    );
+
+ }
 }
