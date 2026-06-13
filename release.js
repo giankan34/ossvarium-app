@@ -162,6 +162,13 @@ console.log("release.js started");
 
             </button>
 
+            <button
+            class="btn"
+            onclick="addToCollection(${id})">
+
+            ⭐ ADD TO COLLECTION
+
+             </button>
         </div>
         
       <div class="submission-box">
@@ -246,3 +253,36 @@ console.log("release.js started");
 }
 
 loadRelease();
+function addToCollection(id){
+
+    let collection =
+    JSON.parse(
+        localStorage.getItem(
+            "ossvariumCollection"
+        ) || "[]"
+    );
+
+    if(
+        !collection.includes(id)
+    ){
+
+        collection.push(id);
+
+        localStorage.setItem(
+            "ossvariumCollection",
+            JSON.stringify(collection)
+        );
+
+        alert(
+            "ADDED TO YOUR COLLECTION"
+        );
+
+    }else{
+
+        alert(
+            "ALREADY IN COLLECTION"
+        );
+
+    }
+
+}
