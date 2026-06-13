@@ -123,35 +123,63 @@ async function loadArtist(){
 </div>
         </div>
 
-        <div class="submission-box">
+       <div class="submission-box">
 
-            <h2>
+    <h2>
 
-                📀 RELEASES
+        📀 RELEASES
 
-            </h2>
+    </h2>
 
-            <div class="submission-text">
+    <div class="submission-text">
 
-             ${artist.similar.map(name => `
+        ${artistReleases.map(
+            release => `
 
-              <a
-              class="submit-btn"
-              href="artist.html?artist=${encodeURIComponent(name)}">
+            <a
+            class="submit-btn"
+            href="release.html?id=${releases.indexOf(release)}">
 
-                     ${name}
+                ${release.release}
 
-                </a>
+            </a>
 
-               <br><br>
+            <br><br>
 
-           `).join('')}  
+            `
+        ).join("")}
 
     </div>
 
 </div>
 
-` : ''}
+${artist.similar ? `
+
+<div class="submission-box">
+
+    <h2>☠ SIMILAR ARTISTS</h2>
+
+    <div class="submission-text">
+
+        ${artist.similar.map(name => `
+
+            <a
+            class="submit-btn"
+            href="artist.html?artist=${encodeURIComponent(name)}">
+
+                ${name}
+
+            </a>
+
+            <br><br>
+
+        `).join('')}
+
+    </div>
+
+</div>
+
+` : ''} 
 
 <div class="submission-box">
 
