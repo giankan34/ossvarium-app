@@ -1059,3 +1059,18 @@ img{
     border-radius:8px;
 
 }
+.similar-item,
+.submission-box .submit-btn{
+
+    transition:0.3s;
+
+}
+
+.submission-box .submit-btn:hover{
+
+    transform:scale(1.05);
+
+    box-shadow:
+    0 0 10px #8a2b2b;
+
+}
