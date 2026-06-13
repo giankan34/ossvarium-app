@@ -208,19 +208,33 @@ async function loadCollection(){
 
         return `
 
-        <a
-        href="release.html?id=${id}"
-        class="submit-btn">
+<a
+href="release.html?id=${id}"
+style="text-decoration:none;">
 
-            ${release.artist}
-            —
+    <div class="release-card">
+
+        <img
+        src="${release.cover}"
+        class="release-cover">
+
+        <div class="release-title">
+
             ${release.release}
 
-        </a>
+        </div>
 
-        <br><br>
+        <div class="release-artist">
 
-        `;
+            ${release.artist}
+
+        </div>
+
+    </div>
+
+</a>
+
+`;
 
     }).join("");
 
