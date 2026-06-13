@@ -317,3 +317,4 @@ function addToCollection(id){
     );
 
  }
+}
