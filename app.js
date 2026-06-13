@@ -165,3 +165,65 @@ async function discoverRelease(){
     }, 3000);
 
 }
+async function loadCollection(){
+
+    const container =
+    document.getElementById(
+        "collectionContainer"
+    );
+
+    if(!container) return;
+
+    const collection =
+    JSON.parse(
+        localStorage.getItem(
+            "ossvariumCollection"
+        ) || "[]"
+    );
+
+    if(collection.length === 0){
+
+        container.innerHTML =
+        "NO RELEASES COLLECTED";
+
+        return;
+
+    }
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    container.innerHTML =
+    collection.map(id => {
+
+        const release =
+        releases[id];
+
+        if(!release) return "";
+
+        return `
+
+        <a
+        href="release.html?id=${id}"
+        class="submit-btn">
+
+            ${release.artist}
+            —
+            ${release.release}
+
+        </a>
+
+        <br><br>
+
+        `;
+
+    }).join("");
+
+}
+
+loadCollection();
