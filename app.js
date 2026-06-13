@@ -172,6 +172,11 @@ async function loadCollection(){
         "collectionContainer"
     );
 
+    const title =
+    document.getElementById(
+        "collectionTitle"
+    );
+    
     if(!container) return;
 
     const collection =
@@ -183,10 +188,13 @@ async function loadCollection(){
 
     if(collection.length === 0){
 
-        container.innerHTML =
-        "NO RELEASES COLLECTED";
+    title.innerHTML =
+    "⚔ MY COLLECTION ⚔";
 
-        return;
+    container.innerHTML =
+    "NO RELEASES COLLECTED";
+
+    return;
 
     }
 
@@ -198,6 +206,11 @@ async function loadCollection(){
     const releases =
     await response.json();
 
+    title.innerHTML =
+
+    `⚔ MY COLLECTION ⚔
+    (${collection.length})`;
+    
     container.innerHTML =
     collection.map(id => {
 
