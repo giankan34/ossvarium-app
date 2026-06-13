@@ -290,7 +290,7 @@ function addToCollection(id){
 
         alert(
             "ALREADY IN COLLECTION"
-        );
+        ); //
 
     }
  function removeFromCollection(id){
