@@ -284,7 +284,7 @@ function addToCollection(id){
 
         alert(
             "ADDED TO YOUR COLLECTION"
-        );
+        ); //
 
     }else{
 
@@ -317,4 +317,3 @@ function addToCollection(id){
     );
 
  }
-}
