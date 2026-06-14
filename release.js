@@ -306,7 +306,7 @@ function removeFromCollection(id){
     collection =
     collection.filter(
         item =>
-        Number(item) !== Number(id)
+        String(item) !== String(id)
     );
 
     localStorage.setItem(
@@ -318,33 +318,6 @@ function removeFromCollection(id){
         "REMOVED FROM COLLECTION"
     );
 
-}
- function removeFromCollection(id){
+    location.reload();
 
-    let collection =
-    JSON.parse(
-        localStorage.getItem(
-            "ossvariumCollection"
-        ) || "[]"
-    );
-
-    collection =
-    collection.filter(
-        item =>
-        Number(item) !== Number(id)
-    );
-   console.log("Before:", JSON.parse(localStorage.getItem("ossvariumCollection") || "[]"));
-   console.log("Removing:", id);
-   console.log("After:", collection);
-    
-     localStorage.setItem(
-        "ossvariumCollection",
-        JSON.stringify(collection)
-    );
-
-    alert(
-        "REMOVED FROM COLLECTION"
-    );
-
- }
 }
