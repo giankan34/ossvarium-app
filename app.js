@@ -281,20 +281,26 @@ async function loadCountries(){
 
     vault.innerHTML =
 
-    countries.map(country => `
+countries.map(country => {
+
+    const count =
+    releases.filter(
+        item =>
+        item.country === country
+    ).length;
+
+    return `
 
     <a
     class="submit-btn"
     href="country.html?country=${encodeURIComponent(country)}">
 
-        🌍 ${country}
+        🌍 ${country} (${count})
 
     </a>
 
     <br><br>
 
-    `).join("");
+    `;
 
-}
-
-loadCountries();
+}).join("");
