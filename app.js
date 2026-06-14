@@ -254,3 +254,47 @@ style="text-decoration:none;">
 }
 
 loadCollection();
+
+async function loadCountries(){
+
+    const vault =
+    document.getElementById(
+        "countryVault"
+    );
+
+    if(!vault) return;
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const countries =
+    [...new Set(
+        releases.map(
+            item => item.country
+        )
+    )];
+
+    vault.innerHTML =
+
+    countries.map(country => `
+
+    <a
+    class="submit-btn"
+    href="country.html?country=${encodeURIComponent(country)}">
+
+        🌍 ${country}
+
+    </a>
+
+    <br><br>
+
+    `).join("");
+
+}
+
+loadCountries();
