@@ -294,9 +294,6 @@ function addToCollection(id){
 
     }
 
-}
-
-
 function removeFromCollection(id){
 
     let collection =
