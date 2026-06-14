@@ -307,8 +307,11 @@ function addToCollection(id){
         item =>
         Number(item) !== Number(id)
     );
-
-    localStorage.setItem(
+   console.log("Before:", JSON.parse(localStorage.getItem("ossvariumCollection") || "[]"));
+   console.log("Removing:", id);
+   console.log("After:", collection);
+    
+     localStorage.setItem(
         "ossvariumCollection",
         JSON.stringify(collection)
     );
