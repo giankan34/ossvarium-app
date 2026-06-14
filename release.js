@@ -284,15 +284,44 @@ function addToCollection(id){
 
         alert(
             "ADDED TO YOUR COLLECTION"
-        ); 
+        );
 
     }else{
 
         alert(
             "ALREADY IN COLLECTION"
-        ); //
+        );
 
     }
+
+}
+
+
+function removeFromCollection(id){
+
+    let collection =
+    JSON.parse(
+        localStorage.getItem(
+            "ossvariumCollection"
+        ) || "[]"
+    );
+
+    collection =
+    collection.filter(
+        item =>
+        Number(item) !== Number(id)
+    );
+
+    localStorage.setItem(
+        "ossvariumCollection",
+        JSON.stringify(collection)
+    );
+
+    alert(
+        "REMOVED FROM COLLECTION"
+    );
+
+}
  function removeFromCollection(id){
 
     let collection =
