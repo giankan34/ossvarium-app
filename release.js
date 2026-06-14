@@ -304,7 +304,8 @@ function addToCollection(id){
 
     collection =
     collection.filter(
-        item => item !== id
+        item =>
+        Number(item) !== Number(id)
     );
 
     localStorage.setItem(
