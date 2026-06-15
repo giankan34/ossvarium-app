@@ -302,5 +302,8 @@ countries.map(country => {
     <br><br>
 
     `;
-
+    } \\
+ 
 }).join("");
+
+loadcountries();
