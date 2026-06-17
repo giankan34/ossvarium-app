@@ -309,3 +309,52 @@ async function loadCountries(){
 
 loadCountries();
 loadCollection();
+
+function loadQuote(){
+
+    const quoteBox =
+    document.getElementById(
+        "catacombQuote"
+    );
+
+    if(!quoteBox) return;
+
+    const quotes = [
+
+        "THE UNDERGROUND REMEMBERS.",
+
+        "ONLY THE DEVOTED SHALL DESCEND.",
+
+        "THE CATACOMBS NEVER SLEEP.",
+
+        "BURIED SOUNDS NEVER DIE.",
+
+        "SUPPORT THE UNDERGROUND OR BECOME THE MAINSTREAM.",
+
+        "IN DARKNESS WE DISCOVER.",
+
+        "THE UNDERGROUND CHOOSES.",
+
+        "EVERY RELEASE HAS A TOMB.",
+
+        "FROM THE DEPTHS OF THE CATACOMBS.",
+
+        "NO TRENDS. NO HYPE. ONLY MUSIC."
+
+    ];
+
+    const randomQuote =
+
+    quotes[
+        Math.floor(
+            Math.random() *
+            quotes.length
+        )
+    ];
+
+    quoteBox.innerText =
+    randomQuote;
+
+}
+
+loadQuote();
