@@ -309,6 +309,3 @@ async function loadCountries(){
 
 loadCountries();
 loadCollection();
-loadCountries();
-
-alert("APP LOADED");
