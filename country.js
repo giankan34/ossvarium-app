@@ -35,6 +35,51 @@ async function loadCountry(){
         release.country === country
     );
 
+    const stats =
+    document.getElementById(
+    "countryStats"
+    );
+
+    const uniqueArtists =
+    new Set(
+        matches.map(
+            item => item.artist
+       )
+   ).size;
+
+    const uniqueGenres =
+    new Set(
+        matches.map(
+            item => item.genre
+       )
+   ).size;
+
+   stats.innerHTML = `
+
+   <div class="submission-box">
+
+       <h2>☠ COUNTRY STATS ☠</h2>
+
+       <div class="submission-text">
+
+           RELEASES:
+           ${matches.length}
+
+           <br><br>
+
+           ARTISTS:
+           ${uniqueArtists}
+
+           <br><br>
+
+           GENRES:
+           ${uniqueGenres}
+
+       </div>
+
+   </div>
+
+`;
     countryContainer.innerHTML =
 
     matches.map((release,index)=>`
