@@ -307,6 +307,58 @@ async function loadCountries(){
 
 }
 
+async function loadGenres(){
+
+    const vault =
+    document.getElementById(
+        "genreVault"
+    );
+
+    if(!vault) return;
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const genres =
+    [...new Set(
+        releases.map(
+            item => item.genre
+        )
+    )];
+
+    vault.innerHTML =
+
+    genres.map(genre => {
+
+        const count =
+        releases.filter(
+            item =>
+            item.genre === genre
+        ).length;
+
+        return `
+
+        <a
+        class="submit-btn"
+        href="genre.html?genre=${encodeURIComponent(genre)}">
+
+            ☠ ${genre} (${count})
+
+        </a>
+
+        <br><br>
+
+        `;
+
+    }).join("");
+
+}
+
 loadCountries();
 loadCollection();
 loadGenres();
