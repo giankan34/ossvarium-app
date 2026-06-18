@@ -309,6 +309,7 @@ async function loadCountries(){
 
 loadCountries();
 loadCollection();
+loadGenres();
 
 function loadQuote(){
 
