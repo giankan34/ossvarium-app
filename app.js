@@ -359,9 +359,63 @@ async function loadGenres(){
 
 }
 
+async function loadArtists(){
+
+    const vault =
+    document.getElementById(
+        "artistVault"
+    );
+
+    if(!vault) return;
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const artists =
+    [...new Set(
+        releases.map(
+            item => item.artist
+        )
+    )];
+
+    vault.innerHTML =
+
+    artists.map(artist => {
+
+        const count =
+        releases.filter(
+            item =>
+            item.artist === artist
+        ).length;
+
+        return `
+
+        <a
+        class="submit-btn"
+        href="artist.html?artist=${encodeURIComponent(artist)}">
+
+            👤 ${artist} (${count})
+
+        </a>
+
+        <br><br>
+
+        `;
+
+    }).join("");
+
+}
+
 loadCountries();
 loadCollection();
 loadGenres();
+loadArtists();
+loadQuote();
 
 function loadQuote(){
 
