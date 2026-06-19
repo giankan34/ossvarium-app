@@ -165,6 +165,58 @@ async function discoverRelease(){
     }, 3000);
 
 }
+ async function discoverArtist(){
+
+    const overlay =
+    document.getElementById(
+        "catacombOverlay"
+    );
+
+    const text =
+    document.getElementById(
+        "catacombText"
+    );
+
+    overlay.style.display =
+    "flex";
+
+    text.innerText =
+    "THE CATACOMBS SEEK AN ARTIST...";
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const artists =
+    [...new Set(
+        releases.map(
+            item => item.artist
+        )
+    )];
+
+    const randomArtist =
+
+    artists[
+        Math.floor(
+            Math.random() *
+            artists.length
+        )
+    ];
+
+    setTimeout(()=>{
+
+        window.location.href =
+
+        `artist.html?artist=${encodeURIComponent(randomArtist)}`;
+
+    }, 3000);
+
+ }
+
 async function loadCollection(){
 
     const container =
