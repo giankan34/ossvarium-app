@@ -559,11 +559,85 @@ async function loadArtists(){
     }).join("");
 
 }
+async function loadCatacombMap(){
+
+    const map =
+    document.getElementById(
+        "catacombMap"
+    );
+
+    if(!map) return;
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const artists =
+    new Set(
+        releases.map(
+            item => item.artist
+        )
+    ).size;
+
+    const genres =
+    new Set(
+        releases.map(
+            item => item.genre
+        )
+    ).size;
+
+    const countries =
+    new Set(
+        releases.map(
+            item => item.country
+        )
+    ).size;
+
+    const collection =
+    JSON.parse(
+        localStorage.getItem(
+            "ossvariumCollection"
+        ) || "[]"
+    );
+
+    map.innerHTML = `
+
+    📀 RELEASES:
+    ${releases.length}
+
+    <br><br>
+
+    👤 ARTISTS:
+    ${artists}
+
+    <br><br>
+
+    ☠ GENRES:
+    ${genres}
+
+    <br><br>
+
+    🌍 COUNTRIES:
+    ${countries}
+
+    <br><br>
+
+    ⚔ COLLECTED:
+    ${collection.length}
+
+    `;
+
+}
 
 loadCountries();
 loadCollection();
 loadGenres();
 loadArtists();
+loadCatacomdmap();
 loadQuote();
 
 function loadQuote(){
