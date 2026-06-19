@@ -637,7 +637,7 @@ loadCountries();
 loadCollection();
 loadGenres();
 loadArtists();
-loadCatacombmap();
+loadCatacombMap();
 loadQuote();
 
 function loadQuote(){
