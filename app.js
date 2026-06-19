@@ -238,6 +238,42 @@ async function loadCollection(){
         ) || "[]"
     );
 
+    const achievementBox =
+document.getElementById(
+    "achievementBox"
+);
+
+if(achievementBox){
+
+    let title =
+
+    "UNINITIATED";
+
+    if(collection.length >= 1)
+    title =
+    "INITIATE OF THE CATACOMBS";
+
+    if(collection.length >= 5)
+    title =
+    "UNDERGROUND SEEKER";
+
+    if(collection.length >= 10)
+    title =
+    "KEEPER OF THE OSSVARIUM";
+
+    if(collection.length >= 20)
+    title =
+    "CATACOMB CURATOR";
+
+    if(collection.length >= 50)
+    title =
+    "LORD OF THE OSSVARIUM";
+
+    achievementBox.innerHTML =
+
+    `🏆 ${title}`;
+}
+    
     if(collection.length === 0){
 
     title.innerHTML =
