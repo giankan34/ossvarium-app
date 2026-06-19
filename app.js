@@ -269,9 +269,70 @@ if(achievementBox){
     title =
     "LORD OF THE OSSVARIUM";
 
-    achievementBox.innerHTML =
+    let nextRank = "";
+let progress = "";
 
-    `🏆 ${title}`;
+if(collection.length < 5){
+
+    nextRank =
+    "UNDERGROUND SEEKER";
+
+    progress =
+    `${collection.length}/5`;
+
+}
+else if(collection.length < 10){
+
+    nextRank =
+    "KEEPER OF THE OSSVARIUM";
+
+    progress =
+    `${collection.length}/10`;
+
+}
+else if(collection.length < 20){
+
+    nextRank =
+    "CATACOMB CURATOR";
+
+    progress =
+    `${collection.length}/20`;
+
+}
+else if(collection.length < 50){
+
+    nextRank =
+    "LORD OF THE OSSVARIUM";
+
+    progress =
+    `${collection.length}/50`;
+
+}
+else{
+
+    nextRank =
+    "MAX RANK ACHIEVED";
+
+    progress =
+    "∞";
+
+}
+
+achievementBox.innerHTML = `
+
+🏆 ${title}
+
+<br><br>
+
+<span style="font-size:12px;">
+
+NEXT RANK:
+${nextRank}
+(${progress})
+
+</span>
+
+`;
 }
     
     if(collection.length === 0){
