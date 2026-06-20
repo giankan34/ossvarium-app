@@ -239,9 +239,14 @@ async function loadCollection(){
     );
 
     const achievementBox =
-document.getElementById(
+    document.getElementById(
     "achievementBox"
-);
+    );
+   
+    const secretBox =
+    document.getElementById(
+    "secretAchievements"
+    );
 
 if(achievementBox){
 
