@@ -890,6 +890,78 @@ async function loadCatacombChallenge(){
 
 }
 
+function loadCatacombStreak(){
+
+    const box =
+    document.getElementById(
+        "catacombStreak"
+    );
+
+    if(!box) return;
+
+    const today =
+    new Date()
+    .toDateString();
+
+    const lastVisit =
+    localStorage.getItem(
+        "ossvariumLastVisit"
+    );
+
+    let streak =
+    parseInt(
+        localStorage.getItem(
+            "ossvariumStreak"
+        ) || "0"
+    );
+
+    if(lastVisit !== today){
+
+        streak++;
+
+        localStorage.setItem(
+            "ossvariumStreak",
+            streak
+        );
+
+        localStorage.setItem(
+            "ossvariumLastVisit",
+            today
+        );
+
+    }
+
+    let title =
+    "CATACOMB WANDERER";
+
+    if(streak >= 7)
+    title =
+    "CATACOMB ADDICT";
+
+    if(streak >= 30)
+    title =
+    "LORD OF THE DEPTHS";
+
+    box.innerHTML = `
+
+    DAYS VISITED:
+
+    <br><br>
+
+    <b>${streak}</b>
+
+    <br><br>
+
+    TITLE:
+
+    <br><br>
+
+    ${title}
+
+    `;
+
+}
+
 loadCountries();
 loadCollection();
 loadGenres();
@@ -898,6 +970,7 @@ loadCatacombMap();
 loadReleaseOfTheDay();
 loadArtistOfTheDay();
 loadCatacombChallenge();
+loadCatacombStreak();
 loadQuote();
 
 function loadQuote(){
