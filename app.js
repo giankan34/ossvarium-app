@@ -728,11 +728,71 @@ async function loadCatacombMap(){
 
 }
 
+async function loadReleaseOfTheDay(){
+
+    const box =
+    document.getElementById(
+        "releaseOfTheDay"
+    );
+
+    if(!box) return;
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const today =
+    new Date().getDate();
+
+    const release =
+    releases[
+        today % releases.length
+    ];
+
+    box.innerHTML = `
+
+    <img
+    src="${release.cover}"
+    style="
+    width:150px;
+    border-radius:10px;
+    margin-bottom:10px;
+    ">
+
+    <br>
+
+    <b>${release.artist}</b>
+
+    <br>
+
+    ${release.release}
+
+    <br><br>
+
+    <a
+    class="submit-btn"
+    href="release.html?id=${
+        releases.indexOf(release)
+    }">
+
+        ⚔ ENTER TOMB ⚔
+
+    </a>
+
+    `;
+
+}
+
 loadCountries();
 loadCollection();
 loadGenres();
 loadArtists();
 loadCatacombMap();
+loadReleaseOfTheDay();
 loadQuote();
 
 function loadQuote(){
