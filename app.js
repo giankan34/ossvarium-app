@@ -837,6 +837,59 @@ async function loadArtistOfTheDay(){
 
 }
 
+async function loadCatacombChallenge(){
+
+    const box =
+    document.getElementById(
+        "catacombChallenge"
+    );
+
+    if(!box) return;
+
+    const challenges = [
+
+        "🌍 Collect a release from a new country",
+
+        "☠ Discover a new genre",
+
+        "👤 Visit an artist page",
+
+        "📀 Add a release to your collection",
+
+        "🏛 Explore the Hall of Fame",
+
+        "⚔ Reach your next rank",
+
+        "💀 Enter a random tomb",
+
+        "🎸 Discover an underground band",
+
+        "🌎 Explore the Country Vault",
+
+        "☠ Search for something unknown"
+
+    ];
+
+    const today =
+    new Date().getDate();
+
+    const challenge =
+    challenges[
+        today % challenges.length
+    ];
+
+    box.innerHTML = `
+
+    <b>TODAY'S MISSION</b>
+
+    <br><br>
+
+    ${challenge}
+
+    `;
+
+}
+
 loadCountries();
 loadCollection();
 loadGenres();
@@ -844,6 +897,7 @@ loadArtists();
 loadCatacombMap();
 loadReleaseOfTheDay();
 loadArtistOfTheDay();
+loadCatacombChallenge();
 loadQuote();
 
 function loadQuote(){
