@@ -787,12 +787,63 @@ async function loadReleaseOfTheDay(){
 
 }
 
+async function loadArtistOfTheDay(){
+
+    const box =
+    document.getElementById(
+        "artistOfTheDay"
+    );
+
+    if(!box) return;
+
+    const response =
+    await fetch(
+        "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const artists =
+    [...new Set(
+        releases.map(
+            item => item.artist
+        )
+    )];
+
+    const today =
+    new Date().getDate();
+
+    const artist =
+    artists[
+        today % artists.length
+    ];
+
+    box.innerHTML = `
+
+    <b>${artist}</b>
+
+    <br><br>
+
+    <a
+    class="submit-btn"
+    href="artist.html?artist=${encodeURIComponent(artist)}">
+
+        👤 ENTER CRYPT 👤
+
+    </a>
+
+    `;
+
+}
+
 loadCountries();
 loadCollection();
 loadGenres();
 loadArtists();
 loadCatacombMap();
 loadReleaseOfTheDay();
+loadArtistOfTheDay();
 loadQuote();
 
 function loadQuote(){
