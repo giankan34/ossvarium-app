@@ -962,6 +962,84 @@ function loadCatacombStreak(){
 
 }
 
+function loadCatacombLevel(){
+
+    const box =
+    document.getElementById(
+        "catacombLevel"
+    );
+
+    if(!box) return;
+
+    const collection =
+    JSON.parse(
+        localStorage.getItem(
+            "ossvariumCollection"
+        ) || "[]"
+    );
+
+    const xp =
+    collection.length;
+
+    let level =
+    1;
+
+    let title =
+    "NECROPHYTE";
+
+    let nextXp =
+    10;
+
+    if(xp >= 10){
+
+        level = 2;
+        title = "GRAVE DIGGER";
+        nextXp = 25;
+
+    }
+
+    if(xp >= 25){
+
+        level = 3;
+        title = "TOMB KEEPER";
+        nextXp = 50;
+
+    }
+
+    if(xp >= 50){
+
+        level = 4;
+        title = "CATACOMB LORD";
+        nextXp = 100;
+
+    }
+
+    if(xp >= 100){
+
+        level = 5;
+        title = "OSSVARIUM IMMORTAL";
+        nextXp = "∞";
+
+    }
+
+    box.innerHTML = `
+
+    LEVEL ${level}
+
+    <br><br>
+
+    🏛 ${title}
+
+    <br><br>
+
+    XP:
+
+    ${xp} / ${nextXp}
+
+    `;
+
+}
+
 loadCountries();
 loadCollection();
 loadGenres();
@@ -971,6 +1049,7 @@ loadReleaseOfTheDay();
 loadArtistOfTheDay();
 loadCatacombChallenge();
 loadCatacombStreak();
+loadCatacombLevel
 loadQuote();
 
 function loadQuote(){
