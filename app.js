@@ -342,6 +342,32 @@ ${nextRank}
 
     const secrets = [];
 
+    const response =
+    await fetch(
+    "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+
+    const countriesCollected =
+    new Set();
+
+    collection.forEach(id => {
+
+        const release =
+        releases[id];
+
+        if(release){
+
+            countriesCollected.add(
+                release.country
+           );
+
+        }
+
+});
+        
     if(collection.length >= 3){
 
         secrets.push(
@@ -366,6 +392,21 @@ ${nextRank}
 
     }
 
+   if(countriesCollected.size >= 3){
+
+    secrets.push(
+        "🌍 WORLD EXPLORER"
+    );
+
+}
+
+if(countriesCollected.size >= 10){
+
+    secrets.push(
+        "🌎 GLOBAL NECROMANCER"
+    );
+
+}
     secretBox.innerHTML =
 
     secrets.length > 0
