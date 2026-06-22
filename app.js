@@ -1049,7 +1049,7 @@ loadReleaseOfTheDay();
 loadArtistOfTheDay();
 loadCatacombChallenge();
 loadCatacombStreak();
-loadCatacombLevel
+loadCatacombLevel();
 loadQuote();
 
 function loadQuote(){
