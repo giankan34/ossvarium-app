@@ -450,7 +450,7 @@ if(countriesCollected.size >= 10){
 
     }).length;
 
-    if(denmarkCount >= 3){
+    if(denmarkCount >= 1){
 
         relics.push(
             "🌍 RELIC OF DENMARK"
