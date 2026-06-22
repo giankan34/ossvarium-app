@@ -1022,21 +1022,53 @@ function loadCatacombLevel(){
 
     }
 
-    box.innerHTML = `
+    const percent =
 
-    LEVEL ${level}
+nextXp === "∞"
 
-    <br><br>
+? 100
 
-    🏛 ${title}
+: Math.floor(
+    (xp / nextXp) * 100
+);
 
-    <br><br>
+box.innerHTML = `
 
-    XP:
+LEVEL ${level}
 
-    ${xp} / ${nextXp}
+<br><br>
 
-    `;
+🏛 ${title}
+
+<br><br>
+
+XP:
+${xp} / ${nextXp}
+
+<br><br>
+
+<div style="
+width:100%;
+height:20px;
+border:1px solid #8a2b2b;
+background:#111;
+">
+
+<div style="
+width:${percent}%;
+height:100%;
+background:#8a2b2b;
+">
+
+</div>
+
+</div>
+
+<br>
+
+${percent}%
+
+`;
 
 }
 
