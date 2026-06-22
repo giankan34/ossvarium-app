@@ -248,6 +248,11 @@ async function loadCollection(){
     "secretAchievements"
     );
 
+    const relicBox =
+document.getElementById(
+    "relicBox"
+);
+    
 if(achievementBox){
 
     let title =
@@ -428,7 +433,52 @@ if(countriesCollected.size >= 10){
     "";
 
     }
-}
+
+ if(relicBox){
+
+    const relics = [];
+
+    const denmarkCount =
+    collection.filter(id => {
+
+        const release =
+        releases[id];
+
+        return release &&
+        release.country ===
+        "Denmark";
+
+    }).length;
+
+    if(denmarkCount >= 3){
+
+        relics.push(
+            "🌍 RELIC OF DENMARK"
+        );
+
+    }
+
+    relicBox.innerHTML =
+
+    relics.length > 0
+
+    ?
+
+    `
+
+    <b>🔥 RELICS OF THE OSSVARIUM 🔥</b>
+
+    <br><br>
+
+    ${relics.join("<br><br>")}
+
+    `
+
+    :
+
+    "";
+
+        }
     
     if(collection.length === 0){
 
