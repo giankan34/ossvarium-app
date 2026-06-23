@@ -434,6 +434,7 @@ if(countriesCollected.size >= 10){
 
     }
 }
+/*
  if(relicBox){
 
     const relics = [];
@@ -479,7 +480,7 @@ if(countriesCollected.size >= 10){
     "";
 
         }
-    
+    */
     if(collection.length === 0){
 
     title.innerHTML =
