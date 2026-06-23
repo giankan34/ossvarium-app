@@ -238,6 +238,14 @@ async function loadCollection(){
         ) || "[]"
     );
 
+    const response =
+    await fetch(
+    "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+    
     const achievementBox =
     document.getElementById(
     "achievementBox"
@@ -347,14 +355,6 @@ ${nextRank}
 
     const secrets = [];
 
-    const response =
-    await fetch(
-    "./data/releases.json"
-    );
-
-    const releases =
-    await response.json();
-
     const countriesCollected =
     new Set();
 
@@ -434,7 +434,7 @@ if(countriesCollected.size >= 10){
 
     }
 }
-/*
+
  if(relicBox){
 
     const relics = [];
@@ -480,7 +480,7 @@ if(countriesCollected.size >= 10){
     "";
 
         }
-    */
+    
     if(collection.length === 0){
 
     title.innerHTML =
