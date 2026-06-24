@@ -460,6 +460,63 @@ if(countriesCollected.size >= 10){
 
     }
 
+     const swedenCount =
+collection.filter(id => {
+
+    const release =
+    releases[id];
+
+    return release &&
+    release.country ===
+    "Sweden";
+
+}).length;
+
+if(swedenCount >= 1){
+
+    relics.push(
+        "🇸🇪 RELIC OF SWEDEN"
+    );
+
+}
+     const finlandCount =
+collection.filter(id => {
+
+    const release =
+    releases[id];
+
+    return release &&
+    release.country ===
+    "Finland";
+
+}).length;
+
+if(finlandCount >= 1){
+
+    relics.push(
+        "🇫🇮 RELIC OF FINLAND"
+    );
+
+}
+     const norwayCount =
+collection.filter(id => {
+
+    const release =
+    releases[id];
+
+    return release &&
+    release.country ===
+    "Norway";
+
+}).length;
+
+if(norwayCount >= 1){
+
+    relics.push(
+        "🇳🇴 RELIC OF NORWAY"
+    );
+
+}
     relicBox.innerHTML =
 
     relics.length > 0
