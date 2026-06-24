@@ -459,9 +459,16 @@ if(countriesCollected.size >= 10){
         );
 
     }
+     if(denmarkCount >= 3){
+
+    relics.push(
+        "💀 DANISH DEATH CULT"
+    );
+
+     }
 
      const swedenCount =
-collection.filter(id => {
+     collection.filter(id => {
 
     const release =
     releases[id];
