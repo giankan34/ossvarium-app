@@ -433,6 +433,8 @@ if(countriesCollected.size >= 10){
     "";
 
     }
+
+}
 /*
  if(relicBox){
 
