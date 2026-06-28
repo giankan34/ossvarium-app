@@ -1278,3 +1278,34 @@ function loadQuote(){
 }
 
 loadQuote();
+
+function showAchievementPopup(text){
+
+    const popup =
+    document.getElementById(
+        "achievementPopup"
+    );
+
+    if(!popup) return;
+
+    popup.innerHTML = `
+
+    🏆 ACHIEVEMENT UNLOCKED
+
+    <br><br>
+
+    ${text}
+
+    `;
+
+    popup.style.display =
+    "block";
+
+    setTimeout(() => {
+
+        popup.style.display =
+        "none";
+
+    },3000);
+
+}
