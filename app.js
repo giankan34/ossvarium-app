@@ -340,6 +340,16 @@ else{
 
 }
 
+const currentXP = collection.length * 10;
+
+const maxXP = 50;
+
+const xpPercent =
+Math.min(
+(currentXP / maxXP) * 100,
+100
+);
+    
 achievementBox.innerHTML = `
 
 🏆 ${title}
