@@ -357,7 +357,7 @@ achievementBox.innerHTML = `
 <br><br>
 
 ⭐ XP:
-${currentxp}
+${currentXP}
 
 <br><br>
 
