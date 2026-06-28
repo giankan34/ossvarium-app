@@ -346,6 +346,11 @@ achievementBox.innerHTML = `
 
 <br><br>
 
+⭐ XP:
+${xp}
+
+<br><br>
+
 <span style="font-size:12px;">
 
 NEXT RANK:
