@@ -238,6 +238,10 @@ async function loadCollection(){
         ) || "[]"
     );
 
+    const xp =
+
+    collection.length * 10;
+    
     const response =
     await fetch(
     "./data/releases.json"
