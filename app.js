@@ -357,7 +357,26 @@ achievementBox.innerHTML = `
 <br><br>
 
 ⭐ XP:
-${xp}
+${currentxp}
+
+<br><br>
+
+<div style="
+width:100%;
+height:10px;
+background:#2b2b2b;
+border-radius:10px;
+overflow:hidden;
+">
+
+<div style="
+width:${xpPercent}%;
+height:100%;
+background:linear-gradient(to right,#b8860b,#ffd700);
+">
+</div>
+
+</div>
 
 <br><br>
 
