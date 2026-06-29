@@ -364,3 +364,64 @@ if(norwayCount >= 1){
     "";
 
  }
+
+if(collection.length === 0){
+
+    title.innerHTML =
+    "⚔ MY COLLECTION ⚔";
+
+    container.innerHTML =
+    "NO RELEASES COLLECTED";
+
+    return;
+
+    }
+
+    title.innerHTML =
+
+    `⚔ MY COLLECTION ⚔
+    (${collection.length})`;
+    
+    container.innerHTML =
+    collection.map(id => {
+
+        const release =
+        releases[id];
+
+        if(!release) return "";
+
+        return `
+
+<a
+href="release.html?id=${id}"
+style="text-decoration:none;">
+
+    <div class="release-card">
+
+        <img
+        src="${release.cover}"
+        class="release-cover">
+
+        <div class="release-title">
+
+            ${release.release}
+
+        </div>
+
+        <div class="release-artist">
+
+            ${release.artist}
+
+        </div>
+
+    </div>
+
+</a>
+
+`;
+
+    }).join("");
+
+}
+
+loadCollection();
