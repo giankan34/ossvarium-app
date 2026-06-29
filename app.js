@@ -994,117 +994,117 @@ async function loadCatacombChallenge(){
 
     const challenges = [
 
-{
-    text:
-    "🌍 Collect a release from a new country",
+    {
+        text:
+        "🌍 Collect a release from a new country",
 
-    reward:50,
+        reward:50,
 
-    target:1,
+        target:1,
 
-    type:"country"
-},
+        type:"country"
+   },
 
-{
-    text:
-    "☠ Discover a new genre",
+   {
+        text:
+        "☠ Discover a new genre",
 
-    reward:40,
+        reward:40,
 
-    target:1,
+        target:1,
 
-    type:"genre"
-},
+        type:"genre"
+   },
 
-{
-    text:
-    "👤 Visit an artist page",
+   {
+        text:
+        "👤 Visit an artist page",
 
-    reward:30,
+        reward:30,
 
-    target:1,
+        target:1,
 
-    type:"artist"
-},
+        type:"artist"
+   },
 
-{
-    text:
-    "📀 Add a release to your collection",
+   {
+        text:
+        "📀 Add a release to your collection",
 
-    reward:50,
+        reward:50,
 
-    target:1,
+        target:1,
 
-    type:"collection"
-},
+        type:"collection"
+   },
 
-{
-    text:
-    "🏛 Explore the Hall of Fame",
+   {
+        text:
+        "🏛 Explore the Hall of Fame",
 
-    reward:25,
+        reward:25,
 
-    target:1,
+        target:1,
 
-    type:"hall"
-},
+        type:"hall"
+   },
 
-{
-    text:
-    "⚔ Reach your next rank",
+   {
+        text:
+        "⚔ Reach your next rank",
 
-    reward:100,
+        reward:100,
 
-    target:1,
+        target:1,
 
-    type:"rank"
-},
+        type:"rank"
+   },
 
-{
-    text:
-    "💀 Enter a random tomb",
+   {
+        text:
+        "💀 Enter a random tomb",
 
-    reward:20,
+        reward:20,
 
-    target:1,
+        target:1,
 
-    type:"tomb"
-},
+        type:"tomb"
+   },
 
-{
-    text:
-    "🎸 Discover an underground band",
+   {
+        text:
+        "🎸 Discover an underground band",
 
-    reward:40,
+        reward:40,
 
-    target:1,
+        target:1,
 
-    type:"band"
-},
+        type:"band"
+   },
 
-{
-    text:
-    "🌎 Explore the Country Vault",
+   {
+        text:
+        "🌎 Explore the Country Vault",
 
-    reward:30,
+        reward:30,
 
-    target:1,
+        target:1,
 
-    type:"vault"
-},
+        type:"vault"
+   },
 
-{
-    text:
-    "☠ Search for something unknown",
+   {
+        text:
+        "☠ Search for something unknown",
 
-    reward:25,
+        reward:25,
 
-    target:1,
+        target:1,
 
-    type:"search"
-}
+        type:"search"
+   }
 
-];
+   ];
 
     const today =
     new Date().getDate();
