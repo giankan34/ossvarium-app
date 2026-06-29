@@ -1120,9 +1120,13 @@ async function loadCatacombChallenge(){
 
     <br><br>
 
-    ${challenge}
+    ${challenge.text}
 
-    `;
+    <br><br>
+
+    ⭐ Reward: +${challenge.reward} XP
+
+`;
 
 }
 
