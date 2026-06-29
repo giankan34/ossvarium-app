@@ -120,3 +120,74 @@ else{
     "∞";
 
 }
+
+const currentXP = collection.length * 10;
+
+const maxXP = 50;
+
+const xpPercent =
+Math.min(
+(currentXP / maxXP) * 100,
+100
+);
+    
+achievementBox.innerHTML = `
+
+🏆 ${title}
+
+<br><br>
+
+⭐ XP:
+${currentXP}
+
+<br><br>
+
+<div style="
+width:100%;
+height:10px;
+background:#2b2b2b;
+border-radius:10px;
+overflow:hidden;
+">
+
+<div style="
+width:${xpPercent}%;
+height:100%;
+background:linear-gradient(to right,#b8860b,#ffd700);
+">
+</div>
+
+</div>
+
+<br><br>
+
+<span style="font-size:12px;">
+
+NEXT RANK:
+${nextRank}
+(${progress})
+
+</span>
+
+`;
+    if(secretBox){
+
+    const secrets = [];
+
+    const countriesCollected =
+    new Set();
+
+    collection.forEach(id => {
+
+        const release =
+        releases[id];
+
+        if(release){
+
+            countriesCollected.add(
+                release.country
+           );
+
+        }
+
+});
