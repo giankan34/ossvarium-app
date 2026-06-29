@@ -191,3 +191,66 @@ ${nextRank}
         }
 
 });
+
+    if(collection.length >= 3){
+
+        secrets.push(
+            "📀 COLLECTOR"
+        );
+
+    }
+
+    if(collection.length >= 10){
+
+        secrets.push(
+            "⚔ OSSVARIUM DEVOTEE"
+        );
+
+    }
+
+    if(collection.length >= 20){
+
+        secrets.push(
+            "🏛 KEEPER OF THE TOMBS"
+        );
+
+    }
+
+   if(countriesCollected.size >= 3){
+
+    secrets.push(
+        "🌍 WORLD EXPLORER"
+    );
+
+}
+
+if(countriesCollected.size >= 10){
+
+    secrets.push(
+        "🌎 GLOBAL NECROMANCER"
+    );
+
+}
+    secretBox.innerHTML =
+
+    secrets.length > 0
+
+    ?
+
+    `
+
+    <b>☠ SECRET ACHIEVEMENTS ☠</b>
+
+    <br><br>
+
+    ${secrets.join("<br><br>")}
+
+    `
+
+    :
+
+    "";
+
+    }
+
+}
