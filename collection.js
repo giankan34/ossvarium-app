@@ -254,3 +254,113 @@ if(countriesCollected.size >= 10){
     }
 
 }
+
+ if(relicBox){
+
+    const relics = [];
+
+    const denmarkCount =
+    collection.filter(id => {
+
+        const release =
+        releases[id];
+
+        return release &&
+        release.country ===
+        "Denmark";
+
+    }).length;
+
+    if(denmarkCount >= 1){
+
+        relics.push(
+            "🌍 RELIC OF DENMARK"
+        );
+
+    }
+     if(denmarkCount >= 3){
+
+    relics.push(
+        "💀 DANISH DEATH CULT"
+    );
+
+     }
+
+     const swedenCount =
+     collection.filter(id => {
+
+    const release =
+    releases[id];
+
+    return release &&
+    release.country ===
+    "Sweden";
+
+}).length;
+
+if(swedenCount >= 1){
+
+    relics.push(
+        "🇸🇪 RELIC OF SWEDEN"
+    );
+
+}
+     const finlandCount =
+collection.filter(id => {
+
+    const release =
+    releases[id];
+
+    return release &&
+    release.country ===
+    "Finland";
+
+}).length;
+
+if(finlandCount >= 1){
+
+    relics.push(
+        "🇫🇮 RELIC OF FINLAND"
+    );
+
+}
+     const norwayCount =
+collection.filter(id => {
+
+    const release =
+    releases[id];
+
+    return release &&
+    release.country ===
+    "Norway";
+
+}).length;
+
+if(norwayCount >= 1){
+
+    relics.push(
+        "🇳🇴 RELIC OF NORWAY"
+    );
+
+}
+    relicBox.innerHTML =
+
+    relics.length > 0
+
+    ?
+
+    `
+
+    <b>🔥 RELICS OF THE OSSVARIUM 🔥</b>
+
+    <br><br>
+
+    ${relics.join("<br><br>")}
+
+    `
+
+    :
+
+    "";
+
+ }
