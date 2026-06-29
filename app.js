@@ -994,27 +994,117 @@ async function loadCatacombChallenge(){
 
     const challenges = [
 
-        "🌍 Collect a release from a new country",
+{
+    text:
+    "🌍 Collect a release from a new country",
 
-        "☠ Discover a new genre",
+    reward:50,
 
-        "👤 Visit an artist page",
+    target:1,
 
-        "📀 Add a release to your collection",
+    type:"country"
+},
 
-        "🏛 Explore the Hall of Fame",
+{
+    text:
+    "☠ Discover a new genre",
 
-        "⚔ Reach your next rank",
+    reward:40,
 
-        "💀 Enter a random tomb",
+    target:1,
 
-        "🎸 Discover an underground band",
+    type:"genre"
+},
 
-        "🌎 Explore the Country Vault",
+{
+    text:
+    "👤 Visit an artist page",
 
-        "☠ Search for something unknown"
+    reward:30,
 
-    ];
+    target:1,
+
+    type:"artist"
+},
+
+{
+    text:
+    "📀 Add a release to your collection",
+
+    reward:50,
+
+    target:1,
+
+    type:"collection"
+},
+
+{
+    text:
+    "🏛 Explore the Hall of Fame",
+
+    reward:25,
+
+    target:1,
+
+    type:"hall"
+},
+
+{
+    text:
+    "⚔ Reach your next rank",
+
+    reward:100,
+
+    target:1,
+
+    type:"rank"
+},
+
+{
+    text:
+    "💀 Enter a random tomb",
+
+    reward:20,
+
+    target:1,
+
+    type:"tomb"
+},
+
+{
+    text:
+    "🎸 Discover an underground band",
+
+    reward:40,
+
+    target:1,
+
+    type:"band"
+},
+
+{
+    text:
+    "🌎 Explore the Country Vault",
+
+    reward:30,
+
+    target:1,
+
+    type:"vault"
+},
+
+{
+    text:
+    "☠ Search for something unknown",
+
+    reward:25,
+
+    target:1,
+
+    type:"search"
+}
+
+];
 
     const today =
     new Date().getDate();
