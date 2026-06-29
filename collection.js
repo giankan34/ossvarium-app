@@ -1,1 +1,122 @@
+async function loadCollection(){
 
+    const container =
+    document.getElementById(
+        "collectionContainer"
+    );
+
+    const title =
+    document.getElementById(
+        "collectionTitle"
+    );
+    
+    if(!container) return;
+
+    const collection =
+    JSON.parse(
+        localStorage.getItem(
+            "ossvariumCollection"
+        ) || "[]"
+    );
+
+    const xp =
+
+    collection.length * 10;
+    
+    const response =
+    await fetch(
+    "./data/releases.json"
+    );
+
+    const releases =
+    await response.json();
+    
+    const achievementBox =
+    document.getElementById(
+    "achievementBox"
+    );
+   
+    const secretBox =
+    document.getElementById(
+    "secretAchievements"
+    );
+
+    const relicBox =
+document.getElementById(
+    "relicBox"
+);
+    
+if(achievementBox){
+
+    let title =
+
+    "UNINITIATED";
+
+    if(collection.length >= 1)
+    title =
+    "INITIATE OF THE CATACOMBS";
+
+    if(collection.length >= 5)
+    title =
+    "UNDERGROUND SEEKER";
+
+    if(collection.length >= 10)
+    title =
+    "KEEPER OF THE OSSVARIUM";
+
+    if(collection.length >= 20)
+    title =
+    "CATACOMB CURATOR";
+
+    if(collection.length >= 50)
+    title =
+    "LORD OF THE OSSVARIUM";
+
+    let nextRank = "";
+let progress = "";
+
+if(collection.length < 5){
+
+    nextRank =
+    "UNDERGROUND SEEKER";
+
+    progress =
+    `${collection.length}/5`;
+
+}
+else if(collection.length < 10){
+
+    nextRank =
+    "KEEPER OF THE OSSVARIUM";
+
+    progress =
+    `${collection.length}/10`;
+
+}
+else if(collection.length < 20){
+
+    nextRank =
+    "CATACOMB CURATOR";
+
+    progress =
+    `${collection.length}/20`;
+
+}
+else if(collection.length < 50){
+
+    nextRank =
+    "LORD OF THE OSSVARIUM";
+
+    progress =
+    `${collection.length}/50`;
+
+}
+else{
+
+    nextRank =
+    "MAX RANK ACHIEVED";
+
+    progress =
+    "∞";
+
+}
