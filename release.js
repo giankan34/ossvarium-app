@@ -116,14 +116,70 @@ console.log("release.js started");
 
         <br><br>
 
-        <a
-        class="support-link"
-        href="${release.links.bandcamp}"
-        target="_blank">
+${release.links.bandcamp ?
 
-        🛒 SUPPORT ON BANDCAMP
+`<a
+class="support-link"
+href="${release.links.bandcamp}"
+target="_blank">
 
-        </a>
+🛒 SUPPORT ON BANDCAMP
+
+</a><br><br>`
+
+: ""}
+
+${release.links.website ?
+
+`<a
+class="support-link"
+href="${release.links.website}"
+target="_blank">
+
+🌐 OFFICIAL WEBSITE
+
+</a><br><br>`
+
+: ""}
+
+${release.links.spotify ?
+
+`<a
+class="support-link"
+href="${release.links.spotify}"
+target="_blank">
+
+🎵 SPOTIFY
+
+</a><br><br>`
+
+: ""}
+
+${release.links.youtube ?
+
+`<a
+class="support-link"
+href="${release.links.youtube}"
+target="_blank">
+
+▶ YOUTUBE
+
+</a><br><br>`
+
+: ""}
+
+${release.links.merch ?
+
+`<a
+class="support-link"
+href="${release.links.merch}"
+target="_blank">
+
+👕 MERCH STORE
+
+</a>`
+
+: ""}
 
     </div>
 
