@@ -102,8 +102,17 @@ console.log("release.js started");
 
     <div class="submission-text">
 
-        ❤️ <b>Supporters:</b>
-        ${release.supporters}
+        <h3>
+
+       ❤️ ${release.supporters} SUPPORTERS
+
+       </h3>
+
+       <p>
+  
+       Every supporter keeps the underground alive.
+
+       </p>
 
         <br><br>
 
