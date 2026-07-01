@@ -107,11 +107,12 @@ console.log("release.js started");
 
         <br><br>
 
-        🛒 <a
+        <a
+        class="support-link"
         href="${release.bandcamp}"
         target="_blank">
 
-        Buy on Bandcamp
+        🛒 SUPPORT ON BANDCAMP
 
         </a>
 
