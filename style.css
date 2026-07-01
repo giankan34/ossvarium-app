@@ -1123,3 +1123,34 @@ box-shadow:0 0 25px #ffd700;
 }
 
 }
+.support-link{
+
+display:inline-block;
+
+margin-top:15px;
+
+padding:12px 22px;
+
+background:#8b0000;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:10px;
+
+font-weight:bold;
+
+transition:.3s;
+
+border:1px solid #aa0000;
+
+}
+
+.support-link:hover{
+
+background:#b30000;
+
+transform:scale(1.03);
+
+}
