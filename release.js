@@ -90,11 +90,35 @@ console.log("release.js started");
 
             </div>
 
-            <div class="release-desc">
+           <div class="release-desc">
 
-                ${release.description}
+    ${release.description}
 
-            </div>
+</div>
+
+<div class="submission-box">
+
+    <h2>⚔ SUPPORT THE UNDERGROUND ⚔</h2>
+
+    <div class="submission-text">
+
+        ❤️ <b>Supporters:</b>
+        ${release.supporters}
+
+        <br><br>
+
+        🛒 <a
+        href="${release.bandcamp}"
+        target="_blank">
+
+        Buy on Bandcamp
+
+        </a>
+
+    </div>
+
+</div>
+
 <div class="submission-box">
 
     <h2>ABOUT THE ARTIST</h2>
@@ -105,7 +129,7 @@ console.log("release.js started");
 
     </div>
 
-</div>
+</div> 
 
 <div class="submission-box">
 
