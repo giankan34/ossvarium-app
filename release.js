@@ -118,7 +118,7 @@ console.log("release.js started");
 
         <a
         class="support-link"
-        href="${release.bandcamp}"
+        href="${release.links.bandcamp}"
         target="_blank">
 
         🛒 SUPPORT ON BANDCAMP
@@ -220,7 +220,7 @@ console.log("release.js started");
 
     <a
     class="submit-btn"
-    href="${release.bandcamp}"
+    href="${release.links.bandcamp}"
     target="_blank">
 
         VISIT BANDCAMP
