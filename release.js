@@ -49,6 +49,28 @@ console.log("release.js started");
         return;
 
         }
+        function getSupportLevel(supporters){
+
+    if(supporters >= 100)
+        return "💀 OSSVARIUM RELIC";
+
+    if(supporters >= 50)
+        return "👑 UNDERGROUND LEGEND";
+
+    if(supporters >= 26)
+        return "🔥 CULT RELEASE";
+
+    if(supporters >= 11)
+        return "⚔ CRYPT DISCOVERY";
+
+    return "⚰ FRESH BURIAL";
+
+}
+
+const supportLevel =
+getSupportLevel(
+    Number(release.supporters)
+);
 
         releasePage.innerHTML = `
 
@@ -105,6 +127,14 @@ console.log("release.js started");
         <h3>
 
        ❤️ ${release.supporters} SUPPORTERS
+
+       </h3>
+
+       <br>
+
+       <h3>
+
+       ${supportLevel}
 
        </h3>
 
