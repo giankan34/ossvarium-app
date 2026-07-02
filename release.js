@@ -160,11 +160,6 @@ getSupportMeter(
        ${supportLevel}
 
        </h3>
-       <h3>
-
-${supportLevel}
-
-</h3>
 
 <p>
 
