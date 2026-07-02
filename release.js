@@ -71,7 +71,30 @@ const supportLevel =
 getSupportLevel(
     Number(release.supporters)
 );
+        
+function getSupportMeter(supporters){
 
+    if(supporters >= 100)
+        return "██████████";
+
+    if(supporters >= 50)
+        return "████████░░";
+
+    if(supporters >= 26)
+        return "██████░░░░";
+
+    if(supporters >= 11)
+        return "████░░░░░░";
+
+    return "██░░░░░░░░";
+
+}
+
+const supportMeter =
+getSupportMeter(
+    Number(release.supporters)
+);
+        
         releasePage.innerHTML = `
 
         <div class="release-card">
@@ -137,6 +160,23 @@ getSupportLevel(
        ${supportLevel}
 
        </h3>
+       <h3>
+
+${supportLevel}
+
+</h3>
+
+<p>
+
+<b>SUPPORT STRENGTH</b>
+
+</p>
+
+<h3>
+
+${supportMeter}
+
+</h3>
 
        <p>
   
