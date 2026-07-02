@@ -1322,7 +1322,6 @@ loadArtistOfTheDay();
 loadCatacombChallenge();
 loadCatacombStreak();
 loadCatacombLevel();
-loadCatacombLegends();
 loadQuote();
 
 function loadQuote(){
@@ -1402,55 +1401,6 @@ function showAchievementPopup(text){
         "none";
 
     },3000);
-
-}
-
-function loadCatacombLegends(){
-
-    const box =
-    document.getElementById(
-        "catacombLegends"
-    );
-
-    if(!box) return;
-
-    const topReleases =
-    [...releases]
-    .sort((a,b)=>
-
-        Number(b.supporters) -
-        Number(a.supporters)
-
-    )
-    .slice(0,3);
-
-    box.innerHTML =
-
-    topReleases.map(
-
-        (release,index)=>`
-
-<b>
-
-${["🥇","🥈","🥉"][index]}
-
-${release.release}
-
-</b>
-
-<br>
-
-${release.artist}
-
-<br>
-
-❤️ ${release.supporters} supporters
-
-<br><br>
-
-`
-
-    ).join("");
 
 }
 
