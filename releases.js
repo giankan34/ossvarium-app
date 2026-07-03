@@ -293,6 +293,11 @@ releaseContainer.innerHTML += `
         class="submit-btn"
         href="release.html?id=${releases.indexOf(topThree[0])}">
 
+        <img
+        class="hall-cover"
+        src="${topThree[0]?.cover}"
+        alt="${topThree[0]?.release}">
+
       🥇 ${topThree[0]?.release}
 
       <br>
@@ -315,6 +320,11 @@ releaseContainer.innerHTML += `
         class="submit-btn"
         href="release.html?id=${releases.indexOf(topThree[1])}">
 
+        <img
+        class="hall-cover"
+        src="${topThree[0]?.cover}"
+        alt="${topThree[0]?.release}">
+
       🥈 ${topThree[1]?.release}
 
       <br>
@@ -336,6 +346,11 @@ releaseContainer.innerHTML += `
         <a
         class="submit-btn"
         href="release.html?id=${releases.indexOf(topThree[2])}">
+
+        <img
+        class="hall-cover"
+        src="${topThree[0]?.cover}"
+        alt="${topThree[0]?.release}">
 
         🥉 ${topThree[2]?.release}
 
