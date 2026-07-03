@@ -1154,3 +1154,21 @@ background:#b30000;
 transform:scale(1.03);
 
 }
+
+.hall-artist{
+
+    display:block;
+
+    margin-top:6px;
+
+    margin-bottom:6px;
+
+    color:#9d9d9d;
+
+    font-size:15px;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+}
