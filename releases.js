@@ -293,7 +293,11 @@ releaseContainer.innerHTML += `
         class="submit-btn"
         href="release.html?id=${releases.indexOf(topThree[0])}">
 
-            🥇 ${topThree[0]?.release}
+       🥇 ${topThree[0]?.release}
+
+         <br>
+
+       ❤️ ${topThree[0]?.supporters} PIONEERS
 
         </a>
 
@@ -303,7 +307,11 @@ releaseContainer.innerHTML += `
         class="submit-btn"
         href="release.html?id=${releases.indexOf(topThree[1])}">
 
-            🥈 ${topThree[1]?.release}
+      🥈 ${topThree[1]?.release}
+
+      <br>
+
+      ❤️ ${topThree[1]?.supporters} PIONEERS
 
         </a>
 
@@ -313,7 +321,11 @@ releaseContainer.innerHTML += `
         class="submit-btn"
         href="release.html?id=${releases.indexOf(topThree[2])}">
 
-            🥉 ${topThree[2]?.release}
+         🥉 ${topThree[2]?.release}
+
+         <br>
+
+        ❤️ ${topThree[2]?.supporters} PIONEERS
 
         </a>
 
