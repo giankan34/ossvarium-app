@@ -1202,3 +1202,19 @@ transform:scale(1.03);
     );
 
 }
+
+.hall-cover{
+
+width:60px;
+
+height:60px;
+
+object-fit:cover;
+
+border-radius:8px;
+
+margin-bottom:10px;
+
+border:1px solid #555;
+
+}
