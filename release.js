@@ -94,6 +94,13 @@ const supportMeter =
 getSupportMeter(
     Number(release.supporters)
 );
+
+        const supporters = Number(release.supporters);
+
+        const cultScore = Math.min(
+        100,
+        40 + (supporters * 2)
+);
         
         releasePage.innerHTML = `
 
@@ -150,6 +157,26 @@ getSupportMeter(
         <h3>
 
        ❤️ ${release.supporters} SUPPORTERS
+
+       <br><br>
+
+       ⚔ CULT SCORE
+
+       <br>
+
+      ${cultScore}/100
+
+      <br><br>
+
+      <div class="cult-bar">
+
+      <div
+      class="cult-fill"
+      style="width:${cultScore}%">
+
+      </div>
+
+      </div>
 
        </h3>
 
