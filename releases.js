@@ -322,8 +322,8 @@ releaseContainer.innerHTML += `
 
         <img
         class="hall-cover"
-        src="${topThree[0]?.cover}"
-        alt="${topThree[0]?.release}">
+        src="${topThree[1]?.cover}"
+        alt="${topThree[1]?.release}">
 
       🥈 ${topThree[1]?.release}
 
@@ -349,8 +349,8 @@ releaseContainer.innerHTML += `
 
         <img
         class="hall-cover"
-        src="${topThree[0]?.cover}"
-        alt="${topThree[0]?.release}">
+        src="${topThree[2]?.cover}"
+        alt="${topThree[2]?.release}">
 
         🥉 ${topThree[2]?.release}
 
