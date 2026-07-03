@@ -124,6 +124,17 @@ else {
     cultBadge = "☠ OBSCURE";
 
 }
+
+      const rank = [...releases]
+      .sort((a,b)=>
+      Number(b.supporters) -
+      Number(a.supporters)
+)
+     .findIndex(r=>
+
+      r.release === release.release
+
+) + 1;  
         
         releasePage.innerHTML = `
 
@@ -187,12 +198,15 @@ else {
 
        <br><br>
 
-      ${cultBadge}
+       ${cultBadge}
+
+      <br>
+
+      🌍 GLOBAL RANK #${rank}
 
       <br>
 
       ${cultScore}/100
-
       <br><br>
 
       <div class="cult-bar">
