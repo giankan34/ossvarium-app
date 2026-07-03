@@ -101,6 +101,29 @@ getSupportMeter(
         100,
         40 + (supporters * 2)
 );
+
+        let cultBadge = "";
+
+if (cultScore >= 95) {
+
+    cultBadge = "👑 LEGENDARY";
+
+}
+else if (cultScore >= 80) {
+
+    cultBadge = "🔥 CULT";
+
+}
+else if (cultScore >= 60) {
+
+    cultBadge = "⚔ RISING";
+
+}
+else {
+
+    cultBadge = "☠ OBSCURE";
+
+}
         
         releasePage.innerHTML = `
 
@@ -162,7 +185,11 @@ getSupportMeter(
 
        ⚔ CULT SCORE
 
-       <br>
+       <br><br>
+
+      ${cultBadge}
+
+      <br>
 
       ${cultScore}/100
 
