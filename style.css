@@ -1274,7 +1274,7 @@ box-shadow:0 0 20px rgba(255,0,0,.6);
 
 .hall-legend{
 
-border:2px solid #d4af37;
+border:3px solid #ffd700;
 
 box-shadow:
 0 0 18px rgba(212,175,55,.45);
@@ -1298,5 +1298,43 @@ box-shadow:
 0 0 35px rgba(255,215,0,.65);
 
 border-color:#ffd700;
+
+}
+
+@keyframes legendGlow{
+
+0%{
+box-shadow:0 0 12px rgba(255,215,0,.25);
+}
+
+50%{
+box-shadow:
+0 0 40px rgba(255,215,0,.9),
+0 0 70px rgba(255,120,0,.45);
+}
+
+100%{
+box-shadow:0 0 12px rgba(255,215,0,.25);
+}
+
+}
+
+.hall-legend{
+
+animation:legendGlow 2.8s infinite ease-in-out;
+
+}
+
+.hall-legend img{
+
+transition:.3s;
+
+}
+
+.hall-legend:hover img{
+
+transform:scale(1.03);
+
+filter:brightness(1.12);
 
 }
