@@ -461,6 +461,47 @@ h1{
 
 }
 
+.hall-card{
+
+display:block;
+
+background:linear-gradient(
+180deg,
+#962222 0%,
+#470808 100%
+);
+
+border:2px solid #5f2424;
+
+border-radius:12px;
+
+padding:20px;
+
+margin-bottom:25px;
+
+text-decoration:none;
+
+color:white;
+
+text-align:center;
+
+transition:.3s ease;
+
+box-shadow:0 0 12px rgba(255,0,0,.15);
+
+}
+
+.hall-card:hover{
+
+transform:translateY(-6px) scale(1.015);
+
+border-color:#b51d1d;
+
+box-shadow:
+0 0 28px rgba(255,0,0,.45);
+
+}
+
 .submit-btn:hover{
 
     transform:translateY(-4px);
