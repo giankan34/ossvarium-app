@@ -293,6 +293,12 @@ releaseContainer.innerHTML += `
         class="hall-card hall-legend"
         href="release.html?id=${releases.indexOf(topThree[0])}">
 
+        <div class="legend-crown">
+
+        👑 LEGEND OF THE CATACOMBS
+
+        </div>
+
         <img
         class="hall-cover"
         src="${topThree[0]?.cover}"
