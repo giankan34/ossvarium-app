@@ -379,6 +379,25 @@ releaseContainer.innerHTML += `
 </div>
 
 `;
+
+const totalSupporters =
+
+releases.reduce(
+
+(sum,release)=>
+
+sum +
+
+Number(release.supporters||0),
+
+0
+
+);
+
+const newestRelease =
+
+releases[releases.length-1];
+            
      const featuredArtist =
 releases[
     Math.floor(
