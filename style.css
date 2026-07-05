@@ -1323,6 +1323,10 @@ box-shadow:0 0 12px rgba(255,215,0,.25);
 
 animation:legendGlow 2.8s infinite ease-in-out;
 
+position:relative;
+
+overflow:hidden;
+
 }
 
 .hall-legend img{
@@ -1333,9 +1337,16 @@ transition:.3s;
 
 .hall-legend:hover img{
 
-transform:scale(1.03);
+transform:
+scale(1.05)
+rotate(-2deg);
 
-filter:brightness(1.12);
+filter:
+brightness(1.15);
+
+transition:.35s ease;
+
+}
 
 }
 
@@ -1385,5 +1396,44 @@ box-shadow:
 0 0 30px rgba(255,215,0,.95);
 
 }
+
+}
+
+.hall-legend::before{
+
+content:"";
+
+position:absolute;
+
+top:-100%;
+
+left:-50%;
+
+width:60%;
+
+height:300%;
+
+background:
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.18),
+
+transparent
+
+);
+
+transform:rotate(25deg);
+
+transition:.8s;
+
+}
+
+.hall-legend:hover::before{
+
+left:150%;
 
 }
