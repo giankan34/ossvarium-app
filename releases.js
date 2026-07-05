@@ -290,7 +290,7 @@ releaseContainer.innerHTML += `
     <div class="submission-text">
 
         <a
-        class="hall-card"
+        class="hall-card hall-legend"
         href="release.html?id=${releases.indexOf(topThree[0])}">
 
         <img
