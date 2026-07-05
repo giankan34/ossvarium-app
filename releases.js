@@ -290,7 +290,7 @@ releaseContainer.innerHTML += `
     <div class="submission-text">
 
         <a
-        class="submit-btn"
+        class="hall-card"
         href="release.html?id=${releases.indexOf(topThree[0])}">
 
         <img
@@ -317,7 +317,7 @@ releaseContainer.innerHTML += `
         <br><br>
 
         <a
-        class="submit-btn"
+        class="hall-card"
         href="release.html?id=${releases.indexOf(topThree[1])}">
 
         <img
@@ -344,7 +344,7 @@ releaseContainer.innerHTML += `
         <br><br>
 
         <a
-        class="submit-btn"
+        class="hall-card"
         href="release.html?id=${releases.indexOf(topThree[2])}">
 
         <img
