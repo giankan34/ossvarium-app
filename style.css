@@ -1205,16 +1205,28 @@ transform:scale(1.03);
 
 .hall-cover{
 
-width:60px;
+width:180px;
 
-height:60px;
+height:180px;
 
 object-fit:cover;
 
-border-radius:8px;
+border-radius:10px;
 
-margin-bottom:10px;
+border:2px solid #444;
 
-border:1px solid #555;
+box-shadow:0 0 12px rgba(180,0,0,.45);
+
+margin-bottom:15px;
+
+transition:.3s;
+
+}
+
+.hall-cover:hover{
+
+transform:scale(1.03);
+
+box-shadow:0 0 20px rgba(255,0,0,.6);
 
 }
