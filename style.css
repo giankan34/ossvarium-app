@@ -1271,3 +1271,32 @@ transform:scale(1.03);
 box-shadow:0 0 20px rgba(255,0,0,.6);
 
 }
+
+.hall-legend{
+
+border:2px solid #d4af37;
+
+box-shadow:
+0 0 18px rgba(212,175,55,.45);
+
+transform:scale(1.04);
+
+background:
+linear-gradient(
+180deg,
+#a22b2b 0%,
+#5a0c0c 100%
+);
+
+}
+
+.hall-legend:hover{
+
+transform:translateY(-8px) scale(1.06);
+
+box-shadow:
+0 0 35px rgba(255,215,0,.65);
+
+border-color:#ffd700;
+
+}
