@@ -1404,3 +1404,64 @@ function showAchievementPopup(text){
 
 }
 
+function getRelicRarity(supporters){
+
+    supporters = Number(supporters);
+
+    if(supporters >= 31){
+
+        return{
+
+            name:"🟡 LEGENDARY RELIC",
+
+            color:"#ffd700"
+
+        };
+
+    }
+
+    if(supporters >= 21){
+
+        return{
+
+            name:"🟣 EPIC RELIC",
+
+            color:"#b84cff"
+
+        };
+
+    }
+
+    if(supporters >= 11){
+
+        return{
+
+            name:"🔵 RARE RELIC",
+
+            color:"#43a5ff"
+
+        };
+
+    }
+
+    if(supporters >= 6){
+
+        return{
+
+            name:"🟢 UNCOMMON RELIC",
+
+            color:"#48d05a"
+
+        };
+
+    }
+
+    return{
+
+        name:"⚪ COMMON RELIC",
+
+        color:"#bbbbbb"
+
+    };
+
+}
