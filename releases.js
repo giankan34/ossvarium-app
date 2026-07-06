@@ -380,23 +380,69 @@ releaseContainer.innerHTML += `
 
 `;
 
-const totalSupporters =
+releaseContainer.innerHTML += `
 
-releases.reduce(
+<div class="submission-box">
 
-(sum,release)=>
+<h2>
 
-sum +
+⚔ CATACOMB NEWS
 
-Number(release.supporters||0),
+</h2>
 
-0
+<div class="submission-text">
 
-);
+👑 Hall Leader
 
-const newestRelease =
+<br>
 
-releases[releases.length-1];
+<b>
+
+${topThree[0].release}
+
+</b>
+
+<br><br>
+
+🔥 Latest Release
+
+<br>
+
+<b>
+
+${releases[releases.length-1].release}
+
+</b>
+
+<br><br>
+
+🎵 Genres
+
+<br>
+
+<b>
+
+${totalGenres}
+
+</b>
+
+<br><br>
+
+❤️ Total Pioneers
+
+<br>
+
+<b>
+
+${totalSupporters}
+
+</b>
+
+</div>
+
+</div>
+
+`;
             
      const featuredArtist =
 releases[
