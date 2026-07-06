@@ -164,13 +164,7 @@ else {
 
             </div>
 
-            <div
-            style="
-            margin-top:12px;
-            font-weight:bold;
-            font-size:18px;
-            color:${relic.color};
-            ">
+            <div class="relic-rarity">
 
             ${relic.name}
 
