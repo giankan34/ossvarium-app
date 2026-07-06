@@ -392,9 +392,7 @@ releaseContainer.innerHTML += `
 
 <div class="submission-text">
 
-👑 Hall Leader
-
-<br>
+👑
 
 <b>
 
@@ -402,11 +400,11 @@ ${topThree[0].release}
 
 </b>
 
+dominates the Hall of Fame
+
 <br><br>
 
-🔥 Latest Release
-
-<br>
+🔥
 
 <b>
 
@@ -414,11 +412,11 @@ ${releases[releases.length-1].release}
 
 </b>
 
+entered the Catacombs
+
 <br><br>
 
-🎵 Genres
-
-<br>
+🎵
 
 <b>
 
@@ -426,17 +424,19 @@ ${totalGenres}
 
 </b>
 
+Genres discovered
+
 <br><br>
 
-❤️ Total Pioneers
-
-<br>
+❤️
 
 <b>
 
 ${totalSupporters}
 
 </b>
+
+Pioneers support the Underground
 
 </div>
 
