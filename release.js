@@ -164,6 +164,18 @@ else {
 
             </div>
 
+            <div
+            style="
+            margin-top:12px;
+            font-weight:bold;
+            font-size:18px;
+            color:${relic.color};
+            ">
+
+            ${relic.name}
+
+            </div>
+
            <div class="release-artist">
 
                <a
