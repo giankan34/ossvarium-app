@@ -392,39 +392,39 @@ releaseContainer.innerHTML += `
 
 <div class="submission-text">
 
-👑
+👑 Hall Leader
+
+<br>
 
 <b>
 
-${topThree[0].release}
-
-</b>
-
-dominates the Hall of Fame
+ ${topThree[0].release}
+ 
+ </b>
 
 <br><br>
 
-🔥
+🔥 Newest Relic
+
+<br>
 
 <b>
 
-${releases[releases.length-1].release}
-
-</b>
-
-entered the Catacombs
+ ${releases[releases.length-1].release}
+ 
+ </b>
 
 <br><br>
 
-🎵
+🎵 Genres
+
+<br>
 
 <b>
 
-${totalGenres}
-
+ ${totalGenres}
+ 
 </b>
-
-Genres discovered
 
 <br><br>
 
