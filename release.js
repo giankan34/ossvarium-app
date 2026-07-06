@@ -95,6 +95,14 @@ getSupportMeter(
     Number(release.supporters)
 );
 
+const relic =
+
+getRelicRarity(
+
+Number(release.supporters)
+
+);
+
         const supporters = Number(release.supporters);
 
         const cultScore = Math.min(
