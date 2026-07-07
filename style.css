@@ -1448,14 +1448,13 @@ margin:10px 0;
 
 }
 
-
 .relic-rarity{
 
 display:inline-block;
 
-margin:12px 0;
+margin:14px 0;
 
-padding:8px 18px;
+padding:10px 22px;
 
 border-radius:30px;
 
@@ -1465,12 +1464,14 @@ font-size:17px;
 
 letter-spacing:1px;
 
-border:2px solid #555;
+background:#181818;
 
-background:#222;
+border:2px solid;
 
-color:#fff;
+transition:.35s;
 
-box-shadow:0 0 12px rgba(255,255,255,.15);
+text-shadow:0 0 10px currentColor;
+
+box-shadow:0 0 18px currentColor;
 
 }
