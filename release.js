@@ -212,15 +212,39 @@ else {
 
            <div class="release-desc">
 
-    ${release.description}
+           ${release.description}
 
-</div>
+            </div>
 
-<div class="submission-box">
+            <div class="museum-record">
 
-    <h2>⚔ SUPPORT THE UNDERGROUND ⚔</h2>
+            <h3>🏛 MUSEUM RECORD</h3>
 
-    <div class="submission-text">
+            <div>🆔 Relic ID:
+            OSV-${String(rank).padStart(5,"0")}</div>
+
+            <div>📜 Status:
+            Preserved</div>
+
+            <div>🏆 Hall Rank:
+            #${rank}</div>
+
+            <div>💀 Rarity:
+            ${relic.name}</div>
+
+            <div>❤️ Pioneers:
+            ${release.supporters}</div>
+
+            <div>🌍 Country:
+            ${release.country}</div>
+
+            </div>
+
+          <div class="submission-box">
+    
+          <h2>⚔ SUPPORT THE UNDERGROUND ⚔</h2>
+
+         <div class="submission-text">
 
         <h3>
 
