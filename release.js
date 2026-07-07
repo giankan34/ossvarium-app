@@ -164,7 +164,15 @@ else {
 
             </div>
 
-            <div class="relic-rarity">
+            <divclass="relic-rarity"
+
+            style="
+
+            color:${relic.color};
+
+            border-color:${relic.color};
+
+            ">
 
             ${relic.name}
 
