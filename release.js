@@ -172,6 +172,8 @@ else {
 
             border-color:${relic.color};
 
+            box-shadow:0 0 25px ${relic.color};
+
             ">
 
             ${relic.name}
