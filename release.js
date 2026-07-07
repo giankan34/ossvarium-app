@@ -151,12 +151,22 @@ else {
             <a
             href="release.html?id=${releases.indexOf(release)}">
 
-            <img
-            class="release-cover"
-            src="${release.cover}"
-            alt="${release.release}">
+            ${supporters >= 31 ? `
 
-            </a>
+           <div class="hall-relic">
+
+           👑 HALL RELIC
+
+           </div>
+
+           ` : ""}
+
+           <img
+           class="release-cover"
+           src="${release.cover}"
+           alt="${release.release}">
+
+           </a>
 
             <div class="release-title">
 
