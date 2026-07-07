@@ -1438,7 +1438,7 @@ function getRelicRarity(supporters){
 
             name:"🔵 RARE RELIC",
 
-            color:"#43a5ff"
+            color:"#3aa8ff"
 
         };
 
@@ -1450,7 +1450,7 @@ function getRelicRarity(supporters){
 
             name:"🟢 UNCOMMON RELIC",
 
-            color:"#48d05a"
+            color:"#39d353"
 
         };
 
@@ -1460,7 +1460,7 @@ function getRelicRarity(supporters){
 
         name:"⚪ COMMON RELIC",
 
-        color:"#bbbbbb"
+        color:"#cccccc"
 
     };
 
