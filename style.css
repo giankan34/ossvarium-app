@@ -1475,3 +1475,60 @@ text-shadow:0 0 10px currentColor;
 box-shadow:0 0 18px currentColor;
 
 }
+
+.hall-relic{
+
+background:
+linear-gradient(
+90deg,
+#ffd700,
+#ffbf00,
+#ffd700
+);
+
+color:#111;
+
+font-weight:bold;
+
+text-align:center;
+
+padding:10px;
+
+border-radius:10px;
+
+margin-bottom:14px;
+
+letter-spacing:2px;
+
+box-shadow:
+0 0 18px #ffd700;
+
+animation:
+hallGlow 2.5s infinite;
+
+}
+
+@keyframes hallGlow{
+
+0%{
+
+box-shadow:
+0 0 12px #ffd700;
+
+}
+
+50%{
+
+box-shadow:
+0 0 28px #ffd700;
+
+}
+
+100%{
+
+box-shadow:
+0 0 12px #ffd700;
+
+}
+
+}
