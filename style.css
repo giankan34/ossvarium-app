@@ -1582,3 +1582,39 @@ font-size:18px;
 letter-spacing:1px;
 
 }
+
+.museum-record{
+
+margin-top:25px;
+
+padding:18px;
+
+border:2px solid #3b2d2d;
+
+border-radius:12px;
+
+background:#171010;
+
+box-shadow:0 0 18px rgba(255,0,0,.12);
+
+}
+
+.museum-record h3{
+
+color:#d4af37;
+
+margin-bottom:15px;
+
+letter-spacing:2px;
+
+}
+
+.museum-record div{
+
+margin:8px 0;
+
+font-size:17px;
+
+letter-spacing:1px;
+
+    }
