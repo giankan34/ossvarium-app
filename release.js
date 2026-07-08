@@ -103,6 +103,34 @@ Number(release.supporters)
 
 );
 
+        let discoveryStatus = "";
+
+if (supporters >= 31){
+
+    discoveryStatus = "👑 IMMORTAL RELIC";
+
+}
+else if (supporters >= 21){
+
+    discoveryStatus = "⚔ REVERED";
+
+}
+else if (supporters >= 11){
+
+    discoveryStatus = "🔥 SPREADING";
+
+}
+else if (supporters >= 6){
+
+    discoveryStatus = "⛏ UNEARTHED";
+
+}
+else{
+
+    discoveryStatus = "⚰ BURIED";
+
+         }
+
         const supporters = Number(release.supporters);
 
         const cultScore = Math.min(
@@ -228,6 +256,14 @@ else {
 
             <div>🏆 Hall Rank:
             #${rank}</div>
+
+            <div>
+
+            🎖 Discovery Status:
+
+            ${discoveryStatus}
+
+            </div>
 
             <div>💀 Rarity:
             ${relic.name}</div>
