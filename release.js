@@ -103,6 +103,8 @@ Number(release.supporters)
 
 );
 
+        const supporters = Number(release.supporters);
+
         let discoveryStatus = "";
 
 if (supporters >= 31){
@@ -130,8 +132,6 @@ else{
     discoveryStatus = "⚰ BURIED";
 
          }
-
-        const supporters = Number(release.supporters);
 
         const cultScore = Math.min(
         100,
