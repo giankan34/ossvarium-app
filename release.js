@@ -276,6 +276,27 @@ else {
 
             </div>
 
+            <div class="museum-record">
+
+            <h3>📜 RELIC TIMELINE</h3>
+
+            <div>⚰ Released:
+            ${release.year}</div>
+
+            <div>🏛 Entered Ossvarium:
+            2026</div>
+
+            <div>❤️ First Pioneer:
+            Unknown</div>
+
+            <div>🏆 Hall Rank:
+            #${rank}</div>
+
+            <div>👑 Current Status:
+            ${discoveryStatus}</div>
+
+            </div>
+
           <div class="submission-box">
     
           <h2>⚔ SUPPORT THE UNDERGROUND ⚔</h2>
