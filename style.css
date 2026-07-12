@@ -1583,19 +1583,19 @@ letter-spacing:1px;
 
 }
 
-.museum-record{
+.timeline-title{
 
 margin-top:25px;
 
-padding:18px;
+padding-top:18px;
 
-border:2px solid #3b2d2d;
+border-top:1px solid rgba(212,175,55,.35);
 
-border-radius:12px;
+color:#d4af37;
 
-background:#171010;
+letter-spacing:3px;
 
-box-shadow:0 0 18px rgba(255,0,0,.12);
+text-align:center;
 
 }
 
