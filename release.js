@@ -280,7 +280,9 @@ else {
 
             <hr class="museum-divider">
 
-            <h3>📜 RELIC TIMELINE</h3>
+            <h3 class="timeline-title">
+            📜 RELIC TIMELINE
+            </h3>
 
             <div>⚰ Released:
             ${release.year}</div>
