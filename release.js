@@ -278,6 +278,8 @@ else {
 
             <div class="museum-record">
 
+            <hr class="museum-divider">
+
             <h3>📜 RELIC TIMELINE</h3>
 
             <div>⚰ Released:
