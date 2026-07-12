@@ -1634,3 +1634,20 @@ letter-spacing:3px;
 text-align:center;
 
 }
+
+.museum-divider{
+
+border:none;
+
+height:1px;
+
+margin:20px 0;
+
+background:linear-gradient(
+90deg,
+transparent,
+#d4af37,
+transparent
+);
+
+}
