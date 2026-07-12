@@ -291,9 +291,6 @@ else {
             <div>❤️ First Pioneer:
             Unknown</div>
 
-            <div>🏆 Hall Rank:
-            #${rank}</div>
-
             <div>👑 Current Status:
             ${discoveryStatus}</div>
 
