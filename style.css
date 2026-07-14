@@ -1737,3 +1737,32 @@ text-shadow:
 0 0 8px rgba(212,175,55,.4);
 
 }
+
+.archive-stamp{
+
+margin-top:22px;
+padding:16px;
+
+text-align:center;
+
+border:2px solid #7d5b16;
+
+border-radius:10px;
+
+background:linear-gradient(
+180deg,
+#2a2110,
+#171010
+);
+
+color:#d4af37;
+
+font-weight:bold;
+
+letter-spacing:3px;
+
+text-shadow:0 0 10px rgba(212,175,55,.45);
+
+box-shadow:0 0 20px rgba(212,175,55,.18);
+
+}
