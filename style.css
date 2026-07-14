@@ -1697,3 +1697,43 @@ box-shadow:0 0 18px rgba(212,175,55,.25);
 background:rgba(212,175,55,.05);
 
 }
+
+.museum-seal{
+
+margin:30px auto 0;
+
+width:220px;
+
+height:220px;
+
+border:3px dashed #d4af37;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+text-align:center;
+
+color:#d4af37;
+
+font-size:18px;
+
+font-weight:bold;
+
+letter-spacing:3px;
+
+background:rgba(212,175,55,.05);
+
+box-shadow:
+0 0 20px rgba(212,175,55,.25);
+
+text-shadow:
+0 0 8px rgba(212,175,55,.4);
+
+}
