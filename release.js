@@ -296,6 +296,16 @@ else {
             <div>👑 Current Status:
             ${discoveryStatus}</div>
 
+            <div class="museum-seal">
+
+           🏛 AUTHENTICATED BY
+
+           <br>
+
+           OSSVARIUM ARCHIVES
+
+           </div>
+
             </div>
 
           <div class="submission-box">
