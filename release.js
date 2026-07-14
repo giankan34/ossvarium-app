@@ -105,6 +105,8 @@ Number(release.supporters)
 
         const supporters = Number(release.supporters);
 
+        const relicAge = 2026 - Number(release.year);
+        
         let discoveryStatus = "";
 
 if (supporters >= 31){
@@ -286,6 +288,9 @@ else {
 
             <div>⚰ Released:
             ${release.year}</div>
+
+            <div>🏺 Relic Age:
+            ${relicAge} Years</div>
 
             <div>🏛 Entered Ossvarium:
             2026</div>
