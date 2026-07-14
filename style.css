@@ -1739,30 +1739,15 @@ text-shadow:
 }
 
 .archive-stamp{
-
-margin-top:22px;
-padding:16px;
-
+margin-top:25px;
+padding:15px;
 text-align:center;
-
-border:2px solid #7d5b16;
-
-border-radius:10px;
-
-background:linear-gradient(
-180deg,
-#2a2110,
-#171010
-);
-
+font-size:20px;
+letter-spacing:4px;
 color:#d4af37;
-
-font-weight:bold;
-
-letter-spacing:3px;
-
-text-shadow:0 0 10px rgba(212,175,55,.45);
-
-box-shadow:0 0 20px rgba(212,175,55,.18);
-
+border:2px solid #d4af37;
+border-radius:10px;
+background:linear-gradient(#241b0d,#120d06);
+box-shadow:0 0 18px rgba(212,175,55,.35);
+text-transform:uppercase;
 }
