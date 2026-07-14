@@ -298,6 +298,8 @@ else {
 
             <div class="museum-seal">
 
+           <div class="archive-stamp">
+
            🏛 AUTHENTICATED BY
 
            <br>
