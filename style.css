@@ -1569,13 +1569,11 @@ letter-spacing:2px;
 
 }
 
-.museum-record div{
+.museum-record > div{
 
 padding:10px 0;
 
-border-bottom:
-
-1px solid rgba(255,255,255,.08);
+border-bottom:1px solid rgba(255,255,255,.08);
 
 font-size:18px;
 
@@ -1609,7 +1607,7 @@ letter-spacing:2px;
 
 }
 
-.museum-record div{
+.museum-record > div{
 
 margin:10px 0;
 
