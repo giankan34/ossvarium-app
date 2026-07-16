@@ -1749,3 +1749,38 @@ background:linear-gradient(#241b0d,#120d06);
 box-shadow:0 0 18px rgba(212,175,55,.35);
 text-transform:uppercase;
 }
+
+.archive-stamp{
+display:block !important;
+
+margin:30px auto 10px auto !important;
+
+padding:18px !important;
+
+width:85% !important;
+
+text-align:center !important;
+
+font-size:20px !important;
+
+font-weight:bold !important;
+
+letter-spacing:3px !important;
+
+color:#d4af37 !important;
+
+border:2px solid #d4af37 !important;
+
+border-radius:12px !important;
+
+background:linear-gradient(#241b0d,#120d06) !important;
+
+box-shadow:0 0 25px rgba(212,175,55,.45) !important;
+
+text-transform:uppercase !important;
+}
+
+.archive-stamp br{
+display:block;
+margin:6px 0;
+}
