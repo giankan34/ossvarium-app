@@ -302,13 +302,9 @@ else {
             ${discoveryStatus}</div>
 
            <div class="archive-stamp">
-
-           🏛 AUTHENTICATED BY
-
-           <br>
-
+           🏛<br>
+           AUTHENTICATED BY<br>
            OSSVARIUM ARCHIVES
-
            </div>
 
           <div class="submission-box">
