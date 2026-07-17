@@ -307,6 +307,8 @@ else {
            OSSVARIUM ARCHIVES
            </div>
 
+           </div>
+
           <div class="submission-box">
     
           <h2>⚔ SUPPORT THE UNDERGROUND ⚔</h2>
