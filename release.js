@@ -1,72 +1,51 @@
-const releasePage = document.getElementById("releasePage");
+document.addEventListener("DOMContentLoaded", () => {
+    loadRelease();
+});
 
 async function loadRelease() {
 
-    try {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
 
-        const response = await fetch("./data/releases.json");
-        const releases = await response.json();
-
-        const params = new URLSearchParams(window.location.search);
-        const id = Number(params.get("id") || 0);
-
-        const release = releases[id];
-
-        if (!release) {
-
-            releasePage.innerHTML = "RELEASE NOT FOUND";
-
-            return;
-
-        }
-
-        releasePage.innerHTML = `
-        
-        <div class="release-card">
-
-            <img
-            class="release-cover"
-            src="${release.cover}"
-            alt="${release.release}">
-
-            <div class="release-title">
-
-                ${release.release}
-
-            </div>
-
-            <div class="release-artist">
-
-                ${release.artist}
-
-            </div>
-
-            <div class="release-meta">
-
-                ${release.genre} • ${release.year}
-
-            </div>
-
-            <div class="release-desc">
-
-                ${release.description}
-
-            </div>
-
-        </div>
-
-        `;
-
+    if (!id) {
+        document.getElementById("release-container").innerHTML =
+            "<h2>Release not found.</h2>";
+        return;
     }
 
-    catch(error){
+    const response = await fetch("/data/releases.json");
+    const releases = await response.json();
 
-        console.error(error);
+    const release = releases.find(r => r.id == id);
 
-        releasePage.innerHTML = "ERROR LOADING RELEASE";
-
+    if (!release) {
+        document.getElementById("release-container").innerHTML =
+            "<h2>Release not found.</h2>";
+        return;
     }
 
+    renderRelease(release);
 }
 
-loadRelease();
+function renderRelease(release) {
+
+    document.getElementById("release-container").innerHTML = `
+        <div class="release-card">
+
+            <img src="${release.cover}" class="release-cover">
+
+            <h1>${release.title}</h1>
+
+            <h2>${release.band}</h2>
+
+            <div class="release-meta">
+                ${release.genre} • ${release.year}
+            </div>
+
+            <p class="release-description">
+                ${release.description}
+            </p>
+
+        </div>
+    `;
+}
