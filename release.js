@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadRelease() {
 
     const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+    const id = Number(params.get("id"));
+
 
     if (!id) {
         document.getElementById("release-container").innerHTML =
@@ -16,7 +17,7 @@ async function loadRelease() {
     const response = await fetch("/data/releases.json");
     const releases = await response.json();
 
-    const release = releases.find(r => r.id == id);
+    const release = releases[id];
 
     if (!release) {
         document.getElementById("release-container").innerHTML =
@@ -34,9 +35,9 @@ function renderRelease(release) {
 
             <img src="${release.cover}" class="release-cover">
 
-            <h1>${release.title}</h1>
+            <h1>${release.release}</h1>
 
-            <h2>${release.band}</h2>
+            <h2>${release.artist}</h2>
 
             <div class="release-meta">
                 ${release.genre} • ${release.year}
