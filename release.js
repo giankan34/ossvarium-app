@@ -1,5 +1,5 @@
 const releasePage =
-document.getElementById("releasePage");
+document.getElementById("release-container");
 
 let releases = [];
 let release = null;
