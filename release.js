@@ -1,52 +1,134 @@
+const releasePage =
+document.getElementById("releasePage");
+
+let releases = [];
+let release = null;
+let releaseId = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
+
     loadRelease();
+
 });
 
-async function loadRelease() {
+async function loadRelease(){
 
-    const params = new URLSearchParams(window.location.search);
-    const id = Number(params.get("id"));
+    try{
 
+        const response =
+        await fetch("./data/releases.json");
 
-    if (!id) {
-        document.getElementById("release-container").innerHTML =
-            "<h2>Release not found.</h2>";
-        return;
+        releases =
+        await response.json();
+
+        const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+        releaseId =
+        Number(
+            params.get("id") || 0
+        );
+
+        release =
+        releases[releaseId];
+
+        if(!release){
+
+            releasePage.innerHTML =
+            "<h2>RELEASE NOT FOUND</h2>";
+
+            return;
+
+        }
+
+        renderPage();
+
     }
 
-    const response = await fetch("/data/releases.json");
-    const releases = await response.json();
+    catch(error){
 
-    const release = releases[id];
+        console.error(error);
 
-    if (!release) {
-        document.getElementById("release-container").innerHTML =
-            "<h2>Release not found.</h2>";
-        return;
+        releasePage.innerHTML =
+        "<h2>ERROR LOADING RELEASE</h2>";
+
     }
 
-    renderRelease(release);
 }
 
-function renderRelease(release) {
+function renderPage(){
 
-    document.getElementById("release-container").innerHTML = `
-        <div class="release-card">
+    releasePage.innerHTML =
 
-            <img src="${release.cover}" class="release-cover">
+        renderHeader();
 
-            <h1>${release.release}</h1>
+}
+function renderHeader(){
 
-            <h2>${release.artist}</h2>
+    return `
 
-            <div class="release-meta">
-                ${release.genre} • ${release.year}
-            </div>
+    <div class="release-card">
 
-            <p class="release-description">
-                ${release.description}
-            </p>
+        ${Number(release.supporters) >= 31 ? `
+
+        <div class="hall-relic">
+
+            👑 HALL RELIC
 
         </div>
+
+        ` : ""}
+
+        <img
+
+            class="release-cover"
+
+            src="${release.cover}"
+
+            alt="${release.release}"
+
+        >
+
+        <div class="release-title">
+
+            ${release.release}
+
+        </div>
+
+        <div class="release-artist">
+
+            <a
+
+                href="artist.html?artist=${encodeURIComponent(release.artist)}"
+
+                class="submit-btn">
+
+                ${release.artist}
+
+            </a>
+
+        </div>
+
+        <div class="release-meta">
+
+            ${release.genre}
+
+            •
+
+            ${release.year}
+
+        </div>
+
+        <div class="release-desc">
+
+            ${release.description}
+
+        </div>
+
+    </div>
+
     `;
+
 }
