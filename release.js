@@ -43,6 +43,12 @@ async function loadRelease(){
 
         }
 
+        releasePage.innerHTML = `
+        <h2 style="color:red">
+        STEP 1 OK
+        </h2>
+        `;
+
         renderPage();
 
     }
