@@ -149,109 +149,50 @@ function renderMuseumRecord(){
 
     return `
 
-    <div class="museum-record">
+    <div class="museum-card">
 
         <h3>🏛 MUSEUM RECORD</h3>
 
-        <div>
-
-            🆔 Relic ID
-
-            OSV-${String(releaseId+1).padStart(5,"0")}
-
+        <div class="museum-row">
+            <span class="label">🆔 Relic ID</span>
+            <span class="value">
+                OSV-${String(releaseId + 1).padStart(5,"0")}
+            </span>
         </div>
 
-        <div>
-
-            📜 Status
-
-            PRESERVED
-
+        <div class="museum-row">
+            <span class="label">📜 Status</span>
+            <span class="value">
+                PRESERVED
+            </span>
         </div>
 
-        <div>
-
-            🏆 Hall Rank
-
-            #${releaseId+1}
-
+        <div class="museum-row">
+            <span class="label">🏆 Hall Rank</span>
+            <span class="value">
+                #${releaseId + 1}
+            </span>
         </div>
 
-        <div>
-
-            💀 Rarity
-
-            ${release.genre}
-
+        <div class="museum-row">
+            <span class="label">💀 Category</span>
+            <span class="value">
+                ${release.genre}
+            </span>
         </div>
 
-        <div>
-
-            ❤️ Supporters
-
-            ${release.supporters}
-
+        <div class="museum-row">
+            <span class="label">❤️ Supporters</span>
+            <span class="value">
+                ${release.supporters}
+            </span>
         </div>
 
-        <div>
-
-            🌍 Country
-
-            ${release.country}
-
-        </div>
-
-    </div>
-
-    `;
-
-}
-
-function renderTimeline(){
-
-    const relicAge = 2026 - Number(release.year);
-
-    return `
-
-    <div class="museum-record">
-
-        <hr class="museum-divider">
-
-        <h3>📜 RELIC TIMELINE</h3>
-
-        <div>
-            ⚰ Released
-            ${release.year}
-        </div>
-
-        <div>
-            🏺 Relic Age
-            ${relicAge} Years
-        </div>
-
-        <div>
-            🏛 Entered Ossvarium
-            2026
-        </div>
-
-        <div>
-            ❤️ First Pioneer
-            Unknown
-        </div>
-
-        <div>
-            👑 Current Status
-            PRESERVED
-        </div>
-
-        <div class="archive-stamp">
-
-            🏛<br>
-
-            AUTHENTICATED BY<br>
-
-            OSSVARIUM ARCHIVES
-
+        <div class="museum-row">
+            <span class="label">🌍 Country</span>
+            <span class="value">
+                ${release.country}
+            </span>
         </div>
 
     </div>
