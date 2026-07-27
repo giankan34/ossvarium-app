@@ -1784,3 +1784,80 @@ text-transform:uppercase !important;
 display:block;
 margin:6px 0;
 }
+
+.museum-card{
+
+margin:28px 0;
+
+padding:22px;
+
+background:linear-gradient(180deg,#181313,#0f0b0b);
+
+border:1px solid rgba(180,80,80,.25);
+
+border-radius:14px;
+
+box-shadow:
+0 0 18px rgba(120,20,20,.18),
+inset 0 0 18px rgba(255,255,255,.03);
+
+transition:.35s;
+
+}
+
+.museum-card:hover{
+
+transform:translateY(-2px);
+
+border-color:#8d2d2d;
+
+box-shadow:
+0 0 28px rgba(180,40,40,.35);
+
+}
+
+.museum-card h3{
+
+margin:0 0 18px;
+
+font-size:28px;
+
+letter-spacing:3px;
+
+color:#e4d8d8;
+
+text-transform:uppercase;
+
+}
+
+.museum-row{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:8px 0;
+
+border-bottom:1px solid rgba(255,255,255,.06);
+
+}
+
+.museum-row:last-child{
+
+border:none;
+
+}
+
+.label{
+
+color:#9f8f8f;
+
+}
+
+.value{
+
+color:#f1eeee;
+
+font-weight:bold;
+
+}
