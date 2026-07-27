@@ -70,7 +70,9 @@ function renderPage(){
 
         renderHeader() +
 
-        renderMuseumRecord();
+        renderMuseumRecord() +
+
+        renderTimeline();
 
 }
 function renderHeader(){
@@ -194,6 +196,59 @@ function renderMuseumRecord(){
             🌍 Country
 
             ${release.country}
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+function renderTimeline(){
+
+    const relicAge = 2026 - Number(release.year);
+
+    return `
+
+    <div class="museum-record">
+
+        <hr class="museum-divider">
+
+        <h3>📜 RELIC TIMELINE</h3>
+
+        <div>
+            ⚰ Released
+            ${release.year}
+        </div>
+
+        <div>
+            🏺 Relic Age
+            ${relicAge} Years
+        </div>
+
+        <div>
+            🏛 Entered Ossvarium
+            2026
+        </div>
+
+        <div>
+            ❤️ First Pioneer
+            Unknown
+        </div>
+
+        <div>
+            👑 Current Status
+            PRESERVED
+        </div>
+
+        <div class="archive-stamp">
+
+            🏛<br>
+
+            AUTHENTICATED BY<br>
+
+            OSSVARIUM ARCHIVES
 
         </div>
 
