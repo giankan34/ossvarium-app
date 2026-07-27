@@ -72,7 +72,9 @@ function renderPage(){
 
         renderMuseumRecord() +
 
-        renderTimeline();
+        renderTimeline() +
+
+        renderArtistBio();
 
 }
 function renderHeader(){
@@ -251,6 +253,26 @@ function renderTimeline(){
             OSSVARIUM ARCHIVES
 
         </div>
+
+    </div>
+
+    `;
+
+}
+
+function renderArtistBio(){
+
+    return `
+
+    <div class="museum-record">
+
+        <h3>🎤 ARTIST DOSSIER</h3>
+
+        <p>
+
+            ${release.bio}
+
+        </p>
 
     </div>
 
