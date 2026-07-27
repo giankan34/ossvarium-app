@@ -68,7 +68,9 @@ function renderPage(){
 
     releasePage.innerHTML =
 
-        renderHeader();
+        renderHeader() +
+
+        renderMuseumRecord();
 
 }
 function renderHeader(){
@@ -130,6 +132,68 @@ function renderHeader(){
         <div class="release-desc">
 
             ${release.description}
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+function renderMuseumRecord(){
+
+    return `
+
+    <div class="museum-record">
+
+        <h3>🏛 MUSEUM RECORD</h3>
+
+        <div>
+
+            🆔 Relic ID
+
+            OSV-${String(releaseId+1).padStart(5,"0")}
+
+        </div>
+
+        <div>
+
+            📜 Status
+
+            PRESERVED
+
+        </div>
+
+        <div>
+
+            🏆 Hall Rank
+
+            #${releaseId+1}
+
+        </div>
+
+        <div>
+
+            💀 Rarity
+
+            ${release.genre}
+
+        </div>
+
+        <div>
+
+            ❤️ Supporters
+
+            ${release.supporters}
+
+        </div>
+
+        <div>
+
+            🌍 Country
+
+            ${release.country}
 
         </div>
 
