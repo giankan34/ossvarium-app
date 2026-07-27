@@ -201,11 +201,60 @@ function renderMuseumRecord(){
 
 }
 
+function renderTimeline(){
+
+    return `
+
+    <div class="museum-card">
+
+        <h3>📜 RELIC TIMELINE</h3>
+
+        <div class="museum-row">
+            <span class="label">📦 Released</span>
+            <span class="value">${release.year}</span>
+        </div>
+
+        <div class="museum-row">
+            <span class="label">⏳ Relic Age</span>
+            <span class="value">
+                ${2026 - Number(release.year)} Years
+            </span>
+        </div>
+
+        <div class="museum-row">
+            <span class="label">🏛 Entered Ossvarium</span>
+            <span class="value">2026</span>
+        </div>
+
+        <div class="museum-row">
+            <span class="label">❤️ First Pioneer</span>
+            <span class="value">Unknown</span>
+        </div>
+
+        <div class="museum-row">
+            <span class="label">👑 Current Status</span>
+            <span class="value">PRESERVED</span>
+        </div>
+
+        <div style="margin-top:20px;text-align:center;color:#b9a8a8;letter-spacing:2px;">
+
+            🏛 AUTHENTICATED BY<br>
+
+            <strong>OSSVARIUM ARCHIVES</strong>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
 function renderArtistBio(){
 
     return `
 
-    <div class="museum-record">
+    <div class="museum-card">
 
         <h3>🎤 ARTIST DOSSIER</h3>
 
