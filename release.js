@@ -147,7 +147,9 @@ function renderMuseumRecord(){
 
     <div class="museum-card">
 
-        <h3>🏛 MUSEUM RECORD</h3>
+        <div class="section-title">
+        🏛 ARCHIVE ENTRY
+        </div>
 
         <div class="museum-row">
 
