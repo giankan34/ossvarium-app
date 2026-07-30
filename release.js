@@ -148,53 +148,56 @@ function renderMuseumRecord(){
     <div class="museum-card">
 
         <div class="section-title">
-        🏛 ARCHIVE ENTRY
+            🏛 ARCHIVE ENTRY
         </div>
 
         <div class="museum-row">
+            <span class="museum-label">ARCHIVE CODE</span>
+            <span class="museum-value">
+                OSV-${String(releaseId+1).padStart(5,"0")}
+            </span>
+        </div>
 
         <div class="museum-row">
-    <span class="museum-label">ARCHIVE CODE</span>
-    <span class="museum-value">
-        OSV-${String(releaseId+1).padStart(5,"0")}
-    </span>
-</div>
+            <span class="museum-label">CLASSIFICATION</span>
+            <span class="museum-value">
+                ${release.genre}
+            </span>
+        </div>
 
-<div class="museum-row">
-    <span class="museum-label">CLASSIFICATION</span>
-    <span class="museum-value">
-        ${release.genre}
-    </span>
-</div>
+        <div class="museum-row">
+            <span class="museum-label">PRESERVATION</span>
+            <span class="museum-value status-red">
+                PRESERVED
+            </span>
+        </div>
 
-<div class="museum-row">
-    <span class="museum-label">PRESERVATION</span>
-    <span class="museum-value status-red">
-        PRESERVED
-    </span>
-</div>
+        <div class="museum-row">
+            <span class="museum-label">ORIGIN</span>
+            <span class="museum-value">
+                ${release.country}
+            </span>
+        </div>
 
-<div class="museum-row">
-    <span class="museum-label">ORIGIN</span>
-    <span class="museum-value">
-        ${release.country}
-    </span>
-</div>
+        <div class="museum-row">
+            <span class="museum-label">ARCHIVE RANK</span>
+            <span class="museum-value status-gold">
+                #${releaseId+1}
+            </span>
+        </div>
 
-<div class="museum-row">
-    <span class="museum-label">ARCHIVE RANK</span>
-    <span class="museum-value status-gold">
-        #${releaseId+1}
-    </span>
-</div>
+        <div class="museum-row">
+            <span class="museum-label">CULT MEMBERS</span>
+            <span class="museum-value">
+                ${release.supporters}
+            </span>
+        </div>
 
-<div class="museum-row">
-    <span class="museum-label">CULT MEMBERS</span>
-    <span class="museum-value">
-        ${release.supporters}
-    </span>
-</div>
+    </div>
 
+    `;
+
+                }
     </div>
 
     `;
