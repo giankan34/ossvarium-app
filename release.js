@@ -150,7 +150,6 @@ function renderMuseumRecord(){
         <h3>🏛 MUSEUM RECORD</h3>
 
         <div class="museum-row">
-function renderMuseumRecord(){
 
     return `
 
