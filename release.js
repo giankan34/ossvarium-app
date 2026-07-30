@@ -83,41 +83,31 @@ function renderHeader(){
 
     <div class="release-card">
 
-        ${Number(release.supporters) >= 31 ? `
+        ${Number(release.supporters) >= 30 ? `
 
         <div class="hall-relic">
-
-            👑 HALL RELIC
-
+            👑 HALL OF RELICS
         </div>
 
         ` : ""}
 
         <img
-
             class="release-cover"
-
             src="${release.cover}"
-
             alt="${release.release}"
-
         >
 
         <div class="release-title">
-
             ${release.release}
-
         </div>
 
         <div class="release-artist">
 
             <a
-
                 href="artist.html?artist=${encodeURIComponent(release.artist)}"
-
                 class="submit-btn">
 
-                ${release.artist}
+                ⚔ ${release.artist}
 
             </a>
 
@@ -126,9 +116,9 @@ function renderHeader(){
         <div class="release-meta">
 
             ${release.genre}
-
             •
-
+            ${release.country}
+            •
             ${release.year}
 
         </div>
@@ -136,6 +126,12 @@ function renderHeader(){
         <div class="release-desc">
 
             ${release.description}
+
+        </div>
+
+        <div class="ossvarium-note">
+
+            ☩ DIGITALLY PRESERVED INSIDE THE OSSVARIUM ARCHIVES
 
         </div>
 
