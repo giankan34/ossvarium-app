@@ -1926,3 +1926,61 @@ text-transform:uppercase;
 opacity:.8;
 
 }
+
+.section-title{
+
+font-size:34px;
+
+margin:35px 0 20px;
+
+letter-spacing:4px;
+
+font-family:'Courier New',monospace;
+
+color:#d8d0d0;
+
+text-transform:uppercase;
+
+}
+
+.museum-row{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:12px 0;
+
+border-bottom:1px solid rgba(255,255,255,.08);
+
+font-size:17px;
+
+letter-spacing:2px;
+
+}
+
+.museum-row span{
+
+color:#888;
+
+}
+
+.museum-row strong{
+
+color:#ddd;
+
+font-weight:bold;
+
+}
+
+.status-red{
+
+color:#b22222;
+
+}
+
+.status-gold{
+
+color:#d4af37;
+
+}
