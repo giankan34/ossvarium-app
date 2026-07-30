@@ -150,52 +150,51 @@ function renderMuseumRecord(){
         <h3>🏛 MUSEUM RECORD</h3>
 
         <div class="museum-row">
-            <span class="label">🆔 Relic ID</span>
-            <span class="value">
-                OSV-${String(releaseId + 1).padStart(5,"0")}
-            </span>
+function renderMuseumRecord(){
+
+    return `
+
+    <div class="museum-card">
+
+        <div class="section-title">
+            🏛 MUSEUM RECORD
         </div>
 
         <div class="museum-row">
-            <span class="label">📜 Status</span>
-            <span class="value">
-                PRESERVED
-            </span>
+            <span>RELIC ID</span>
+            <strong>OSV-${String(releaseId+1).padStart(5,"0")}</strong>
         </div>
 
         <div class="museum-row">
-            <span class="label">🏆 Hall Rank</span>
-            <span class="value">
-                #${releaseId + 1}
-            </span>
+            <span>STATUS</span>
+            <strong class="status-red">PRESERVED</strong>
         </div>
 
         <div class="museum-row">
-            <span class="label">💀 Category</span>
-            <span class="value">
-                ${release.genre}
-            </span>
+            <span>HALL RANK</span>
+            <strong class="status-gold">#${releaseId+1}</strong>
         </div>
 
         <div class="museum-row">
-            <span class="label">❤️ Supporters</span>
-            <span class="value">
-                ${release.supporters}
-            </span>
+            <span>CATEGORY</span>
+            <strong>${release.genre}</strong>
         </div>
 
         <div class="museum-row">
-            <span class="label">🌍 Country</span>
-            <span class="value">
-                ${release.country}
-            </span>
+            <span>SUPPORTERS</span>
+            <strong>${release.supporters}</strong>
+        </div>
+
+        <div class="museum-row">
+            <span>COUNTRY</span>
+            <strong>${release.country}</strong>
         </div>
 
     </div>
 
     `;
 
-}
+        }
 
 function renderTimeline(){
 
