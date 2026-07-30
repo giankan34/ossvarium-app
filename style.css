@@ -1905,3 +1905,24 @@ font-weight:bold;
     line-height:1.8;
     font-size:18px;
 }
+
+.ossvarium-note{
+
+margin-top:25px;
+padding-top:18px;
+
+border-top:1px solid #3b2d2d;
+
+font-size:12px;
+
+letter-spacing:4px;
+
+color:#8b6b6b;
+
+text-align:center;
+
+text-transform:uppercase;
+
+opacity:.8;
+
+}
