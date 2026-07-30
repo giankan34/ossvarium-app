@@ -194,7 +194,7 @@ function renderMuseumRecord(){
 
     `;
 
-        }
+ }
 
 function renderTimeline(){
 
