@@ -153,11 +153,6 @@ function renderMuseumRecord(){
 
         <div class="museum-row">
 
-
-        <div class="section-title">
-            🏛 MUSEUM RECORD
-        </div>
-
         <div class="museum-row">
             <span>RELIC ID</span>
             <strong>OSV-${String(releaseId+1).padStart(5,"0")}</strong>
