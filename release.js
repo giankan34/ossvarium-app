@@ -197,12 +197,7 @@ function renderMuseumRecord(){
 
     `;
 
-                }
-    </div>
-
-    `;
-
- }
+}
 
 function renderTimeline(){
 
