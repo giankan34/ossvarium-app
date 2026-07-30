@@ -151,9 +151,6 @@ function renderMuseumRecord(){
 
         <div class="museum-row">
 
-    return `
-
-    <div class="museum-card">
 
         <div class="section-title">
             🏛 MUSEUM RECORD
