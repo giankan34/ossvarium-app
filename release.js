@@ -154,34 +154,46 @@ function renderMuseumRecord(){
         <div class="museum-row">
 
         <div class="museum-row">
-            <span>RELIC ID</span>
-            <strong>OSV-${String(releaseId+1).padStart(5,"0")}</strong>
-        </div>
+    <span class="museum-label">ARCHIVE CODE</span>
+    <span class="museum-value">
+        OSV-${String(releaseId+1).padStart(5,"0")}
+    </span>
+</div>
 
-        <div class="museum-row">
-            <span>STATUS</span>
-            <strong class="status-red">PRESERVED</strong>
-        </div>
+<div class="museum-row">
+    <span class="museum-label">CLASSIFICATION</span>
+    <span class="museum-value">
+        ${release.genre}
+    </span>
+</div>
 
-        <div class="museum-row">
-            <span>HALL RANK</span>
-            <strong class="status-gold">#${releaseId+1}</strong>
-        </div>
+<div class="museum-row">
+    <span class="museum-label">PRESERVATION</span>
+    <span class="museum-value status-red">
+        PRESERVED
+    </span>
+</div>
 
-        <div class="museum-row">
-            <span>CATEGORY</span>
-            <strong>${release.genre}</strong>
-        </div>
+<div class="museum-row">
+    <span class="museum-label">ORIGIN</span>
+    <span class="museum-value">
+        ${release.country}
+    </span>
+</div>
 
-        <div class="museum-row">
-            <span>SUPPORTERS</span>
-            <strong>${release.supporters}</strong>
-        </div>
+<div class="museum-row">
+    <span class="museum-label">ARCHIVE RANK</span>
+    <span class="museum-value status-gold">
+        #${releaseId+1}
+    </span>
+</div>
 
-        <div class="museum-row">
-            <span>COUNTRY</span>
-            <strong>${release.country}</strong>
-        </div>
+<div class="museum-row">
+    <span class="museum-label">CULT MEMBERS</span>
+    <span class="museum-value">
+        ${release.supporters}
+    </span>
+</div>
 
     </div>
 
