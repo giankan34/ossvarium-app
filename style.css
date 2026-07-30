@@ -1861,3 +1861,47 @@ color:#f1eeee;
 font-weight:bold;
 
 }
+
+.museum-card{
+    background:#181212;
+    border:1px solid #3a2a2a;
+    border-radius:14px;
+    padding:22px;
+    margin:24px 0;
+    box-shadow:0 0 18px rgba(120,0,0,.15);
+}
+
+.museum-card h3{
+    margin:0 0 18px;
+    color:#f2e7e7;
+    font-size:34px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+}
+
+.museum-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.museum-row:last-child{
+    border-bottom:none;
+}
+
+.museum-row .label{
+    color:#b8a8a8;
+}
+
+.museum-row .value{
+    color:#fff;
+    font-weight:bold;
+}
+
+.artist-bio{
+    color:#d8d0d0;
+    line-height:1.8;
+    font-size:18px;
+}
