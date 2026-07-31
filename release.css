@@ -1,1 +1,88 @@
+/* =====================================
+   OSSVARIUM RELEASE PAGE
+===================================== */
 
+body{
+
+    background:#0b0a0a;
+
+}
+
+.release-card{
+
+    background:#141010;
+
+    border:1px solid #382525;
+
+    border-radius:16px;
+
+    padding:30px;
+
+    margin-bottom:35px;
+
+    box-shadow:
+    0 0 30px rgba(120,0,0,.15);
+
+}
+
+.release-cover{
+
+    width:100%;
+
+    border-radius:10px;
+
+    border:1px solid #402727;
+
+    margin-bottom:25px;
+
+}
+
+.release-title{
+
+    font-size:42px;
+
+    letter-spacing:4px;
+
+    text-transform:uppercase;
+
+    margin-bottom:10px;
+
+}
+
+.release-meta{
+
+    color:#9a8b8b;
+
+    letter-spacing:2px;
+
+    margin:15px 0;
+
+}
+
+.release-desc{
+
+    color:#d7d1d1;
+
+    line-height:1.8;
+
+    margin-top:20px;
+
+}
+
+.section-title{
+
+    margin-bottom:25px;
+
+    padding-bottom:10px;
+
+    border-bottom:1px solid #402828;
+
+    font-size:30px;
+
+    letter-spacing:4px;
+
+    color:#e7dddd;
+
+    text-transform:uppercase;
+
+}
