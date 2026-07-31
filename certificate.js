@@ -83,13 +83,35 @@ ${release.year}
 
 <div class="cert-footer">
 
-This relic has been officially authenticated
-and permanently preserved inside the
-<strong>OSSVARIUM ARCHIVES.</strong>
+This relic has been officially examined,
+authenticated and permanently preserved
+inside the
 
 <br><br>
 
-Future generations shall remember its existence.
+<strong>OSSVARIUM ARCHIVES</strong>
+
+<br><br>
+
+by order of the Curator.
+
+<br><br><br>
+
+────────────────────────
+
+<br>
+
+CURATOR SIGNATURE
+
+<br><br>
+
+OSSVARIUM ARCHIVES
+
+<br>
+
+CERTIFICATE No.
+
+OSV-CERT-2026-${String(id+1).padStart(5,"0")}
 
 </div>
 
