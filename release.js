@@ -147,8 +147,26 @@ function renderMuseumRecord(){
 
     <div class="museum-card">
 
-        <div class="section-title">
-            🏛 ARCHIVE ENTRY
+        <div class="archive-header">
+
+            <div class="archive-icon">🏛</div>
+
+            <div>
+
+                <div class="archive-title">
+                    ARCHIVE ENTRY
+                </div>
+
+                <div class="archive-subtitle">
+                    OFFICIAL OSSVARIUM RECORD
+                </div>
+
+            </div>
+
+            <div class="archive-stamp">
+                PRESERVED
+            </div>
+
         </div>
 
         <div class="museum-row">
@@ -162,13 +180,6 @@ function renderMuseumRecord(){
             <span class="museum-label">CLASSIFICATION</span>
             <span class="museum-value">
                 ${release.genre}
-            </span>
-        </div>
-
-        <div class="museum-row">
-            <span class="museum-label">PRESERVATION</span>
-            <span class="museum-value status-red">
-                PRESERVED
             </span>
         </div>
 
@@ -187,7 +198,7 @@ function renderMuseumRecord(){
         </div>
 
         <div class="museum-row">
-            <span class="museum-label">CULT MEMBERS</span>
+            <span class="museum-label">FOLLOWERS</span>
             <span class="museum-value">
                 ${release.supporters}
             </span>
@@ -198,6 +209,7 @@ function renderMuseumRecord(){
     `;
 
 }
+
 
 function renderTimeline(){
 
