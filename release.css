@@ -86,3 +86,73 @@ body{
     text-transform:uppercase;
 
 }
+
+.museum-card{
+
+    background:#151010;
+
+    border:1px solid #402828;
+
+    border-radius:14px;
+
+    padding:25px;
+
+    margin:35px 0;
+
+    box-shadow:0 0 25px rgba(120,0,0,.12);
+
+}
+
+.museum-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 0;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.museum-row:last-child{
+
+    border-bottom:none;
+
+}
+
+.museum-label{
+
+    color:#8c7d7d;
+
+    font-size:13px;
+
+    letter-spacing:3px;
+
+    text-transform:uppercase;
+
+}
+
+.museum-value{
+
+    color:#ece4e4;
+
+    font-weight:bold;
+
+    letter-spacing:1px;
+
+}
+
+.status-red{
+
+    color:#b22222;
+
+}
+
+.status-gold{
+
+    color:#caa03d;
+
+}
