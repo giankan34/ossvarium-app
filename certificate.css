@@ -24,7 +24,7 @@ background:#ede1c7;
 
 color:#1b1815;
 
-padding:60px;
+padding:40px 22px;
 
 border:12px solid #2a201a;
 
@@ -62,9 +62,13 @@ pointer-events:none;
 
 font-family:'UnifrakturMaguntia',serif;
 
-font-size:64px;
+font-size:clamp(36px,8vw,64px);
 
 text-align:center;
+
+line-height:1.1;
+
+word-break:break-word;
 
 margin-bottom:10px;
 
