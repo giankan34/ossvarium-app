@@ -218,3 +218,37 @@ letter-spacing:3px;
 transform:rotate(-8deg);
 
 }
+
+.certificate-btn{
+
+display:inline-block;
+
+margin-top:30px;
+
+padding:14px 26px;
+
+background:#2b1a1a;
+
+border:1px solid #6b2a2a;
+
+color:#e8dfd6;
+
+text-decoration:none;
+
+letter-spacing:4px;
+
+font-size:14px;
+
+transition:.25s;
+
+}
+
+.certificate-btn:hover{
+
+background:#571d1d;
+
+box-shadow:0 0 18px rgba(180,40,40,.45);
+
+transform:translateY(-2px);
+
+}
