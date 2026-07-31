@@ -129,6 +129,16 @@ function renderHeader(){
 
         </div>
 
+        <br>
+
+        <a
+        class="certificate-btn"
+        href="certificate.html?id=${releaseId}">
+
+        📜 VIEW CERTIFICATE
+
+        </a>
+
         <div class="ossvarium-note">
 
             ☩ DIGITALLY PRESERVED INSIDE THE OSSVARIUM ARCHIVES
