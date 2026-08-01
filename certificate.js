@@ -155,6 +155,15 @@ setTimeout(()=>{
 
     container.style.display="block";
 
+    setTimeout(()=>{
+
+const seal =
+document.querySelector(".archive-seal");
+
+seal.classList.add("show");
+
+},350);
+    
 },2800);
   
 });
