@@ -1,6 +1,15 @@
 const container =
 document.getElementById("certificate-container");
 
+const loading =
+document.getElementById("loading-screen");
+
+const loadingText =
+document.getElementById("loading-text");
+
+const loadingFill =
+document.getElementById("loading-fill");
+
 const params =
 new URLSearchParams(window.location.search);
 
@@ -119,4 +128,29 @@ OSV-CERT-2026-${String(id+1).padStart(5,"0")}
 
 `;
 
+loadingFill.style.width = "25%";
+loadingText.innerText = "Authenticating...";
+
+setTimeout(()=>{
+
+    loadingFill.style.width = "60%";
+    loadingText.innerText = "Locating Certificate...";
+
+},800);
+
+setTimeout(()=>{
+
+    loadingFill.style.width = "100%";
+    loadingText.innerText = "Opening Archive...";
+
+},1700);
+
+setTimeout(()=>{
+
+    loading.style.display="none";
+
+    container.style.display="block";
+
+},2800);
+  
 });
