@@ -29,6 +29,10 @@ container.innerHTML = `
 
 <div class="certificate">
 
+<img
+class="archive-seal"
+src="images/seals/preserved.png">
+
 <div class="cert-title">
 
 OSSVARIUM
