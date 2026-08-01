@@ -189,3 +189,33 @@ background:#8f1d1d;
 transition:all .7s ease;
 
 }
+
+.archive-seal{
+
+position:absolute;
+
+right:45px;
+
+top:70px;
+
+width:150px;
+
+opacity:0;
+
+transform:scale(2.4) rotate(-25deg);
+
+transition:all .45s ease-out;
+
+pointer-events:none;
+
+filter:drop-shadow(0 0 10px rgba(100,0,0,.35));
+
+}
+
+.archive-seal.show{
+
+opacity:.82;
+
+transform:scale(1) rotate(-12deg);
+
+}
