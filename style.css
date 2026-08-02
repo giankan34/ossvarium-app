@@ -2023,3 +2023,169 @@ color:#d4af37;
 .status-gold{
     color:#b88b2b;
 }
+
+/* ===========================
+   OSSVARIUM HEADER
+=========================== */
+
+.site-header{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+margin-bottom:50px;
+
+position:relative;
+
+}
+
+.site-header::before{
+
+content:"";
+
+position:absolute;
+
+width:320px;
+
+height:320px;
+
+background:
+
+radial-gradient(circle,
+rgba(120,0,0,.18),
+transparent 70%);
+
+top:-70px;
+
+z-index:-1;
+
+filter:blur(25px);
+
+animation:pulseGlow 8s ease-in-out infinite;
+
+}
+
+.ossvarium-crest{
+
+width:140px;
+
+margin-bottom:20px;
+
+filter:
+drop-shadow(0 0 20px rgba(120,0,0,.35));
+
+transition:.4s;
+
+}
+
+.ossvarium-crest:hover{
+
+transform:scale(1.05) rotate(-2deg);
+
+filter:
+drop-shadow(0 0 30px rgba(180,20,20,.45));
+
+}
+
+.site-header h1{
+
+margin:0;
+
+font-size:64px;
+
+letter-spacing:12px;
+
+}
+
+.site-header .subtitle{
+
+margin-top:8px;
+
+letter-spacing:6px;
+
+font-size:14px;
+
+color:#8f8782;
+
+text-transform:uppercase;
+
+}
+
+/* ====================================
+   OSSVARIUM CREST ANIMATION
+==================================== */
+
+@keyframes crestFloat{
+
+0%{
+
+transform:rotate(-1deg) scale(1);
+
+}
+
+50%{
+
+transform:rotate(1deg) scale(1.015);
+
+}
+
+100%{
+
+transform:rotate(-1deg) scale(1);
+
+}
+
+}
+
+.ossvarium-crest{
+
+animation:crestFloat 8s ease-in-out infinite;
+
+transition:.4s;
+
+cursor:pointer;
+
+}
+
+.ossvarium-crest:hover{
+
+transform:scale(1.08);
+
+filter:
+
+drop-shadow(0 0 12px rgba(170,20,20,.45))
+
+drop-shadow(0 0 30px rgba(120,0,0,.35));
+
+}
+
+@keyframes pulseGlow{
+
+0%{
+
+opacity:.35;
+
+transform:scale(.95);
+
+}
+
+50%{
+
+opacity:.75;
+
+transform:scale(1.1);
+
+}
+
+100%{
+
+opacity:.35;
+
+transform:scale(.95);
+
+}
+
+}
