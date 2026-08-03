@@ -72,13 +72,45 @@ text-align:center;
 
 }
 
-</style>
+#progress-container{
 
-</head>
+width:320px;
+
+height:10px;
+
+border:1px solid #ff4d4d;
+
+margin:35px auto;
+
+background:#111;
+
+overflow:hidden;
+
+}
+
+#progress-bar{
+
+width:0%;
+
+height:100%;
+
+background:#ff4d4d;
+
+box-shadow:0 0 15px #ff4d4d;
+
+transition:width .5s linear;
+
+}
+
+</style>
 
 <body>
 
 <div id="terminal"></div>
+
+<div id="progress-container">
+    <div id="progress-bar"></div>
+</div>
 
 <script>
 
@@ -121,6 +153,10 @@ div.className="line";
 div.style.animationDelay="0s";
 
 div.innerText=lines[i];
+
+const bar = document.getElementById("progress-bar");
+
+bar.style.width = ((i+1)/lines.length)*100 + "%";
 
 terminal.appendChild(div);
 
