@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>The OSSVARIUM Codex</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>THE OSSVARIUM CODEX</title>
-
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="ossvarium-codex.css">
-
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ossvarium-codex.css">
 </head>
 
 <body>
@@ -21,132 +17,106 @@
 
 <div class="book">
 
+    <!-- COVER -->
+
     <div class="front-page">
 
         <div class="codex-cover">
 
-<img
-src="images/ui/ossvarium-crest.png"
-class="crest">
+            <img
+                src="images/ui/ossvarium-crest.png"
+                class="crest"
+                alt="OSSVARIUM Crest">
 
-<h1>THE OSSVARIUM CODEX</h1>
+            <h1>THE OSSVARIUM CODEX</h1>
 
-<p>
+            <p>
+                The Official Archive Manuscript
+            </p>
 
-The Official Archive Manuscript
+            <button id="enterCodex">
+                ENTER THE ARCHIVES
+            </button>
 
-</p>
-<button id="enterCodex">
-
-ENTER THE ARCHIVES
-
-</button>
-
-</div>
-
-<section class="page active">
-
-<h2>I — THE PURPOSE</h2>
-
-<p>
-
-Not every album deserves to survive.
-
-The OSSVARIUM exists to preserve
-those recordings that have become
-part of underground history.
-
-</p>
-
-</section>
+        </div>
 
     </div>
 
+
+    <!-- PAGE I -->
+
+    <section class="page active">
+
+        <h2>I — THE PURPOSE</h2>
+
+        <p>
+            Not every album deserves to survive.
+        </p>
+
+        <p>
+            The OSSVARIUM exists to preserve
+            those recordings that have become
+            part of underground history.
+        </p>
+
+    </section>
+
+
+    <!-- PAGE II -->
+
+    <section class="page">
+
+        <h2>II — THE CURATOR</h2>
+
+        <p>
+            The Curator owns nothing.
+        </p>
+
+        <p>
+            The Curator protects everything.
+        </p>
+
+    </section>
+
+
+    <!-- PAGE III -->
+
+    <section class="page">
+
+        <h2>III — THE ARCHIVE</h2>
+
+        <p>
+            Every preserved relic receives
+            its own identity, certificate
+            and eternal archive record.
+        </p>
+
+    </section>
+
 </div>
 
-<section class="page">
 
-<h2>II — THE CURATOR</h2>
-
-<p>
-
-The Curator owns nothing.
-
-The Curator protects everything.
-
-</p>
-
-</section>
-
-<section class="page">
-
-<h2>III — THE ARCHIVE</h2>
-
-<p>
-
-Every preserved relic receives
-its own identity,
-certificate
-and eternal archive record.
-
-</p>
-
-</section>
+<!-- NAVIGATION -->
 
 <div class="codex-controls">
 
-<button id="prevPage">◀ Previous</button>
+    <button id="prevPage">
+        ◀ Previous
+    </button>
 
-<button id="nextPage">Next ▶</button>
+    <div id="pageCounter">
+        Page 1 / 3
+    </div>
 
-<script>
-
-const pages=document.querySelectorAll(".page");
-
-let current=0;
-
-function showPage(index){
-
-pages.forEach(p=>p.classList.remove("active"));
-
-pages[index].classList.add("active");
-
-}
-
-document.getElementById("nextPage").onclick=()=>{
-
-if(current<pages.length-1){
-
-current++;
-
-showPage(current);
-
-}
-
-};
-
-document.getElementById("prevPage").onclick=()=>{
-
-if(current>0){
-
-current--;
-
-showPage(current);
-
-}
-
-};
-
-showPage(0);
-
-</script>
+    <button id="nextPage">
+        Next ▶
+    </button>
 
 </div>
 
 </div>
 
-</div>
+<script src="ossvarium-codex.js"></script>
 
 </body>
-
 </html>
