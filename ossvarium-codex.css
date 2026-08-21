@@ -1,198 +1,503 @@
 body{
-
-background:#080707;
-
-margin:0;
-
-padding:80px 20px;
-
-font-family:Georgia,serif;
-
+    background:#080707;
+    margin:0;
+    padding:80px 20px;
+    font-family:Georgia, serif;
 }
+
+
+/* =========================
+   MAIN CODEX FRAME
+========================= */
 
 .codex-book{
+    max-width:900px;
+    margin:auto;
+    background:#efe2cb;
+    padding:70px;
+    border:14px solid #5c4331;
 
-max-width:900px;
-
-margin:auto;
-
-background:#efe2cb;
-
-padding:70px;
-
-border:14px solid #5c4331;
-
-box-shadow:
-
-0 0 60px rgba(0,0,0,.7);
-
+    box-shadow:
+        0 0 60px rgba(0,0,0,.7);
 }
 
-.codex-cover{
 
-text-align:center;
-
-margin-bottom:80px;
-
-}
-
-.crest{
-
-width:220px !important;
-
-height:auto !important;
-
-display:block !important;
-
-margin:0 auto 40px !important;
-
-object-fit:contain !important;
-
-max-width:220px !important;
-
-}
-
-.codex-cover h1{
-
-font-size:54px;
-
-letter-spacing:5px;
-
-margin:0;
-
-color:#2f2016;
-
-}
-
-.codex-cover p{
-
-font-style:italic;
-
-letter-spacing:3px;
-
-margin-top:18px;
-
-}
-
-.page{
-
-margin-top:70px;
-
-}
-
-.page h2{
-
-font-size:30px;
-
-border-bottom:2px solid #6c513d;
-
-padding-bottom:10px;
-
-margin-bottom:30px;
-
-color:#3d2a1f;
-
-}
-
-.page p{
-
-font-size:22px;
-
-line-height:2;
-
-color:#34261d;
-
-}
+/* =========================
+   BOOK ENGINE
+========================= */
 
 .book{
-
-perspective:2200px;
-
+    position:relative;
+    perspective:2200px;
 }
+
+
+/* =========================
+   COVER
+========================= */
 
 .front-page{
+    position:relative;
+    overflow:hidden;
 
-transition:1.3s;
+    padding:55px 45px;
 
-transform-origin:left center;
+    background:
+        radial-gradient(
+            circle at 20% 15%,
+            rgba(255,245,210,.28),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(92,58,28,.10),
+            transparent 30%
+        ),
+        linear-gradient(
+            90deg,
+            rgba(75,45,22,.08),
+            transparent 8%,
+            transparent 92%,
+            rgba(75,45,22,.08)
+        ),
+        #e7d2aa;
 
+    border:2px solid #6f4d2f;
+    border-radius:2px;
+
+    box-shadow:
+        inset 0 0 0 8px rgba(73,45,24,.18),
+        inset 0 0 35px rgba(70,40,18,.28),
+        0 12px 35px rgba(0,0,0,.35);
+
+    transition:
+        transform 1.3s ease,
+        opacity 1.3s ease;
+
+    transform-origin:left center;
 }
+
+
+/* inner cover border */
+
+.front-page::before{
+    content:"";
+
+    position:absolute;
+    inset:14px;
+
+    border:1px solid rgba(78,48,27,.55);
+
+    box-shadow:
+        inset 0 0 18px rgba(76,44,20,.18);
+
+    pointer-events:none;
+}
+
+
+/* bottom ornament */
+
+.front-page::after{
+    content:"✦";
+
+    position:absolute;
+    left:50%;
+    bottom:18px;
+
+    transform:translateX(-50%);
+
+    color:#6b482b;
+    font-size:20px;
+    opacity:.7;
+}
+
+
+/* OPEN COVER */
 
 .book.open .front-page{
+    position:absolute;
+    top:0;
+    left:0;
 
-transform:rotateY(-165deg);
+    width:100%;
+    box-sizing:border-box;
 
-opacity:.15;
+    z-index:0;
 
+    transform:
+        rotateY(-178deg)
+        translateX(-8px);
+
+    transform-origin:left center;
+
+    opacity:.07;
+
+    pointer-events:none;
 }
 
+
+/* =========================
+   COVER CONTENT
+========================= */
+
+.codex-cover{
+    position:relative;
+    z-index:1;
+
+    text-align:center;
+    margin-bottom:80px;
+}
+
+
+/* upper ornaments */
+
+.codex-cover::before,
+.codex-cover::after{
+    content:"❦";
+
+    position:absolute;
+    top:-10px;
+
+    font-size:28px;
+    color:#6b482b;
+    opacity:.55;
+}
+
+.codex-cover::before{
+    left:-5px;
+}
+
+.codex-cover::after{
+    right:-5px;
+}
+
+
+/* CREST */
+
+.crest{
+    width:220px !important;
+    max-width:220px !important;
+
+    height:auto !important;
+
+    display:block !important;
+
+    margin:
+        0 auto 40px !important;
+
+    object-fit:contain !important;
+}
+
+
+/* COVER TITLE */
+
+.codex-cover h1{
+    margin:0;
+
+    font-family:"Cinzel", serif;
+    font-size:54px;
+    font-weight:700;
+
+    letter-spacing:5px;
+
+    color:#2f2016;
+
+    text-shadow:
+        0 1px 0 rgba(255,255,255,.18),
+        0 2px 8px rgba(76,35,15,.18);
+}
+
+
+/* COVER SUBTITLE */
+
+.codex-cover p{
+    margin-top:18px;
+
+    font-style:italic;
+    letter-spacing:3px;
+}
+
+
+/* ENTER BUTTON */
+
 #enterCodex{
+    margin-top:40px;
 
-margin-top:40px;
+    padding:18px 35px;
 
-padding:18px 35px;
+    background:#111;
+    color:#e8d6b0;
 
-background:#111;
+    border:1px solid #8a6c4b;
 
-color:#e8d6b0;
+    cursor:pointer;
 
-border:1px solid #8a6c4b;
+    font-family:"Cinzel", serif;
+    font-size:18px;
+    font-weight:600;
 
-cursor:pointer;
+    letter-spacing:3px;
 
-font-size:18px;
+    transition:.3s;
 
-letter-spacing:3px;
-
-transition:.3s;
-
+    box-shadow:
+        inset 0 0 0 1px rgba(197,151,74,.25),
+        0 5px 14px rgba(0,0,0,.25);
 }
 
 #enterCodex:hover{
-
-background:#2c1e14;
-
+    background:#2c1e14;
 }
+
+
+/* =========================
+   INNER PAGES
+========================= */
 
 .page{
-display:none;
-animation:fade .4s ease;
+    display:none;
+
+    position:relative;
+
+    max-width:760px;
+
+    margin:
+        40px auto 0;
+
+    padding:
+        48px 42px 64px;
+
+    box-sizing:border-box;
+
+    transform-origin:left center;
+    backface-visibility:hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(255,245,215,.22),
+            transparent 35%
+        ),
+        linear-gradient(
+            90deg,
+            rgba(80,48,24,.06),
+            transparent 10%,
+            transparent 90%,
+            rgba(80,48,24,.06)
+        ),
+        #ead7b2;
+
+    border:
+        1px solid #7a5a3a;
+
+    box-shadow:
+        inset 0 0 28px rgba(70,40,18,.16),
+        0 8px 20px rgba(0,0,0,.18);
 }
+
+
+/* inner page border */
+
+.page::before{
+    content:"";
+
+    position:absolute;
+    inset:12px;
+
+    border:
+        1px solid rgba(86,57,33,.35);
+
+    pointer-events:none;
+}
+
+
+/* Hide all manuscript pages before opening */
+
+.book:not(.open) .page{
+    display:none !important;
+}
+
+
+/* Active manuscript page */
 
 .page.active{
-display:block;
+    display:block;
+
+    animation:
+        pageTurnIn .75s
+        cubic-bezier(.2,.7,.2,1);
 }
+
+
+/* PAGE TITLE */
+
+.page h2{
+    margin-top:0;
+    margin-bottom:30px;
+
+    padding-bottom:16px;
+
+    text-align:center;
+
+    font-family:"Cinzel", serif;
+    font-size:32px;
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    color:#3d2a1f;
+
+    border-bottom:
+        1px solid #7a5a3a;
+}
+
+
+/* PAGE TEXT */
+
+.page p{
+    max-width:680px;
+
+    margin-left:auto;
+    margin-right:auto;
+
+    font-size:21px;
+    line-height:1.9;
+
+    color:#34261d;
+}
+
+
+/* =========================
+   PAGE TURN
+========================= */
+
+@keyframes pageTurnIn{
+
+    from{
+        opacity:.2;
+
+        transform:
+            perspective(1400px)
+            rotateY(-55deg);
+
+        box-shadow:
+            -30px 0 40px
+            rgba(0,0,0,.25);
+    }
+
+    to{
+        opacity:1;
+
+        transform:
+            perspective(1400px)
+            rotateY(0deg);
+
+        box-shadow:
+            0 0 0
+            rgba(0,0,0,0);
+    }
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
 
 .codex-controls{
-display:flex;
-justify-content:space-between;
-margin-top:30px;
+    display:flex;
+
+    align-items:center;
+    justify-content:space-between;
+
+    margin-top:30px;
 }
+
 
 .codex-controls button{
-background:#111;
-color:#d6b07a;
-border:1px solid #5b4633;
-padding:12px 20px;
-cursor:pointer;
-font-family:inherit;
+    padding:12px 20px;
+
+    background:#111;
+    color:#d6b07a;
+
+    border:
+        1px solid #5b4633;
+
+    cursor:pointer;
+
+    font-family:"Cinzel", serif;
+    font-weight:600;
 }
 
-.codex-controls button:hover{
-background:#2b1f17;
+
+.codex-controls button:hover:not(:disabled){
+    background:#2b1f17;
 }
 
-@keyframes fade{
-from{
-opacity:0;
-transform:translateX(20px);
-}
-to{
-opacity:1;
-transform:translateX(0);
-}
+
+.codex-controls button:disabled{
+    opacity:.35;
+    cursor:not-allowed;
 }
 
-.book:not(.open) .page {
-    display: none;
+
+/* PAGE COUNTER */
+
+#pageCounter{
+    text-align:center;
+
+    font-size:15px;
+    letter-spacing:2px;
+
+    color:#6f5035;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    body{
+        padding:25px 10px;
+    }
+
+    .codex-book{
+        padding:25px 15px;
+
+        border-width:8px;
+    }
+
+    .front-page{
+        padding:40px 20px;
+    }
+
+    .crest{
+        width:150px !important;
+        max-width:150px !important;
+    }
+
+    .codex-cover h1{
+        font-size:34px;
+        letter-spacing:3px;
+    }
+
+    #enterCodex{
+        padding:14px 20px;
+        font-size:14px;
+    }
+
+    .page{
+        padding:
+            35px 25px 45px;
+    }
+
+    .page h2{
+        font-size:24px;
+    }
+
+    .page p{
+        font-size:18px;
+    }
+
 }
