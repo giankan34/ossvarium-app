@@ -2189,3 +2189,8 @@ transform:scale(.95);
 }
 
 }
+
+.codex-link{
+    display:inline-block;
+    text-decoration:none;
+}
