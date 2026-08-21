@@ -2191,6 +2191,34 @@ transform:scale(.95);
 }
 
 .codex-link{
-    display:inline-block;
+    display:block;
+    width:max-content;
+
+    margin:22px auto 28px;
+    padding:11px 24px;
+
     text-decoration:none;
+
+    font-family:"Cinzel", serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:3px;
+
+    color:#b07a5a;
+
+    border-top:1px solid rgba(139,66,48,.45);
+    border-bottom:1px solid rgba(139,66,48,.45);
+
+    transition:
+        color .3s ease,
+        letter-spacing .3s ease,
+        text-shadow .3s ease;
+}
+
+.codex-link:hover{
+    color:#d09a76;
+    letter-spacing:4px;
+
+    text-shadow:
+        0 0 8px rgba(150,55,35,.45);
 }
