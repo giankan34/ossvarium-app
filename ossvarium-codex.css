@@ -296,21 +296,6 @@ body{
 }
 
 
-/* inner page border */
-
-.page::before{
-    content:"";
-
-    position:absolute;
-    inset:12px;
-
-    border:
-        1px solid rgba(86,57,33,.35);
-
-    pointer-events:none;
-}
-
-
 /* Hide all manuscript pages before opening */
 
 .book:not(.open) .page{
@@ -373,31 +358,128 @@ body{
 
 @keyframes pageTurnIn{
 
-    from{
-        opacity:.2;
+    0%{
+        opacity:.15;
 
         transform:
-            perspective(1400px)
-            rotateY(-55deg);
+            perspective(1600px)
+            rotateY(-72deg)
+            translateX(-18px);
 
         box-shadow:
-            -30px 0 40px
-            rgba(0,0,0,.25);
+            -35px 8px 45px rgba(0,0,0,.45);
     }
 
-    to{
+    55%{
+        opacity:.75;
+
+        transform:
+            perspective(1600px)
+            rotateY(-18deg)
+            translateX(-4px);
+
+        box-shadow:
+            -18px 5px 30px rgba(0,0,0,.30);
+    }
+
+    100%{
         opacity:1;
 
         transform:
-            perspective(1400px)
-            rotateY(0deg);
+            perspective(1600px)
+            rotateY(0deg)
+            translateX(0);
 
         box-shadow:
-            0 0 0
-            rgba(0,0,0,0);
+            inset 0 0 18px rgba(45,20,10,.18),
+            inset 0 0 55px rgba(55,20,8,.32),
+            0 10px 30px rgba(0,0,0,.45);
     }
 }
 
+/* =========================
+   PAGE TURN DIRECTIONS
+========================= */
+
+.book.turn-next .page.active{
+    animation:
+        pageTurnNext .85s
+        cubic-bezier(.2,.7,.2,1);
+}
+
+.book.turn-prev .page.active{
+    animation:
+        pageTurnPrev .85s
+        cubic-bezier(.2,.7,.2,1);
+}
+
+
+@keyframes pageTurnNext{
+
+    0%{
+        opacity:.15;
+
+        transform:
+            perspective(1600px)
+            rotateY(-72deg)
+            translateX(-18px);
+
+        box-shadow:
+            -35px 8px 45px rgba(0,0,0,.45);
+    }
+
+    55%{
+        opacity:.75;
+
+        transform:
+            perspective(1600px)
+            rotateY(-18deg)
+            translateX(-4px);
+    }
+
+    100%{
+        opacity:1;
+
+        transform:
+            perspective(1600px)
+            rotateY(0deg)
+            translateX(0);
+    }
+}
+
+
+@keyframes pageTurnPrev{
+
+    0%{
+        opacity:.15;
+
+        transform:
+            perspective(1600px)
+            rotateY(72deg)
+            translateX(18px);
+
+        box-shadow:
+            35px 8px 45px rgba(0,0,0,.45);
+    }
+
+    55%{
+        opacity:.75;
+
+        transform:
+            perspective(1600px)
+            rotateY(18deg)
+            translateX(4px);
+    }
+
+    100%{
+        opacity:1;
+
+        transform:
+            perspective(1600px)
+            rotateY(0deg)
+            translateX(0);
+    }
+}
 
 /* =========================
    NAVIGATION
@@ -500,4 +582,181 @@ body{
         font-size:18px;
     }
 
+}
+
+/* =========================
+   DARKER CODEX ATMOSPHERE
+========================= */
+
+.page h2{
+    color:#2a1710;
+    text-shadow:0 1px 2px rgba(70,25,10,.25);
+}
+
+.page p{
+    color:#2b1c14;
+}
+
+/* =========================
+   CREEPY ILLUMINATED INITIAL
+========================= */
+
+.page p:first-of-type::first-letter{
+    float:left;
+
+    font-family:"UnifrakturMaguntia", serif;
+    font-size:64px;
+    line-height:.8;
+
+    margin-right:10px;
+    margin-top:8px;
+
+    color:#5a160f;
+
+    text-shadow:
+        0 1px 0 #c9a26b,
+        0 0 8px rgba(90,22,15,.25);
+}
+
+/* =========================
+   OCCULT TITLE ORNAMENT
+========================= */
+
+.page h2::before{
+    content:"☩  ✦  ☾";
+    display:block;
+
+    font-size:16px;
+    letter-spacing:12px;
+
+    color:#6b2b1f;
+    opacity:.65;
+
+    margin-bottom:12px;
+}
+
+.page h2::after{
+    content:"✦";
+    display:block;
+
+    font-size:12px;
+    color:#6b2b1f;
+
+    margin-top:14px;
+    opacity:.55;
+}
+
+/* =========================
+   AGED / BURNT PARCHMENT
+========================= */
+
+.page{
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(255,238,190,.18) 0%,
+            rgba(205,166,105,.12) 55%,
+            rgba(65,25,12,.30) 100%
+        ),
+        #d8bd8c;
+
+    box-shadow:
+        inset 0 0 18px rgba(45,20,10,.18),
+        inset 0 0 55px rgba(55,20,8,.32),
+        0 10px 30px rgba(0,0,0,.45);
+}
+
+/* =========================
+   OCCULT WATERMARK
+========================= */
+
+.page{
+    overflow:hidden;
+}
+
+.page::after{
+    content:"✦  OSSVARIUM  ✦";
+
+    position:absolute;
+    left:50%;
+    bottom:28px;
+
+    transform:translateX(-50%);
+
+    font-family:"Cinzel", serif;
+    font-size:11px;
+    letter-spacing:4px;
+
+    color:#681c16;
+    opacity:.45;
+
+    border-top:1px solid rgba(104,28,22,.45);
+    border-bottom:1px solid rgba(104,28,22,.45);
+
+    padding:5px 14px;
+
+    z-index:2;
+}
+
+.page::before{
+    content:"☩";
+
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-family:"Cinzel", serif;
+    font-size:280px;
+    line-height:1;
+
+    color:#4e170f;
+    opacity:.035;
+
+    text-shadow:
+    0 0 2px rgba(78,23,15,.18),
+    0 0 12px rgba(78,23,15,.10);
+
+    transform: translateY(18px);
+
+    z-index:0;
+    pointer-events:none;
+}
+
+.page h2,
+.page p{
+    position:relative;
+    z-index:1;
+}
+
+/* =========================
+   SUBTLE AGE STAINS
+========================= */
+
+.page{
+    background:
+        radial-gradient(
+            ellipse at 8% 15%,
+            rgba(65,24,12,.13),
+            transparent 18%
+        ),
+        radial-gradient(
+            ellipse at 92% 82%,
+            rgba(70,26,12,.11),
+            transparent 20%
+        ),
+        radial-gradient(
+            ellipse at 80% 10%,
+            rgba(80,35,15,.06),
+            transparent 15%
+        ),
+        radial-gradient(
+            ellipse at center,
+            rgba(255,238,190,.20) 0%,
+            rgba(205,166,105,.10) 58%,
+            rgba(65,25,12,.28) 100%
+        ),
+        #d8bd8c;
 }

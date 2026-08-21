@@ -53,7 +53,6 @@ function updateBook() {
 
 }
 
-
 // NEXT
 
 nextBtn.addEventListener("click", () => {
@@ -62,10 +61,11 @@ nextBtn.addEventListener("click", () => {
 
     if (currentPage < pages.length - 1) {
 
+        document.querySelector(".book").classList.remove("turn-prev");
+        document.querySelector(".book").classList.add("turn-next");
+
         currentPage++;
-
         updateBook();
-
     }
 
 });
@@ -79,10 +79,11 @@ prevBtn.addEventListener("click", () => {
 
     if (currentPage > 0) {
 
+        document.querySelector(".book").classList.remove("turn-next");
+        document.querySelector(".book").classList.add("turn-prev");
+
         currentPage--;
-
         updateBook();
-
     }
 
 });
