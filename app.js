@@ -1465,3 +1465,27 @@ function getRelicRarity(supporters){
     };
 
 }
+
+// =========================
+// CODEX ENTRANCE TRANSITION
+// =========================
+
+const codexLink = document.querySelector(".codex-link");
+
+if (codexLink) {
+
+    codexLink.addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        const destination = this.href;
+
+        document.body.classList.add("codex-entering");
+
+        setTimeout(() => {
+            window.location.href = destination;
+        }, 850);
+
+    });
+
+}
