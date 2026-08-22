@@ -855,3 +855,33 @@ body{
         inset 0 0 12px rgba(120,35,25,.18),
         0 0 12px rgba(120,35,25,.20);
 }
+
+/* =========================
+   THE OATH — FINAL SEAL
+========================= */
+
+.oath-page{
+    text-align:center;
+}
+
+.oath-page p{
+    max-width:620px;
+}
+
+.oath-page p:last-of-type{
+    margin-top:38px;
+
+    font-family:"Cinzel", serif;
+    font-size:17px;
+    font-weight:700;
+
+    letter-spacing:3px;
+
+    color:#5a160f;
+
+    text-transform:uppercase;
+
+    text-shadow:
+        0 1px 0 rgba(210,170,110,.25),
+        0 0 8px rgba(90,22,15,.15);
+}
