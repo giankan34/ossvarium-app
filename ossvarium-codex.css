@@ -885,3 +885,37 @@ body{
         0 1px 0 rgba(210,170,110,.25),
         0 0 8px rgba(90,22,15,.15);
 }
+
+/* =========================
+   ARCHIVE AWAKENING
+========================= */
+
+.book.open{
+    animation:archiveAwakening 1.25s ease-out;
+}
+
+@keyframes archiveAwakening{
+
+    0%{
+        box-shadow:
+            0 0 0 rgba(100,15,10,0);
+    }
+
+    35%{
+        box-shadow:
+            0 0 35px rgba(110,20,15,.20),
+            0 0 80px rgba(80,10,8,.12);
+    }
+
+    65%{
+    box-shadow:
+        0 0 70px rgba(190,25,15,.75),
+        0 0 150px rgba(150,10,8,.55),
+        0 0 220px rgba(100,0,0,.35);
+}
+
+    100%{
+        box-shadow:
+            0 0 0 rgba(100,15,10,0);
+    }
+}
