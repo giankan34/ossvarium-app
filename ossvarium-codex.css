@@ -760,3 +760,42 @@ body{
         ),
         #d8bd8c;
 }
+
+/* =========================
+   RETURN TO OSSVARIUM
+========================= */
+
+.return-ossvarium,
+.return-ossvarium:visited{
+    display:block;
+    width:max-content;
+
+    margin:0 auto 22px;
+    padding:8px 16px;
+
+    font-family:"Cinzel", serif;
+    font-size:11px;
+    letter-spacing:2px;
+
+    color:#8f684d;
+    text-decoration:none;
+
+    border-bottom:1px solid rgba(120,75,48,.35);
+
+    opacity:.75;
+
+    transition:
+        color .3s ease,
+        opacity .3s ease,
+        letter-spacing .3s ease,
+        text-shadow .3s ease;
+}
+
+.return-ossvarium:hover{
+    color:#c08a66;
+    opacity:1;
+    letter-spacing:3px;
+
+    text-shadow:
+        0 0 8px rgba(120,40,25,.35);
+}
