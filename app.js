@@ -1471,6 +1471,7 @@ function getRelicRarity(supporters){
 // =========================
 
 const codexLink = document.querySelector(".codex-link");
+const codexSpecter = document.getElementById("codexSpecter");
 
 if (codexLink) {
 
@@ -1482,9 +1483,21 @@ if (codexLink) {
 
         document.body.classList.add("codex-entering");
 
+        if (codexSpecter) {
+            codexSpecter.classList.add("awaken");
+        }
+
+        setTimeout(() => {
+
+            if (codexSpecter) {
+                codexSpecter.classList.remove("awaken");
+            }
+
+        }, 600);
+
         setTimeout(() => {
             window.location.href = destination;
-        }, 850);
+        }, 1000);
 
     });
 

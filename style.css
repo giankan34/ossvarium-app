@@ -2239,27 +2239,75 @@ transform:scale(.95);
 }
 
 /* =========================
-   CODEX ENTRANCE TRANSITION
+   CODEX ENTRANCE DARKNESS
 ========================= */
 
-body.codex-entering{
-    animation:codexFadeOut .85s ease forwards;
+body::before{
+    content:"";
+
+    position:fixed;
+    inset:0;
+
+    background:#000;
+
+    opacity:0;
+
     pointer-events:none;
+
+    z-index:99990;
+
+    transition:opacity .9s ease;
 }
 
-@keyframes codexFadeOut{
-    0%{
-        opacity:1;
-        filter:brightness(1);
-    }
+body.codex-entering::before{
+    opacity:.88;
+}
 
-    60%{
-        opacity:.65;
-        filter:brightness(.55);
-    }
+/* =========================
+   CODEX SPECTER
+========================= */
 
-    100%{
-        opacity:0;
-        filter:brightness(.15);
-    }
+#codexSpecter{
+    position:fixed;
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%, -50%) scale(.75);
+
+    z-index:99999;
+
+    font-size:150px;
+    line-height:1;
+
+    color:#8b332b;
+
+    opacity:0;
+    visibility:hidden;
+
+    pointer-events:none;
+
+    filter:
+        blur(1px)
+        drop-shadow(0 0 25px rgba(120,20,20,.45));
+
+    text-shadow:
+        0 0 35px rgba(120,20,20,.35);
+
+    transition:
+        opacity .8s ease,
+        transform 1.2s ease,
+        filter 1.2s ease;
+}
+
+#codexSpecter.awaken{
+    visibility:visible;
+    opacity:.30;
+
+    transform:
+        translate(-50%, -50%)
+        scale(1.18);
+
+    filter:
+        blur(0)
+        drop-shadow(0 0 45px rgba(150,20,20,.75));
 }
