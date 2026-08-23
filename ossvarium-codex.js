@@ -7,7 +7,7 @@ const prevBtn = document.getElementById("prevPage");
 const nextBtn = document.getElementById("nextPage");
 const pageCounter = document.getElementById("pageCounter");
 
-let currentPage = 0;
+let currentPage = Number(localStorage.getItem("ossvariumCodexPage")) || 0;
 let archivesOpen = false;
 
 
@@ -18,8 +18,6 @@ enterCodex.addEventListener("click", () => {
     archivesOpen = true;
 
     book.classList.add("open");
-
-    currentPage = 0;
 
     updateBook();
 
@@ -51,6 +49,8 @@ function updateBook() {
     nextBtn.disabled =
         currentPage === pages.length - 1;
 
+        localStorage.setItem("ossvariumCodexPage", currentPage);
+        
 }
 
 // NEXT
