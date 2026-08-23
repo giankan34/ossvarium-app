@@ -6,6 +6,8 @@ const pages = document.querySelectorAll(".page");
 const prevBtn = document.getElementById("prevPage");
 const nextBtn = document.getElementById("nextPage");
 const pageCounter = document.getElementById("pageCounter");
+const contentsBtn = document.getElementById("contentsBtn");
+const codexContents = document.getElementById("codexContents");
 
 let currentPage = Number(localStorage.getItem("ossvariumCodexPage")) || 0;
 let archivesOpen = false;
@@ -18,6 +20,8 @@ enterCodex.addEventListener("click", () => {
     archivesOpen = true;
 
     book.classList.add("open");
+
+    document.body.classList.add("archives-open");
 
     updateBook();
 
@@ -50,7 +54,7 @@ function updateBook() {
         currentPage === pages.length - 1;
 
         localStorage.setItem("ossvariumCodexPage", currentPage);
-        
+
 }
 
 // NEXT
@@ -85,5 +89,37 @@ prevBtn.addEventListener("click", () => {
         currentPage--;
         updateBook();
     }
+
+});
+
+// =========================
+// CODEX CONTENTS
+// =========================
+
+if (contentsBtn && codexContents) {
+
+    contentsBtn.addEventListener("click", () => {
+
+        codexContents.classList.toggle("open");
+
+    });
+
+}
+
+const chapterLinks = document.querySelectorAll(".chapter-link");
+
+chapterLinks.forEach((chapter) => {
+
+    chapter.addEventListener("click", () => {
+
+        const targetPage = Number(chapter.dataset.page);
+
+        currentPage = targetPage;
+
+        updateBook();
+
+        codexContents.classList.remove("open");
+
+    });
 
 });
