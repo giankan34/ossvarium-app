@@ -50,24 +50,74 @@ verifyBtn.addEventListener("click", async () => {
             return;
         }
 
-        verifyResult.innerHTML = `
-            <div class="verification-success">
+       verifyResult.innerHTML = `
+    <div class="verification-success">
 
-                <div class="verification-status">
-                    ✦ VERIFIED ARCHIVE RELIC ✦
+        <div class="archive-record-header">
+            <span>✦</span>
+            <span>VERIFIED ARCHIVE RELIC</span>
+            <span>✦</span>
+        </div>
+
+        <div class="archive-record">
+
+            <div class="archive-cover">
+                <img
+                    src="${relic.cover}"
+                    alt="${relic.artist} — ${relic.release}"
+                >
+            </div>
+
+            <div class="archive-details">
+
+                <div class="archive-label">
+                    OFFICIAL OSSVARIUM RECORD
                 </div>
 
                 <h2>${relic.artist}</h2>
 
                 <h3>${relic.release}</h3>
 
-                <p><strong>RELIC ID:</strong> ${relic.relicId}</p>
-                <p><strong>YEAR:</strong> ${relic.year}</p>
-                <p><strong>COUNTRY:</strong> ${relic.country}</p>
-                <p><strong>CLASSIFICATION:</strong> ${relic.genre}</p>
+                <div class="archive-meta">
+
+                    <p>
+                        <span>RELIC ID</span>
+                        <strong>${relic.relicId}</strong>
+                    </p>
+
+                    <p>
+                        <span>YEAR</span>
+                        <strong>${relic.year}</strong>
+                    </p>
+
+                    <p>
+                        <span>ORIGIN</span>
+                        <strong>${relic.country}</strong>
+                    </p>
+
+                    <p>
+                        <span>CLASSIFICATION</span>
+                        <strong>${relic.genre}</strong>
+                    </p>
+
+                </div>
 
             </div>
-        `;
+
+            <div class="verified-seal">
+                <span>OSSVARIUM</span>
+                <strong>VERIFIED</strong>
+                <span>ARCHIVE</span>
+            </div>
+
+        </div>
+
+        <div class="archive-confirmation">
+            This relic is registered within the OSSVARIUM Archive.
+        </div>
+
+    </div>
+`;
 
     } catch (error) {
 
