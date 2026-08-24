@@ -48,7 +48,7 @@ CERTIFICATE OF PRESERVATION
 <div class="cert-line">
 <span class="cert-label">RELIC ID</span>
 <span class="cert-value">
-OSV-${String(id+1).padStart(5,"0")}
+${release.relicId}
 </span>
 </div>
 
@@ -92,6 +92,17 @@ ${release.year}
 <span class="cert-value">
 2026
 </span>
+</div>
+
+<div class="cert-verify">
+
+    <a
+        href="verify.html?relic=${encodeURIComponent(release.relicId)}"
+        class="cert-verify-link"
+    >
+        ✦ VERIFY THIS RELIC ✦
+    </a>
+
 </div>
 
 <div class="cert-footer">
