@@ -121,7 +121,7 @@ releases.forEach((release)=>{
 
             <a
             class="submit-btn"
-            href="?genre=${encodeURIComponent(genre)}">
+            href="?genre=${encodeURIComponent(genre)}#genreResults"
 
                 ${genre}
                 (${genreCounts[genre]})
@@ -511,6 +511,8 @@ releases[
 
     releaseContainer.innerHTML += `
 
+    <div id="genreResults"></div>
+
     <div class="submission-box">
 
         <h2>
@@ -636,6 +638,22 @@ releases[
             });
 
         });
+
+        if (selectedGenre) {
+
+    const genreResults =
+        document.getElementById("genreResults");
+
+    if (genreResults) {
+
+        genreResults.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    }
+
+}
 
     }catch(error){
 
