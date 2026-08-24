@@ -21,6 +21,14 @@ async function loadReleases(){
 
         const selectedGenre =
         params.get("genre");
+
+        const filteredReleases =
+        selectedGenre
+            ? releases.filter(
+                release =>
+                release.genre === selectedGenre
+           )
+           : releases;
         
         const totalReleases =
         releases.length;
@@ -499,16 +507,39 @@ releases[
 `;
         }
 
-        // Genres
-        const filteredReleases =
-        selectedGenre
+        if (selectedGenre) {
 
-        ? releases.filter(
-            release =>
-            release.genre === selectedGenre
-        )
+    releaseContainer.innerHTML += `
 
-        : releases;
+    <div class="submission-box">
+
+        <h2>
+            ⚰ ${selectedGenre.toUpperCase()}
+        </h2>
+
+        <div class="submission-text">
+
+            ${filteredReleases.length}
+            ${filteredReleases.length === 1 ? "RELIC" : "RELICS"}
+            FOUND IN THE ARCHIVE
+
+            <br><br>
+
+            <a
+            class="submit-btn"
+            href="index.html">
+
+                ← RETURN TO ALL GENRES
+
+            </a>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
         
         const genres = {};
 
