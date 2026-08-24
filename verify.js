@@ -138,3 +138,18 @@ verifyBtn.addEventListener("click", async () => {
     }
 
 });
+
+// =========================
+// AUTO VERIFY FROM URL
+// =========================
+
+const urlParams = new URLSearchParams(window.location.search);
+const relicFromUrl = urlParams.get("relic");
+
+if (relicFromUrl) {
+
+    relicInput.value = relicFromUrl;
+
+    verifyBtn.click();
+
+}
