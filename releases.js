@@ -121,7 +121,7 @@ releases.forEach((release)=>{
 
             <a
             class="submit-btn"
-            href="?genre=${encodeURIComponent(genre)}#genreResults"
+            href="?genre=${encodeURIComponent(genre)}#genreResults">
 
                 ${genre}
                 (${genreCounts[genre]})
