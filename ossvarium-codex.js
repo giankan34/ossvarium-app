@@ -123,3 +123,51 @@ chapterLinks.forEach((chapter) => {
     });
 
 });
+
+function updateCatacombLevel() {
+
+    const catacombLevel =
+        document.getElementById("catacombLevel");
+
+    if (!catacombLevel) return;
+
+    const collected =
+        JSON.parse(
+            localStorage.getItem("ossvariumCollection") || "[]"
+        );
+
+    const xp = collected.length * 100;
+
+    let level = "INITIATE";
+    let icon = "🕯️";
+
+    if (xp >= 100) {
+        level = "CRYPT WALKER";
+        icon = "💀";
+    }
+
+    if (xp >= 300) {
+        level = "RELIC HUNTER";
+        icon = "⚔️";
+    }
+
+    if (xp >= 500) {
+        level = "CATACOMB KEEPER";
+        icon = "🏛️";
+    }
+
+    if (xp >= 1000) {
+        level = "ARCHIVE LEGEND";
+        icon = "👑";
+    }
+
+    catacombLevel.innerHTML = `
+        ${icon} ${level}
+        <br><br>
+        ⭐ ${xp} XP
+        <br><br>
+        🗝️ ${collected.length} RELICS COLLECTED
+    `;
+}
+
+updateCatacombLevel();
