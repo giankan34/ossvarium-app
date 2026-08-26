@@ -2371,3 +2371,9 @@ body.codex-entering::before{
         blur(0)
         drop-shadow(0 0 45px rgba(150,20,20,.75));
 }
+
+/* HALL OF FAME TYPOGRAPHY */
+
+.submission-box h2{
+    font-family:"Cinzel Decorative", serif;
+}
