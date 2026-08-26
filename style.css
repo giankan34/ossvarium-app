@@ -1333,30 +1333,22 @@ transition:.3s;
 
 }
 
-.hall-cover:hover{
-
-transform:scale(1.03);
-
-box-shadow:0 0 20px rgba(255,0,0,.6);
-
-}
-
 .hall-legend{
+    border:2px solid #8f6b32;
 
-border:3px solid #ffd700;
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.45),
+        inset 0 0 20px rgba(120,80,30,.08);
 
-box-shadow:
-0 0 18px rgba(212,175,55,.45);
+    transform:scale(1.02);
 
-transform:scale(1.04);
-
-background:
-linear-gradient(
-180deg,
-#a22b2b 0%,
-#5a0c0c 100%
-);
-
+    background:
+        linear-gradient(
+            180deg,
+            #321817 0%,
+            #1b0d0d 55%,
+            #100909 100%
+        );
 }
 
 .hall-legend:hover{
