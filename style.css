@@ -385,24 +385,64 @@ h1{
 
 }
 .submission-box{
+    position:relative;
 
     margin-top:35px;
-
-    background:
-    linear-gradient(
-        180deg,
-        #1a1414 0%,
-        #0d0909 100%
-    );
-
-    border:2px solid #2f2424;
-
-    border-radius:14px;
-
-    padding:20px;
+    padding:26px 24px;
 
     text-align:center;
 
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(105,28,24,.10),
+            transparent 55%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(24,16,16,.98) 0%,
+            rgba(10,7,7,.99) 100%
+        );
+
+    border:1px solid rgba(125,72,58,.42);
+    border-radius:6px;
+
+    box-shadow:
+        0 16px 38px rgba(0,0,0,.32),
+        inset 0 0 32px rgba(95,25,20,.06);
+
+    transition:
+        border-color .3s ease,
+        box-shadow .3s ease,
+        transform .3s ease;
+}
+
+.submission-box::before{
+    content:"";
+
+    position:absolute;
+    top:0;
+    left:12%;
+    right:12%;
+
+    height:1px;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(177,105,74,.50),
+        transparent
+    );
+}
+
+.submission-box:hover{
+    transform:translateY(-2px);
+
+    border-color:rgba(158,83,61,.55);
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.40),
+        inset 0 0 38px rgba(110,28,22,.08);
 }
 
 .submission-box h2{
