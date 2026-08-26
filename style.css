@@ -475,30 +475,59 @@ h1{
 }
 
 .submit-btn{
-
     display:inline-block;
-
-    background:
-    linear-gradient(
-        180deg,
-        #962222 0%,
-        #470808 100%
-    );
-
-    border:2px solid #5f2424;
-
-    color:#fff;
-
-    text-decoration:none;
 
     padding:12px 22px;
 
-    border-radius:8px;
+    text-decoration:none;
 
-    font-weight:bold;
+    font-family:"Cinzel", serif;
+    font-size:12px;
+    font-weight:600;
 
-    transition:0.3s;
+    letter-spacing:1.5px;
 
+    color:#d3a07e;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(34,18,17,.98),
+            rgba(18,10,10,.98)
+        );
+
+    border:1px solid rgba(137,65,50,.55);
+    border-radius:4px;
+
+    box-shadow:
+        inset 0 0 10px rgba(120,35,25,.08),
+        0 5px 14px rgba(0,0,0,.28);
+
+    transition:
+        color .25s ease,
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+}
+
+.submit-btn:hover{
+    color:#efb58c;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(50,22,20,.98),
+            rgba(25,11,10,.98)
+        );
+
+    border-color:rgba(177,82,59,.75);
+
+    box-shadow:
+        inset 0 0 14px rgba(130,35,25,.13),
+        0 0 12px rgba(120,35,25,.18);
+
+    transform:translateY(-1px);
 }
 
 .hall-card{
