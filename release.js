@@ -139,6 +139,24 @@ function renderHeader(){
 
         </a>
 
+        ${JSON.parse(
+        localStorage.getItem("ossvariumCollection") || "[]"
+        ).includes(releaseId)
+
+        ? `
+
+        <button
+        class="certificate-btn collected-btn"
+        disabled>
+
+        ✓ RELIC COLLECTED
+
+        </button>
+
+        `
+
+        : `
+
         <button
         class="certificate-btn"
         onclick="addToCollection(${releaseId})">
@@ -146,6 +164,8 @@ function renderHeader(){
         ⚔ ADD TO COLLECTION
 
         </button>
+
+        `}
 
         <div class="ossvarium-note">
 
