@@ -1443,17 +1443,13 @@ animation:legendGlow 2s infinite alternate;
 @keyframes legendGlow{
 
 from{
-
-box-shadow:
-0 0 12px rgba(255,215,0,.4);
-
+    box-shadow:
+    0 0 8px rgba(160,115,45,.18);
 }
 
 to{
-
-box-shadow:
-0 0 30px rgba(255,215,0,.95);
-
+    box-shadow:
+    0 0 18px rgba(184,134,11,.38);
 }
 
 }
