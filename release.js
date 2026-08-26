@@ -336,6 +336,8 @@ function addToCollection(id) {
             JSON.stringify(collection)
         );
 
+        renderPage();
+
         alert(
             "ADDED TO YOUR COLLECTION"
         );
