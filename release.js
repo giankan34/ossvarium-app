@@ -139,6 +139,14 @@ function renderHeader(){
 
         </a>
 
+        <button
+        class="certificate-btn"
+        onclick="addToCollection(${releaseId})">
+
+        ⚔ ADD TO COLLECTION
+
+        </button>
+
         <div class="ossvarium-note">
 
             ☩ DIGITALLY PRESERVED INSIDE THE OSSVARIUM ARCHIVES
@@ -288,4 +296,35 @@ function renderArtistBio(){
 
     `;
 
+}
+
+function addToCollection(id) {
+
+    let collection =
+        JSON.parse(
+            localStorage.getItem(
+                "ossvariumCollection"
+            ) || "[]"
+        );
+
+    if (!collection.includes(id)) {
+
+        collection.push(id);
+
+        localStorage.setItem(
+            "ossvariumCollection",
+            JSON.stringify(collection)
+        );
+
+        alert(
+            "ADDED TO YOUR COLLECTION"
+        );
+
+    } else {
+
+        alert(
+            "ALREADY IN COLLECTION"
+        );
+
+    }
 }
