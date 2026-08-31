@@ -1245,8 +1245,8 @@ async function checkCollectorAchievement() {
     });
 
     if (collectedGenres.size >= 3) {
-        unlockAchievement("COLLECTOR");
-    }
+    unlockAchievement("COLLECTOR");
+}
 
     if (collectedCountries.size >= 3) {
     unlockAchievement("KEEPER OF THE TOMBS");
@@ -1255,10 +1255,6 @@ async function checkCollectorAchievement() {
 }
 
 checkCollectorAchievement();
-
-if (collectedGenres.size >= 3) {
-    unlockAchievement("COLLECTOR");
-}
 
     if(lastVisit !== today){
 
