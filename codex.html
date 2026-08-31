@@ -23,7 +23,11 @@ href="style.css">
 
 <div class="submission-box">
 
-<h1>📜 CATACOMB CODEX 📜</h1>
+<h1 class="codex-title">
+    <span class="codex-icon">📜</span>
+    <span>CATACOMB CODEX</span>
+    <span class="codex-icon">📜</span>
+</h1>
 
 <div class="submission-text">
 
@@ -53,49 +57,65 @@ href="style.css">
 
 </div>
 
-<div class="submission-box">
+<div class="submission-box achievements-box">
 
 <h2>🏆 ACHIEVEMENTS 🏆</h2>
 
 <div class="submission-text">
 
-🏆 INITIATE OF THE CATACOMBS
+<span id="achievement-initiate">
+    🔒 INITIATE OF THE CATACOMBS
+</span>
 
 <br><br>
 
-🏆 UNDERGROUND SEEKER
+<span id="achievement-seeker">
+    🔒 UNDERGROUND SEEKER
+</span>
 
 <br><br>
 
-🏆 KEEPER OF THE OSSVARIUM
+<span id="achievement-keeper">
+    🔒 KEEPER OF THE OSSVARIUM
+</span>
 
 <br><br>
 
-🏆 CATACOMB CURATOR
+<span id="achievement-curator">
+    🔒 CATACOMB CURATOR
+</span>
 
 <br><br>
 
-🏆 LORD OF THE OSSVARIUM
+<span id="achievement-lord">
+    🔒 LORD OF THE OSSVARIUM
+</span>
 
 </div>
 
 </div>
 
-<div class="submission-box">
+<div class="submission-box secret-achievements-box">
 
 <h2>☠ SECRET ACHIEVEMENTS ☠</h2>
 
 <div class="submission-text">
 
-📀 COLLECTOR
+<span id="achievement-collector">
+    🔒 SECRET ACHIEVEMENT
+</span>
 
 <br><br>
 
-⚔ OSSVARIUM DEVOTEE
+<span id="achievement-devotee">
+    🔒 SECRET ACHIEVEMENT
+</span>
 
 <br><br>
 
-🏛 KEEPER OF THE TOMBS
+<span id="achievement-tombs">
+    🔒 SECRET ACHIEVEMENT
+</span>
 
 </div>
 
@@ -114,6 +134,101 @@ href="index.html">
 </div>
 
 </div>
+
+<script>
+const unlockedAchievements =
+    JSON.parse(
+        localStorage.getItem("ossvariumAchievements") || "[]"
+    );
+
+const initiateAchievement =
+    document.getElementById("achievement-initiate");
+
+if (
+    initiateAchievement &&
+    unlockedAchievements.includes("INITIATE OF THE CATACOMBS")
+) {
+    initiateAchievement.innerHTML =
+        "🏆 INITIATE OF THE CATACOMBS";
+}
+
+const seekerAchievement =
+    document.getElementById("achievement-seeker");
+
+if (
+    seekerAchievement &&
+    unlockedAchievements.includes("UNDERGROUND SEEKER")
+) {
+    seekerAchievement.innerHTML =
+        "🏆 UNDERGROUND SEEKER";
+}
+
+const keeperAchievement =
+    document.getElementById("achievement-keeper");
+
+if (
+    keeperAchievement &&
+    unlockedAchievements.includes("KEEPER OF THE OSSVARIUM")
+) {
+    keeperAchievement.innerHTML =
+        "🏆 KEEPER OF THE OSSVARIUM";
+}
+
+const curatorAchievement =
+    document.getElementById("achievement-curator");
+
+if (
+    curatorAchievement &&
+    unlockedAchievements.includes("CATACOMB CURATOR")
+) {
+    curatorAchievement.innerHTML =
+        "🏆 CATACOMB CURATOR";
+}
+
+const lordAchievement =
+    document.getElementById("achievement-lord");
+
+if (
+    lordAchievement &&
+    unlockedAchievements.includes("LORD OF THE OSSVARIUM")
+) {
+    lordAchievement.innerHTML =
+        "👑 LORD OF THE OSSVARIUM";
+}
+
+const collectorAchievement =
+    document.getElementById("achievement-collector");
+
+if (
+    collectorAchievement &&
+    unlockedAchievements.includes("COLLECTOR")
+) {
+    collectorAchievement.innerHTML =
+        "📀 COLLECTOR";
+}
+
+const devoteeAchievement =
+    document.getElementById("achievement-devotee");
+
+if (
+    devoteeAchievement &&
+    unlockedAchievements.includes("OSSVARIUM DEVOTEE")
+) {
+    devoteeAchievement.innerHTML =
+        "⚔ OSSVARIUM DEVOTEE";
+}
+
+const tombsAchievement =
+    document.getElementById("achievement-tombs");
+
+if (
+    tombsAchievement &&
+    unlockedAchievements.includes("KEEPER OF THE TOMBS")
+) {
+    tombsAchievement.innerHTML =
+        "🏛 KEEPER OF THE TOMBS";
+}
+</script>
 
 </body>
 

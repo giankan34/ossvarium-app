@@ -43,6 +43,20 @@ async function loadRelease(){
 
         }
 
+        let visitedReleases =
+    JSON.parse(
+        localStorage.getItem("ossvariumVisitedReleases") || "[]"
+    );
+
+if (!visitedReleases.includes(releaseId)) {
+    visitedReleases.push(releaseId);
+
+    localStorage.setItem(
+        "ossvariumVisitedReleases",
+        JSON.stringify(visitedReleases)
+    );
+}
+
         releasePage.innerHTML = `
         <h2 style="color:red">
         STEP 1 OK

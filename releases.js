@@ -204,7 +204,7 @@ releaseContainer.innerHTML += `
 href="release.html?id=${releases.indexOf(topRelease)}"
 style="text-decoration:none;">
 
-<div class="featured-release">
+<div class="featured-release top-supported-release">
 
     <div class="featured-label">
 

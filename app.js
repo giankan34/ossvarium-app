@@ -1155,6 +1155,111 @@ function loadCatacombStreak(){
         ) || "0"
     );
 
+    const achievements =
+    JSON.parse(
+        localStorage.getItem("ossvariumAchievements") || "[]"
+    );
+
+function unlockAchievement(name) {
+    if (!achievements.includes(name)) {
+        achievements.push(name);
+
+        localStorage.setItem(
+            "ossvariumAchievements",
+            JSON.stringify(achievements)
+        );
+
+        console.log("🏆 ACHIEVEMENT UNLOCKED:", name);
+    }
+}
+
+unlockAchievement("INITIATE OF THE CATACOMBS");
+
+const visitedReleases =
+    JSON.parse(
+        localStorage.getItem("ossvariumVisitedReleases") || "[]"
+    );
+
+if (visitedReleases.length >= 1) {
+    unlockAchievement("UNDERGROUND SEEKER");
+}
+
+if (visitedReleases.length >= 10) {
+    unlockAchievement("OSSVARIUM DEVOTEE");
+}
+
+const currentCollection =
+    JSON.parse(
+        localStorage.getItem("ossvariumCollection") || "[]"
+    );
+
+if (currentCollection.length >= 5) {
+    unlockAchievement("KEEPER OF THE OSSVARIUM");
+}
+
+if (currentCollection.length >= 10) {
+    unlockAchievement("CATACOMB CURATOR");
+}
+
+if (currentCollection.length >= 20) {
+    unlockAchievement("LORD OF THE OSSVARIUM");
+}
+
+async function checkCollectorAchievement() {
+
+    const response =
+        await fetch("./data/releases.json");
+
+    const allReleases =
+        await response.json();
+
+    const collectedGenres =
+        new Set();
+
+    const collectedCountries =
+        new Set(); 
+
+    currentCollection.forEach(id => {
+
+      const collectedRelease =
+         allReleases[id];
+
+        if (
+            collectedRelease &&
+            collectedRelease.genre
+        ) {
+            collectedGenres.add(
+                collectedRelease.genre
+            );
+        }
+
+       if (
+           collectedRelease &&
+           collectedRelease.country
+    ) {
+           collectedCountries.add(
+           collectedRelease.country
+    );
+}
+
+    });
+
+    if (collectedGenres.size >= 3) {
+        unlockAchievement("COLLECTOR");
+    }
+
+    if (collectedCountries.size >= 3) {
+    unlockAchievement("KEEPER OF THE TOMBS");
+}
+
+}
+
+checkCollectorAchievement();
+
+if (collectedGenres.size >= 3) {
+    unlockAchievement("COLLECTOR");
+}
+
     if(lastVisit !== today){
 
         streak++;
