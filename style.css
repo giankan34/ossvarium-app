@@ -2527,3 +2527,13 @@ body.codex-entering::before{
     font-size: 32px;
     flex-shrink: 0;
 }
+
+.submission-box h2.discover-title {
+    font-size: 24px;
+    line-height: 1.15;
+}
+
+.submission-box h2.quote-title {
+    font-size: 24px;
+    line-height: 1.15;
+}

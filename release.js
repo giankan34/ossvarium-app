@@ -88,9 +88,11 @@ function renderPage(){
 
         renderTimeline() +
 
-        renderArtistBio();
+        renderArtistBio() +
 
+        renderSimilarArtists();
 }
+
 function renderHeader(){
 
     return `
@@ -330,6 +332,35 @@ function renderArtistBio(){
 
     `;
 
+}
+
+function renderSimilarArtists(){
+
+    return `
+        <div class="submission-box">
+
+            <h2>YOU MAY ALSO LIKE</h2>
+
+            <div class="submission-text">
+
+                ${
+                    release.similar && release.similar.length
+                    ?
+                    release.similar.map(artist => `
+                        <a
+                            href="artist.html?artist=${encodeURIComponent(artist)}"
+                            class="similar-link">
+                            ${artist}
+                        </a>
+                    `).join("<br>")
+                    :
+                    "No similar artists"
+                }
+
+            </div>
+
+        </div>
+    `;
 }
 
 function addToCollection(id) {
