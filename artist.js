@@ -183,16 +183,73 @@ ${artist.similar ? `
 
 <div class="submission-box">
 
-    <h2>🔗 BANDCAMP</h2>
+    <h2>🔗 OFFICIAL LINKS</h2>
 
-    <a
-    class="submit-btn"
-    href="${artist.bandcamp}"
-    target="_blank">
+    <div class="submission-text">
 
-        VISIT BANDCAMP
+        ${artist.links?.bandcamp ? `
+            <a class="submit-btn"
+               href="${artist.links.bandcamp}"
+               target="_blank">
+                BANDCAMP
+            </a>
+            <br><br>
+        ` : ''}
 
-    </a>
+        ${artist.links?.spotify ? `
+            <a class="submit-btn"
+               href="${artist.links.spotify}"
+               target="_blank">
+                SPOTIFY
+            </a>
+            <br><br>
+        ` : ''}
+
+        ${artist.links?.youtube ? `
+            <a class="submit-btn"
+               href="${artist.links.youtube}"
+               target="_blank">
+                YOUTUBE
+            </a>
+            <br><br>
+        ` : ''}
+
+        ${artist.links?.website ? `
+            <a class="submit-btn"
+               href="${artist.links.website}"
+               target="_blank">
+                WEBSITE
+            </a>
+            <br><br>
+        ` : ''}
+
+        ${artist.links?.merch ? `
+            <a class="submit-btn"
+               href="${artist.links.merch}"
+               target="_blank">
+                MERCH
+            </a>
+            <br><br>
+        ` : ''}
+
+        ${artist.links?.instagram ? `
+            <a class="submit-btn"
+               href="${artist.links.instagram}"
+               target="_blank">
+                INSTAGRAM
+            </a>
+            <br><br>
+        ` : ''}
+
+        ${artist.links?.facebook ? `
+            <a class="submit-btn"
+               href="${artist.links.facebook}"
+               target="_blank">
+                FACEBOOK
+            </a>
+        ` : ''}
+
+    </div>
 
 </div>
 
