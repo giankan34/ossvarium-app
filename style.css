@@ -2579,3 +2579,15 @@ body.codex-entering::before{
     opacity:.65;
     cursor:default;
 }
+
+.signal-pentagram{
+    display:inline-block;
+    margin:0 10px;
+
+    font-size:22px;
+    color:#c83232;
+
+    text-shadow:
+        0 0 6px rgba(200,50,50,.55),
+        0 0 12px rgba(200,50,50,.25);
+}

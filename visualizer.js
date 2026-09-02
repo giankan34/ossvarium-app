@@ -50,8 +50,16 @@ function animate(){
 
     bars.forEach((bar,index)=>{
 
-        bar.height +=
-        (Math.random() - 0.5) * 20;
+        const pulse =
+            Math.sin(
+                Date.now() * 0.0015 +
+                index * 0.45
+        );
+
+        bar.height =
+            35 +
+            pulse * 22 +
+            Math.random() * 6;
 
         if(bar.height < 10){
 
