@@ -2537,3 +2537,45 @@ body.codex-entering::before{
     font-size: 24px;
     line-height: 1.15;
 }
+
+.artist-release-entry{
+    margin-bottom:24px;
+    text-align:center;
+}
+
+.artist-release-meta{
+    margin-top:10px;
+    font-family:"Cormorant Garamond", serif;
+    font-size:14px;
+    letter-spacing:1px;
+    color:#9b8983;
+    opacity:.85;
+}
+
+.similar-artists-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:14px;
+}
+
+.similar-artists-grid .submit-btn{
+    min-width:180px;
+}
+
+.similar-unavailable{
+    display:inline-block;
+    min-width:180px;
+    padding:12px 18px;
+
+    font-family:"Cinzel", serif;
+    font-size:13px;
+    letter-spacing:1px;
+
+    color:#756561;
+    border:1px solid rgba(110,80,70,.28);
+    background:rgba(20,12,11,.45);
+
+    opacity:.65;
+    cursor:default;
+}

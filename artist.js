@@ -43,6 +43,13 @@ async function loadArtist(){
         const artist =
         artistReleases[0];
 
+        const totalArtistSupporters =
+    artistReleases.reduce(
+        (sum, release) =>
+            sum + Number(release.supporters || 0),
+        0
+    );
+
         artistPage.innerHTML = `
 
         <div class="release-card">
@@ -92,7 +99,7 @@ async function loadArtist(){
 
         <span>RELEASES</span>
 
-        <span>1</span>
+        <span>${artistReleases.length}</span>
 
     </div>
 
@@ -116,7 +123,7 @@ async function loadArtist(){
 
         <span>SUPPORTERS</span>
 
-        <span>${artist.supporters}</span>
+        <span>${totalArtistSupporters}</span>
 
     </div>
 
@@ -134,52 +141,78 @@ async function loadArtist(){
     <div class="submission-text">
 
         ${artistReleases.map(
-            release => `
+    release => `
 
-            <a
-            class="submit-btn"
-            href="release.html?id=${releases.indexOf(release)}">
+    <div class="artist-release-entry">
 
-                ${release.release}
+        <a
+        class="submit-btn"
+        href="release.html?id=${releases.indexOf(release)}">
 
-            </a>
+            ${release.release}
 
-            <br><br>
+        </a>
 
-            `
-        ).join("")}
+        <div class="artist-release-meta">
+            ${release.year || "UNKNOWN YEAR"}
+            •
+            ${release.genre || artist.genre}
+        </div>
+
+    </div>
+
+    `
+).join("")}
 
     </div>
 
 </div>
 
-${artist.similar ? `
+${artist.similar && artist.similar.length ? `
 
 <div class="submission-box">
 
     <h2>☠ SIMILAR ARTISTS</h2>
 
-    <div class="submission-text">
+    <div class="submission-text similar-artists-grid">
 
-        ${artist.similar.map(name => `
+        ${artist.similar.map(name => {
 
-            <a
-            class="submit-btn"
-            href="artist.html?artist=${encodeURIComponent(name)}">
+            const existsInArchive =
+                releases.some(
+                    release => release.artist === name
+                );
 
-                ${name}
+            if (existsInArchive) {
 
-            </a>
+                return `
+                    <a
+                    class="submit-btn"
+                    href="artist.html?artist=${encodeURIComponent(name)}">
 
-            <br><br>
+                        ${name}
 
-        `).join('')}
+                    </a>
+
+                `;
+
+            }
+
+            return `
+                <span class="similar-unavailable">
+                    ${name}
+                </span>
+
+                <br><br>
+            `;
+
+        }).join('')}
 
     </div>
 
 </div>
 
-` : ''} 
+` : ''}
 
 <div class="submission-box">
 
