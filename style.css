@@ -2591,3 +2591,46 @@ body.codex-entering::before{
         0 0 6px rgba(200,50,50,.55),
         0 0 12px rgba(200,50,50,.25);
 }
+
+.signal-transmission{
+    margin-top:18px;
+    text-align:center;
+}
+
+.signal-status{
+    font-family:"Cinzel", serif;
+    font-size:12px;
+    letter-spacing:3px;
+    color:#8f6f69;
+    margin-bottom:12px;
+}
+
+.signal-release{
+    min-height:90px;
+}
+
+.signal-artist{
+    font-family:"Cinzel", serif;
+    font-size:13px;
+    letter-spacing:2px;
+    color:#9b8983;
+    text-transform:uppercase;
+}
+
+.signal-title{
+    margin:6px 0 18px;
+
+    font-family:"Pirata One", cursive;
+    font-size:23px;
+    letter-spacing:1px;
+
+    color:#c83232;
+
+    text-shadow:
+        0 0 8px rgba(200,50,50,.20);
+}
+
+.signal-trace{
+    display:inline-block;
+    min-width:150px;
+}

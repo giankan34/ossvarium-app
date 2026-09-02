@@ -118,3 +118,69 @@ function animate(){
 }
 
 animate();
+
+async function acquireCatacombSignal(){
+
+    try{
+
+        const response =
+            await fetch("./data/releases.json");
+
+        const releases =
+            await response.json();
+
+        if(!releases.length){
+            return;
+        }
+
+        const randomIndex =
+            Math.floor(
+                Math.random() * releases.length
+            );
+
+        const release =
+            releases[randomIndex];
+
+        const signalStatus =
+            document.querySelector(".signal-status");
+
+        const signalRelease =
+            document.getElementById("signalRelease");
+
+        setTimeout(() => {
+
+            signalStatus.textContent =
+                "SIGNAL ACQUIRED";
+
+            signalRelease.innerHTML = `
+
+                <div class="signal-artist">
+                    ${release.artist}
+                </div>
+
+                <div class="signal-title">
+                    ${release.release}
+                </div>
+
+                <a
+                    class="submit-btn signal-trace"
+                    href="release.html?id=${randomIndex}">
+                    TRACE SIGNAL
+                </a>
+
+            `;
+
+        }, 1800);
+
+    }catch(error){
+
+        console.error(
+            "CATACOMB SIGNAL ERROR:",
+            error
+        );
+
+    }
+
+}
+
+acquireCatacombSignal();
