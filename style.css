@@ -2944,3 +2944,23 @@ body.codex-entering::before{
 
     color:#75615c;
 }
+
+/* =========================
+   FOOTER LEGAL LINKS
+========================= */
+
+.footer a {
+    color: #8a2b2b;
+    text-decoration: none;
+    font-family: "Cinzel", serif;
+    transition: 0.3s ease;
+}
+
+.footer a:hover {
+    color: #c9a45c;
+    text-shadow: 0 0 8px rgba(201, 164, 92, 0.5);
+}
+
+.footer span {
+    color: #555;
+}
