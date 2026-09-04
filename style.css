@@ -2797,3 +2797,150 @@ body.codex-entering::before{
 
     cursor:pointer;
 }
+
+.track-buy-btn{
+    margin-left:12px;
+    padding:6px 10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(70,12,12,.95),
+            rgba(35,5,5,.95)
+        );
+
+    border:1px solid rgba(150,45,45,.45);
+
+    color:#c96b63;
+
+    font-family:"Cinzel", serif;
+    font-size:10px;
+    letter-spacing:.8px;
+
+    cursor:pointer;
+
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,.55),
+        0 0 8px rgba(120,20,20,.12);
+}
+
+.track-buy-btn:hover{
+    color:#f06b61;
+    border-color:rgba(210,60,60,.7);
+
+    box-shadow:
+        0 0 10px rgba(170,25,25,.25);
+
+    transform:translateY(-1px);
+}
+
+.purchase-overlay{
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(0,0,0,.82);
+
+    z-index:9999;
+
+    backdrop-filter:blur(4px);
+}
+
+.purchase-panel{
+    width:min(420px, 90vw);
+
+    padding:34px 30px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #160808,
+            #090404
+        );
+
+    border:1px solid rgba(145,40,40,.45);
+
+    box-shadow:
+        0 0 35px rgba(120,15,15,.28),
+        inset 0 0 22px rgba(0,0,0,.75);
+
+    text-align:center;
+}
+
+.purchase-symbol{
+    font-size:26px;
+    color:#8f2f2f;
+    margin-bottom:10px;
+}
+
+.purchase-panel h2{
+    margin:0 0 22px;
+
+    font-family:"Cinzel", serif;
+    font-size:22px;
+    letter-spacing:2px;
+
+    color:#c8433d;
+}
+
+.purchase-track{
+    font-family:"Cormorant Garamond", serif;
+    font-size:22px;
+
+    color:#c5aaa2;
+
+    margin-bottom:18px;
+}
+
+.purchase-price{
+    font-family:"Cinzel", serif;
+    font-size:28px;
+
+    color:#d24c45;
+
+    margin-bottom:26px;
+
+    text-shadow:
+        0 0 10px rgba(180,30,30,.28);
+}
+
+.purchase-pay-btn,
+.purchase-close-btn{
+    display:block;
+    width:100%;
+
+    padding:11px 14px;
+
+    font-family:"Cinzel", serif;
+    letter-spacing:1px;
+
+    cursor:pointer;
+}
+
+.purchase-pay-btn{
+    background:#4f1111;
+
+    border:1px solid #8f2f2f;
+
+    color:#df8178;
+
+    margin-bottom:10px;
+}
+
+.purchase-pay-btn:hover{
+    background:#641515;
+
+    box-shadow:
+        0 0 12px rgba(150,25,25,.3);
+}
+
+.purchase-close-btn{
+    background:transparent;
+
+    border:1px solid rgba(110,70,65,.35);
+
+    color:#75615c;
+}

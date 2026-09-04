@@ -1,3 +1,46 @@
+Pi.init({
+    version: "2.0",
+    sandbox: true
+});
+
+let piAuth = null;
+
+async function authenticatePiUser(){
+
+    try{
+
+        piAuth = await Pi.authenticate(
+            ["username", "payments"],
+            onIncompletePaymentFound
+        );
+
+        console.log(
+            "Pi user authenticated:",
+            piAuth.user.username
+        );
+
+        return piAuth;
+
+    }catch(error){
+
+        console.error(
+            "Pi authentication failed:",
+            error
+        );
+
+        return null;
+    }
+}
+
+function onIncompletePaymentFound(payment){
+
+    console.log(
+        "Incomplete Pi payment found:",
+        payment
+    );
+
+}
+
 const releasePage =
 document.getElementById("release-container");
 
@@ -95,6 +138,8 @@ function renderPage(){
         renderSimilarArtists();
 
         initializePlayer();
+
+        initializePurchasePanel();
 }
 
 function renderHeader(){
@@ -390,6 +435,14 @@ function renderTracklist(){
             typeof track === "object" &&
             track.audio;
 
+        const isForSale =
+            typeof track === "object" &&
+            track.forSale;
+
+        const pricePi =
+            typeof track === "object" &&
+            track.pricePi;
+
         const trackTitle =
             typeof track === "object"
             ? track.title
@@ -416,6 +469,16 @@ function renderTracklist(){
                 <span class="track-time">
                     ${hasAudio ? "0:00 / 0:00" : "--:--"}
                 </span>
+
+                ${isForSale ? `
+                    <button
+                        class="track-buy-btn"
+                        type="button"
+                        data-track-title="${trackTitle}"
+                        data-price-pi="${pricePi}">
+                        BUY TRACK · ${pricePi} π
+                    </button>
+                ` : ''}
 
                 <div class="track-progress">
                     <div class="track-progress-fill"></div>
@@ -752,6 +815,80 @@ currentAudio.addEventListener(
 
             }
         );
+
+    });
+
+}
+
+function initializePurchasePanel(){
+
+    const buyButtons =
+        document.querySelectorAll(".track-buy-btn");
+
+    buyButtons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const trackTitle =
+                button.dataset.trackTitle;
+
+            const pricePi =
+                button.dataset.pricePi;
+
+            const overlay =
+                document.createElement("div");
+
+            overlay.className =
+                "purchase-overlay";
+
+            overlay.innerHTML = `
+                <div class="purchase-panel">
+
+                    <div class="purchase-symbol">
+                        ✦
+                    </div>
+
+                    <h2>
+                        ACQUIRE RELIC
+                    </h2>
+
+                    <div class="purchase-track">
+                        ${trackTitle}
+                    </div>
+
+                    <div class="purchase-price">
+                        ${pricePi} π
+                    </div>
+
+                    <button
+                        class="purchase-pay-btn"
+                        type="button">
+                        PAY WITH PI
+                    </button>
+
+                    <button
+                        class="purchase-close-btn"
+                        type="button">
+                        CANCEL
+                    </button>
+
+                </div>
+            `;
+
+            document.body.appendChild(
+                overlay
+            );
+
+            overlay
+                .querySelector(".purchase-close-btn")
+                .addEventListener(
+                    "click",
+                    () => {
+                        overlay.remove();
+                    }
+                );
+
+        });
 
     });
 

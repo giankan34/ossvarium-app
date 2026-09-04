@@ -60,8 +60,10 @@
     "bio":"P.L.F. delivers relentless grindcore with extreme speed, aggression and political intensity.",
     "tracks":[
       {
-    "title": "Devious Persecution",
-    "audio": "assets/audio/CARCASS-BlackStar.mp3"
+  "title": "Devious Persecution",
+  "audio": "assets/audio/CARCASS-BlackStar.mp3",
+  "forSale": true,
+  "pricePi": 2
 },
       "Forced Compliance",
       "Corporate Slaughter",
