@@ -1,5 +1,7 @@
 function loginWithPi(){
 
+    console.log("PI LOGIN CLICKED");
+
     const state = crypto.randomUUID();
 
     sessionStorage.setItem(
