@@ -59,7 +59,10 @@
     "description":"Chaotic blasting grindcore violence.",
     "bio":"P.L.F. delivers relentless grindcore with extreme speed, aggression and political intensity.",
     "tracks":[
-      "Devious Persecution",
+      {
+    "title": "Devious Persecution",
+    "audio": "assets/audio/CARCASS-BlackStar.mp3"
+},
       "Forced Compliance",
       "Corporate Slaughter",
       "Scorched Earth",
@@ -138,5 +141,6 @@
         "Undergang",
         "P.L.F."
     ]
+   
   }
 ]

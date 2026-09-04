@@ -89,8 +89,12 @@ function renderPage(){
         renderTimeline() +
 
         renderArtistBio() +
+ 
+        renderTracklist() +
 
         renderSimilarArtists();
+
+        initializePlayer();
 }
 
 function renderHeader(){
@@ -361,6 +365,396 @@ function renderSimilarArtists(){
 
         </div>
     `;
+}
+
+function renderTracklist(){
+
+    if(
+        !release.tracks ||
+        !release.tracks.length
+    ){
+        return "";
+    }
+
+    return `
+        <div class="submission-box">
+
+            <h2>🎵 TRACKLIST</h2>
+
+            <div class="submission-text">
+
+                ${release.tracks.map(
+    (track, index) => {
+
+        const hasAudio =
+            typeof track === "object" &&
+            track.audio;
+
+        const trackTitle =
+            typeof track === "object"
+            ? track.title
+            : track;
+
+        return `
+            <div class="track-entry">
+
+                <button
+                    class="track-play ${hasAudio ? "active" : "disabled"}"
+                    type="button"
+                    ${hasAudio ? `data-audio="${track.audio}"` : "disabled"}>
+                    ▶
+                </button>
+
+                <span class="track-number">
+                    ${String(index + 1).padStart(2, "0")}
+                </span>
+
+                <span class="track-title">
+                    ${trackTitle}
+                </span>  
+
+                <span class="track-time">
+                    ${hasAudio ? "0:00 / 0:00" : "--:--"}
+                </span>
+
+                <div class="track-progress">
+                    <div class="track-progress-fill"></div>
+                </div>
+
+                ${hasAudio ? `
+
+                <div class="track-volume-wrap">
+
+                    <span class="track-volume-icon">
+                        🔊
+                    </span>
+
+                    <input
+                        class="track-volume"
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value="1"
+                    >
+ 
+                </div>
+            ` : ''}
+
+            ${hasAudio ? `
+    <canvas
+        class="track-visualizer"
+        width="360"
+        height="50">
+    </canvas>
+` : ''}
+
+         </div>
+        `;          
+    }
+).join("")}
+
+            </div>
+
+        </div>
+    `;
+}
+
+let currentAudio = null;
+let currentButton = null;
+let audioContext = null;
+let analyser = null;
+let audioSourceNode = null;
+let visualizerAnimation = null;
+
+function initializePlayer(){
+
+    const playButtons =
+        document.querySelectorAll(
+            ".track-play.active"
+        );
+
+    playButtons.forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const audioSource =
+                    button.dataset.audio;
+
+                // Αν παίζει ήδη το ίδιο track
+                if(
+                    currentAudio &&
+                    currentButton === button
+                ){
+
+                    if(currentAudio.paused){
+
+                        currentAudio.play();
+                        button.textContent = "❚❚";
+
+                    }else{
+
+                        currentAudio.pause();
+                        button.textContent = "▶";
+
+                    }
+
+                    return;
+                }
+
+                // Αν παίζει άλλο track
+                if(currentAudio){
+
+                    currentAudio.pause();
+
+                    if(currentButton){
+                        currentButton.textContent = "▶";
+                    }
+
+                }
+
+                currentAudio =
+                    new Audio(audioSource);
+
+                currentButton =
+                    button;
+
+                const trackEntry =
+                    button.closest(".track-entry");
+
+                const visualizer =
+                    trackEntry.querySelector(".track-visualizer");
+
+                if(visualizer){
+
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+
+    analyser =
+        audioContext.createAnalyser();
+
+    analyser.fftSize = 128;
+
+    audioSourceNode =
+        audioContext.createMediaElementSource(
+            currentAudio
+        );
+
+    audioSourceNode.connect(analyser);
+    analyser.connect(audioContext.destination);
+
+    const visualizerCtx =
+        visualizer.getContext("2d");
+
+    const dataArray =
+        new Uint8Array(
+            analyser.frequencyBinCount
+        );
+
+    function drawTrackVisualizer(){
+
+        visualizerAnimation =
+            requestAnimationFrame(
+                drawTrackVisualizer
+            );
+
+        analyser.getByteFrequencyData(
+            dataArray
+        );
+
+        visualizerCtx.clearRect(
+            0,
+            0,
+            visualizer.width,
+            visualizer.height
+        );
+
+        const barWidth =
+            visualizer.width /
+            dataArray.length;
+
+        dataArray.forEach(
+            (value, index) => {
+
+                const barHeight =
+                    (value / 255) *
+                    visualizer.height;
+
+              const gradient =
+    visualizerCtx.createLinearGradient(
+        0,
+        visualizer.height,
+        0,
+        visualizer.height - barHeight
+    );
+
+gradient.addColorStop(
+    0,
+    "#2a0505"
+);
+
+gradient.addColorStop(
+    0.45,
+    "#7d1717"
+);
+
+gradient.addColorStop(
+    0.8,
+    "#b52a2a"
+);
+
+gradient.addColorStop(
+    1,
+    "#e04444"
+);
+
+visualizerCtx.fillStyle =
+    gradient;
+
+visualizerCtx.shadowColor =
+    "rgba(180,25,25,.65)";
+
+visualizerCtx.shadowBlur =
+    8;
+
+visualizerCtx.fillRect(
+    index * barWidth,
+    visualizer.height - barHeight,
+    Math.max(barWidth - 2, 1),
+    barHeight
+);
+            }
+        );
+    }
+
+    drawTrackVisualizer();
+}
+
+                currentAudio.play();
+
+                button.textContent = "❚❚";
+
+const timeDisplay =
+    trackEntry.querySelector(".track-time");
+
+const progressFill =
+    trackEntry.querySelector(".track-progress-fill");
+
+    const progressBar =
+    trackEntry.querySelector(".track-progress");
+
+    const volumeControl =
+    trackEntry.querySelector(".track-volume");
+
+    volumeControl.addEventListener(
+    "input",
+    () => {
+
+        if(currentAudio){
+            currentAudio.volume =
+                Number(volumeControl.value);
+        }
+
+    }
+);
+
+function formatTime(seconds){
+
+    if(!Number.isFinite(seconds)){
+        return "0:00";
+    }
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+    const secs =
+        Math.floor(seconds % 60);
+
+    return `${minutes}:${String(secs).padStart(2, "0")}`;
+}
+
+currentAudio.addEventListener(
+    "loadedmetadata",
+    () => {
+
+        timeDisplay.textContent =
+            `0:00 / ${formatTime(currentAudio.duration)}`;
+
+    }
+);
+
+currentAudio.addEventListener(
+    "timeupdate",
+    () => {
+
+        progressBar.addEventListener(
+    "click",
+    event => {
+
+        const rect =
+            progressBar.getBoundingClientRect();
+
+        const clickX =
+            event.clientX - rect.left;
+
+        const percentage =
+            clickX / rect.width;
+
+        if(
+            currentAudio &&
+            Number.isFinite(currentAudio.duration)
+        ){
+            currentAudio.currentTime =
+                percentage * currentAudio.duration;
+        }
+
+    }
+);
+
+        const current =
+            currentAudio.currentTime;
+
+        const duration =
+            currentAudio.duration;
+
+        timeDisplay.textContent =
+            `${formatTime(current)} / ${formatTime(duration)}`;
+
+        if(duration){
+
+            const percentage =
+                (current / duration) * 100;
+
+            progressFill.style.width =
+                `${percentage}%`;
+
+        }
+
+    }
+);
+
+                currentAudio.addEventListener(
+                    "ended",
+                    () => {
+
+                        button.textContent = "▶";
+
+                        currentAudio = null;
+                        currentButton = null;
+
+                    }
+                );
+
+            }
+        );
+
+    });
+
 }
 
 function addToCollection(id) {
