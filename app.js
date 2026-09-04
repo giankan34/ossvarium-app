@@ -1,40 +1,7 @@
 function loginWithPi() {
-
-    const state = crypto.randomUUID();
-
-    sessionStorage.setItem("pi_oauth_state", state);
-
-    const url = new URL(
-        "https://accounts.pinet.com/oauth/authorize"
-    );
-
-    url.searchParams.set(
-        "response_type",
-        "token"
-    );
-
-    url.searchParams.set(
-        "client_id",
-        OIua7JiEtkJ7ZsqgmU6hhxM2qmZ6L5m2KezyI5NJ9QI
-    );
-
-    url.searchParams.set(
-        "redirect_uri",
-        "https://ossvarium-stream.vercel.app/pi-callback.html"
-    );
-
-    url.searchParams.set(
-        "scope",
-        "username"
-    );
-
-    url.searchParams.set(
-        "state",
-        state
-    );
-
-    window.location.assign(url.toString());
+    alert("OSSVARIUM PI BUTTON WORKS");
 }
+
 const searchInput =
 document.getElementById(
     "searchInput"
