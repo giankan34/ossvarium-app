@@ -7,12 +7,21 @@ function loginWithPi() {
         state
     );
 
-    Pi.signIn({
-        clientId: "OIua7JiEtkJ7ZsqgmU6hhxM2qmZ6L5m2KezyI5NJ9QI",
-        redirectUri: "https://ossvarium-stream.vercel.app/pi-callback.html",
-        scopes: ["username"],
-        state: state
-    });
+    const clientId =
+        "Olua7JiEtkJ7ZsqgmU6hhxM2qmZ6L5m2KezyI5N9JQI";
+
+    const redirectUri =
+        "https://ossvarium-stream.vercel.app/pi-callback.html";
+
+    const authUrl =
+        "https://accounts.pinet.com/oauth/authorize" +
+        "?response_type=token" +
+        "&client_id=" + encodeURIComponent(clientId) +
+        "&redirect_uri=" + encodeURIComponent(redirectUri) +
+        "&scope=username" +
+        "&state=" + encodeURIComponent(state);
+
+    window.location.href = authUrl;
 }
 
 const searchInput =
