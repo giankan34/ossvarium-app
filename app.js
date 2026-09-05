@@ -1,5 +1,18 @@
 function loginWithPi() {
-    alert("OSSVARIUM PI BUTTON WORKS");
+
+    const state = crypto.randomUUID();
+
+    sessionStorage.setItem(
+        "pi_oauth_state",
+        state
+    );
+
+    Pi.signIn({
+        clientId: "OIua7JiEtkJ7ZsqgmU6hhxM2qmZ6L5m2KezyI5NJ9QI",
+        redirectUri: "https://ossvarium-stream.vercel.app/pi-callback.html",
+        scopes: ["username"],
+        state: state
+    });
 }
 
 const searchInput =
