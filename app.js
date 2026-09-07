@@ -1,27 +1,49 @@
-function loginWithPi() {
+async function loginWithPi() {
 
-    const state = crypto.randomUUID();
+    try {
 
-    sessionStorage.setItem(
-        "pi_oauth_state",
-        state
-    );
+        const scopes = ["username", "payments"];
 
-    const clientId =
-        "Olua7JiEtkJ7ZsqgmU6hhxM2qmZ6L5m2KezyI5N9JQI";
+        const auth = await Pi.authenticate(
+            scopes,
+            function (payment) {
+                console.log(
+                    "Incomplete Pi payment found:",
+                    payment
+                );
+            }
+        );
 
-    const redirectUri =
-        "https://ossvarium-stream.vercel.app/pi-callback.html";
+        console.log("Pi authentication successful:", auth);
 
-    const authUrl =
-        "https://accounts.pinet.com/oauth/authorize" +
-        "?response_type=token" +
-        "&client_id=" + encodeURIComponent(clientId) +
-        "&redirect_uri=" + encodeURIComponent(redirectUri) +
-        "&scope=username" +
-        "&state=" + encodeURIComponent(state);
+        localStorage.setItem(
+            "ossvariumPiUser",
+            JSON.stringify({
+                uid: auth.user.uid,
+                username: auth.user.username
+            })
+        );
 
-    window.location.href = authUrl;
+        localStorage.setItem(
+            "ossvariumPiAccessToken",
+            auth.accessToken
+        );
+
+        alert(
+            "☠ PI IDENTITY VERIFIED ☠\n\n" +
+            "Welcome, " + auth.user.username +
+            "\nto the OSSVARIUM archives."
+        );
+
+    } catch (error) {
+
+        console.error("Pi authentication failed:", error);
+
+        alert(
+            "Pi authentication failed.\n\n" +
+            (error.message || error)
+        );
+    }
 }
 
 const searchInput =
