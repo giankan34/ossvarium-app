@@ -882,12 +882,22 @@ function initializePurchasePanel(){
                 .querySelector(".purchase-pay-btn")
                 .addEventListener(
                     "click",
-                    () => {
-                        testPiPayment(
-                        pricePi,
-                        trackTitle
-                    );
-                }
+                    async () => {
+
+                     if (!piAuth) {
+                         piAuth = await authenticatePiUser();
+                     }
+
+                    if (!piAuth) {
+                        alert("Pi authentication is required.");
+                        return;
+                   }
+
+                   testPiPayment(
+                       pricePi,
+                       trackTitle
+                  );
+                }         
             );
 
             overlay
