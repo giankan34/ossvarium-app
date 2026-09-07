@@ -46,6 +46,93 @@ async function loginWithPi() {
     }
 }
 
+function testPiPayment(pricePi, trackTitle) {
+
+    const amount = Number(pricePi);
+
+    if (!amount || amount <= 0) {
+        alert("Invalid Pi price.");
+        return;
+    }
+
+    Pi.createPayment(
+        {
+            amount: amount,
+            memo: `OSSVARIUM Track Purchase: ${trackTitle}`,
+            metadata: {
+                purpose: "track_purchase",
+                trackTitle: trackTitle
+            }
+        },
+        {
+            onReadyForServerApproval: async function (paymentId) {
+
+                const response = await fetch(
+                    "/api/approve-payment",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            paymentId: paymentId
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Payment approval failed");
+                }
+            },
+
+            onReadyForServerCompletion: async function (paymentId, txid) {
+
+                const response = await fetch(
+                    "/api/complete-payment",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            paymentId: paymentId,
+                            txid: txid
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error("Payment completion failed");
+                }
+
+                alert(
+                    `☠ RELIC ACQUIRED ☠\n\n${trackTitle}\n${amount} π`
+                );
+            },
+
+            onCancel: function (paymentId) {
+                console.log(
+                    "Pi payment cancelled:",
+                    paymentId
+                );
+            },
+
+            onError: function (error, payment) {
+                console.error(
+                    "Pi payment error:",
+                    error,
+                    payment
+                );
+
+                alert(
+                    "Pi payment failed.\n\n" +
+                    (error.message || error)
+                );
+            }
+        }
+    );
+}
+
 const searchInput =
 document.getElementById(
     "searchInput"

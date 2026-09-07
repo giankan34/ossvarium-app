@@ -880,6 +880,18 @@ function initializePurchasePanel(){
             );
 
             overlay
+                .querySelector(".purchase-pay-btn")
+                .addEventListener(
+                    "click",
+                    () => {
+                        testPiPayment(
+                        pricePi,
+                        trackTitle
+          );
+        }
+    );
+
+            overlay
                 .querySelector(".purchase-close-btn")
                 .addEventListener(
                     "click",
