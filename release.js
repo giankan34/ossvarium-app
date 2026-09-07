@@ -1,6 +1,5 @@
 Pi.init({
-    version: "2.0",
-    sandbox: true
+    version: "2.0"
 });
 
 let piAuth = null;
@@ -887,9 +886,9 @@ function initializePurchasePanel(){
                         testPiPayment(
                         pricePi,
                         trackTitle
-          );
-        }
-    );
+                    );
+                }
+            );
 
             overlay
                 .querySelector(".purchase-close-btn")
