@@ -23,13 +23,8 @@ async function loadCollection(){
 
     collection.length * 10;
     
-    const response =
-    await fetch(
-    "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
     
     const achievementBox =
     document.getElementById(

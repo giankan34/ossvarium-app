@@ -16,9 +16,7 @@ new URLSearchParams(window.location.search);
 const id =
 Number(params.get("id") || 0);
 
-fetch("./data/releases.json")
-
-.then(r=>r.json())
+loadOssvariumCatalog()
 
 .then(releases=>{
 

@@ -21,13 +21,8 @@ async function loadCountry(){
     countryTitle.innerHTML =
     `🌍 ${country} VAULT 🌍`;
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
-    const releases =
-    await response.json();
+   const releases =
+    await loadOssvariumCatalog();
 
     const matches =
     releases.filter(

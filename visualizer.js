@@ -123,11 +123,8 @@ async function acquireCatacombSignal(){
 
     try{
 
-        const response =
-            await fetch("./data/releases.json");
-
         const releases =
-            await response.json();
+    await loadOssvariumCatalog();
 
         if(!releases.length){
             return;

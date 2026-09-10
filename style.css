@@ -383,7 +383,21 @@ h1{
 
     }
 
+
+h2 {
+    font-size: 24px !important;
+    line-height: 1.15;
+    max-width: 100%;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+}
+
 .submission-box{
     position:relative;
 
@@ -2963,4 +2977,274 @@ body.codex-entering::before{
 
 .footer span {
     color: #555;
+}
+
+/* =========================================
+   OSSVARIUM - SUBMIT RELIC PAGE
+   ========================================= */
+
+.submission-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 55px 20px;
+}
+
+.submission-box {
+    width: 100%;
+    max-width: 760px;
+    padding: 40px;
+    border: 1px solid #5e2a24;
+    border-radius: 8px;
+    background: rgba(18, 8, 8, 0.88);
+    box-sizing: border-box;
+}
+
+.submission-box h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.submission-text {
+    text-align: center;
+    margin-bottom: 35px;
+    line-height: 1.7;
+}
+
+#relicSubmissionForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#relicSubmissionForm label {
+    margin-top: 10px;
+    font-family: "Cinzel", serif;
+    font-size: 14px;
+}
+
+#relicSubmissionForm input,
+#relicSubmissionForm textarea {
+    width: 100%;
+    padding: 12px 14px;
+    box-sizing: border-box;
+
+    background: #0d0808;
+    color: #e6d6c7;
+
+    border: 1px solid #6a332c;
+    border-radius: 4px;
+
+    font-family: "Cinzel", serif;
+    font-size: 14px;
+}
+
+#relicSubmissionForm input:focus,
+#relicSubmissionForm textarea:focus {
+    outline: none;
+    border-color: #c35d48;
+    box-shadow: 0 0 8px rgba(195, 93, 72, 0.35);
+}
+
+#relicSubmissionForm textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.submission-permission {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.submission-permission input {
+    width: auto !important;
+    margin-top: 4px;
+}
+
+.submission-permission label {
+    margin: 0 !important;
+    line-height: 1.5;
+}
+
+#relicSubmissionForm .submit-btn {
+    align-self: center;
+    margin-top: 10px;
+    padding: 14px 25px;
+    cursor: pointer;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 25px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    .submission-page {
+        padding: 25px 12px;
+    }
+
+    .submission-box {
+        padding: 25px 18px;
+    }
+
+    .submission-box h1 {
+        font-size: 32px;
+    }
+}
+
+/* =========================================
+   OSSVARIUM - ADMIN REVIEW
+   ========================================= */
+
+.review-relic-card {
+    margin: 30px 0;
+    padding: 25px;
+
+    border: 1px solid #6a332c;
+    border-radius: 6px;
+
+    background: rgba(10, 5, 5, 0.8);
+
+    text-align: center;
+}
+
+.review-relic-card h2 {
+    margin-bottom: 5px;
+}
+
+.review-relic-card h3 {
+    margin-top: 0;
+    opacity: 0.8;
+}
+
+.review-cover {
+    display: block;
+
+    width: 100%;
+    max-width: 300px;
+
+    margin: 20px auto;
+
+    border: 1px solid #6a332c;
+}
+
+.review-actions {
+    display: flex;
+
+    justify-content: center;
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+    margin-top: 25px;
+}
+
+/* =========================================
+   OSSVARIUM - BACK BUTTON
+   ========================================= */
+
+.back-link {
+    display: block;
+    width: fit-content;
+
+    margin: 30px auto 0;
+    padding: 12px 22px;
+
+    border: 1px solid #6a332c;
+    border-radius: 4px;
+
+    background: rgba(25, 8, 8, 0.9);
+
+    color: #d78a6c;
+    text-decoration: none;
+
+    font-family: "Cinzel", serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+
+    transition: 0.25s ease;
+}
+
+.back-link:hover {
+    color: #ffb092;
+    border-color: #c35d48;
+
+    box-shadow:
+        0 0 10px rgba(195, 93, 72, 0.45);
+
+    transform: translateY(-2px);
+}
+
+.no-cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 260px;
+
+    border: 1px solid #5e2a24;
+    background: #0d0808;
+
+    color: #8e5b4d;
+
+    font-family: "Cinzel", serif;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+/* =========================================
+   OSSVARIUM - TRACK SUBMISSION BUILDER
+   ========================================= */
+
+.track-submit-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin: 15px 0;
+    padding: 18px;
+
+    border: 1px solid #5e2a24;
+    background: rgba(10, 5, 5, 0.65);
+}
+
+.track-sale-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.track-sale-option input {
+    width: auto !important;
+}
+
+#addTrackButton {
+    align-self: flex-start;
+    margin-bottom: 20px;
+}
+
+.review-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.review-tracklist {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #5e2a24;
+}
+
+.review-track {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(94, 42, 36, 0.45);
+    line-height: 1.6;
 }

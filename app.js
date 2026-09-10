@@ -160,13 +160,8 @@ return;
 
 }
 
-const response =
-await fetch(
-"./data/releases.json"
-);
-
 const releases =
-await response.json();
+    await loadOssvariumCatalog();
 
 const matches =
 releases.filter(item =>
@@ -267,13 +262,8 @@ async function discoverRelease(){
     text.innerText =
     "THE UNDERGROUND CHOOSES...";
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const randomId =
     Math.floor(
@@ -307,13 +297,8 @@ async function discoverRelease(){
     text.innerText =
     "THE CATACOMBS SEEK AN ARTIST...";
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const artists =
     [...new Set(
@@ -366,13 +351,8 @@ async function loadCollection(){
 
     collection.length * 10;
     
-    const response =
-    await fetch(
-    "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
     
     const achievementBox =
     document.getElementById(
@@ -778,13 +758,8 @@ async function loadCountries(){
 
     if(!vault) return;
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const countries =
     [...new Set(
@@ -830,13 +805,8 @@ async function loadGenres(){
 
     if(!vault) return;
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const genres =
     [...new Set(
@@ -882,13 +852,8 @@ async function loadArtists(){
 
     if(!vault) return;
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const artists =
     [...new Set(
@@ -933,13 +898,8 @@ async function loadCatacombMap(){
 
     if(!map) return;
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const artists =
     new Set(
@@ -1007,13 +967,8 @@ async function loadReleaseOfTheDay(){
 
     if(!box) return;
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const today =
     new Date().getDate();
@@ -1066,13 +1021,8 @@ async function loadArtistOfTheDay(){
 
     if(!box) return;
 
-    const response =
-    await fetch(
-        "./data/releases.json"
-    );
-
     const releases =
-    await response.json();
+    await loadOssvariumCatalog();
 
     const artists =
     [...new Set(
@@ -1331,11 +1281,8 @@ if (currentCollection.length >= 20) {
 
 async function checkCollectorAchievement() {
 
-    const response =
-        await fetch("./data/releases.json");
-
     const allReleases =
-        await response.json();
+    await loadOssvariumCatalog();
 
     const collectedGenres =
         new Set();

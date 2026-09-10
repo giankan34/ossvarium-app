@@ -7,13 +7,9 @@ async function loadReleases(){
 
     try{
 
-        const response =
-        await fetch(
-            "./data/releases.json"
-        );
-
-        const releases =
-        await response.json();
+       const releases =
+    await loadOssvariumCatalog();
+    
         const params =
         new URLSearchParams(
             window.location.search
@@ -589,10 +585,18 @@ releases[
                 <a
                 href="release.html?id=${releases.indexOf(release)}">
 
+                ${release.cover
+                ? `
                 <img
                 class="release-cover"
                 src="${release.cover}"
                 alt="${release.release}">
+                `
+                : `
+                <div class="release-cover no-cover">
+                     ☠ NO COVER ART ☠
+                </div>
+                `}
 
                 </a>
 

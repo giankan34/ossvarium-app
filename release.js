@@ -57,11 +57,8 @@ async function loadRelease(){
 
     try{
 
-        const response =
-        await fetch("./data/releases.json");
-
         releases =
-        await response.json();
+    await loadOssvariumCatalog();
 
         const params =
         new URLSearchParams(
@@ -155,11 +152,22 @@ function renderHeader(){
 
         ` : ""}
 
-        <img
-            class="release-cover"
-            src="${release.cover}"
-            alt="${release.release}"
-        >
+        ${release.cover ? `
+
+    <img 
+        class="release-cover" 
+        src="${release.cover}" 
+        alt="${release.release}"
+        onerror="this.outerHTML='<div class=&quot;release-cover no-cover&quot;>☠ NO COVER ART ☠</div>'"
+    >
+
+` : `
+
+    <div class="release-cover no-cover">
+        ☠ NO COVER ART ☠
+    </div>
+
+`}
 
         <div class="release-title">
             ${release.release}
@@ -364,6 +372,12 @@ function renderTimeline(){
 
 function renderArtistBio(){
 
+    const bio =
+        release.bio &&
+        release.bio.trim()
+        ? release.bio
+        : "No artist dossier has been submitted for this relic yet.";
+
     return `
 
     <div class="museum-card">
@@ -372,7 +386,7 @@ function renderArtistBio(){
 
         <p>
 
-            ${release.bio}
+            ${bio}
 
         </p>
 

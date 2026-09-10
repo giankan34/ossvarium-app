@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Submit a Relic | OSSVARIUM</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=UnifrakturMaguntia&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="submission-page">
+
+        <section class="submission-box">
+
+            <h1>☠ SUBMIT A RELIC ☠</h1>
+
+            <p class="submission-text">
+                Artists and underground bands may submit their releases
+                for inclusion in the OSSVARIUM archives.
+            </p>
+
+            <form id="relicSubmissionForm">
+
+                <label for="artistName">Artist / Band Name</label>
+                <input type="text" id="artistName" required>
+
+                <label for="releaseTitle">Release Title</label>
+                <input type="text" id="releaseTitle" required>
+
+                <label for="country">Country</label>
+                <input type="text" id="country" required>
+
+                <label for="genre">Genre</label>
+                <input type="text" id="genre" required>
+
+                <label for="releaseYear">Release Year</label>
+                <input type="number" id="releaseYear" min="1900" max="2100">
+
+                <label for="description">Release Description</label>
+<textarea
+    id="description"
+    rows="4"
+    placeholder="Short description of the release...">
+</textarea>
+
+<label for="bio">Artist / Band Bio</label>
+<textarea
+    id="bio"
+    rows="5"
+    placeholder="Short artist biography...">
+</textarea>
+
+<label for="artistImage">Artist Image URL</label>
+<input
+    type="url"
+    id="artistImage"
+    placeholder="https://...">
+
+<label for="banner">Artist Banner URL</label>
+<input
+    type="url"
+    id="banner"
+    placeholder="https://...">
+
+                <label for="coverArtwork">Cover Artwork URL</label>
+                <input type="url" id="coverArtwork">
+
+                <label for="bandcamp">Bandcamp Release</label>
+<input
+    type="url"
+    id="bandcamp"
+    placeholder="https://artist.bandcamp.com/album/...">
+
+<label for="spotify">Spotify</label>
+<input
+    type="url"
+    id="spotify"
+    placeholder="https://open.spotify.com/...">
+
+<label for="youtube">YouTube</label>
+<input
+    type="url"
+    id="youtube"
+    placeholder="https://youtube.com/...">
+
+<label for="instagram">Instagram</label>
+<input
+    type="url"
+    id="instagram"
+    placeholder="https://instagram.com/...">
+
+<label for="facebook">Facebook</label>
+<input
+    type="url"
+    id="facebook"
+    placeholder="https://facebook.com/...">
+
+<label for="website">Official Website</label>
+<input
+    type="url"
+    id="website"
+    placeholder="https://...">
+
+<label for="merch">Merch Store</label>
+<input
+    type="url"
+    id="merch"
+    placeholder="https://...">
+                
+                <label for="contactEmail">Contact Email</label>
+                <input type="email" id="contactEmail" required>
+
+                <label>Tracklist</label>
+
+<div id="trackBuilder">
+
+    <div class="track-submit-row">
+
+        <input
+            type="text"
+            class="track-title"
+            placeholder="Track title">
+
+        <input
+            type="url"
+            class="track-audio"
+            placeholder="Audio / preview URL">
+
+        <input
+            type="number"
+            class="track-price"
+            min="0"
+            step="0.01"
+            placeholder="Price in Pi">
+
+        <label class="track-sale-option">
+
+            <input
+                type="checkbox"
+                class="track-for-sale">
+
+            Available for individual purchase
+
+        </label>
+
+    </div>
+
+</div>
+
+<button
+    type="button"
+    id="addTrackButton"
+    class="submit-btn">
+
+    + ADD TRACK
+
+</button>
+
+                <label for="pricePi">Full Release Price in Pi</label>
+<input
+    type="number"
+    id="pricePi"
+    min="0"
+    step="0.01"
+    placeholder="Example: 1.50">
+
+                <div class="submission-permission">
+                    <input type="checkbox" id="permission" required>
+                    <label for="permission">
+                        I confirm that I own or have permission to submit this material.
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    ☠ SUBMIT RELIC FOR REVIEW ☠
+                </button>
+
+            </form>
+
+            <a href="index.html" class="back-link">
+                ← RETURN TO OSSVARIUM
+            </a>
+
+        </section>
+
+    </main>
+
+    <script>
+ 
+ document
+.getElementById("addTrackButton")
+.addEventListener("click", function(){
+
+    const builder =
+        document.getElementById("trackBuilder");
+
+    const row =
+        document.createElement("div");
+
+    row.className =
+        "track-submit-row";
+
+    row.innerHTML = `
+
+        <input
+            type="text"
+            class="track-title"
+            placeholder="Track title">
+
+        <input
+            type="url"
+            class="track-audio"
+            placeholder="Audio / preview URL">
+
+        <input
+            type="number"
+            class="track-price"
+            min="0"
+            step="0.01"
+            placeholder="Price in Pi">
+
+        <label class="track-sale-option">
+
+            <input
+                type="checkbox"
+                class="track-for-sale">
+
+            Available for individual purchase
+
+        </label>
+
+        <button
+            type="button"
+            class="submit-btn remove-track">
+
+            REMOVE TRACK
+
+        </button>
+    `;
+
+    builder.appendChild(row);
+
+});
+
+
+document.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target.classList
+            .contains("remove-track")
+        ){
+
+            event.target
+            .closest(".track-submit-row")
+            .remove();
+
+        }
+
+    }
+);
+
+document.getElementById("relicSubmissionForm")
+.addEventListener("submit", function(event){
+
+    event.preventDefault();
+
+    const tracks =
+[...document.querySelectorAll(
+    ".track-submit-row"
+)]
+.map(row => {
+
+    const title =
+        row.querySelector(
+            ".track-title"
+        ).value.trim();
+
+    const audio =
+        row.querySelector(
+            ".track-audio"
+        ).value.trim();
+
+    const price =
+        Number(
+            row.querySelector(
+                ".track-price"
+            ).value || 0
+        );
+
+    const forSale =
+        row.querySelector(
+            ".track-for-sale"
+        ).checked;
+
+    return {
+
+        title: title,
+
+        audio: audio,
+
+        forSale: forSale,
+
+        pricePi: price
+
+    };
+
+})
+.filter(track => track.title);
+
+    const submission = {
+        id: Date.now(),
+
+        tracks: tracks,
+        
+        artist: document.getElementById("artistName").value.trim(),
+        release: document.getElementById("releaseTitle").value.trim(),
+        country: document.getElementById("country").value.trim(),
+        genre: document.getElementById("genre").value.trim(),
+        year: document.getElementById("releaseYear").value,
+        description: document.getElementById("description").value.trim(),
+        bio:document.getElementById("bio").value.trim(),
+        artistImage:document.getElementById("artistImage").value.trim(),
+        banner:document.getElementById("banner").value.trim(),
+        cover: document.getElementById("coverArtwork").value.trim(),
+        bandcamp:document.getElementById("bandcamp").value.trim(),
+        spotify:document.getElementById("spotify").value.trim(),
+        youtube:document.getElementById("youtube").value.trim(),
+        instagram:document.getElementById("instagram").value.trim(),
+        facebook:document.getElementById("facebook").value.trim(),
+        website:document.getElementById("website").value.trim(),
+        merch:document.getElementById("merch").value.trim(),
+        contactEmail: document.getElementById("contactEmail").value.trim(),
+        pricePi: document.getElementById("pricePi").value,
+
+        submittedAt: new Date().toISOString(),
+        status: "pending"
+    };
+
+    const pendingSubmissions =
+        JSON.parse(
+            localStorage.getItem("ossvariumPendingSubmissions")
+            || "[]"
+        );
+
+    pendingSubmissions.push(submission);
+
+    localStorage.setItem(
+        "ossvariumPendingSubmissions",
+        JSON.stringify(pendingSubmissions)
+    );
+
+    alert(
+        "☠ RELIC SUBMITTED FOR REVIEW ☠\n\n" +
+        submission.artist +
+        " — " +
+        submission.release
+    );
+
+    this.reset();
+
+});
+</script>
+
+</body>
+</html>

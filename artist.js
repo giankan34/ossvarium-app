@@ -7,13 +7,8 @@ async function loadArtist(){
 
     try{
 
-        const response =
-        await fetch(
-            "./data/releases.json"
-        );
-
         const releases =
-        await response.json();
+    await loadOssvariumCatalog();
 
         const params =
         new URLSearchParams(
