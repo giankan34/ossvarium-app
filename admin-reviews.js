@@ -38,10 +38,7 @@ async function unlockAdmin() {
             "adminContent"
         ).style.display = "block";
 
-        sessionStorage.setItem(
-            "ossvariumAdminUnlocked",
-            "true"
-        );
+        
 
         loadPendingRelics();
 
@@ -57,27 +54,6 @@ async function unlockAdmin() {
         ).style.display = "block";
     }
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-
-    const isUnlocked =
-        sessionStorage.getItem(
-            "ossvariumAdminUnlocked"
-        );
-
-    if (isUnlocked === "true") {
-
-        document.getElementById(
-            "adminGate"
-        ).style.display = "none";
-
-        document.getElementById(
-            "adminContent"
-        ).style.display = "block";
-
-    }
-
-});
 
 async function loadPendingRelics() {
 
