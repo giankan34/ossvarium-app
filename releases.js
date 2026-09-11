@@ -25,6 +25,13 @@ async function loadReleases(){
                 release.genre === selectedGenre
            )
            : releases;
+
+           const homeReleases =
+    selectedGenre
+    ? filteredReleases
+    : filteredReleases
+        .slice(-12)
+        .reverse();
         
         const totalReleases =
         releases.length;
@@ -549,7 +556,7 @@ releases[
         
         const genres = {};
 
-        filteredReleases.forEach((release)=>{
+        homeReleases.forEach((release)=>{
 
             if(!genres[release.genre]){
 
@@ -650,6 +657,31 @@ releases[
             });
 
         });
+
+        if (!selectedGenre) {
+
+    releaseContainer.innerHTML += `
+        <div class="submission-box">
+
+            <h2>
+                ☠ THE FULL ARCHIVE ☠
+            </h2>
+
+            <div class="submission-text">
+                Descend deeper into the OSSVARIUM.
+            </div>
+
+            <br>
+
+            <a
+                class="submit-btn"
+                href="archive.html">
+                ☠ ENTER THE FULL ARCHIVE ☠
+            </a>
+
+        </div>
+    `;
+}
 
         if (selectedGenre) {
 

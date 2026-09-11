@@ -11,10 +11,16 @@ async function loadOssvariumCatalog() {
     try {
 
         const approvedResponse =
-            await fetch("/api/approved-relics");
+    await fetch("/api/approved-relics");
 
-        const approvedResult =
-            await approvedResponse.json();
+if (!approvedResponse.ok) {
+    throw new Error(
+        "Approved relics API unavailable"
+    );
+}
+
+const approvedResult =
+    await approvedResponse.json();
 
         if (!approvedResponse.ok) {
             throw new Error(

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="el">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>OSSVARIUM — Full Archive</title>
+
+<link
+href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap"
+rel="stylesheet">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="submission-box">
+
+    <h1>
+        ☠ OSSVARIUM FULL ARCHIVE ☠
+    </h1>
+
+    <div class="submission-text">
+        Every preserved relic of the underground.
+    </div>
+
+    <br>
+
+    <a
+    class="submit-btn"
+    href="index.html">
+
+        ← RETURN TO OSSVARIUM
+
+    </a>
+
+</div>
+
+
+<div
+id="archiveControls"
+class="submission-box">
+
+    <h2>
+        ⚔ SEARCH THE ARCHIVE ⚔
+    </h2>
+
+    <input
+    id="archiveSearch"
+    type="text"
+    placeholder="Search artist, release, genre, country..."
+    style="
+        width:100%;
+        max-width:600px;
+        padding:12px;
+        background:#111;
+        color:#fff;
+        border:1px solid #777;
+        box-sizing:border-box;
+    ">
+
+</div>
+
+
+<div id="archiveReleases"></div>
+
+
+<script src="catalog.js"></script>
+
+<script>
+
+let archiveCatalog = [];
+
+async function loadArchive() {
+
+    const container =
+        document.getElementById(
+            "archiveReleases"
+        );
+
+    try {
+
+        archiveCatalog =
+            await loadOssvariumCatalog();
+
+        renderArchive(
+            archiveCatalog
+        );
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM archive error:",
+            error
+        );
+
+        container.innerHTML = `
+
+            <div class="submission-box">
+
+                <div class="submission-text">
+
+                    ☠ ARCHIVE COULD NOT BE LOADED ☠
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+function renderArchive(releases) {
+
+    const container =
+        document.getElementById(
+            "archiveReleases"
+        );
+
+    container.innerHTML = "";
+
+    if (!releases.length) {
+
+        container.innerHTML = `
+
+            <div class="submission-box">
+
+                <div class="submission-text">
+
+                    ☠ NO RELICS FOUND ☠
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const genres = {};
+
+    releases.forEach((release)=>{
+
+        const genre =
+            release.genre || "Unknown";
+
+        if (!genres[genre]) {
+
+            genres[genre] = [];
+
+        }
+
+        genres[genre].push(
+            release
+        );
+
+    });
+
+
+    Object.keys(genres)
+    .sort()
+    .forEach((genre)=>{
+
+        container.innerHTML += `
+
+            <div class="genre-title">
+
+                ${genre}
+
+            </div>
+
+        `;
+
+
+        genres[genre]
+        .forEach((release)=>{
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "release-card";
+
+            const originalIndex =
+                archiveCatalog.indexOf(
+                    release
+                );
+
+            card.innerHTML = `
+
+                <a
+                href="release.html?id=${originalIndex}">
+
+                    ${release.cover
+                    ? `
+                        <img
+                        class="release-cover"
+                        src="${release.cover}"
+                        alt="${release.release}">
+                    `
+                    : `
+                        <div class="release-cover no-cover">
+                            ☠ NO COVER ART ☠
+                        </div>
+                    `}
+
+                </a>
+
+                <div class="release-title">
+
+                    ${release.release}
+
+                </div>
+
+                <div class="release-artist">
+
+                    ${release.artist}
+
+                </div>
+
+                <div class="release-meta">
+
+                    ${release.genre || ""}
+                    •
+                    ${release.year || ""}
+
+                </div>
+
+                <div class="release-desc">
+
+                    ${release.description || ""}
+
+                </div>
+
+                <a
+                class="submit-btn"
+                href="release.html?id=${originalIndex}">
+
+                    VIEW RELEASE
+
+                </a>
+
+            `;
+
+            container.appendChild(
+                card
+            );
+
+        });
+
+    });
+
+}
+
+
+document
+.getElementById("archiveSearch")
+.addEventListener(
+    "input",
+    function() {
+
+        const query =
+            this.value
+            .trim()
+            .toLowerCase();
+
+        if (!query) {
+
+            renderArchive(
+                archiveCatalog
+            );
+
+            return;
+
+        }
+
+        const filtered =
+            archiveCatalog.filter(
+                release => {
+
+                    const text = `
+                        ${release.artist || ""}
+                        ${release.release || ""}
+                        ${release.genre || ""}
+                        ${release.country || ""}
+                        ${release.year || ""}
+                    `.toLowerCase();
+
+                    return text.includes(
+                        query
+                    );
+
+                }
+            );
+
+        renderArchive(
+            filtered
+        );
+
+    }
+);
+
+
+window.addEventListener(
+    "DOMContentLoaded",
+    loadArchive
+);
+
+</script>
+
+</body>
+</html>
