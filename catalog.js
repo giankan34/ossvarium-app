@@ -1,68 +1,97 @@
 async function loadOssvariumCatalog() {
 
-    const response =
+    const staticResponse =
         await fetch("./data/releases.json");
 
     const staticReleases =
-        await response.json();
+        await staticResponse.json();
 
-    const approvedSubmissions =
-        JSON.parse(
-            localStorage.getItem(
-                "ossvariumApprovedSubmissions"
-            ) || "[]"
+    let approvedReleases = [];
+
+    try {
+
+        const approvedResponse =
+            await fetch("/api/approved-relics");
+
+        const approvedResult =
+            await approvedResponse.json();
+
+        if (!approvedResponse.ok) {
+            throw new Error(
+                approvedResult.error ||
+                "Failed to load approved relics"
+            );
+        }
+
+        approvedReleases =
+            approvedResult.relics.map(item => ({
+
+                id:
+                    item.id,
+
+                relicId:
+                    item.relic_id,
+
+                artist:
+                    item.artist,
+
+                release:
+                    item.release_title,
+
+                country:
+                    item.country ?? "",
+
+                genre:
+                    item.genre ?? "",
+
+                year:
+                    item.release_year ?? "",
+
+                description:
+                    item.description ?? "",
+
+                bio:
+                    item.bio ?? "",
+
+                cover:
+                    item.cover ?? "",
+
+                artistImage:
+                    item.artist_image ?? "",
+
+                banner:
+                    item.banner ?? "",
+
+                price:
+                    item.price_pi ?? 0,
+
+                pricePi:
+                    item.price_pi ?? 0,
+
+                supporters:
+                    item.supporters ?? 0,
+
+                links:
+                    item.links ?? {},
+
+                tracks:
+                    item.tracks ?? [],
+
+                similar:
+                    item.similar_artists ?? [],
+
+                status:
+                    item.status
+
+            }));
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM approved catalog error:",
+            error
         );
-
-    const approvedReleases =
-        approvedSubmissions.map(item => ({
-
-            ...item,
-
-            price:
-                item.price ??
-                item.pricePi ??
-                "",
-
-            supporters:
-                item.supporters ??
-                0,
-
-            description:
-                item.description ??
-                "",
-
-            bio:
-                item.bio ??
-                "",
-
-            tracks:
-                item.tracks ??
-                [],
-
-            artistImage:
-                item.artistImage ??
-                "",
-
-            banner:
-                item.banner ??
-                "",
-
-            links:
-                item.links ?? {
-                    bandcamp: item.bandcamp ?? "",
-                    spotify: item.spotify ?? "",
-                    youtube: item.youtube ?? "",
-                    website: item.website ?? "",
-                    merch: item.merch ?? "",
-                    instagram: item.instagram ?? "",
-                    facebook: item.facebook ?? ""
-                },
-
-            similar:
-                item.similar ??
-                []
-
-        }));
+    }
 
     return [
         ...staticReleases,
