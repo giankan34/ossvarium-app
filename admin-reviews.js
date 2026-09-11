@@ -1,6 +1,4 @@
-const ADMIN_KEY = "relic666";
-
-function unlockAdmin() {
+async function unlockAdmin() {
 
     const password =
         document.getElementById("adminPassword").value;
@@ -8,20 +6,56 @@ function unlockAdmin() {
     const error =
         document.getElementById("adminError");
 
-    if (password === ADMIN_KEY) {
+    error.style.display = "none";
 
-        document.getElementById("adminGate").style.display = "none";
-        document.getElementById("adminContent").style.display = "block";
+    try {
+
+        const response =
+            await fetch("/api/admin-login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    password: password
+                })
+            });
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Login failed"
+            );
+        }
+
+        document.getElementById(
+            "adminGate"
+        ).style.display = "none";
+
+        document.getElementById(
+            "adminContent"
+        ).style.display = "block";
 
         sessionStorage.setItem(
             "ossvariumAdminUnlocked",
             "true"
         );
 
-        return;
-    }
+        loadPendingRelics();
 
-    error.style.display = "block";
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM admin login error:",
+            error
+        );
+
+        document.getElementById(
+            "adminError"
+        ).style.display = "block";
+    }
 }
 
 window.addEventListener("DOMContentLoaded", () => {

@@ -498,5 +498,71 @@ font-family:Cinzel;
 <script src="releases.js"></script>
 <script src="visualizer.js"></script>
 
+<a
+    id="adminPendingLink"
+    href="admin-reviews.html"
+    style="
+        display:none;
+        position:fixed;
+        right:20px;
+        bottom:20px;
+        z-index:9999;
+        padding:10px 14px;
+        border:1px solid #777;
+        background:#111;
+        color:#fff;
+        text-decoration:none;
+        font-weight:bold;
+    ">
+</a>
+
+<script>
+async function checkAdminPendingRelics() {
+
+    try {
+
+        const response =
+            await fetch("/api/admin-status");
+
+        const result =
+            await response.json();
+
+        const link =
+            document.getElementById(
+                "adminPendingLink"
+            );
+
+        if (
+            result.admin === true &&
+            result.pending > 0
+        ) {
+
+            link.textContent =
+                `☠ ${result.pending} RELIC` +
+                `${result.pending === 1 ? "" : "S"} ` +
+                `AWAIT JUDGEMENT ☠`;
+
+            link.style.display = "block";
+
+        } else {
+
+            link.style.display = "none";
+        }
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM admin status error:",
+            error
+        );
+    }
+}
+
+window.addEventListener(
+    "DOMContentLoaded",
+    checkAdminPendingRelics
+);
+</script>
+
 </body>
 </html>

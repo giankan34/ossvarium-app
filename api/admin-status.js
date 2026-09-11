@@ -21,6 +21,7 @@ module.exports = async function handler(req, res) {
                     .map(cookie => cookie.trim())
                     .filter(Boolean)
                     .map(cookie => {
+
                         const index =
                             cookie.indexOf("=");
 
@@ -34,6 +35,13 @@ module.exports = async function handler(req, res) {
         const adminToken =
             cookies.ossvarium_admin;
 
+        if (!adminToken) {
+            return res.status(200).json({
+                admin: false,
+                pending: 0
+            });
+        }
+
         const expectedToken =
             crypto
                 .createHmac(
@@ -43,58 +51,36 @@ module.exports = async function handler(req, res) {
                 .update("ossvarium-admin")
                 .digest("hex");
 
-        if (
-            !adminToken ||
-            adminToken !== expectedToken
-        ) {
-            return res.status(401).json({
-                error: "Unauthorized"
+        if (adminToken !== expectedToken) {
+            return res.status(200).json({
+                admin: false,
+                pending: 0
             });
         }
 
         const sql =
             neon(process.env.POSTGRES_URL);
 
-        const relics = await sql`
-            SELECT
-                id,
-                relic_id,
-                artist,
-                release_title,
-                country,
-                genre,
-                release_year,
-                description,
-                bio,
-                cover,
-                artist_image,
-                banner,
-                price_pi,
-                supporters,
-                contact_email,
-                links,
-                tracks,
-                submitted_at,
-                status
+        const result = await sql`
+            SELECT COUNT(*)::int AS count
             FROM relics
-            WHERE status = 'pending'
-            ORDER BY submitted_at DESC;
+            WHERE status = 'pending';
         `;
 
         return res.status(200).json({
-            success: true,
-            relics: relics
+            admin: true,
+            pending: result[0].count
         });
 
     } catch (error) {
 
         console.error(
-            "OSSVARIUM pending relics error:",
+            "OSSVARIUM admin status error:",
             error
         );
 
         return res.status(500).json({
-            error: "Failed to load pending relics"
+            error: "Failed to check admin status"
         });
     }
 };
