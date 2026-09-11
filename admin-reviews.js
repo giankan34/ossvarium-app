@@ -45,17 +45,95 @@ window.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function loadPendingRelics() {
+async function loadPendingRelics() {
 
     const container =
         document.getElementById("pendingRelics");
 
-    const submissions =
-        JSON.parse(
-            localStorage.getItem(
-                "ossvariumPendingSubmissions"
-            ) || "[]"
+    let submissions = [];
+
+try {
+
+    const response =
+        await fetch("/api/pending-relics");
+
+    const result =
+        await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.error ||
+            "Failed to load pending relics"
         );
+    }
+
+    submissions =
+        result.relics.map(item => ({
+
+            id: item.id,
+            relicId: item.relic_id,
+
+            artist: item.artist,
+            release: item.release_title,
+
+            country: item.country,
+            genre: item.genre,
+            year: item.release_year,
+
+            description: item.description,
+            bio: item.bio,
+
+            cover: item.cover,
+            artistImage: item.artist_image,
+            banner: item.banner,
+
+            pricePi: item.price_pi,
+            contactEmail: item.contact_email,
+
+            bandcamp:
+                item.links?.bandcamp || "",
+
+            spotify:
+                item.links?.spotify || "",
+
+            youtube:
+                item.links?.youtube || "",
+
+            instagram:
+                item.links?.instagram || "",
+
+            facebook:
+                item.links?.facebook || "",
+
+            website:
+                item.links?.website || "",
+
+            merch:
+                item.links?.merch || "",
+
+            tracks:
+                item.tracks || [],
+
+            status:
+                item.status
+
+        }));
+
+} catch (error) {
+
+    console.error(
+        "ADMIN pending relics error:",
+        error
+    );
+
+    container.innerHTML = `
+        <p class="submission-text">
+            ☠ DATABASE CONNECTION FAILED ☠
+        </p>
+    `;
+
+    return;
+}
 
     if (submissions.length === 0) {
 
