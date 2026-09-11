@@ -1,0 +1,98 @@
+body {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.archive-header,
+#archiveControls {
+    max-width: 1100px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#archiveReleases {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.genre-title {
+    text-align: center;
+    margin: 45px 0 20px;
+    font-size: 2rem;
+}
+
+.archive-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.archive-grid .release-card {
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.archive-grid .release-cover {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+.archive-grid .no-cover {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#archiveSearch {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    display: block;
+}
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .archive-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 12px;
+    }
+
+    .genre-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .archive-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.archive-header {
+    max-width: 1100px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#archiveReleases > .submission-box {
+    max-width: 1100px;
+    margin: 30px auto;
+    text-align: center;
+}

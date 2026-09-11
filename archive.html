@@ -36,12 +36,13 @@ href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap"
 rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="archive.css">
 
 </head>
 
 <body>
 
-<div class="submission-box">
+<div class="submission-box archive-header">
 
     <h1>
         ☠ OSSVARIUM FULL ARCHIVE ☠
@@ -191,99 +192,118 @@ function renderArchive(releases) {
 
 
     Object.keys(genres)
-    .sort()
-    .forEach((genre)=>{
+.sort()
+.forEach((genre)=>{
 
-        container.innerHTML += `
+    const genreTitle =
+        document.createElement(
+            "div"
+        );
 
-            <div class="genre-title">
+    genreTitle.className =
+        "genre-title";
 
-                ${genre}
+    genreTitle.textContent =
+        genre;
+
+    container.appendChild(
+        genreTitle
+    );
+
+
+    const grid =
+        document.createElement(
+            "div"
+        );
+
+    grid.className =
+        "archive-grid";
+
+
+    genres[genre]
+    .forEach((release)=>{
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+        card.className =
+            "release-card";
+
+        const originalIndex =
+            archiveCatalog.indexOf(
+                release
+            );
+
+        card.innerHTML = `
+
+            <a
+            href="release.html?id=${originalIndex}">
+
+                ${release.cover
+                ? `
+                    <img
+                    class="release-cover"
+                    src="${release.cover}"
+                    alt="${release.release}">
+                `
+                : `
+                    <div class="release-cover no-cover">
+                        ☠ NO COVER ART ☠
+                    </div>
+                `}
+
+            </a>
+
+            <div class="release-title">
+
+                ${release.release}
 
             </div>
 
+            <div class="release-artist">
+
+                ${release.artist}
+
+            </div>
+
+            <div class="release-meta">
+
+                ${release.genre || ""}
+                •
+                ${release.year || ""}
+
+            </div>
+
+            <div class="release-desc">
+
+                ${release.description || ""}
+
+            </div>
+
+            <a
+            class="submit-btn"
+            href="release.html?id=${originalIndex}">
+
+                VIEW RELEASE
+
+            </a>
+
         `;
 
-
-        genres[genre]
-        .forEach((release)=>{
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-            card.className =
-                "release-card";
-
-            const originalIndex =
-                archiveCatalog.indexOf(
-                    release
-                );
-
-            card.innerHTML = `
-
-                <a
-                href="release.html?id=${originalIndex}">
-
-                    ${release.cover
-                    ? `
-                        <img
-                        class="release-cover"
-                        src="${release.cover}"
-                        alt="${release.release}">
-                    `
-                    : `
-                        <div class="release-cover no-cover">
-                            ☠ NO COVER ART ☠
-                        </div>
-                    `}
-
-                </a>
-
-                <div class="release-title">
-
-                    ${release.release}
-
-                </div>
-
-                <div class="release-artist">
-
-                    ${release.artist}
-
-                </div>
-
-                <div class="release-meta">
-
-                    ${release.genre || ""}
-                    •
-                    ${release.year || ""}
-
-                </div>
-
-                <div class="release-desc">
-
-                    ${release.description || ""}
-
-                </div>
-
-                <a
-                class="submit-btn"
-                href="release.html?id=${originalIndex}">
-
-                    VIEW RELEASE
-
-                </a>
-
-            `;
-
-            container.appendChild(
-                card
-            );
-
-        });
+        grid.appendChild(
+            card
+        );
 
     });
+
+
+    container.appendChild(
+        grid
+    );
+
+});
 
 }
 
