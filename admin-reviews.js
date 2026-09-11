@@ -349,229 +349,102 @@ ${submission.tracks && submission.tracks.length
         `).join("");
 }
 
+async function approveRelic(id) {
 
-function approveRelic(id) {
+    try {
 
-    let submissions =
-        JSON.parse(
-            localStorage.getItem(
-                "ossvariumPendingSubmissions"
-            ) || "[]"
-        );
+        const response =
+            await fetch("/api/approve-relic", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            });
 
-    const submission =
-        submissions.find(
-            item => item.id === id
-        );
+        const result =
+            await response.json();
 
-    if (!submission) return;
-
-    const approved =
-        JSON.parse(
-            localStorage.getItem(
-                "ossvariumApprovedSubmissions"
-            ) || "[]"
-        );
-
-    const duplicate =
-        approved.some(item =>
-            item.artist.toLowerCase() ===
-            submission.artist.toLowerCase()
-            &&
-            item.release.toLowerCase() ===
-            submission.release.toLowerCase()
-        );
-
-    if (duplicate) {
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Approval failed"
+            );
+        }
 
         alert(
-            "☠ THIS RELIC IS ALREADY APPROVED ☠"
+            "⚔ RELIC APPROVED ⚔\n\n" +
+            result.relic.relic_id +
+            "\n" +
+            result.relic.artist +
+            " — " +
+            result.relic.release_title
         );
 
-        return;
+        loadPendingRelics();
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM approve relic error:",
+            error
+        );
+
+        alert(
+            "Approval failed.\n\n" +
+            error.message
+        );
     }
-
-    const allIds = approved
-    .map(item => item.relicId)
-    .filter(Boolean)
-    .map(id =>
-        Number(
-            id.replace("OSV-", "")
-        )
-    )
-    .filter(Number.isFinite);
-
-const highestApprovedId =
-    allIds.length > 0
-    ? Math.max(...allIds)
-    : 3;
-
-const nextNumber =
-    highestApprovedId + 1;
-
-const relicId =
-    "OSV-" +
-    String(nextNumber)
-    .padStart(5, "0");
-
-    const relic = {
-
-        id: submission.id,
-
-        relicId: relicId,
-
-        artist:
-            submission.artist,
-
-        release:
-            submission.release,
-
-        genre:
-            submission.genre,
-
-        year:
-            submission.year,
-
-        country:
-            submission.country,
-
-        price:
-            submission.pricePi || "0",
-
-        supporters: "0",
-
-        description:
-            submission.description || "",
-
-        bio:
-            submission.bio || "",
-
-        tracks:
-            submission.tracks || [],
-
-        cover:
-            submission.cover || "",
-
-        artistImage:
-            submission.artistImage || "",
-
-        banner:
-            submission.banner || "",
-
-        links: {
-
-            bandcamp:
-                submission.bandcamp || "",
-
-            spotify:
-                submission.spotify || "",
-
-            youtube:
-                submission.youtube || "",
-
-            website:
-                submission.website || "",
-
-            merch:
-                submission.merch || "",
-
-            instagram:
-                submission.instagram || "",
-
-            facebook:
-                submission.facebook || ""
-
-        },
-
-        similar: [],
-
-        contactEmail:
-            submission.contactEmail || "",
-
-        submittedAt:
-            submission.submittedAt,
-
-        approvedAt:
-            new Date().toISOString(),
-
-        status: "approved"
-
-    };
-
-    approved.push(relic);
-
-    localStorage.setItem(
-        "ossvariumApprovedSubmissions",
-        JSON.stringify(approved)
-    );
-
-    submissions =
-        submissions.filter(
-            item => item.id !== id
-        );
-
-    localStorage.setItem(
-        "ossvariumPendingSubmissions",
-        JSON.stringify(submissions)
-    );
-
-    alert(
-        "⚔ RELIC APPROVED ⚔\n\n" +
-        relic.relicId +
-        "\n" +
-        relic.artist +
-        " — " +
-        relic.release
-    );
-
-    loadPendingRelics();
 }
 
+async function rejectRelic(id) {
 
-function rejectRelic(id) {
+    try {
 
-    let submissions =
-        JSON.parse(
-            localStorage.getItem(
-                "ossvariumPendingSubmissions"
-            ) || "[]"
-        );
+        const response =
+            await fetch("/api/reject-relic", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            });
 
-    const relic =
-        submissions.find(
-            item => item.id === id
-        );
+        const result =
+            await response.json();
 
-    if (!relic) return;
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Rejection failed"
+            );
+        }
 
-    const confirmed =
-        confirm(
-            "☠ REJECT THIS RELIC? ☠\n\n" +
-            relic.artist +
+        alert(
+            "☠ RELIC REJECTED ☠\n\n" +
+            result.relic.relic_id +
+            "\n" +
+            result.relic.artist +
             " — " +
-            relic.release
+            result.relic.release_title
         );
 
-    if (!confirmed) return;
+        loadPendingRelics();
 
-    submissions =
-        submissions.filter(
-            item => item.id !== id
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM reject relic error:",
+            error
         );
 
-    localStorage.setItem(
-        "ossvariumPendingSubmissions",
-        JSON.stringify(submissions)
-    );
-
-    alert(
-        "☠ RELIC REJECTED ☠\n\n" +
-        relic.artist +
-        " — " +
-        relic.release
-    );
-
-    loadPendingRelics();
+        alert(
+            "Rejection failed.\n\n" +
+            error.message
+        );
+    }
 }
 
 
