@@ -9,7 +9,7 @@ async function loadReleases(){
 
        const releases =
     await loadOssvariumCatalog();
-    
+
         const params =
         new URLSearchParams(
             window.location.search
@@ -185,14 +185,22 @@ releaseContainer.innerHTML += `
 
         </div>
 
-`;const topRelease =
-releases.reduce(
-    (top,current)=>
-    Number(current.supporters) >
-    Number(top.supporters)
-    ? current
-    : top
-);
+        `;
+
+const topRelease =
+    releases.length > 0
+        ? releases.reduce(
+            (top, current) =>
+                Number(current.supporters || 0) >
+                Number(top.supporters || 0)
+                    ? current
+                    : top
+        )
+        : null;
+        
+        if (!topRelease) {
+    return;
+}
 
 releaseContainer.innerHTML += `
 

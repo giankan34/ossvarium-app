@@ -269,7 +269,7 @@ document.addEventListener(
 );
 
 document.getElementById("relicSubmissionForm")
-.addEventListener("submit", function(event){
+.addEventListener("submit", async function(event){
 
     event.preventDefault();
 
@@ -345,27 +345,47 @@ document.getElementById("relicSubmissionForm")
         status: "pending"
     };
 
-    const pendingSubmissions =
-        JSON.parse(
-            localStorage.getItem("ossvariumPendingSubmissions")
-            || "[]"
+    try {
+
+    const response = await fetch("/api/submit-relic", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(submission)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.error || "Submission failed"
         );
-
-    pendingSubmissions.push(submission);
-
-    localStorage.setItem(
-        "ossvariumPendingSubmissions",
-        JSON.stringify(pendingSubmissions)
-    );
+    }
 
     alert(
         "☠ RELIC SUBMITTED FOR REVIEW ☠\n\n" +
         submission.artist +
         " — " +
-        submission.release
+        submission.release +
+        "\n\nArchive ID: " +
+        result.relic.relic_id
     );
 
     this.reset();
+
+} catch (error) {
+
+    console.error(
+        "OSSVARIUM submission error:",
+        error
+    );
+
+    alert(
+        "Submission failed.\n\n" +
+        error.message
+    );
+}
 
 });
 </script>

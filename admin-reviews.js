@@ -1,3 +1,50 @@
+const ADMIN_KEY = "relic666";
+
+function unlockAdmin() {
+
+    const password =
+        document.getElementById("adminPassword").value;
+
+    const error =
+        document.getElementById("adminError");
+
+    if (password === ADMIN_KEY) {
+
+        document.getElementById("adminGate").style.display = "none";
+        document.getElementById("adminContent").style.display = "block";
+
+        sessionStorage.setItem(
+            "ossvariumAdminUnlocked",
+            "true"
+        );
+
+        return;
+    }
+
+    error.style.display = "block";
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    const isUnlocked =
+        sessionStorage.getItem(
+            "ossvariumAdminUnlocked"
+        );
+
+    if (isUnlocked === "true") {
+
+        document.getElementById(
+            "adminGate"
+        ).style.display = "none";
+
+        document.getElementById(
+            "adminContent"
+        ).style.display = "block";
+
+    }
+
+});
+
 function loadPendingRelics() {
 
     const container =

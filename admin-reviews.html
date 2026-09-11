@@ -19,9 +19,53 @@
 
 <body>
 
+    <div
+    id="adminGate"
+    class="submission-page"
+>
+    <section class="submission-box">
+
+        <h1>☠ OSSVARIUM ADMIN ☠</h1>
+
+        <p class="submission-text">
+            RESTRICTED ARCHIVE ACCESS
+        </p>
+
+        <input
+            type="password"
+            id="adminPassword"
+            placeholder="ENTER ADMIN KEY"
+            autocomplete="off"
+        >
+
+        <br><br>
+
+        <button
+            type="button"
+            class="submit-btn"
+            onclick="unlockAdmin()"
+        >
+            ⚔ ENTER THE ARCHIVES ⚔
+        </button>
+
+        <p
+            id="adminError"
+            class="submission-text"
+            style="display:none;"
+        >
+            ☠ ACCESS DENIED ☠
+        </p>
+
+    </section>
+</div>
+
     <main class="submission-page">
 
-        <section class="submission-box">
+        <main
+    class="submission-page"
+    id="adminContent"
+    style="display:none;"
+>
 
             <h1>
                 ☠ RELICS AWAITING JUDGEMENT ☠
