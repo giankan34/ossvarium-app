@@ -1,46 +1,137 @@
-const params = new URLSearchParams(window.location.search);
-
-const genreName = params.get("genre");
-
-const genreTitle = document.getElementById("genreTitle");
-
-genreTitle.textContent = genreName;
-
-fetch("data/releases.json")
-.then(response => response.json())
-.then(data => {
-
-    const results = document.getElementById("genreResults");
-
-    const filtered = data.filter(item =>
-        item.genre.toLowerCase().includes(
-            genreName.toLowerCase()
-        )
+const params =
+    new URLSearchParams(
+        window.location.search
     );
 
-    results.innerHTML = filtered.map(item => `
+const genreName =
+    params.get("genre");
 
-        <a href="release.html?artist=${encodeURIComponent(item.artist)}&release=${encodeURIComponent(item.release)}"
-           style="text-decoration:none;">
+const genreTitle =
+    document.getElementById(
+        "genreTitle"
+    );
 
-            <div class="release-card">
+genreTitle.textContent =
+    genreName || "GENRE";
 
-                <img
-                src="${item.cover}"
-                class="release-cover">
 
-                <div class="release-title">
-                    ${item.release}
+async function loadGenreRelics() {
+
+    const results =
+        document.getElementById(
+            "genreResults"
+        );
+
+    try {
+
+        const data =
+            await loadOssvariumCatalog();
+
+        const filtered =
+            data.filter(item =>
+
+                (item.genre || "")
+                .toLowerCase()
+                .includes(
+                    (genreName || "")
+                    .toLowerCase()
+                )
+
+            );
+
+
+        if (!filtered.length) {
+
+            results.innerHTML = `
+
+                <div class="submission-box">
+
+                    <div class="submission-text">
+
+                        ☠ NO RELICS FOUND ☠
+
+                    </div>
+
                 </div>
 
-                <div class="release-artist">
-                    ${item.artist}
+            `;
+
+            return;
+
+        }
+
+
+        results.innerHTML =
+            filtered.map(item => {
+
+                const originalIndex =
+                    data.indexOf(item);
+
+                return `
+
+                    <a
+                    href="release.html?id=${originalIndex}"
+                    style="text-decoration:none;">
+
+                        <div class="release-card">
+
+                            ${item.cover
+                            ? `
+                                <img
+                                src="${item.cover}"
+                                class="release-cover"
+                                alt="${item.release}">
+                            `
+                            : `
+                                <div class="release-cover no-cover">
+                                    ☠ NO COVER ART ☠
+                                </div>
+                            `}
+
+                            <div class="release-title">
+
+                                ${item.release}
+
+                            </div>
+
+                            <div class="release-artist">
+
+                                ${item.artist}
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                `;
+
+            }).join("");
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM genre error:",
+            error
+        );
+
+        results.innerHTML = `
+
+            <div class="submission-box">
+
+                <div class="submission-text">
+
+                    ☠ GENRE VAULT COULD NOT BE LOADED ☠
+
                 </div>
 
             </div>
 
-        </a>
+        `;
 
-    `).join("");
+    }
 
-});
+}
+
+
+loadGenreRelics();
