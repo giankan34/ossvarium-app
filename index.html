@@ -532,23 +532,28 @@ async function checkAdminPendingRelics() {
                 "adminPendingLink"
             );
 
-        if (
-            result.admin === true &&
-            result.pending > 0
-        ) {
+        if (result.admin === true) {
 
-            link.textContent =
-                `☠ ${result.pending} RELIC` +
-                `${result.pending === 1 ? "" : "S"} ` +
-                `AWAIT JUDGEMENT ☠`;
+    if (result.pending > 0) {
 
-            link.style.display = "block";
+        link.textContent =
+            `☠ ${result.pending} RELIC` +
+            `${result.pending === 1 ? "" : "S"} ` +
+            `AWAIT JUDGEMENT ☠`;
 
-        } else {
+    } else {
 
-            link.style.display = "none";
-        }
+        link.textContent =
+            "⚔ ADMIN CHAMBER ⚔";
 
+    }
+
+    link.style.display = "block";
+
+} else {
+
+    link.style.display = "none";
+}
     } catch (error) {
 
         console.error(
