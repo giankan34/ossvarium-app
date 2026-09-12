@@ -39,7 +39,7 @@ module.exports = async function handler(req, res) {
             crypto
                 .createHmac(
                     "sha256",
-                    process.env.ADMIN_PASSWORD
+                    process.env.ADMIN_SESSION_SECRET
                 )
                 .update("ossvarium-admin")
                 .digest("hex");

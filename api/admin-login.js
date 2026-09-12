@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
         }
 
         const secret =
-            process.env.ADMIN_PASSWORD;
+            process.env.ADMIN_SESSION_SECRET;
 
         const token = crypto
             .createHmac("sha256", secret)
