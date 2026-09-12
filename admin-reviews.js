@@ -448,4 +448,43 @@ async function rejectRelic(id) {
 }
 
 
-loadPendingRelics();
+async function checkAdminSession() {
+
+    try {
+
+        const response =
+            await fetch("/api/admin-status");
+
+        const result =
+            await response.json();
+
+        if (result.admin === true) {
+
+            document.getElementById(
+                "adminGate"
+            ).style.display = "none";
+
+            document.getElementById(
+                "adminContent"
+            ).style.display = "block";
+
+            loadPendingRelics();
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM admin session check error:",
+            error
+        );
+
+    }
+
+}
+
+
+window.addEventListener(
+    "DOMContentLoaded",
+    checkAdminSession
+);
