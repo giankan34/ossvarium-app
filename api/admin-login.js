@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
 
         res.setHeader(
             "Set-Cookie",
-            `ossvarium_admin=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400`
+            `ossvarium_admin=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=2592000`
         );
 
         return res.status(200).json({
