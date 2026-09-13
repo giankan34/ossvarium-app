@@ -69,7 +69,7 @@ module.exports = async function handler(req, res) {
                 cover,
                 artist_image,
                 banner,
-                price_pi,
+                price_eur,
                 supporters,
                 contact_email,
                 links,

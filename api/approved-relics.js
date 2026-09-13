@@ -28,6 +28,7 @@ module.exports = async function handler(req, res) {
                 artist_image,
                 banner,
                 price_pi,
+                price_eur,
                 supporters,
                 links,
                 tracks,

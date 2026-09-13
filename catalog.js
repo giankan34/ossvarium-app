@@ -69,7 +69,10 @@ const approvedResult =
                     item.banner ?? "",
 
                 price:
-                    item.price_pi ?? 0,
+                    item.price_eur ?? 0,
+
+                priceEur:
+                    item.price_eur ?? 0,
 
                 pricePi:
                     item.price_pi ?? 0,

@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
             website,
             merch,
             contactEmail,
-            pricePi,
+            priceEur,
             tracks
         } = req.body;
 
@@ -63,7 +63,7 @@ module.exports = async function handler(req, res) {
                 artist_image,
                 banner,
                 cover,
-                price_pi,
+                price_eur,
                 contact_email,
                 status,
                 source,
@@ -81,7 +81,7 @@ module.exports = async function handler(req, res) {
                 ${artistImage || ""},
                 ${banner || ""},
                 ${cover || ""},
-                ${pricePi ? Number(pricePi) : 0},
+                ${priceEur ? Number(priceEur) : 0},
                 ${contactEmail || ""},
                 'pending',
                 'submission',

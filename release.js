@@ -456,6 +456,10 @@ function renderTracklist(){
             typeof track === "object" &&
             track.pricePi;
 
+        const priceEur =
+            typeof track === "object" &&
+            track.priceEur;
+
         const trackTitle =
             typeof track === "object"
             ? track.title
@@ -484,14 +488,19 @@ function renderTracklist(){
                 </span>
 
                 ${isForSale ? `
-                    <button
-                        class="track-buy-btn"
-                        type="button"
-                        data-track-title="${trackTitle}"
-                        data-price-pi="${pricePi}">
-                        BUY TRACK · ${pricePi} π
-                    </button>
-                ` : ''}
+                <button
+                   class="track-buy-btn"
+                   type="button"
+                   data-track-title="${trackTitle}"
+                   data-price-pi="${pricePi || ""}"
+                   data-price-eur="${priceEur || ""}">
+                   BUY TRACK · ${
+                       priceEur
+                           ? `€${priceEur}`
+                           : `${pricePi} π`
+               }
+               </button>
+            ` : ''}
 
                 <div class="track-progress">
                     <div class="track-progress-fill"></div>
@@ -552,9 +561,7 @@ function initializePlayer(){
 
     playButtons.forEach(button => {
 
-        button.addEventListener(
-            "click",
-            () => {
+        button.addEventListener("click", () => {
 
                 const audioSource =
                     button.dataset.audio;
@@ -840,13 +847,16 @@ function initializePurchasePanel(){
 
     buyButtons.forEach(button => {
 
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
 
             const trackTitle =
                 button.dataset.trackTitle;
 
             const pricePi =
                 button.dataset.pricePi;
+
+            const priceEur =
+                button.dataset.priceEur;
 
             const overlay =
                 document.createElement("div");
@@ -869,9 +879,13 @@ function initializePurchasePanel(){
                         ${trackTitle}
                     </div>
 
-                    <div class="purchase-price">
-                        ${pricePi} π
-                    </div>
+                   <div class="purchase-price">
+                        ${
+                           priceEur
+                               ? `€${priceEur} · calculating Pi...`
+                               : `${pricePi} π`
+                    }
+                   </div>
 
                     <button
                         class="purchase-pay-btn"
@@ -892,6 +906,48 @@ function initializePurchasePanel(){
                 overlay
             );
 
+            let calculatedPi = null;
+
+            if (priceEur) {
+
+    try {
+
+        const rateResponse =
+            await fetch("/api/pi-rate");
+
+        const rateResult =
+            await rateResponse.json();
+
+        if (
+            rateResponse.ok &&
+            rateResult.piEur
+        ) {
+
+            calculatedPi =
+    (
+        Number(priceEur) /
+        Number(rateResult.piEur)
+    ).toFixed(4);
+
+            const priceElement =
+                overlay.querySelector(
+                    ".purchase-price"
+                );
+
+            priceElement.textContent =
+                `€${priceEur} · ${calculatedPi} π`;
+        }
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM Pi rate display error:",
+            error
+        );
+
+    }
+}
+
             overlay
                 .querySelector(".purchase-pay-btn")
                 .addEventListener(
@@ -907,10 +963,25 @@ function initializePurchasePanel(){
                         return;
                    }
 
-                   testPiPayment(
-                       pricePi,
-                       trackTitle
-                  );
+                   const finalPricePi =
+    priceEur
+        ? calculatedPi
+        : pricePi;
+
+if (
+    !finalPricePi ||
+    Number(finalPricePi) <= 0
+) {
+    alert(
+        "Could not calculate Pi price."
+    );
+    return;
+}
+
+testPiPayment(
+    finalPricePi,
+    trackTitle
+);
                 }         
             );
 

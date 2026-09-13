@@ -97,7 +97,7 @@ try {
             artistImage: item.artist_image,
             banner: item.banner,
 
-            pricePi: item.price_pi,
+            pricePi: item.price_eur,
             contactEmail: item.contact_email,
 
             bandcamp:
@@ -174,8 +174,8 @@ try {
                 </p>
 
                 <p>
-                    🜏 Price:
-                    ${submission.pricePi || "0"} Pi
+                    ☠ Price:
+                    €${submission.priceEur || "0"}
                 </p>
 
                 ${
@@ -310,7 +310,7 @@ ${submission.tracks && submission.tracks.length
 
             ${
                 track.forSale
-                ? `Price: ${track.pricePi || 0} Pi`
+                ? `Price: €${track.priceEur || 0}`
                 : "Not for individual sale"
             }
 
