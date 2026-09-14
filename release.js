@@ -18,6 +18,11 @@ async function authenticatePiUser(){
             piAuth.user.username
         );
 
+        console.log(
+    "PI AUTH OBJECT:",
+    piAuth
+);
+
         return piAuth;
 
     }catch(error){
