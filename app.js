@@ -46,7 +46,11 @@ async function loginWithPi() {
     }
 }
 
-function testPiPayment(pricePi, trackTitle) {
+function testPiPayment(
+    pricePi,
+    trackTitle,
+    relicId
+) {
 
     const amount = Number(pricePi);
 
@@ -60,9 +64,10 @@ function testPiPayment(pricePi, trackTitle) {
             amount: amount,
             memo: `OSSVARIUM Track Purchase: ${trackTitle}`,
             metadata: {
-                purpose: "track_purchase",
-                trackTitle: trackTitle
-            }
+    purpose: "track_purchase",
+    relicId: relicId,
+    trackTitle: trackTitle
+}
         },
         {
             onReadyForServerApproval: async function (paymentId) {

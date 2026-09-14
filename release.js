@@ -980,7 +980,8 @@ if (
 
 testPiPayment(
     finalPricePi,
-    trackTitle
+    trackTitle,
+    release.relicId
 );
                 }         
             );

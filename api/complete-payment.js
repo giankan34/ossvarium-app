@@ -1,5 +1,11 @@
 const axios = require("axios");
 
+const {
+    neon
+} = require(
+    "@neondatabase/serverless"
+);
+
 module.exports = async (req, res) => {
 
     if (req.method !== "POST") {
@@ -30,7 +36,72 @@ module.exports = async (req, res) => {
             }
         );
 
-        return res.status(200).json(response.data);
+        const completedPayment =
+    response.data;
+
+    const metadata =
+    completedPayment?.metadata || {};
+
+if (
+    metadata.purpose !== "track_purchase" ||
+    !metadata.relicId ||
+    !metadata.trackTitle
+) {
+    return res.status(400).json({
+        error: "Invalid completed payment metadata"
+    });
+}
+
+if (
+    completedPayment?.status?.developer_completed !== true
+) {
+    console.error(
+        "OSSVARIUM payment not confirmed as completed:",
+        completedPayment
+    );
+
+    return res.status(400).json({
+        error: "Payment was not confirmed as completed"
+    });
+}
+
+const userUid =
+    completedPayment?.user_uid;
+
+if (!userUid) {
+    return res.status(400).json({
+        error: "Missing Pi user UID"
+    });
+}
+
+const sql =
+    neon(process.env.POSTGRES_URL);
+
+await sql`
+    INSERT INTO purchases (
+        payment_id,
+        txid,
+        user_uid,
+        relic_id,
+        track_title,
+        amount_pi
+    )
+    VALUES (
+        ${paymentId},
+        ${txid},
+        ${userUid},
+        ${metadata.relicId},
+        ${metadata.trackTitle},
+        ${Number(completedPayment.amount)}
+    )
+    ON CONFLICT
+    DO NOTHING;
+`;
+
+        return res.status(200).json({
+    success: true,
+    payment: completedPayment
+});
 
     } catch (error) {
 
