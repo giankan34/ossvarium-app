@@ -677,6 +677,10 @@ function initializePlayer(){
             window.webkitAudioContext
         )();
 
+        if (audioContext.state === "suspended") {
+    await audioContext.resume();
+}
+
     analyser =
         audioContext.createAnalyser();
 
