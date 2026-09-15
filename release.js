@@ -18,10 +18,6 @@ async function authenticatePiUser(){
             piAuth.user.username
         );
 
-        console.log(
-    "PI AUTH OBJECT:",
-    piAuth
-);
 
         return piAuth;
 
@@ -122,7 +118,7 @@ if (!visitedReleases.includes(releaseId)) {
 
 }
 
-function renderPage(){
+    async function renderPage(){
 
     releasePage.innerHTML =
 
@@ -140,7 +136,15 @@ function renderPage(){
 
         initializePlayer();
 
-        initializePurchasePanel();
+       initializePurchasePanel();
+
+       if (!piAuth) {
+          piAuth = await authenticatePiUser();
+    }
+
+       if (piAuth) {
+          await updateOwnedTracks();
+    }
 }
 
 function renderHeader(){
@@ -843,6 +847,101 @@ currentAudio.addEventListener(
 
     });
 
+}
+
+async function loadMyPurchases() {
+
+    if (!piAuth?.accessToken) {
+        return [];
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/my-purchases",
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${piAuth.accessToken}`
+                }
+            }
+        );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error ||
+                "Failed to load purchases"
+            );
+        }
+
+        return result.purchases || [];
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM ownership check error:",
+            error
+        );
+
+        return [];
+    }
+}
+
+async function updateOwnedTracks() {
+
+    if (!piAuth) {
+        return;
+    }
+
+    const purchases =
+        await loadMyPurchases();
+
+    if (!purchases.length) {
+        return;
+    }
+
+    const ownedTracks =
+        purchases.filter(
+            purchase =>
+                purchase.relic_id === release.relicId
+        );
+
+    if (!ownedTracks.length) {
+        return;
+    }
+
+    const buyButtons =
+        document.querySelectorAll(
+            ".track-buy-btn"
+        );
+
+    buyButtons.forEach(button => {
+
+        const trackTitle =
+            button.dataset.trackTitle;
+
+        const owned =
+            ownedTracks.some(
+                purchase =>
+                    purchase.track_title === trackTitle
+            );
+
+        if (!owned) {
+            return;
+        }
+
+        button.textContent =
+            "☠ RELIC OWNED ☠";
+
+        button.disabled = true;
+
+        button.classList.add(
+            "track-owned-btn"
+        );
+    });
 }
 
 function initializePurchasePanel(){

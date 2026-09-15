@@ -1,3 +1,5 @@
+const axios = require("axios");
+
 const {
     neon
 } = require(
@@ -12,16 +14,41 @@ module.exports = async function handler(req, res) {
         });
     }
 
-    const userUid =
-        req.query.userUid;
+    const authHeader =
+    req.headers.authorization;
 
-    if (!userUid) {
-        return res.status(400).json({
-            error: "Missing userUid"
-        });
-    }
+if (
+    !authHeader ||
+    !authHeader.startsWith("Bearer ")
+) {
+    return res.status(401).json({
+        error: "Missing Pi access token"
+    });
+}
+
+const accessToken =
+    authHeader.substring(7);
 
     try {
+
+        const meResponse = await axios.get(
+    "https://api.minepi.com/v2/me",
+    {
+        headers: {
+            Authorization:
+                `Bearer ${accessToken}`
+        }
+    }
+);
+
+const userUid =
+    meResponse.data?.uid;
+
+if (!userUid) {
+    return res.status(401).json({
+        error: "Invalid Pi user"
+    });
+}
 
         const sql =
             neon(process.env.POSTGRES_URL);
