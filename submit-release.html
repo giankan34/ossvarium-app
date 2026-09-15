@@ -129,9 +129,13 @@
             placeholder="Track title">
 
         <input
-            type="url"
-            class="track-audio"
-            placeholder="Audio / preview URL">
+    type="file"
+    class="track-audio-file"
+    accept="audio/mpeg,.mp3">
+
+<input
+    type="hidden"
+    class="track-audio">
 
         <input
             type="number"
@@ -149,6 +153,16 @@
             Available for individual purchase
 
         </label>
+
+        <label class="track-sale-option">
+
+    <input
+        type="checkbox"
+        class="track-allow-download">
+
+    Allow buyer to download track
+
+</label>
 
     </div>
 
@@ -219,10 +233,14 @@
             class="track-title"
             placeholder="Track title">
 
-        <input
-            type="url"
-            class="track-audio"
-            placeholder="Audio / preview URL">
+            <input
+    type="file"
+    class="track-audio-file"
+    accept="audio/mpeg,.mp3">
+
+<input
+    type="hidden"
+    class="track-audio">
 
         <input
             type="number"
@@ -240,6 +258,16 @@
             Available for individual purchase
 
         </label>
+
+        <label class="track-sale-option">
+
+    <input
+        type="checkbox"
+        class="track-allow-download">
+
+    Allow buyer to download track
+
+</label>
 
         <button
             type="button"
@@ -273,26 +301,112 @@ document.addEventListener(
     }
 );
 
+async function uploadPrivateAudio(file) {
+
+    if (!file) {
+        return "";
+    }
+
+    if (
+        file.type !== "audio/mpeg" &&
+        !file.name.toLowerCase().endsWith(".mp3")
+    ) {
+        throw new Error(
+            "Only MP3 files are allowed."
+        );
+    }
+
+    // Ask OSSVARIUM for temporary upload URL
+    const urlResponse =
+        await fetch(
+            "/api/audio-upload-url",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    fileName: file.name,
+                    contentType: "audio/mpeg"
+                })
+            }
+        );
+
+    const urlResult =
+        await urlResponse.json();
+
+    if (!urlResponse.ok) {
+        throw new Error(
+            urlResult.error ||
+            "Could not prepare private audio upload."
+        );
+    }
+
+    // Upload MP3 directly to private storage
+    const uploadResponse =
+        await fetch(
+            urlResult.uploadUrl,
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type":
+                        "audio/mpeg"
+                },
+
+                body: file
+            }
+        );
+
+    if (!uploadResponse.ok) {
+        throw new Error(
+            "Private MP3 upload failed."
+        );
+    }
+
+    return urlResult.objectKey;
+}
+
 document.getElementById("relicSubmissionForm")
 .addEventListener("submit", async function(event){
 
     event.preventDefault();
 
-    const tracks =
-[...document.querySelectorAll(
-    ".track-submit-row"
-)]
-.map(row => {
+try {
+
+const trackRows =
+    [...document.querySelectorAll(
+        ".track-submit-row"
+    )];
+
+const tracks = [];
+
+for (const row of trackRows) {
 
     const title =
         row.querySelector(
             ".track-title"
         ).value.trim();
 
-    const audio =
+    if (!title) {
+        continue;
+    }
+
+    const audioFile =
+        row.querySelector(
+            ".track-audio-file"
+        )?.files?.[0];
+
+    const audioInput =
         row.querySelector(
             ".track-audio"
-        ).value.trim();
+        );
+
+    let audio =
+        audioInput.value.trim();
 
     const price =
         Number(
@@ -306,7 +420,23 @@ document.getElementById("relicSubmissionForm")
             ".track-for-sale"
         ).checked;
 
-    return {
+    const allowDownload =
+        row.querySelector(
+            ".track-allow-download"
+        ).checked;
+
+    if (audioFile) {
+
+        audio =
+            await uploadPrivateAudio(
+                audioFile
+            );
+
+        audioInput.value =
+            audio;
+    }
+
+    tracks.push({
 
         title: title,
 
@@ -314,12 +444,13 @@ document.getElementById("relicSubmissionForm")
 
         forSale: forSale,
 
-        priceEur: price
+        priceEur: price,
 
-    };
+        allowDownload:
+            allowDownload
 
-})
-.filter(track => track.title);
+    });
+}
 
     const submission = {
         id: Date.now(),
@@ -350,7 +481,6 @@ document.getElementById("relicSubmissionForm")
         status: "pending"
     };
 
-    try {
 
     const response = await fetch("/api/submit-relic", {
         method: "POST",
