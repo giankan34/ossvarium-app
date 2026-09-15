@@ -113,6 +113,12 @@ function testPiPayment(
                 alert(
                     `☠ RELIC ACQUIRED ☠\n\n${trackTitle}\n${amount} π`
                 );
+
+                if (
+    typeof updateOwnedTracks === "function"
+) {
+    await updateOwnedTracks();
+}
             },
 
             onCancel: function (paymentId) {
