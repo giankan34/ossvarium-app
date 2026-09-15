@@ -1045,8 +1045,167 @@ async function updateOwnedTracks() {
         button.classList.add(
             "track-owned-btn"
         );
+
+        const track =
+    release.tracks.find(
+        item =>
+            typeof item === "object" &&
+            item.title === trackTitle
+    );
+
+if (
+    track &&
+    track.allowDownload === true
+) {
+
+    const trackEntry =
+        button.closest(
+            ".track-entry"
+        );
+
+    if (
+        trackEntry &&
+        !trackEntry.querySelector(
+            ".track-download-btn"
+        )
+    ) {
+
+        const downloadButton =
+            document.createElement(
+                "button"
+            );
+
+        downloadButton.type =
+            "button";
+
+        downloadButton.className =
+            "track-download-btn";
+
+        downloadButton.dataset.trackTitle =
+            trackTitle;
+
+        downloadButton.textContent =
+            "☠ DOWNLOAD RELIC ☠";
+
+        trackEntry.appendChild(
+            downloadButton
+        );
+    }
+}
     });
 }
+
+async function downloadOwnedTrack(
+    trackTitle
+) {
+
+    if (!piAuth?.accessToken) {
+
+        piAuth =
+            await authenticatePiUser();
+    }
+
+    if (!piAuth?.accessToken) {
+
+        alert(
+            "Pi authentication is required."
+        );
+
+        return;
+    }
+
+    try {
+
+        const params =
+            new URLSearchParams({
+                relicId:
+                    release.relicId,
+
+                trackTitle:
+                    trackTitle,
+
+                mode:
+                    "download"
+            });
+
+        const response =
+            await fetch(
+                `/api/my-purchases?${params.toString()}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${piAuth.accessToken}`
+                    }
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                "Download unavailable"
+            );
+        }
+
+        if (!result.audioUrl) {
+
+            throw new Error(
+                "Download URL unavailable"
+            );
+        }
+
+        window.location.href =
+            result.audioUrl;
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM download error:",
+            error
+        );
+
+        alert(
+            "Download failed.\n\n" +
+            error.message
+        );
+    }
+}
+
+document.addEventListener(
+    "click",
+    async function(event) {
+
+        const button =
+            event.target.closest(
+                ".track-download-btn"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        const trackTitle =
+            button.dataset.trackTitle;
+
+        const originalText =
+            button.textContent;
+
+        button.disabled = true;
+        button.textContent =
+            "☠ PREPARING RELIC... ☠";
+
+        await downloadOwnedTrack(
+            trackTitle
+        );
+
+        button.disabled = false;
+        button.textContent =
+            originalText;
+    }
+);
 
 function initializePurchasePanel(){
 

@@ -77,6 +77,9 @@ module.exports = async function handler(req, res) {
         const trackTitle =
             req.query.trackTitle;
 
+        const mode =
+            req.query.mode || "stream";
+
         // ---------------------------------
         // NORMAL MODE:
         // RETURN USER PURCHASES
@@ -158,6 +161,15 @@ module.exports = async function handler(req, res) {
             });
         }
 
+        if (
+    mode === "download" &&
+    track.allowDownload !== true
+) {
+    return res.status(403).json({
+        error: "Download not allowed"
+    });
+}
+
         // ---------------------------------
         // SAFETY:
         // ONLY PRIVATE UPLOAD PATHS
@@ -202,15 +214,30 @@ module.exports = async function handler(req, res) {
                 forcePathStyle: true
             });
 
-        const command =
-            new GetObjectCommand({
+        const downloadFileName =
+    `${trackTitle
+        .replace(/[^a-zA-Z0-9._-]/g, "_")
+    }.mp3`;
 
-                Bucket:
-                    "ossvarium-private-audio",
+const command =
+    new GetObjectCommand({
 
-                Key:
-                    track.audio
-            });
+        Bucket:
+            "ossvarium-private-audio",
+
+        Key:
+            track.audio,
+
+        ...(mode === "download"
+            ? {
+                ResponseContentDisposition:
+                    `attachment; filename="${downloadFileName}"`,
+
+                ResponseContentType:
+                    "audio/mpeg"
+            }
+            : {})
+    });
 
         const audioUrl =
             await getSignedUrl(
