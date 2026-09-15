@@ -669,7 +669,7 @@ function initializePlayer(){
                 const visualizer =
                     trackEntry.querySelector(".track-visualizer");
 
-                if(visualizer){
+                if(false && visualizer){
 
     audioContext =
         new (
