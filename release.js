@@ -570,10 +570,62 @@ function initializePlayer(){
 
     playButtons.forEach(button => {
 
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
 
-                const audioSource =
-                    button.dataset.audio;
+        let audioSource =
+            button.dataset.audio;
+
+        const trackEntry =
+            button.closest(".track-entry");
+
+        const buyButton =
+            trackEntry.querySelector(
+                ".track-buy-btn"
+            );
+
+        // Paid/private track
+        if (buyButton) {
+
+            const trackTitle =
+                buyButton.dataset.trackTitle;
+
+            if (!piAuth) {
+                piAuth =
+                    await authenticatePiUser();
+            }
+
+            if (!piAuth) {
+                alert(
+                    "Pi authentication is required."
+                );
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = "⌛";
+
+            const protectedUrl =
+                await getOwnedAudioUrl(
+                    release.relicId,
+                    trackTitle
+                );
+
+            button.disabled = false;
+
+            if (!protectedUrl) {
+
+                button.textContent = "▶";
+
+                alert(
+                    "☠ This relic has not been acquired."
+                );
+
+                return;
+            }
+
+            audioSource =
+                protectedUrl;
+        }
 
                 // Αν παίζει ήδη το ίδιο track
                 if(
@@ -613,8 +665,6 @@ function initializePlayer(){
                 currentButton =
                     button;
 
-                const trackEntry =
-                    button.closest(".track-entry");
 
                 const visualizer =
                     trackEntry.querySelector(".track-visualizer");
@@ -887,6 +937,56 @@ async function loadMyPurchases() {
         );
 
         return [];
+    }
+}
+
+async function getOwnedAudioUrl(
+    relicId,
+    trackTitle
+) {
+
+    if (!piAuth?.accessToken) {
+        return null;
+    }
+
+    try {
+
+        const params =
+            new URLSearchParams({
+                relicId: relicId,
+                trackTitle: trackTitle
+            });
+
+        const response = await fetch(
+            `/api/my-purchases?${params.toString()}`,
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${piAuth.accessToken}`
+                }
+            }
+        );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error ||
+                "Protected audio unavailable"
+            );
+        }
+
+        return result.audioUrl || null;
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM protected audio error:",
+            error
+        );
+
+        return null;
     }
 }
 
