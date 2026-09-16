@@ -219,3 +219,96 @@ opacity:.82;
 transform:scale(1) rotate(-12deg);
 
 }
+
+/* =========================================
+   OSSVARIUM CERTIFICATE — MOBILE POLISH
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px 10px;
+    }
+
+    #certificate-container {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .certificate {
+        width: 100%;
+        max-width: 100%;
+        padding: 30px 16px;
+        border-width: 7px;
+        box-sizing: border-box;
+    }
+
+    .cert-title {
+        max-width: 100%;
+        font-size: clamp(32px, 11vw, 48px);
+        overflow-wrap: break-word;
+    }
+
+    .cert-subtitle {
+        max-width: 100%;
+        margin-bottom: 35px;
+        font-size: 12px;
+        line-height: 1.6;
+        letter-spacing: 3px;
+        overflow-wrap: break-word;
+    }
+
+    .cert-line {
+        gap: 14px;
+        font-size: 14px;
+    }
+
+    .cert-label,
+    .cert-value {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .cert-label {
+        letter-spacing: 2px;
+    }
+
+    .cert-value {
+        text-align: right;
+    }
+
+    .cert-footer {
+        margin-top: 45px;
+        font-size: 15px;
+    }
+
+    .loading-logo {
+        max-width: 100%;
+        font-size: clamp(34px, 11vw, 48px);
+        text-align: center;
+        overflow-wrap: break-word;
+    }
+
+    #loading-text {
+        max-width: 100%;
+        padding: 0 12px;
+        box-sizing: border-box;
+        text-align: center;
+        line-height: 1.5;
+        letter-spacing: 2px;
+    }
+
+    .loading-bar {
+        width: min(280px, 80vw);
+        max-width: 100%;
+    }
+
+    .archive-seal {
+        right: 18px;
+        top: 60px;
+        width: 110px;
+        max-width: 30%;
+    }
+
+}
