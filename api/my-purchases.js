@@ -120,32 +120,152 @@ module.exports = async function handler(req, res) {
         });
     }
 
-   // ---------------------------------
-// CREATE SECURE DOWNLOAD TICKET
+    // ---------------------------------
+// REDEEM SECURE DOWNLOAD TICKET
 // ---------------------------------
 
-if (mode === "download") {
+if (req.query.ticket) {
 
-    const ticket =
-        createDownloadTicket({
-            relicId,
-            trackTitle,
-            audioKey: track.audio,
-            allowDownload: true,
-            exp:
-                Date.now() +
-                (2 * 60 * 1000)
+    const ticketData =
+        verifyDownloadTicket(
+            req.query.ticket
+        );
+
+    if (!ticketData) {
+        return res.status(401).json({
+            error:
+                "Invalid or expired download ticket"
         });
+    }
 
-    const downloadUrl =
-        `/api/my-purchases?ticket=${encodeURIComponent(
-            ticket
-        )}`;
+    const {
+        relicId,
+        trackTitle,
+        audioKey,
+        allowDownload
+    } = ticketData;
 
-    return res.status(200).json({
-        success: true,
-        downloadUrl
-    });
+    if (
+        !relicId ||
+        !trackTitle ||
+        !audioKey ||
+        allowDownload !== true ||
+        !audioKey.startsWith("uploads/")
+    ) {
+        return res.status(403).json({
+            error:
+                "Invalid download ticket"
+        });
+    }
+
+    try {
+
+        const s3 =
+            new S3Client({
+
+                endpoint:
+                    process.env
+                        .AWS_ENDPOINT_URL_S3,
+
+                region:
+                    process.env
+                        .AWS_REGION,
+
+                credentials: {
+
+                    accessKeyId:
+                        process.env
+                            .AWS_ACCESS_KEY_ID,
+
+                    secretAccessKey:
+                        process.env
+                            .AWS_SECRET_ACCESS_KEY
+                },
+
+                forcePathStyle: true
+            });
+
+        const command =
+            new GetObjectCommand({
+                Bucket:
+                    "ossvarium-private-audio",
+                Key:
+                    audioKey
+            });
+
+        const object =
+            await s3.send(command);
+
+        const chunks = [];
+
+        for await (
+            const chunk of object.Body
+        ) {
+            chunks.push(chunk);
+        }
+
+        const audioBuffer =
+            Buffer.concat(chunks);
+
+        const downloadFileName =
+            `${trackTitle
+                .replace(
+                    /[^a-zA-Z0-9._-]/g,
+                    "_"
+                )
+            }.mp3`;
+
+        res.setHeader(
+            "Cache-Control",
+            "no-store, no-cache, must-revalidate, private"
+        );
+
+        res.setHeader(
+            "Pragma",
+            "no-cache"
+        );
+
+        res.setHeader(
+            "Expires",
+            "0"
+        );
+
+        res.setHeader(
+            "Content-Type",
+            "application/octet-stream"
+        );
+
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${downloadFileName}"`
+        );
+
+        res.setHeader(
+            "Content-Length",
+            audioBuffer.length
+        );
+
+        res.setHeader(
+            "X-Content-Type-Options",
+            "nosniff"
+        );
+
+        return res
+            .status(200)
+            .send(audioBuffer);
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM ticket download error:",
+            error
+        );
+
+        return res.status(500).json({
+            error:
+                "Failed to download relic"
+        });
+    }
 }
 
     const authHeader =
@@ -337,76 +457,32 @@ if (mode === "download") {
 
 
 // ---------------------------------
-// DIRECT DOWNLOAD MODE
+// CREATE SECURE DOWNLOAD TICKET
 // ---------------------------------
 
 if (mode === "download") {
 
-    const command =
-        new GetObjectCommand({
-
-            Bucket:
-                "ossvarium-private-audio",
-
-            Key:
-                track.audio
+    const downloadTicket =
+        createDownloadTicket({
+            relicId,
+            trackTitle,
+            audioKey: track.audio,
+            allowDownload: true,
+            exp:
+                Date.now() +
+                (2 * 60 * 1000)
         });
 
-    const object =
-        await s3.send(
-            command
-        );
+    const downloadUrl =
+        `/api/my-purchases?ticket=${encodeURIComponent(
+            downloadTicket
+        )}`;
 
-    const chunks = [];
-
-    for await (
-        const chunk of object.Body
-    ) {
-        chunks.push(chunk);
-    }
-
-    const audioBuffer =
-        Buffer.concat(chunks);
-
-    res.setHeader(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, private"
-    );
-
-    res.setHeader(
-        "Pragma",
-        "no-cache"
-    );
-
-    res.setHeader(
-        "Expires",
-        "0"
-    );
-
-    res.removeHeader(
-        "ETag"
-    );
-
-    res.setHeader(
-        "Content-Type",
-        "application/octet-stream"
-    );
-
-    res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="${downloadFileName}"`
-    );
-
-    res.setHeader(
-        "Content-Length",
-        audioBuffer.length
-    );
-
-    return res.status(200).send(
-        audioBuffer
-    );
+    return res.status(200).json({
+        success: true,
+        downloadUrl
+    });
 }
-
 
 // ---------------------------------
 // NORMAL PROTECTED STREAM MODE
