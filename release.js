@@ -1139,43 +1139,72 @@ async function downloadOwnedTrack(
                 }
             );
 
-        const result =
-            await response.json();
-
         if (!response.ok) {
 
+            let message =
+                "Download unavailable";
+
+            try {
+
+                const result =
+                    await response.json();
+
+                message =
+                    result.error ||
+                    message;
+
+            } catch (error) {
+                // Response was not JSON
+            }
+
             throw new Error(
-                result.error ||
-                "Download unavailable"
+                message
             );
         }
 
-        if (!result.audioUrl) {
+        const blob =
+            await response.blob();
 
-            throw new Error(
-                "Download URL unavailable"
+        const blobUrl =
+            URL.createObjectURL(
+                blob
             );
-        }
 
         const downloadLink =
-    document.createElement("a");
+            document.createElement(
+                "a"
+            );
 
-downloadLink.href =
-    result.audioUrl;
+        downloadLink.href =
+            blobUrl;
 
-downloadLink.download =
-    `${trackTitle}.mp3`;
+        downloadLink.download =
+            `${trackTitle
+                .replace(
+                    /[^a-zA-Z0-9._-]/g,
+                    "_"
+                )
+            }.mp3`;
 
-downloadLink.style.display =
-    "none";
+        downloadLink.style.display =
+            "none";
 
-document.body.appendChild(
-    downloadLink
-);
+        document.body.appendChild(
+            downloadLink
+        );
 
-downloadLink.click();
+        downloadLink.click();
 
-downloadLink.remove();
+        downloadLink.remove();
+
+        setTimeout(
+            () => {
+                URL.revokeObjectURL(
+                    blobUrl
+                );
+            },
+            1000
+        );
 
     } catch (error) {
 
@@ -1190,39 +1219,6 @@ downloadLink.remove();
         );
     }
 }
-
-document.addEventListener(
-    "click",
-    async function(event) {
-
-        const button =
-            event.target.closest(
-                ".track-download-btn"
-            );
-
-        if (!button) {
-            return;
-        }
-
-        const trackTitle =
-            button.dataset.trackTitle;
-
-        const originalText =
-            button.textContent;
-
-        button.disabled = true;
-        button.textContent =
-            "☠ PREPARING RELIC... ☠";
-
-        await downloadOwnedTrack(
-            trackTitle
-        );
-
-        button.disabled = false;
-        button.textContent =
-            originalText;
-    }
-);
 
 function initializePurchasePanel(){
 

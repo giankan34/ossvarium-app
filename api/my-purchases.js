@@ -214,11 +214,63 @@ module.exports = async function handler(req, res) {
                 forcePathStyle: true
             });
 
-        const downloadFileName =
+            const downloadFileName =
     `${trackTitle
         .replace(/[^a-zA-Z0-9._-]/g, "_")
     }.mp3`;
 
+
+// DIRECT DOWNLOAD MODE
+if (mode === "download") {
+
+    const command =
+        new GetObjectCommand({
+
+            Bucket:
+                "ossvarium-private-audio",
+
+            Key:
+                track.audio
+        });
+
+    const object =
+        await s3.send(
+            command
+        );
+
+    const chunks = [];
+
+    for await (
+        const chunk of object.Body
+    ) {
+        chunks.push(chunk);
+    }
+
+    const audioBuffer =
+        Buffer.concat(chunks);
+
+    res.setHeader(
+        "Content-Type",
+        "application/octet-stream"
+    );
+
+    res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${downloadFileName}"`
+    );
+
+    res.setHeader(
+        "Content-Length",
+        audioBuffer.length
+    );
+
+    return res.status(200).send(
+        audioBuffer
+    );
+}
+
+
+// NORMAL PROTECTED STREAM MODE
 const command =
     new GetObjectCommand({
 
@@ -226,35 +278,25 @@ const command =
             "ossvarium-private-audio",
 
         Key:
-            track.audio,
-
-        ...(mode === "download"
-            ? {
-                ResponseContentDisposition:
-                    `attachment; filename="${downloadFileName}"`,
-
-                ResponseContentType:
-                    "audio/mpeg"
-            }
-            : {})
+            track.audio
     });
 
-        const audioUrl =
-            await getSignedUrl(
-                s3,
-                command,
-                {
-                    expiresIn: 300
-                }
-            );
-
-        return res.status(200).json({
-            success: true,
-            owned: true,
-            audioUrl: audioUrl,
+const audioUrl =
+    await getSignedUrl(
+        s3,
+        command,
+        {
             expiresIn: 300
-        });
+        }
+    );
 
+return res.status(200).json({
+    success: true,
+    owned: true,
+    audioUrl: audioUrl,
+    expiresIn: 300
+});
+       
     } catch (error) {
 
         console.error(
