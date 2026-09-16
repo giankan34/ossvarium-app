@@ -312,3 +312,7 @@ transform:scale(.65) rotate(-12deg);
     }
 
 }
+
+.archive-seal {
+    display: none !important;
+}
