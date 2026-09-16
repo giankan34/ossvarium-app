@@ -3248,3 +3248,172 @@ body.codex-entering::before{
     border-bottom: 1px solid rgba(94, 42, 36, 0.45);
     line-height: 1.6;
 }
+
+/* =========================================
+   OSSVARIUM MOBILE POLISH — GLOBAL
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .container,
+    .submission-page,
+    .submission-box {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .submission-page {
+        padding: 18px 8px;
+    }
+
+    .submission-box {
+        padding: 22px 14px;
+        overflow: hidden;
+    }
+
+    .submission-box h1,
+    .submission-box h2 {
+        max-width: 100%;
+        white-space: normal !important;
+        overflow-wrap: break-word;
+        word-break: normal;
+        line-height: 1.15;
+    }
+
+    .submission-box h1 {
+        font-size: clamp(30px, 10vw, 42px);
+    }
+
+    .submission-box h2 {
+        font-size: clamp(20px, 7vw, 26px) !important;
+    }
+
+    .submission-text {
+        max-width: 100%;
+        font-size: 13px;
+        line-height: 1.65;
+        overflow-wrap: break-word;
+    }
+
+    .submit-btn,
+    .submission-box .submit-btn,
+    .submission-text .submit-btn {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 13px 12px;
+        font-size: 11px;
+        letter-spacing: 1.2px;
+        white-space: normal;
+        overflow-wrap: break-word;
+        text-align: center;
+    }
+
+}
+
+/* =========================================
+   OSSVARIUM MOBILE — SUBMIT RELIC FORM
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    #relicSubmissionForm {
+        width: 100%;
+        min-width: 0;
+    }
+
+    #relicSubmissionForm input,
+    #relicSubmissionForm textarea,
+    #relicSubmissionForm select {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    #relicSubmissionForm input[type="file"] {
+        font-size: 12px;
+        padding: 10px 8px;
+        overflow: hidden;
+    }
+
+    .submission-permission {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .submission-permission input[type="checkbox"] {
+        width: 18px !important;
+        min-width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+        margin: 3px 0 0;
+    }
+
+    .submission-permission label {
+        flex: 1;
+        min-width: 0;
+        margin: 0 !important;
+        font-size: 12px;
+        line-height: 1.5;
+        overflow-wrap: break-word;
+    }
+
+}
+
+/* =========================================
+   OSSVARIUM MOBILE — TRACK BUILDER
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    #trackBuilder,
+    .track-submit-row {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .track-submit-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+        overflow: hidden;
+    }
+
+    .track-submit-row input,
+    .track-submit-row select,
+    .track-submit-row button {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .track-submit-row input[type="file"] {
+        font-size: 12px;
+        padding: 9px 7px;
+    }
+
+    .track-submit-row input[type="checkbox"] {
+        width: 18px !important;
+        min-width: 18px;
+        height: 18px;
+    }
+
+    .track-submit-row label {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
+
+}
