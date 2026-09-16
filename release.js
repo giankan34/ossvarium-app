@@ -1157,8 +1157,25 @@ async function downloadOwnedTrack(
             );
         }
 
-        window.location.href =
-            result.audioUrl;
+        const downloadLink =
+    document.createElement("a");
+
+downloadLink.href =
+    result.audioUrl;
+
+downloadLink.download =
+    `${trackTitle}.mp3`;
+
+downloadLink.style.display =
+    "none";
+
+document.body.appendChild(
+    downloadLink
+);
+
+downloadLink.click();
+
+downloadLink.remove();
 
     } catch (error) {
 
