@@ -162,3 +162,21 @@ body {
     }
 
 }
+
+/* =========================================
+   OSSVARIUM ARCHIVE — LONG RELEASE TITLES
+   ========================================= */
+
+@media (max-width: 450px) {
+
+    .archive-grid .release-title {
+        max-width: 100%;
+        font-size: clamp(24px, 9vw, 36px);
+        line-height: 1.1;
+        letter-spacing: 1px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        text-align: center;
+    }
+
+}
