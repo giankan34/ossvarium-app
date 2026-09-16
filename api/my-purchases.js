@@ -232,8 +232,8 @@ if (req.query.ticket) {
 
         res.setHeader(
             "Content-Type",
-            "application/octet-stream"
-        );
+            "audio/mpeg"
+    );
 
         res.setHeader(
             "Content-Disposition",
