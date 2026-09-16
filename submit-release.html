@@ -117,6 +117,34 @@
                 <label for="contactEmail">Contact Email</label>
                 <input type="email" id="contactEmail" required>
 
+                <div class="pi-creator-connect">
+
+    <h3>π CONNECT WITH PI</h3>
+
+    <p class="submission-text">
+        Optional. Connect your Pi account to link this relic
+        to your OSSVARIUM creator identity.
+    </p>
+
+    <button
+        type="button"
+        id="connectPiCreator"
+        class="submit-btn">
+
+        π CONNECT PI ACCOUNT
+
+    </button>
+
+    <div
+        id="piCreatorStatus"
+        class="submission-text">
+
+        NOT CONNECTED — OPTIONAL
+
+    </div>
+
+</div>
+
                 <label>Tracklist</label>
 
 <div id="trackBuilder">
@@ -211,7 +239,68 @@
 
     </main>
 
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
     <script>
+
+        Pi.init({
+           version: "2.0"
+        });
+
+        let creatorPiAuth = null;
+
+const connectPiCreatorButton =
+    document.getElementById("connectPiCreator");
+
+const piCreatorStatus =
+    document.getElementById("piCreatorStatus");
+
+connectPiCreatorButton.addEventListener(
+    "click",
+    async function () {
+
+        try {
+
+            connectPiCreatorButton.disabled = true;
+            connectPiCreatorButton.textContent =
+                "π CONNECTING...";
+
+            creatorPiAuth = await Pi.authenticate(
+                ["username"],
+                function (payment) {
+                    console.log(
+                        "OSSVARIUM incomplete payment:",
+                        payment
+                    );
+                }
+            );
+
+            piCreatorStatus.textContent =
+                "π CONNECTED AS @" +
+                creatorPiAuth.user.username;
+
+            connectPiCreatorButton.textContent =
+                "π PI ACCOUNT CONNECTED";
+
+        } catch (error) {
+
+            console.error(
+                "OSSVARIUM Pi creator authentication error:",
+                error
+            );
+
+            creatorPiAuth = null;
+
+            piCreatorStatus.textContent =
+                "PI CONNECTION FAILED — SUBMISSION IS STILL AVAILABLE";
+
+            connectPiCreatorButton.disabled = false;
+            connectPiCreatorButton.textContent =
+                "π CONNECT PI ACCOUNT";
+        }
+
+    }
+);
  
  document
 .getElementById("addTrackButton")
