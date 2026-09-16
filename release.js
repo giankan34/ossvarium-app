@@ -1154,10 +1154,6 @@ async function downloadOwnedTrack(
                     "download"
             });
 
-            alert(
-    "DOWNLOAD REQUEST:\n" +
-    params.toString()
-);
 
         const response =
             await fetch(

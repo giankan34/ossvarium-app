@@ -249,6 +249,25 @@ if (mode === "download") {
     const audioBuffer =
         Buffer.concat(chunks);
 
+        res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, private"
+);
+
+res.setHeader(
+    "Pragma",
+    "no-cache"
+);
+
+res.setHeader(
+    "Expires",
+    "0"
+);
+
+res.removeHeader(
+    "ETag"
+);
+
     res.setHeader(
         "Content-Type",
         "application/octet-stream"
