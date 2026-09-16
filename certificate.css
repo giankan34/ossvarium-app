@@ -313,6 +313,34 @@ transform:scale(.65) rotate(-12deg);
 
 }
 
+/* CERTIFICATE ARCHIVE SEAL — FINAL SIZE */
+
 .archive-seal {
-    display: none !important;
+    position: absolute;
+    width: 105px !important;
+    height: 105px !important;
+    object-fit: contain;
+    right: 28px !important;
+    top: 105px !important;
+
+    opacity: 0;
+    transform: rotate(-12deg) !important;
+
+    pointer-events: none;
+    filter: drop-shadow(0 0 8px rgba(100,0,0,.30));
+}
+
+.archive-seal.show {
+    opacity: .72;
+    transform: rotate(-12deg) !important;
+}
+
+@media (max-width: 600px) {
+    .archive-seal {
+        width: 90px !important;
+        height: 90px !important;
+        right: 14px !important;
+        top: 105px !important;
+        max-width: none !important;
+    }
 }
