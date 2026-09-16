@@ -1148,6 +1148,29 @@ if (
         trackEntry.appendChild(
             downloadButton
         );
+
+        downloadButton.addEventListener(
+    "click",
+    async () => {
+
+        const originalText =
+            downloadButton.textContent;
+
+        downloadButton.disabled = true;
+
+        downloadButton.textContent =
+            "☠ PREPARING RELIC... ☠";
+
+        await downloadOwnedTrack(
+            trackTitle
+        );
+
+        downloadButton.disabled = false;
+
+        downloadButton.textContent =
+            originalText;
+    }
+);
     }
 }
     });
