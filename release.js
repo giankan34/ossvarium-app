@@ -688,6 +688,10 @@ button.textContent = "❚❚";
                 currentAudio =
                     new Audio(audioSource);
 
+                    currentAudio.muted = false;
+                    currentAudio.volume = 1;
+                    currentAudio.preload = "auto";
+
                 currentButton =
                     button;
 
@@ -807,7 +811,35 @@ visualizerCtx.fillRect(
     drawTrackVisualizer();
 }
 
-                currentAudio.play();
+                try {
+
+    await currentAudio.play();
+
+    console.log(
+        "☠ OSSVARIUM AUDIO STARTED",
+        {
+            volume: currentAudio.volume,
+            muted: currentAudio.muted,
+            readyState: currentAudio.readyState
+        }
+    );
+
+} catch (error) {
+
+    console.error(
+        "☠ OSSVARIUM AUDIO FAILED:",
+        error
+    );
+
+    button.textContent = "▶";
+
+    alert(
+        "Audio playback failed.\n\n" +
+        error.message
+    );
+
+    return;
+}
 
                 button.textContent = "❚❚";
 

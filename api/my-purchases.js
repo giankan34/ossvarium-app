@@ -214,13 +214,19 @@ module.exports = async function handler(req, res) {
                 forcePathStyle: true
             });
 
-            const downloadFileName =
+const downloadFileName =
     `${trackTitle
-        .replace(/[^a-zA-Z0-9._-]/g, "_")
+        .replace(
+            /[^a-zA-Z0-9._-]/g,
+            "_"
+        )
     }.mp3`;
 
 
+// ---------------------------------
 // DIRECT DOWNLOAD MODE
+// ---------------------------------
+
 if (mode === "download") {
 
     const command =
@@ -249,24 +255,24 @@ if (mode === "download") {
     const audioBuffer =
         Buffer.concat(chunks);
 
-        res.setHeader(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, private"
-);
+    res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, private"
+    );
 
-res.setHeader(
-    "Pragma",
-    "no-cache"
-);
+    res.setHeader(
+        "Pragma",
+        "no-cache"
+    );
 
-res.setHeader(
-    "Expires",
-    "0"
-);
+    res.setHeader(
+        "Expires",
+        "0"
+    );
 
-res.removeHeader(
-    "ETag"
-);
+    res.removeHeader(
+        "ETag"
+    );
 
     res.setHeader(
         "Content-Type",
@@ -289,7 +295,10 @@ res.removeHeader(
 }
 
 
+// ---------------------------------
 // NORMAL PROTECTED STREAM MODE
+// ---------------------------------
+
 const command =
     new GetObjectCommand({
 
@@ -314,7 +323,7 @@ return res.status(200).json({
     owned: true,
     audioUrl: audioUrl,
     expiresIn: 300
-});
+});            
        
     } catch (error) {
 
