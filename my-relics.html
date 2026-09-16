@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>My Relics | OSSVARIUM</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=UnifrakturMaguntia&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <main class="submission-page">
+
+        <section class="submission-box">
+
+            <h1>☠ MY RELICS ☠</h1>
+
+            <p class="submission-text">
+                Your creator archive within OSSVARIUM.
+            </p>
+
+            <button
+                type="button"
+                id="connectPiCreator"
+                class="submit-btn">
+
+                π CONNECT PI ACCOUNT
+
+            </button>
+
+            <div
+                id="creatorStatus"
+                class="submission-text">
+
+                CONNECT YOUR PI ACCOUNT TO VIEW YOUR RELICS
+
+            </div>
+
+            <div id="myRelicsContainer"></div>
+
+            <a
+                href="index.html"
+                class="back-link">
+
+                ← RETURN TO OSSVARIUM
+
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+    <script>
+
+        Pi.init({
+            version: "2.0"
+        });
+
+        let creatorPiAuth = null;
+
+const connectButton =
+    document.getElementById("connectPiCreator");
+
+const creatorStatus =
+    document.getElementById("creatorStatus");
+
+const relicsContainer =
+    document.getElementById("myRelicsContainer");
+
+
+connectButton.addEventListener(
+    "click",
+    async function () {
+
+        try {
+
+            connectButton.disabled = true;
+            connectButton.textContent =
+                "π CONNECTING...";
+
+            creatorPiAuth = await Pi.authenticate(
+                ["username"],
+                function (payment) {
+                    console.log(
+                        "OSSVARIUM incomplete payment:",
+                        payment
+                    );
+                }
+            );
+
+            creatorStatus.textContent =
+                "π CONNECTED AS @" +
+                creatorPiAuth.user.username;
+
+            connectButton.textContent =
+                "π PI ACCOUNT CONNECTED";
+
+            await loadMyRelics();
+
+        } catch (error) {
+
+            console.error(
+                "OSSVARIUM My Relics error:",
+                error
+            );
+
+            creatorStatus.textContent =
+                "COULD NOT LOAD YOUR RELICS";
+
+            connectButton.disabled = false;
+            connectButton.textContent =
+                "π CONNECT PI ACCOUNT";
+        }
+
+    }
+);
+
+
+async function loadMyRelics() {
+
+    relicsContainer.innerHTML =
+        "<p class='submission-text'>LOADING RELICS...</p>";
+
+    const response = await fetch(
+        "/api/submit-relic",
+        {
+            method: "GET",
+
+            headers: {
+                Authorization:
+                    `Bearer ${creatorPiAuth.accessToken}`
+            },
+
+            cache: "no-store"
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.error ||
+            "Could not load relics"
+        );
+    }
+
+    if (!result.relics?.length) {
+
+        relicsContainer.innerHTML =
+            "<p class='submission-text'>NO RELICS FOUND.</p>";
+
+        return;
+    }
+
+    relicsContainer.innerHTML = "";
+
+    result.relics.forEach(function (relic) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "my-relic-card";
+
+        card.innerHTML = `
+            <h2>${relic.artist}</h2>
+
+            <h3>${relic.release_title}</h3>
+
+            <p>
+                ${relic.relic_id}
+            </p>
+
+            <p>
+                STATUS:
+                <strong>
+                    ${String(relic.status).toUpperCase()}
+                </strong>
+            </p>
+        `;
+
+        relicsContainer.appendChild(card);
+    });
+}
+
+    </script>
+
+</body>
+
+</html>
