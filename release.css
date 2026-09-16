@@ -324,3 +324,112 @@ transform:translateY(-2px);
     cursor: wait;
     transform: none;
 }
+
+/* =========================================
+   OSSVARIUM RELEASE — MOBILE POLISH
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .release-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 20px 14px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .release-cover {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .release-title {
+        max-width: 100%;
+        font-size: clamp(26px, 8vw, 34px);
+        line-height: 1.15;
+        letter-spacing: 2px;
+        overflow-wrap: break-word;
+        word-break: normal;
+    }
+
+    .release-meta,
+    .release-desc {
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+
+    .section-title {
+        max-width: 100%;
+        font-size: clamp(21px, 6.5vw, 27px);
+        line-height: 1.2;
+        letter-spacing: 2px;
+        overflow-wrap: break-word;
+    }
+
+    .museum-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 18px 14px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .museum-row {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .museum-label,
+    .museum-value {
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+
+    .museum-value {
+        text-align: right;
+    }
+
+    .archive-header {
+        width: 100%;
+        max-width: 100%;
+        gap: 14px;
+    }
+
+    .archive-title {
+        max-width: 100%;
+        font-size: clamp(23px, 7vw, 30px);
+        line-height: 1.2;
+        letter-spacing: 3px;
+        overflow-wrap: break-word;
+    }
+
+    .archive-subtitle {
+        max-width: 100%;
+        line-height: 1.5;
+        letter-spacing: 2px;
+        overflow-wrap: break-word;
+    }
+
+    .archive-icon {
+        font-size: 36px;
+        margin-right: 10px;
+    }
+
+    .archive-stamp {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .certificate-btn,
+    .track-download-btn {
+        max-width: 100%;
+        box-sizing: border-box;
+        white-space: normal;
+        overflow-wrap: break-word;
+        text-align: center;
+    }
+
+}
