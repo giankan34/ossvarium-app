@@ -542,9 +542,15 @@ for (const row of trackRows) {
 }
 
     const submission = {
-        id: Date.now(),
+    id: Date.now(),
 
-        tracks: tracks,
+    creatorPiUid:
+        creatorPiAuth?.user?.uid || null,
+
+    creatorPiUsername:
+        creatorPiAuth?.user?.username || null,
+
+    tracks: tracks,
         
         artist: document.getElementById("artistName").value.trim(),
         release: document.getElementById("releaseTitle").value.trim(),
@@ -574,8 +580,14 @@ for (const row of trackRows) {
     const response = await fetch("/api/submit-relic", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
-        },
+    "Content-Type": "application/json",
+    ...(creatorPiAuth?.accessToken
+        ? {
+            "Authorization":
+                `Bearer ${creatorPiAuth.accessToken}`
+        }
+        : {})
+},
         body: JSON.stringify(submission)
     });
 

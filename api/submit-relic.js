@@ -12,6 +12,57 @@ module.exports = async function handler(req, res) {
 
         const sql = neon(process.env.POSTGRES_URL);
 
+        let verifiedCreatorPiUid = null;
+let verifiedCreatorPiUsername = null;
+
+const authHeader =
+    req.headers.authorization || "";
+
+if (authHeader.startsWith("Bearer ")) {
+
+    const accessToken =
+        authHeader.substring(7);
+
+    try {
+
+        const piResponse = await fetch(
+            "https://api.minepi.com/v2/me",
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${accessToken}`
+                }
+            }
+        );
+
+        if (!piResponse.ok) {
+            throw new Error(
+                "Pi authentication verification failed"
+            );
+        }
+
+        const piUser =
+            await piResponse.json();
+
+        verifiedCreatorPiUid =
+            piUser.uid || null;
+
+        verifiedCreatorPiUsername =
+            piUser.username || null;
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM creator Pi verification error:",
+            error
+        );
+
+        return res.status(401).json({
+            error: "Invalid Pi authentication"
+        });
+    }
+}
+
         const {
             artist,
             release,
@@ -65,6 +116,8 @@ module.exports = async function handler(req, res) {
                 cover,
                 price_eur,
                 contact_email,
+                creator_pi_uid,
+                creator_pi_username,
                 status,
                 source,
                 links,
@@ -83,6 +136,8 @@ module.exports = async function handler(req, res) {
                 ${cover || ""},
                 ${priceEur ? Number(priceEur) : 0},
                 ${contactEmail || ""},
+                ${verifiedCreatorPiUid},
+                ${verifiedCreatorPiUsername},
                 'pending',
                 'submission',
                 ${JSON.stringify(links)}::jsonb,
