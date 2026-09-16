@@ -1153,39 +1153,34 @@ if (
     });
 }
 
-async function downloadOwnedTrack(
-    trackTitle
-) {
-
-    if (!piAuth?.accessToken) {
-
-        piAuth =
-            await authenticatePiUser();
-    }
-
-    if (!piAuth?.accessToken) {
-
-        alert(
-            "Pi authentication is required."
-        );
-
-        return;
-    }
+async function downloadOwnedTrack(trackTitle) {
 
     try {
+
+        if (!piAuth?.accessToken) {
+
+            await authenticatePiUser();
+
+            if (!piAuth?.accessToken) {
+                throw new Error(
+                    "Pi authentication required"
+                );
+            }
+        }
 
         const params =
             new URLSearchParams({
                 relicId:
                     release.relicId,
-
                 trackTitle:
                     trackTitle,
-
                 mode:
                     "download"
             });
 
+        // ---------------------------------
+        // REQUEST SECURE DOWNLOAD TICKET
+        // ---------------------------------
 
         const response =
             await fetch(
@@ -1194,81 +1189,38 @@ async function downloadOwnedTrack(
                     headers: {
                         Authorization:
                             `Bearer ${piAuth.accessToken}`
-                    }
+                    },
+                    cache: "no-store"
                 }
             );
 
+        const data =
+            await response.json();
+
         if (!response.ok) {
-
-            let message =
-                "Download unavailable";
-
-            try {
-
-                const result =
-                    await response.json();
-
-                message =
-                    result.error ||
-                    message;
-
-            } catch (error) {
-                // Response was not JSON
-            }
-
             throw new Error(
-                message
+                data.error ||
+                "Download authorization failed"
             );
         }
 
-        const blob =
-            await response.blob();
-
-        const blobUrl =
-            URL.createObjectURL(
-                blob
+        if (!data.downloadUrl) {
+            throw new Error(
+                "Download URL not received"
             );
+        }
 
-        const downloadLink =
-            document.createElement(
-                "a"
-            );
+        // ---------------------------------
+        // REAL BROWSER DOWNLOAD
+        // ---------------------------------
 
-        downloadLink.href =
-            blobUrl;
-
-        downloadLink.download =
-            `${trackTitle
-                .replace(
-                    /[^a-zA-Z0-9._-]/g,
-                    "_"
-                )
-            }.mp3`;
-
-        downloadLink.style.display =
-            "none";
-
-        document.body.appendChild(
-            downloadLink
-        );
-
-        downloadLink.click();
-
-        downloadLink.remove();
-
-        setTimeout(
-            () => {
-                URL.revokeObjectURL(
-                    blobUrl
-                );
-            },
-            1000
-        );
+        window.location.href =
+            data.downloadUrl;
 
     } catch (error) {
 
         console.error(
-            "OSSVARIUM download error:",
+            "☠ OSSVARIUM DOWNLOAD ERROR:",
             error
         );
 
@@ -1278,41 +1230,6 @@ async function downloadOwnedTrack(
         );
     }
 }
-
-document.addEventListener(
-    "click",
-    async function(event) {
-
-        const button =
-            event.target.closest(
-                ".track-download-btn"
-            );
-
-        if (!button) {
-            return;
-        }
-
-        const trackTitle =
-            button.dataset.trackTitle;
-
-        const originalText =
-            button.textContent;
-
-        button.disabled = true;
-
-        button.textContent =
-            "☠ PREPARING RELIC... ☠";
-
-        await downloadOwnedTrack(
-            trackTitle
-        );
-
-        button.disabled = false;
-
-        button.textContent =
-            originalText;
-    }
-);
 
 function initializePurchasePanel(){
 

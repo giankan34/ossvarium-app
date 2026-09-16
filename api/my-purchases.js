@@ -1,5 +1,7 @@
 const axios = require("axios");
 
+const crypto = require("crypto");
+
 const {
     neon
 } = require(
@@ -19,6 +21,97 @@ const {
     "@aws-sdk/s3-request-presigner"
 );
 
+function createDownloadTicket(payload) {
+
+    const data =
+        Buffer.from(
+            JSON.stringify(payload)
+        ).toString("base64url");
+
+    const signature =
+        crypto
+            .createHmac(
+                "sha256",
+                process.env.ADMIN_SESSION_SECRET
+            )
+            .update(data)
+            .digest("base64url");
+
+    return `${data}.${signature}`;
+}
+
+
+function verifyDownloadTicket(ticket) {
+
+    if (!ticket) {
+        return null;
+    }
+
+    const parts =
+        ticket.split(".");
+
+    if (parts.length !== 2) {
+        return null;
+    }
+
+    const [data, signature] =
+        parts;
+
+    const expectedSignature =
+        crypto
+            .createHmac(
+                "sha256",
+                process.env.ADMIN_SESSION_SECRET
+            )
+            .update(data)
+            .digest("base64url");
+
+    const signatureBuffer =
+        Buffer.from(signature);
+
+    const expectedBuffer =
+        Buffer.from(expectedSignature);
+
+    if (
+        signatureBuffer.length !==
+        expectedBuffer.length
+    ) {
+        return null;
+    }
+
+    if (
+        !crypto.timingSafeEqual(
+            signatureBuffer,
+            expectedBuffer
+        )
+    ) {
+        return null;
+    }
+
+    try {
+
+        const payload =
+            JSON.parse(
+                Buffer.from(
+                    data,
+                    "base64url"
+                ).toString("utf8")
+            );
+
+        if (
+            !payload.exp ||
+            Date.now() > payload.exp
+        ) {
+            return null;
+        }
+
+        return payload;
+
+    } catch {
+        return null;
+    }
+}
+
 module.exports = async function handler(req, res) {
 
     if (req.method !== "GET") {
@@ -26,6 +119,34 @@ module.exports = async function handler(req, res) {
             error: "Method not allowed"
         });
     }
+
+   // ---------------------------------
+// CREATE SECURE DOWNLOAD TICKET
+// ---------------------------------
+
+if (mode === "download") {
+
+    const ticket =
+        createDownloadTicket({
+            relicId,
+            trackTitle,
+            audioKey: track.audio,
+            allowDownload: true,
+            exp:
+                Date.now() +
+                (2 * 60 * 1000)
+        });
+
+    const downloadUrl =
+        `/api/my-purchases?ticket=${encodeURIComponent(
+            ticket
+        )}`;
+
+    return res.status(200).json({
+        success: true,
+        downloadUrl
+    });
+}
 
     const authHeader =
         req.headers.authorization;
@@ -213,14 +334,6 @@ module.exports = async function handler(req, res) {
 
                 forcePathStyle: true
             });
-
-const downloadFileName =
-    `${trackTitle
-        .replace(
-            /[^a-zA-Z0-9._-]/g,
-            "_"
-        )
-    }.mp3`;
 
 
 // ---------------------------------
