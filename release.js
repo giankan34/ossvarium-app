@@ -635,8 +635,34 @@ function initializePlayer(){
 
                     if(currentAudio.paused){
 
-                        currentAudio.play();
-                        button.textContent = "❚❚";
+                        currentAudio.play()
+    .then(() => {
+
+        console.log(
+            "☠ AUDIO PLAYING",
+            {
+                src: currentAudio.src,
+                volume: currentAudio.volume,
+                muted: currentAudio.muted,
+                readyState: currentAudio.readyState
+            }
+        );
+
+    })
+    .catch(error => {
+
+        console.error(
+            "☠ AUDIO PLAY FAILED:",
+            error
+        );
+
+        alert(
+            "AUDIO ERROR:\n" +
+            error.message
+        );
+    });
+
+button.textContent = "❚❚";
 
                     }else{
 
@@ -1219,6 +1245,41 @@ async function downloadOwnedTrack(
         );
     }
 }
+
+document.addEventListener(
+    "click",
+    async function(event) {
+
+        const button =
+            event.target.closest(
+                ".track-download-btn"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        const trackTitle =
+            button.dataset.trackTitle;
+
+        const originalText =
+            button.textContent;
+
+        button.disabled = true;
+
+        button.textContent =
+            "☠ PREPARING RELIC... ☠";
+
+        await downloadOwnedTrack(
+            trackTitle
+        );
+
+        button.disabled = false;
+
+        button.textContent =
+            originalText;
+    }
+);
 
 function initializePurchasePanel(){
 
