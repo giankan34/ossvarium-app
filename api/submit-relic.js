@@ -2,12 +2,14 @@ const { neon } = require("@neondatabase/serverless");
 
 module.exports = async function handler(req, res) {
 
-    if (req.method !== "POST") {
-        return res.status(405).json({
-            error: "Method not allowed"
-        });
-    }
-
+    if (
+    req.method !== "POST" &&
+    req.method !== "GET"
+) {
+    return res.status(405).json({
+        error: "Method not allowed"
+    });
+}
     try {
 
         const sql = neon(process.env.POSTGRES_URL);
@@ -61,6 +63,40 @@ if (authHeader.startsWith("Bearer ")) {
             error: "Invalid Pi authentication"
         });
     }
+}
+
+// ---------------------------------
+// MY RELICS (GET)
+// ---------------------------------
+
+if (req.method === "GET") {
+
+    if (!verifiedCreatorPiUid) {
+        return res.status(401).json({
+            error: "Pi login required"
+        });
+    }
+
+    const relics = await sql`
+        SELECT
+            relic_id,
+            artist,
+            release_title,
+            status,
+            created_at,
+            cover,
+            genre,
+            country
+        FROM relics
+        WHERE creator_pi_uid = ${verifiedCreatorPiUid}
+        ORDER BY created_at DESC;
+    `;
+
+    return res.status(200).json({
+        success: true,
+        username: verifiedCreatorPiUsername,
+        relics
+    });
 }
 
         const {
