@@ -49,18 +49,36 @@ async function loadArtist(){
 
         <div class="release-card">
 
-            <img
-            class="artist-image"
-            src="${artist.artistImage}"
-            alt="${artist.artist}">
+            ${artist.artistImage
+? `
+    <img
+    class="artist-image"
+    src="${artist.artistImage}"
+    alt="${artist.artist}">
+`
+: `
+    <div class="artist-image no-cover">
+        ☠ NO ARTIST IMAGE ☠
+    </div>
+`
+}
 
         <div class="artist-banner">
 
-            <img
-            src="${artist.banner}"
-            alt="${artist.artist}">
-
+    ${artist.banner
+    ? `
+        <img
+        src="${artist.banner}"
+        alt="${artist.artist}">
+    `
+    : `
+        <div class="no-cover">
+            ☠ NO ARTIST BANNER ☠
         </div>
+    `
+    }
+
+</div>
         
             <div class="release-title">
 
