@@ -337,10 +337,19 @@ releaseContainer.innerHTML += `
 
         </div>
 
-        <img
-        class="hall-cover"
-        src="${topThree[0]?.cover}"
-        alt="${topThree[0]?.release}">
+        ${topThree[0]?.cover
+? `
+    <img
+    class="hall-cover"
+    src="${topThree[0].cover}"
+    alt="${topThree[0].release}">
+`
+: `
+    <div class="hall-cover no-cover">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
       🥇 ${topThree[0]?.release}
 
@@ -364,10 +373,19 @@ releaseContainer.innerHTML += `
         class="hall-card"
         href="release.html?id=${releases.indexOf(topThree[1])}">
 
-        <img
-        class="hall-cover"
-        src="${topThree[1]?.cover}"
-        alt="${topThree[1]?.release}">
+        ${topThree[1]?.cover
+? `
+    <img
+    class="hall-cover"
+    src="${topThree[1].cover}"
+    alt="${topThree[1].release}">
+`
+: `
+    <div class="hall-cover no-cover">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
       🥈 ${topThree[1]?.release}
 
@@ -391,10 +409,19 @@ releaseContainer.innerHTML += `
         class="hall-card"
         href="release.html?id=${releases.indexOf(topThree[2])}">
 
-        <img
-        class="hall-cover"
-        src="${topThree[2]?.cover}"
-        alt="${topThree[2]?.release}">
+        ${topThree[2]?.cover
+? `
+    <img
+    class="hall-cover"
+    src="${topThree[2].cover}"
+    alt="${topThree[2].release}">
+`
+: `
+    <div class="hall-cover no-cover">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
         🥉 ${topThree[2]?.release}
 
