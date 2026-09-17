@@ -442,3 +442,24 @@ transform:scale(.65) rotate(-12deg);
     }
 
 }
+
+.curator-signature .curator-sign {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    position: relative !important;
+    z-index: 5;
+
+    width: calc(100% - 20px);
+    margin: -8px 0 8px 0 !important;
+
+    font-family: 'UnifrakturMaguntia', serif !important;
+    font-size: 34px !important;
+    line-height: 1.1;
+
+    color: #541b1b !important;
+    text-align: center;
+
+    transform: rotate(-4deg);
+}
