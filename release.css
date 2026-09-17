@@ -441,7 +441,7 @@ transform:translateY(-2px);
 @media (max-width: 600px) {
 
     .release-title {
-        font-size: clamp(26px, 8vw, 34px) !important;
+    font-size: 28px !important;
         line-height: 1.08 !important;
 
         max-width: 100% !important;
