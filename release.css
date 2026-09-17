@@ -433,3 +433,24 @@ transform:translateY(-2px);
     }
 
 }
+
+/* =========================================
+   OSSVARIUM — RELEASE TITLE MOBILE FIT
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .release-title {
+        font-size: clamp(26px, 8vw, 34px) !important;
+        line-height: 1.08 !important;
+
+        max-width: 100% !important;
+        padding-left: 8px;
+        padding-right: 8px;
+        box-sizing: border-box;
+
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+}
