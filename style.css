@@ -3456,3 +3456,32 @@ body.codex-entering::before{
 
     box-sizing: border-box;
 }
+
+/* =========================================
+   OSSVARIUM — ARTIST IMAGE FALLBACK
+   ========================================= */
+
+.artist-image.no-cover {
+    height: 220px;
+    max-height: 220px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    text-align: center;
+
+    color: #8a5a55;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 2px;
+}
+
+@media (max-width: 600px) {
+    .artist-image.no-cover {
+        height: 180px;
+        max-height: 180px;
+        padding: 20px;
+        font-size: 14px;
+    }
+}
