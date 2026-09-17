@@ -107,15 +107,8 @@ const approvedResult =
     ...approvedReleases
 ];
 
-const uniqueReleases = Array.from(
-    new Map(
-        mergedReleases.map(release => [
-            release.relicId,
-            release
-        ])
-    ).values()
-);
-
-return uniqueReleases;
-
+return [
+    ...staticReleases,
+    ...approvedReleases
+];
 }
