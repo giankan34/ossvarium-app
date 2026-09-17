@@ -102,8 +102,20 @@ const approvedResult =
         );
     }
 
-    return [
-        ...staticReleases,
-        ...approvedReleases
-    ];
+    const mergedReleases = [
+    ...staticReleases,
+    ...approvedReleases
+];
+
+const uniqueReleases = Array.from(
+    new Map(
+        mergedReleases.map(release => [
+            release.relicId,
+            release
+        ])
+    ).values()
+);
+
+return uniqueReleases;
+
 }
