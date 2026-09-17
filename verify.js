@@ -18,19 +18,19 @@ verifyBtn.addEventListener("click", async () => {
 
     try {
 
-        const response = await fetch("data/releases.json");
+        const response = await fetch("/api/approved-relics");
 
-        if (!response.ok) {
-            throw new Error("Archive data unavailable");
-        }
+if (!response.ok) {
+    throw new Error("Archive data unavailable");
+}
 
-        const releases = await response.json();
+const data = await response.json();
 
-        const relic = releases.find(
-            item =>
-                item.relicId &&
-                item.relicId.toUpperCase() === relicId
-        );
+const relic = data.relics.find(
+    item =>
+        item.relic_id &&
+        item.relic_id.toUpperCase() === relicId
+);
 
         if (!relic) {
 
@@ -61,48 +61,48 @@ verifyBtn.addEventListener("click", async () => {
 
         <div class="archive-record">
 
-            <div class="archive-cover">
-                <img
-                    src="${relic.cover}"
-                    alt="${relic.artist} — ${relic.release}"
-                >
-            </div>
+    <div class="archive-cover">
+        <img
+            src="${relic.cover}"
+            alt="${relic.artist} — ${relic.release_title}"
+        >
+    </div>
 
-            <div class="archive-details">
+    <div class="archive-details">
 
-                <div class="archive-label">
-                    OFFICIAL OSSVARIUM RECORD
-                </div>
+        <div class="archive-label">
+            OFFICIAL OSSVARIUM RECORD
+        </div>
 
-                <h2>${relic.artist}</h2>
+        <h2>${relic.artist}</h2>
 
-                <h3>${relic.release}</h3>
+        <h3>${relic.release_title}</h3>
 
-                <div class="archive-meta">
+        <div class="archive-meta">
 
-                    <p>
-                        <span>RELIC ID</span>
-                        <strong>${relic.relicId}</strong>
-                    </p>
+            <p>
+                <span>RELIC ID</span>
+                <strong>${relic.relic_id}</strong>
+            </p>
 
-                    <p>
-                        <span>YEAR</span>
-                        <strong>${relic.year}</strong>
-                    </p>
+            <p>
+                <span>YEAR</span>
+                <strong>${relic.release_year}</strong>
+            </p>
 
-                    <p>
-                        <span>ORIGIN</span>
-                        <strong>${relic.country}</strong>
-                    </p>
+            <p>
+                <span>ORIGIN</span>
+                <strong>${relic.country}</strong>
+            </p>
 
-                    <p>
-                        <span>CLASSIFICATION</span>
-                        <strong>${relic.genre}</strong>
-                    </p>
+            <p>
+                <span>CLASSIFICATION</span>
+                <strong>${relic.genre}</strong>
+            </p>
 
-                </div>
+        </div>
 
-            </div>
+    </div>
 
             <div class="verified-seal">
                 <span>OSSVARIUM</span>
