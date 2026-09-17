@@ -119,11 +119,15 @@ by order of the Curator.
 
 <br><br><br>
 
-────────────────────────
+<div class="curator-signature">
 
-<br>
+    <div class="signature-line"></div>
 
-CURATOR SIGNATURE
+    <div class="signature-label">
+        CURATOR SIGNATURE
+    </div>
+
+</div>
 
 <br><br>
 
