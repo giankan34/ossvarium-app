@@ -278,19 +278,20 @@ style="text-decoration:none;">
 
                </div>
 
-               <img
-class="featured-cover"
-src="${releases[0].cover}"
-alt="${releases[0].release}"
-onerror="
-    this.onerror=null;
-    this.style.display='none';
-    this.nextElementSibling.style.display='flex';
-">
-
-<div class="featured-cover-fallback" style="display:none;">
-    ☠ NO COVER ART ☠
-</div>
+         
+               ${releases[0].cover
+? `
+    <img
+    class="featured-cover"
+    src="${releases[0].cover}"
+    alt="${releases[0].release}">
+`
+: `
+    <div class="featured-cover featured-cover-fallback">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
                <div class="featured-title">${releases[0].release}
 
