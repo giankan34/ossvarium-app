@@ -223,19 +223,19 @@ style="text-decoration:none;">
 
     </div>
 
+    ${topRelease.cover
+? `
     <img
-class="featured-cover"
-src="${topRelease.cover}"
-alt="${topRelease.release}"
-onerror="
-    this.onerror=null;
-    this.style.display='none';
-    this.nextElementSibling.style.display='flex';
-">
-
-<div class="featured-cover-fallback" style="display:none;">
-    ☠ NO COVER ART ☠
-</div>
+    class="featured-cover"
+    src="${topRelease.cover}"
+    alt="${topRelease.release}">
+`
+: `
+    <div class="featured-cover featured-cover-fallback">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
     <div class="featured-title">
 
