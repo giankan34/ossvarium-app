@@ -3417,3 +3417,27 @@ body.codex-entering::before{
     }
 
 }
+
+/* =========================================
+   OSSVARIUM — FEATURED COVER FALLBACK
+   ========================================= */
+
+.featured-cover-fallback {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(145, 83, 57, .45);
+    background: #080606;
+
+    font-family: "Cinzel", serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+
+    color: #8e634c;
+    text-align: center;
+}
