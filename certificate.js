@@ -144,6 +144,14 @@ CERTIFICATE No.
 
 OSV-CERT-2026-${String(id+1).padStart(5,"0")}
 
+<div class="certificate-back">
+
+    <a href="index.html" class="certificate-back-link">
+        ⚔ BACK TO OSSVARIUM ⚔
+    </a>
+
+</div>
+
 </div>
 
 </div>
