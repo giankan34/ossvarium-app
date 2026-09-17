@@ -119,6 +119,10 @@ by order of the Curator.
 
     <div class="signature-line"></div>
 
+    <div class="curator-sign">
+    The Curator
+</div>
+
     <div class="signature-label">
         CURATOR SIGNATURE
     </div>
