@@ -409,3 +409,36 @@ transform:scale(.65) rotate(-12deg);
         top: -30px !important;
     }
 }
+
+/* =========================================
+   OSSVARIUM — CURATOR SIGNATURE
+   ========================================= */
+
+.curator-sign {
+    position: relative;
+    margin-top: -8px;
+    margin-bottom: 6px;
+
+    font-family: 'UnifrakturMaguntia', serif;
+    font-size: 34px;
+    line-height: 1;
+
+    color: #541b1b;
+
+    text-align: center;
+    transform: rotate(-4deg);
+
+    opacity: .88;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 600px) {
+
+    .curator-sign {
+        font-size: 28px;
+        margin-top: -6px;
+        margin-bottom: 7px;
+        transform: rotate(-4deg);
+    }
+
+}
