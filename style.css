@@ -3441,3 +3441,18 @@ body.codex-entering::before{
     color: #8e634c;
     text-align: center;
 }
+
+/* =========================================
+   OSSVARIUM — ARTIST BANNER FALLBACK
+   ========================================= */
+
+.artist-banner .no-cover {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
