@@ -27,10 +27,6 @@ container.innerHTML = `
 
 <div class="certificate">
 
-<img
-class="archive-seal"
-src="images/seals/preserved.png">
-
 <div class="cert-title">
 
 OSSVARIUM
@@ -126,6 +122,11 @@ by order of the Curator.
     <div class="signature-label">
         CURATOR SIGNATURE
     </div>
+
+    <img
+        class="archive-seal"
+        src="images/seals/preserved.png"
+        alt="OSSVARIUM Preserved Seal">
 
 </div>
 
