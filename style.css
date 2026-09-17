@@ -3522,3 +3522,25 @@ body.codex-entering::before{
         font-size: 14px;
     }
 }
+
+/* =========================================
+   OSSVARIUM — ARTIST TITLE MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    #artistPage .release-title {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+
+        font-size: clamp(26px, 9vw, 40px);
+        line-height: 1.05;
+
+        overflow-wrap: anywhere;
+        word-break: break-word;
+
+        text-align: center;
+    }
+
+}
