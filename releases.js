@@ -526,10 +526,19 @@ releases[
 
          </div>
 
-         <img
-         class="featured-cover"
-         src="${featuredArtist.cover}"
-         alt="${featuredArtist.artist}">
+         ${featuredArtist.cover
+? `
+    <img
+    class="featured-cover"
+    src="${featuredArtist.cover}"
+    alt="${featuredArtist.artist}">
+`
+: `
+    <div class="featured-cover no-cover">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
          <div class="featured-title">${featuredArtist.artist}
 

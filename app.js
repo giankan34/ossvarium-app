@@ -732,9 +732,19 @@ style="text-decoration:none;">
 
     <div class="release-card">
 
-        <img
-        src="${release.cover}"
-        class="release-cover">
+        ${release.cover
+? `
+    <img
+    src="${release.cover}"
+    class="release-cover"
+    alt="${release.release}">
+`
+: `
+    <div class="release-cover no-cover">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
         <div class="release-title">
 
@@ -991,6 +1001,8 @@ async function loadReleaseOfTheDay(){
 
     box.innerHTML = `
 
+    ${release.cover
+? `
     <img
     src="${release.cover}"
     style="
@@ -998,6 +1010,13 @@ async function loadReleaseOfTheDay(){
     border-radius:10px;
     margin-bottom:10px;
     ">
+`
+: `
+    <div class="release-cover no-cover">
+        ☠ NO COVER ART ☠
+    </div>
+`
+}
 
     <br>
 
