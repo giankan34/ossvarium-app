@@ -57,7 +57,7 @@ async function loadArtist(){
     alt="${artist.artist}">
 `
 : `
-    <div class="artist-image no-cover">
+    <div class="artist-image artist-image-fallback">
         ☠ NO ARTIST IMAGE ☠
     </div>
 `
