@@ -239,10 +239,106 @@ earningsDashboard.innerHTML = `
         ${Number(result.earnings?.available_balance_pi || 0).toFixed(4)} Pi
     </strong>
 </p>
+
+<button
+    type="button"
+    id="requestPayoutButton"
+    class="submit-btn"
+>
+    π REQUEST PAYOUT
+</button>
+
+<div
+    id="payoutStatus"
+    class="submission-text"
+></div>
+
 `;
 
 relicsContainer.appendChild(
     earningsDashboard
+);
+
+const requestPayoutButton =
+    document.getElementById(
+        "requestPayoutButton"
+    );
+
+const payoutStatus =
+    document.getElementById(
+        "payoutStatus"
+    );
+
+requestPayoutButton.addEventListener(
+    "click",
+    async function () {
+
+        try {
+
+            requestPayoutButton.disabled = true;
+
+            requestPayoutButton.textContent =
+                "π REQUESTING...";
+
+            payoutStatus.textContent =
+                "";
+
+            const response = await fetch(
+                "/api/submit-relic",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        Authorization:
+                            `Bearer ${creatorPiAuth.accessToken}`
+                    },
+
+                    body: JSON.stringify({
+                        action: "request_payout"
+                    })
+                }
+            );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error ||
+                    "Payout request failed"
+                );
+            }
+
+            payoutStatus.textContent =
+                `PAYOUT REQUESTED: ${
+                    Number(
+                        result.payout.amount_pi
+                    ).toFixed(4)
+                } Pi`;
+
+            requestPayoutButton.textContent =
+                "π PAYOUT PENDING";
+
+        } catch (error) {
+
+            console.error(
+                "OSSVARIUM payout request error:",
+                error
+            );
+
+            payoutStatus.textContent =
+                error.message;
+
+            requestPayoutButton.disabled =
+                false;
+
+            requestPayoutButton.textContent =
+                "π REQUEST PAYOUT";
+        }
+    }
 );
 
     result.relics.forEach(function (relic) {
