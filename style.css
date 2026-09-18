@@ -3545,3 +3545,31 @@ body.codex-entering::before{
 }
 
 }
+
+/* =========================================
+   OSSVARIUM — HOME RELEASE TITLE MOBILE
+   Prevent long submitted titles overflowing
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .release-card .release-title {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+
+        font-size: clamp(22px, 7vw, 32px);
+        line-height: 1.08;
+        letter-spacing: 0;
+
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: normal;
+
+        padding-left: 8px;
+        padding-right: 8px;
+
+        text-align: center;
+    }
+
+}
