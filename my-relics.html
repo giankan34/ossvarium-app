@@ -227,6 +227,13 @@ earningsDashboard.innerHTML = `
     </p>
 
     <p>
+    PAYOUT PENDING:
+    <strong>
+        ${Number(result.earnings?.pending_payout_pi || 0).toFixed(4)} Pi
+    </strong>
+</p>
+
+    <p>
     PAID OUT:
     <strong>
         ${Number(result.earnings?.paid_out_pi || 0).toFixed(4)} Pi
@@ -268,6 +275,29 @@ const payoutStatus =
     document.getElementById(
         "payoutStatus"
     );
+
+    const availableBalance =
+    Number(
+        result.earnings?.available_balance_pi || 0
+    );
+
+const pendingPayout =
+    Number(
+        result.earnings?.pending_payout_pi || 0
+    );
+
+if (
+    availableBalance <= 0 &&
+    pendingPayout > 0
+) {
+    requestPayoutButton.disabled = true;
+
+    requestPayoutButton.textContent =
+        "π PAYOUT PENDING";
+
+    payoutStatus.textContent =
+        `${pendingPayout.toFixed(4)} Pi AWAITING PAYOUT`;
+}
 
 requestPayoutButton.addEventListener(
     "click",
