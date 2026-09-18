@@ -192,6 +192,20 @@ async function loadMyRelics() {
                     ${String(relic.status).toUpperCase()}
                 </strong>
             </p>
+
+            <p>
+    TRACK SALES:
+    <strong>
+        ${relic.track_sales || 0}
+    </strong>
+</p>
+
+<p>
+    π EARNED:
+    <strong>
+        ${Number(relic.pi_earned || 0).toFixed(4)} Pi
+    </strong>
+</p>
         `;
 
         relicsContainer.appendChild(card);

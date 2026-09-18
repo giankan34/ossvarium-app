@@ -78,19 +78,44 @@ if (req.method === "GET") {
     }
 
     const relics = await sql`
-        SELECT
-            relic_id,
-            artist,
-            release_title,
-            status,
-            created_at,
-            cover,
-            genre,
-            country
-        FROM relics
-        WHERE creator_pi_uid = ${verifiedCreatorPiUid}
-        ORDER BY created_at DESC;
-    `;
+    SELECT
+        r.relic_id,
+        r.artist,
+        r.release_title,
+        r.status,
+        r.created_at,
+        r.cover,
+        r.genre,
+        r.country,
+
+        COUNT(p.id)::int AS track_sales,
+
+        COALESCE(
+            SUM(p.amount_pi),
+            0
+        ) AS pi_earned
+
+    FROM relics r
+
+    LEFT JOIN purchases p
+        ON p.relic_id = r.relic_id
+
+    WHERE
+        r.creator_pi_uid = ${verifiedCreatorPiUid}
+
+    GROUP BY
+        r.relic_id,
+        r.artist,
+        r.release_title,
+        r.status,
+        r.created_at,
+        r.cover,
+        r.genre,
+        r.country
+
+    ORDER BY
+        r.created_at DESC;
+`;
 
     return res.status(200).json({
         success: true,
