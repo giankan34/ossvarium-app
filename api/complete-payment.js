@@ -77,6 +77,15 @@ if (!userUid) {
 const sql =
     neon(process.env.POSTGRES_URL);
 
+const amountPi =
+    Number(completedPayment.amount);
+
+const artistSharePi =
+    Number((amountPi * 0.90).toFixed(4));
+
+const ossvariumFeePi =
+    Number((amountPi * 0.10).toFixed(4));
+
 await sql`
     INSERT INTO purchases (
         payment_id,
@@ -84,7 +93,9 @@ await sql`
         user_uid,
         relic_id,
         track_title,
-        amount_pi
+        amount_pi,
+        artist_share_pi,
+        ossvarium_fee_pi
     )
     VALUES (
         ${paymentId},
@@ -92,7 +103,9 @@ await sql`
         ${userUid},
         ${metadata.relicId},
         ${metadata.trackTitle},
-        ${Number(completedPayment.amount)}
+        ${amountPi},
+        ${artistSharePi},
+        ${ossvariumFeePi}
     )
     ON CONFLICT
     DO NOTHING;
