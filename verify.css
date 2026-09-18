@@ -737,4 +737,29 @@ body{
         overflow-wrap: break-word;
     }
 
+    .archive-confirmation {
+    max-width: 100%;
+
+    font-size: 9px;
+    line-height: 1.6;
+    letter-spacing: 1.5px;
+
+    overflow-wrap: break-word;
+}
+
+/* No-cover verified relic */
+.archive-record:not(:has(.archive-cover)) {
+    gap: 12px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.archive-record:not(:has(.archive-cover)) .archive-details h2 {
+    margin-top: 4px;
+}
+
+.archive-record:not(:has(.archive-cover)) .verified-seal {
+    margin-top: 10px;
+}
+
 }
