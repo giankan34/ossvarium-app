@@ -91,9 +91,19 @@ if (req.method === "GET") {
         COUNT(p.id)::int AS track_sales,
 
         COALESCE(
-            SUM(p.amount_pi),
-            0
-        ) AS pi_earned
+    SUM(p.amount_pi),
+    0
+) AS gross_pi,
+
+COALESCE(
+    SUM(p.artist_share_pi),
+    0
+) AS pi_earned,
+
+COALESCE(
+    SUM(p.ossvarium_fee_pi),
+    0
+) AS ossvarium_fee_pi
 
     FROM relics r
 
