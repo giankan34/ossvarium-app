@@ -173,6 +173,104 @@ const availableBalancePi =
 });
 }
 
+if (
+    req.method === "POST" &&
+    req.body?.action === "request_payout"
+) {
+
+    if (!verifiedCreatorPiUid) {
+        return res.status(401).json({
+            error: "Pi login required"
+        });
+    }
+
+    const earnings = await sql`
+        SELECT
+            COALESCE(
+                SUM(p.artist_share_pi),
+                0
+            ) AS total_earned_pi
+
+        FROM purchases p
+
+        INNER JOIN relics r
+            ON r.relic_id = p.relic_id
+
+        WHERE
+            r.creator_pi_uid =
+                ${verifiedCreatorPiUid};
+    `;
+
+    const payouts = await sql`
+        SELECT
+            COALESCE(
+                SUM(amount_pi)
+                    FILTER (
+                        WHERE status IN (
+                            'pending',
+                            'completed'
+                        )
+                    ),
+                0
+            ) AS reserved_pi
+
+        FROM creator_payouts
+
+        WHERE
+            creator_pi_uid =
+                ${verifiedCreatorPiUid};
+    `;
+
+    const totalEarnedPi =
+        Number(
+            earnings[0]?.total_earned_pi || 0
+        );
+
+    const reservedPi =
+        Number(
+            payouts[0]?.reserved_pi || 0
+        );
+
+    const availablePi =
+        Number(
+            Math.max(
+                0,
+                totalEarnedPi - reservedPi
+            ).toFixed(4)
+        );
+
+    if (availablePi <= 0) {
+        return res.status(400).json({
+            error: "No balance available for payout"
+        });
+    }
+
+    const payout = await sql`
+        INSERT INTO creator_payouts (
+            creator_pi_uid,
+            creator_pi_username,
+            amount_pi,
+            status
+        )
+        VALUES (
+            ${verifiedCreatorPiUid},
+            ${verifiedCreatorPiUsername},
+            ${availablePi},
+            'pending'
+        )
+        RETURNING
+            id,
+            amount_pi,
+            status,
+            created_at;
+    `;
+
+    return res.status(201).json({
+        success: true,
+        payout: payout[0]
+    });
+}
+
         const {
             artist,
             release,
