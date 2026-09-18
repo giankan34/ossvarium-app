@@ -225,6 +225,20 @@ earningsDashboard.innerHTML = `
         OSSVARIUM FEE (10%):
         <strong>${totalOssvariumFeePi.toFixed(4)} Pi</strong>
     </p>
+
+    <p>
+    PAID OUT:
+    <strong>
+        ${Number(result.earnings?.paid_out_pi || 0).toFixed(4)} Pi
+    </strong>
+</p>
+
+<p>
+    AVAILABLE BALANCE:
+    <strong>
+        ${Number(result.earnings?.available_balance_pi || 0).toFixed(4)} Pi
+    </strong>
+</p>
 `;
 
 relicsContainer.appendChild(
