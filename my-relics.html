@@ -169,6 +169,68 @@ async function loadMyRelics() {
 
     relicsContainer.innerHTML = "";
 
+    const totalTrackSales =
+    result.relics.reduce(
+        (sum, relic) =>
+            sum + Number(relic.track_sales || 0),
+        0
+    );
+
+const totalGrossPi =
+    result.relics.reduce(
+        (sum, relic) =>
+            sum + Number(relic.gross_pi || 0),
+        0
+    );
+
+const totalArtistPi =
+    result.relics.reduce(
+        (sum, relic) =>
+            sum + Number(relic.pi_earned || 0),
+        0
+    );
+
+const totalOssvariumFeePi =
+    result.relics.reduce(
+        (sum, relic) =>
+            sum + Number(relic.ossvarium_fee_pi || 0),
+        0
+    );
+
+const earningsDashboard =
+    document.createElement("div");
+
+earningsDashboard.className =
+    "my-relic-card";
+
+earningsDashboard.innerHTML = `
+    <h2>☠ CREATOR EARNINGS ☠</h2>
+
+    <p>
+        TOTAL TRACK SALES:
+        <strong>${totalTrackSales}</strong>
+    </p>
+
+    <p>
+        GROSS SALES:
+        <strong>${totalGrossPi.toFixed(4)} Pi</strong>
+    </p>
+
+    <p>
+        YOUR SHARE (90%):
+        <strong>${totalArtistPi.toFixed(4)} Pi</strong>
+    </p>
+
+    <p>
+        OSSVARIUM FEE (10%):
+        <strong>${totalOssvariumFeePi.toFixed(4)} Pi</strong>
+    </p>
+`;
+
+relicsContainer.appendChild(
+    earningsDashboard
+);
+
     result.relics.forEach(function (relic) {
 
         const card =
