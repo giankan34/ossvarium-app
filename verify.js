@@ -61,12 +61,14 @@ const relic = data.relics.find(
 
         <div class="archive-record">
 
+    ${relic.cover ? `
     <div class="archive-cover">
         <img
             src="${relic.cover}"
             alt="${relic.artist} — ${relic.release_title}"
         >
     </div>
+` : ""}
 
     <div class="archive-details">
 
