@@ -127,11 +127,50 @@ COALESCE(
         r.created_at DESC;
 `;
 
+const payoutSummary = await sql`
+    SELECT
+        COALESCE(
+            SUM(amount_pi)
+                FILTER (WHERE status = 'completed'),
+            0
+        ) AS paid_out_pi
+    FROM creator_payouts
+    WHERE creator_pi_uid = ${verifiedCreatorPiUid};
+`;
+
+const totalEarnedPi =
+    relics.reduce(
+        (sum, relic) =>
+            sum + Number(relic.pi_earned || 0),
+        0
+    );
+
+const paidOutPi =
+    Number(
+        payoutSummary[0]?.paid_out_pi || 0
+    );
+
+const availableBalancePi =
+    Math.max(
+        0,
+        totalEarnedPi - paidOutPi
+    );
+
     return res.status(200).json({
-        success: true,
-        username: verifiedCreatorPiUsername,
-        relics
-    });
+    success: true,
+    username: verifiedCreatorPiUsername,
+    relics,
+    earnings: {
+        total_earned_pi:
+            Number(totalEarnedPi.toFixed(4)),
+
+        paid_out_pi:
+            Number(paidOutPi.toFixed(4)),
+
+        available_balance_pi:
+            Number(availableBalancePi.toFixed(4))
+    }
+});
 }
 
         const {
