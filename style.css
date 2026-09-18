@@ -3583,3 +3583,34 @@ body.codex-entering::before{
     font-weight: 400;
     letter-spacing: 1px;
 }
+
+/* =========================================
+   OSSVARIUM — ADMIN CHAMBER MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    #adminPendingLink {
+        position: fixed !important;
+
+        right: 8px !important;
+        bottom: 8px !important;
+        left: auto !important;
+        top: auto !important;
+
+        width: auto !important;
+        max-width: 150px !important;
+
+        padding: 8px 10px !important;
+
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        letter-spacing: 0.5px !important;
+
+        text-align: center !important;
+        white-space: normal !important;
+
+        z-index: 9999 !important;
+    }
+
+}
