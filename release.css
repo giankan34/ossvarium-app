@@ -482,3 +482,13 @@ transform:translateY(-2px);
     }
 
 }
+
+/* =====================================
+   OSSVARIUM RELEASE — HEADER TITLE
+===================================== */
+
+.release-ossvarium-title {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-weight: 400;
+    letter-spacing: 2px;
+}
