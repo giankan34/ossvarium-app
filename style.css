@@ -3573,3 +3573,13 @@ body.codex-entering::before{
     }
 
 }
+
+/* =========================================
+   OSSVARIUM — RELEASE TITLES GOTHIC
+   ========================================= */
+
+.release-title {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
