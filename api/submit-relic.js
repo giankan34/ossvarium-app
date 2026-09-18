@@ -133,9 +133,19 @@ const payoutSummary = await sql`
             SUM(amount_pi)
                 FILTER (WHERE status = 'completed'),
             0
-        ) AS paid_out_pi
+        ) AS paid_out_pi,
+
+        COALESCE(
+            SUM(amount_pi)
+                FILTER (WHERE status = 'pending'),
+            0
+        ) AS pending_payout_pi
+
     FROM creator_payouts
-    WHERE creator_pi_uid = ${verifiedCreatorPiUid};
+
+    WHERE
+        creator_pi_uid =
+            ${verifiedCreatorPiUid};
 `;
 
 const totalEarnedPi =
@@ -150,10 +160,17 @@ const paidOutPi =
         payoutSummary[0]?.paid_out_pi || 0
     );
 
+const pendingPayoutPi =
+    Number(
+        payoutSummary[0]?.pending_payout_pi || 0
+    );
+
 const availableBalancePi =
     Math.max(
         0,
-        totalEarnedPi - paidOutPi
+        totalEarnedPi -
+        paidOutPi -
+        pendingPayoutPi
     );
 
     return res.status(200).json({
@@ -163,6 +180,9 @@ const availableBalancePi =
     earnings: {
         total_earned_pi:
             Number(totalEarnedPi.toFixed(4)),
+
+        pending_payout_pi:
+            Number(pendingPayoutPi.toFixed(4)),
 
         paid_out_pi:
             Number(paidOutPi.toFixed(4)),
