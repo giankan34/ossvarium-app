@@ -299,6 +299,19 @@ if (
         `${pendingPayout.toFixed(4)} Pi AWAITING PAYOUT`;
 }
 
+if (
+    availableBalance <= 0 &&
+    pendingPayout <= 0
+) {
+    requestPayoutButton.disabled = true;
+
+    requestPayoutButton.textContent =
+        "π NO BALANCE AVAILABLE";
+
+    payoutStatus.textContent =
+        "NO PAYOUT AVAILABLE";
+}
+
 requestPayoutButton.addEventListener(
     "click",
     async function () {
