@@ -334,11 +334,15 @@ if (authHeader.startsWith("Bearer ")) {
 
 if (req.method === "GET") {
 
-    if (!verifiedCreatorPiUid) {
-        return res.status(401).json({
-            error: "Pi login required"
-        });
-    }
+    if (
+    !verifiedCreatorPiUid &&
+    !verifiedCreatorEmail
+) {
+    return res.status(401).json({
+        error:
+            "Creator authentication required"
+    });
+}
 
     const relics = await sql`
     SELECT
@@ -374,7 +378,19 @@ COALESCE(
         ON p.relic_id = r.relic_id
 
     WHERE
+    (
+        ${verifiedCreatorPiUid} IS NOT NULL
+        AND
         r.creator_pi_uid = ${verifiedCreatorPiUid}
+    )
+    OR
+    (
+        ${verifiedCreatorPiUid} IS NULL
+        AND
+        ${verifiedCreatorEmail} IS NOT NULL
+        AND
+        LOWER(r.contact_email) = ${verifiedCreatorEmail}
+    )
 
     GROUP BY
         r.relic_id,
@@ -407,49 +423,72 @@ const salesHistory = await sql`
         ON r.relic_id = p.relic_id
 
     WHERE
+    (
+        ${verifiedCreatorPiUid} IS NOT NULL
+        AND
         r.creator_pi_uid = ${verifiedCreatorPiUid}
+    )
+    OR
+    (
+        ${verifiedCreatorPiUid} IS NULL
+        AND
+        ${verifiedCreatorEmail} IS NOT NULL
+        AND
+        LOWER(r.contact_email) = ${verifiedCreatorEmail}
+    )
 
     ORDER BY
         p.created_at DESC;
 `;
 
-const payoutSummary = await sql`
-    SELECT
-        COALESCE(
-            SUM(amount_pi)
-                FILTER (WHERE status = 'completed'),
-            0
-        ) AS paid_out_pi,
+let payoutSummary = [{
+    paid_out_pi: 0,
+    pending_payout_pi: 0
+}];
 
-        COALESCE(
-            SUM(amount_pi)
-                FILTER (WHERE status = 'pending'),
-            0
-        ) AS pending_payout_pi
+if (verifiedCreatorPiUid) {
+    payoutSummary = await sql`
+        SELECT
+            COALESCE(
+                SUM(amount_pi)
+                    FILTER (WHERE status = 'completed'),
+                0
+            ) AS paid_out_pi,
 
-    FROM creator_payouts
+            COALESCE(
+                SUM(amount_pi)
+                    FILTER (WHERE status = 'pending'),
+                0
+            ) AS pending_payout_pi
 
-    WHERE
-        creator_pi_uid =
-            ${verifiedCreatorPiUid};
-`;
+        FROM creator_payouts
 
-const payoutHistory = await sql`
-    SELECT
-        id,
-        amount_pi,
-        status,
-        pi_payment_id,
-        txid,
-        created_at,
-        completed_at
-    FROM creator_payouts
-    WHERE
-        creator_pi_uid =
-            ${verifiedCreatorPiUid}
-    ORDER BY
-        created_at DESC;
-`;
+        WHERE
+            creator_pi_uid =
+                ${verifiedCreatorPiUid};
+    `;
+}
+
+let payoutHistory = [];
+
+if (verifiedCreatorPiUid) {
+    payoutHistory = await sql`
+        SELECT
+            id,
+            amount_pi,
+            status,
+            pi_payment_id,
+            txid,
+            created_at,
+            completed_at
+        FROM creator_payouts
+        WHERE
+            creator_pi_uid =
+                ${verifiedCreatorPiUid}
+        ORDER BY
+            created_at DESC;
+    `;
+}
 
 const totalEarnedPi =
     relics.reduce(
