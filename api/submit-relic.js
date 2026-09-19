@@ -1,7 +1,7 @@
 const { neon } = require("@neondatabase/serverless");
 const PiNetwork = require("pi-backend").default;
-
 const { Resend } = require("resend");
+const crypto = require("crypto");
 
 const resend = new Resend(
     process.env.RESEND_API_KEY
@@ -154,15 +154,131 @@ if (
         WHERE id = ${verification[0].id};
     `;
 
-    return res.status(200).json({
-        success: true,
-        message:
-            "Email verified successfully"
-    });
+    const sessionExpiresAt =
+    Date.now() + 24 * 60 * 60 * 1000;
+
+const sessionPayload =
+    Buffer.from(
+        JSON.stringify({
+            email,
+            expiresAt: sessionExpiresAt
+        })
+    ).toString("base64url");
+
+const sessionSignature =
+    crypto
+        .createHmac(
+            "sha256",
+            process.env.CREATOR_SESSION_SECRET
+        )
+        .update(sessionPayload)
+        .digest("base64url");
+
+const creatorSession =
+    `${sessionPayload}.${sessionSignature}`;
+
+return res.status(200).json({
+    success: true,
+    message:
+        "Email verified successfully",
+    creatorSession,
+    expiresAt:
+        new Date(sessionExpiresAt)
+            .toISOString()
+});
 }
 
         let verifiedCreatorPiUid = null;
 let verifiedCreatorPiUsername = null;
+
+let verifiedCreatorEmail = null;
+
+const creatorSessionHeader =
+    req.headers["x-creator-session"] || "";
+
+if (creatorSessionHeader) {
+
+    try {
+
+        const [
+            sessionPayload,
+            sessionSignature
+        ] = creatorSessionHeader.split(".");
+
+        if (
+            !sessionPayload ||
+            !sessionSignature
+        ) {
+            throw new Error(
+                "Invalid creator session format"
+            );
+        }
+
+        const expectedSignature =
+            crypto
+                .createHmac(
+                    "sha256",
+                    process.env.CREATOR_SESSION_SECRET
+                )
+                .update(sessionPayload)
+                .digest("base64url");
+
+        const suppliedBuffer =
+            Buffer.from(sessionSignature);
+
+        const expectedBuffer =
+            Buffer.from(expectedSignature);
+
+        if (
+            suppliedBuffer.length !==
+                expectedBuffer.length ||
+            !crypto.timingSafeEqual(
+                suppliedBuffer,
+                expectedBuffer
+            )
+        ) {
+            throw new Error(
+                "Invalid creator session signature"
+            );
+        }
+
+        const sessionData =
+            JSON.parse(
+                Buffer.from(
+                    sessionPayload,
+                    "base64url"
+                ).toString("utf8")
+            );
+
+        if (
+            !sessionData.email ||
+            !sessionData.expiresAt ||
+            Date.now() >=
+                Number(sessionData.expiresAt)
+        ) {
+            throw new Error(
+                "Creator session expired"
+            );
+        }
+
+        verifiedCreatorEmail =
+            String(sessionData.email)
+                .trim()
+                .toLowerCase();
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM creator session error:",
+            error
+        );
+
+        return res.status(401).json({
+            error:
+                "Invalid or expired creator session"
+        });
+    }
+}
 
 const authHeader =
     req.headers.authorization || "";
