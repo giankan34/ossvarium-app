@@ -154,6 +154,23 @@ const payoutSummary = await sql`
             ${verifiedCreatorPiUid};
 `;
 
+const payoutHistory = await sql`
+    SELECT
+        id,
+        amount_pi,
+        status,
+        pi_payment_id,
+        txid,
+        created_at,
+        completed_at
+    FROM creator_payouts
+    WHERE
+        creator_pi_uid =
+            ${verifiedCreatorPiUid}
+    ORDER BY
+        created_at DESC;
+`;
+
 const totalEarnedPi =
     relics.reduce(
         (sum, relic) =>
@@ -194,9 +211,11 @@ const availableBalancePi =
             Number(paidOutPi.toFixed(4)),
 
         available_balance_pi:
-            Number(availableBalancePi.toFixed(4))
-    }
+    Number(availableBalancePi.toFixed(4))
+},
+payout_history: payoutHistory
 });
+
 }
 
 if (
