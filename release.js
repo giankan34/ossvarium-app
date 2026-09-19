@@ -61,11 +61,7 @@ async function loadRelease(){
         releases =
     await loadOssvariumCatalog();
 
-    console.log(
-    "OSSVARIUM RELEASES:",
-    releases
-);
-
+    
         const params =
         new URLSearchParams(
             window.location.search
