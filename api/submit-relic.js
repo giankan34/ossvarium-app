@@ -1,4 +1,10 @@
 const { neon } = require("@neondatabase/serverless");
+const PiNetwork = require("pi-backend").default;
+
+const pi = new PiNetwork(
+    process.env.PI_API_KEY,
+    process.env.PI_WALLET_PRIVATE_SEED
+);
 
 module.exports = async function handler(req, res) {
 
@@ -197,12 +203,228 @@ if (
     req.method === "POST" &&
     req.body?.action === "request_payout"
 ) {
-
     if (!verifiedCreatorPiUid) {
         return res.status(401).json({
             error: "Pi login required"
         });
     }
+
+    // -------------------------------------------------
+    // 1. RESUME AN EXISTING PENDING PAYOUT FIRST
+    // -------------------------------------------------
+
+    const existingPendingPayouts = await sql`
+        SELECT
+            id,
+            amount_pi,
+            status,
+            pi_payment_id,
+            txid,
+            created_at
+        FROM creator_payouts
+        WHERE
+            creator_pi_uid = ${verifiedCreatorPiUid}
+            AND status = 'pending'
+        ORDER BY created_at ASC
+        LIMIT 1;
+    `;
+
+    if (existingPendingPayouts.length > 0) {
+        const existingPayout = existingPendingPayouts[0];
+
+        // ---------------------------------------------
+        // 2. RECOVER OR CREATE PI PAYMENT ID
+        // ---------------------------------------------
+
+        if (!existingPayout.pi_payment_id) {
+            const incompletePayments =
+                await pi.getIncompleteServerPayments();
+
+            const matchingIncompletePayment =
+                incompletePayments.find(
+                    payment =>
+                        Number(payment.metadata?.payoutId) ===
+                        Number(existingPayout.id)
+                );
+
+            if (matchingIncompletePayment) {
+                existingPayout.pi_payment_id =
+                    matchingIncompletePayment.identifier;
+
+                await sql`
+                    UPDATE creator_payouts
+                    SET pi_payment_id =
+                        ${existingPayout.pi_payment_id}
+                    WHERE
+                        id = ${existingPayout.id}
+                        AND creator_pi_uid =
+                            ${verifiedCreatorPiUid}
+                        AND status = 'pending'
+                        AND pi_payment_id IS NULL;
+                `;
+
+                if (matchingIncompletePayment.transaction?.txid) {
+                    existingPayout.txid =
+                        matchingIncompletePayment.transaction.txid;
+
+                    await sql`
+                        UPDATE creator_payouts
+                        SET txid = ${existingPayout.txid}
+                        WHERE
+                            id = ${existingPayout.id}
+                            AND creator_pi_uid =
+                                ${verifiedCreatorPiUid}
+                            AND status = 'pending'
+                            AND txid IS NULL;
+                    `;
+                }
+            } else {
+                if (incompletePayments.length > 0) {
+                    return res.status(409).json({
+                        error:
+                            "Another incomplete Pi payment already exists"
+                    });
+                }
+
+                const paymentData = {
+                    amount: Number(existingPayout.amount_pi),
+                    memo:
+                        `OSSVARIUM creator payout #${existingPayout.id}`,
+                    metadata: {
+                        payoutId: existingPayout.id,
+                        type: "creator_payout"
+                    },
+                    uid: verifiedCreatorPiUid
+                };
+
+                existingPayout.pi_payment_id =
+                    await pi.createPayment(paymentData);
+
+                await sql`
+                    UPDATE creator_payouts
+                    SET pi_payment_id =
+                        ${existingPayout.pi_payment_id}
+                    WHERE
+                        id = ${existingPayout.id}
+                        AND creator_pi_uid =
+                            ${verifiedCreatorPiUid}
+                        AND status = 'pending'
+                        AND pi_payment_id IS NULL;
+                `;
+            }
+        }
+
+        // ---------------------------------------------
+        // 3. RECOVER TXID FROM PI IF IT ALREADY EXISTS
+        // ---------------------------------------------
+
+        if (
+            existingPayout.pi_payment_id &&
+            !existingPayout.txid
+        ) {
+            const piPayment =
+                await pi.getPayment(
+                    existingPayout.pi_payment_id
+                );
+
+            if (piPayment.transaction?.txid) {
+                existingPayout.txid =
+                    piPayment.transaction.txid;
+
+                await sql`
+                    UPDATE creator_payouts
+                    SET txid = ${existingPayout.txid}
+                    WHERE
+                        id = ${existingPayout.id}
+                        AND creator_pi_uid =
+                            ${verifiedCreatorPiUid}
+                        AND status = 'pending'
+                        AND txid IS NULL;
+                `;
+            }
+        }
+
+        // ---------------------------------------------
+        // 4. SUBMIT ONLY IF NO TXID EXISTS
+        // ---------------------------------------------
+
+        if (
+            existingPayout.pi_payment_id &&
+            !existingPayout.txid
+        ) {
+            existingPayout.txid =
+                await pi.submitPayment(
+                    existingPayout.pi_payment_id
+                );
+
+            await sql`
+                UPDATE creator_payouts
+                SET txid = ${existingPayout.txid}
+                WHERE
+                    id = ${existingPayout.id}
+                    AND creator_pi_uid =
+                        ${verifiedCreatorPiUid}
+                    AND status = 'pending'
+                    AND pi_payment_id =
+                        ${existingPayout.pi_payment_id}
+                    AND txid IS NULL;
+            `;
+        }
+
+        // ---------------------------------------------
+        // 5. COMPLETE AND ONLY THEN MARK PAID
+        // ---------------------------------------------
+
+        if (
+            existingPayout.pi_payment_id &&
+            existingPayout.txid
+        ) {
+            const completedPayment =
+                await pi.completePayment(
+                    existingPayout.pi_payment_id,
+                    existingPayout.txid
+                );
+
+            if (
+                completedPayment.status
+                    ?.developer_completed !== true
+            ) {
+                return res.status(502).json({
+                    error:
+                        "Pi payment was not confirmed as completed"
+                });
+            }
+
+            await sql`
+                UPDATE creator_payouts
+                SET
+                    status = 'completed',
+                    completed_at = NOW()
+                WHERE
+                    id = ${existingPayout.id}
+                    AND creator_pi_uid =
+                        ${verifiedCreatorPiUid}
+                    AND status = 'pending'
+                    AND pi_payment_id =
+                        ${existingPayout.pi_payment_id}
+                    AND txid =
+                        ${existingPayout.txid};
+            `;
+
+            existingPayout.status = "completed";
+        }
+
+        return res.status(200).json({
+            success: true,
+            payout: existingPayout,
+            resumed: true
+        });
+    }
+
+    // -------------------------------------------------
+    // 6. NO PENDING PAYOUT:
+    //    CALCULATE AVAILABLE CREATOR BALANCE
+    // -------------------------------------------------
 
     const earnings = await sql`
         SELECT
@@ -210,12 +432,9 @@ if (
                 SUM(p.artist_share_pi),
                 0
             ) AS total_earned_pi
-
         FROM purchases p
-
         INNER JOIN relics r
             ON r.relic_id = p.relic_id
-
         WHERE
             r.creator_pi_uid =
                 ${verifiedCreatorPiUid};
@@ -233,9 +452,7 @@ if (
                     ),
                 0
             ) AS reserved_pi
-
         FROM creator_payouts
-
         WHERE
             creator_pi_uid =
                 ${verifiedCreatorPiUid};
@@ -264,6 +481,10 @@ if (
             error: "No balance available for payout"
         });
     }
+
+    // -------------------------------------------------
+    // 7. CREATE NEW LOCAL PAYOUT REQUEST ONLY
+    // -------------------------------------------------
 
     const payout = await sql`
         INSERT INTO creator_payouts (
