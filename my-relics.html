@@ -531,6 +531,13 @@ requestPayoutButton.addEventListener(
         ${Number(relic.pi_earned || 0).toFixed(4)} Pi
     </strong>
 </p>
+
+<a
+    href="release.html?id=${encodeURIComponent(relic.relic_id)}"
+    class="submit-btn"
+>
+    ⚔ VIEW RELIC
+</a>
         `;
 
         relicsContainer.appendChild(card);
