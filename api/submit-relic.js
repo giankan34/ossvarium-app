@@ -237,8 +237,14 @@ if (
         // ---------------------------------------------
 
         if (!existingPayout.pi_payment_id) {
-            const incompletePayments =
-                await pi.getIncompleteServerPayments();
+            const incompletePaymentsResponse =
+    await pi.getIncompleteServerPayments();
+
+const incompletePayments =
+    Array.isArray(incompletePaymentsResponse)
+        ? incompletePaymentsResponse
+        : incompletePaymentsResponse
+            ?.incomplete_server_payments || [];
 
             const matchingIncompletePayment =
                 incompletePayments.find(
