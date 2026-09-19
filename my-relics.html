@@ -310,6 +310,65 @@ if (payoutHistory.length > 0) {
     relicsContainer.appendChild(
         payoutHistorySection
     );
+} 
+
+const salesHistory =
+    Array.isArray(result.sales_history)
+        ? result.sales_history
+        : [];
+
+if (salesHistory.length > 0) {
+    const salesHistorySection =
+        document.createElement("div");
+
+    salesHistorySection.className =
+        "submission-card";
+
+    salesHistorySection.innerHTML = `
+        <h2>☠ SALES HISTORY ☠</h2>
+
+        ${salesHistory.map(sale => {
+            const gross =
+                Number(sale.amount_pi || 0).toFixed(4);
+
+            const artistShare =
+                Number(sale.artist_share_pi || 0).toFixed(4);
+
+            const ossvariumFee =
+                Number(sale.ossvarium_fee_pi || 0).toFixed(4);
+
+            const date =
+                sale.created_at
+                    ? new Date(
+                        sale.created_at
+                    ).toLocaleDateString()
+                    : "-";
+
+            return `
+                <p>
+                    <strong>${sale.track_title || "Unknown Track"}</strong>
+                    <br>
+                    ${sale.artist || ""} — ${sale.release_title || ""}
+                    <br>
+                    ${sale.relic_id || ""}
+                    <br>
+                    SALE: <strong>${gross} Pi</strong>
+                    <br>
+                    YOUR SHARE (90%):
+                    <strong>${artistShare} Pi</strong>
+                    <br>
+                    OSSVARIUM FEE (10%):
+                    ${ossvariumFee} Pi
+                    <br>
+                    ${date}
+                </p>
+            `;
+        }).join("")}
+    `;
+
+    relicsContainer.appendChild(
+        salesHistorySection
+    );
 }
 
 const requestPayoutButton =

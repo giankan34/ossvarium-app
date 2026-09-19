@@ -133,6 +133,29 @@ COALESCE(
         r.created_at DESC;
 `;
 
+const salesHistory = await sql`
+    SELECT
+        p.id,
+        p.relic_id,
+        p.track_title,
+        p.amount_pi,
+        p.artist_share_pi,
+        p.ossvarium_fee_pi,
+        p.created_at,
+        r.artist,
+        r.release_title
+    FROM purchases p
+
+    INNER JOIN relics r
+        ON r.relic_id = p.relic_id
+
+    WHERE
+        r.creator_pi_uid = ${verifiedCreatorPiUid}
+
+    ORDER BY
+        p.created_at DESC;
+`;
+
 const payoutSummary = await sql`
     SELECT
         COALESCE(
@@ -213,7 +236,8 @@ const availableBalancePi =
         available_balance_pi:
     Number(availableBalancePi.toFixed(4))
 },
-payout_history: payoutHistory
+payout_history: payoutHistory,
+sales_history: salesHistory
 });
 
 }
