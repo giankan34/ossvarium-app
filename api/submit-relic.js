@@ -540,6 +540,52 @@ sales_history: salesHistory
 
 if (
     req.method === "POST" &&
+    req.body?.action === "update_relic"
+) {
+    if (!verifiedCreatorPiUid) {
+        return res.status(401).json({
+            error: "Pi login required"
+        });
+    }
+
+    const relicId =
+        String(req.body?.relicId || "").trim();
+
+    if (!relicId) {
+        return res.status(400).json({
+            error: "Relic ID is required"
+        });
+    }
+
+    const ownedRelics = await sql`
+        SELECT
+            relic_id,
+            artist,
+            release_title,
+            genre,
+            country,
+            release_year
+        FROM relics
+        WHERE
+            relic_id = ${relicId}
+            AND creator_pi_uid = ${verifiedCreatorPiUid}
+        LIMIT 1;
+    `;
+
+    if (ownedRelics.length === 0) {
+        return res.status(403).json({
+            error: "Relic not found or not owned by creator"
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        relic: ownedRelics[0]
+    });
+}
+
+if (
+    req.method === "POST" &&
     req.body?.action === "request_payout"
 ) {
     if (!verifiedCreatorPiUid) {
