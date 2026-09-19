@@ -266,6 +266,52 @@ relicsContainer.appendChild(
     earningsDashboard
 );
 
+const payoutHistory =
+    Array.isArray(result.payout_history)
+        ? result.payout_history
+        : [];
+
+if (payoutHistory.length > 0) {
+    const payoutHistorySection =
+        document.createElement("div");
+
+    payoutHistorySection.className =
+        "submission-card";
+
+    payoutHistorySection.innerHTML = `
+        <h2>☠ PAYOUT HISTORY ☠</h2>
+
+        ${payoutHistory.map(payout => {
+            const amount =
+                Number(payout.amount_pi || 0).toFixed(4);
+
+            const status =
+                String(payout.status || "").toUpperCase();
+
+            const dateValue =
+                payout.completed_at ||
+                payout.created_at;
+
+            const date = dateValue
+                ? new Date(dateValue).toLocaleDateString()
+                : "-";
+
+            return `
+                <p>
+                    <strong>${amount} Pi</strong>
+                    — ${status}
+                    <br>
+                    ${date}
+                </p>
+            `;
+        }).join("")}
+    `;
+
+    relicsContainer.appendChild(
+        payoutHistorySection
+    );
+}
+
 const requestPayoutButton =
     document.getElementById(
         "requestPayoutButton"
