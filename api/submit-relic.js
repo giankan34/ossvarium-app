@@ -48,6 +48,31 @@ module.exports = async function handler(req, res) {
             )
         );
 
+        const expiresAt =
+    new Date(
+        Date.now() + 10 * 60 * 1000
+    );
+
+await sql`
+    DELETE FROM creator_email_verifications
+    WHERE
+        email = ${email}
+        AND verified_at IS NULL;
+`;
+
+await sql`
+    INSERT INTO creator_email_verifications (
+        email,
+        verification_code,
+        expires_at
+    )
+    VALUES (
+        ${email},
+        ${verificationCode},
+        ${expiresAt.toISOString()}
+    );
+`;
+
     const { error } =
         await resend.emails.send({
             from:
@@ -78,6 +103,61 @@ module.exports = async function handler(req, res) {
         success: true,
         message:
             "Verification email sent"
+    });
+}
+
+if (
+    req.method === "POST" &&
+    req.body?.action === "verify_email_code"
+) {
+    const email =
+        String(req.body?.email || "")
+            .trim()
+            .toLowerCase();
+
+    const verificationCode =
+        String(req.body?.code || "")
+            .trim();
+
+    if (!email || !verificationCode) {
+        return res.status(400).json({
+            error:
+                "Email and verification code are required"
+        });
+    }
+
+    const verification = await sql`
+        SELECT
+            id,
+            email,
+            expires_at
+        FROM creator_email_verifications
+        WHERE
+            email = ${email}
+            AND verification_code = ${verificationCode}
+            AND verified_at IS NULL
+            AND expires_at > NOW()
+        ORDER BY created_at DESC
+        LIMIT 1;
+    `;
+
+    if (verification.length === 0) {
+        return res.status(401).json({
+            error:
+                "Invalid or expired verification code"
+        });
+    }
+
+    await sql`
+        UPDATE creator_email_verifications
+        SET verified_at = NOW()
+        WHERE id = ${verification[0].id};
+    `;
+
+    return res.status(200).json({
+        success: true,
+        message:
+            "Email verified successfully"
     });
 }
 
