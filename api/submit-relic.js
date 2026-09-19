@@ -1,6 +1,12 @@
 const { neon } = require("@neondatabase/serverless");
 const PiNetwork = require("pi-backend").default;
 
+const { Resend } = require("resend");
+
+const resend = new Resend(
+    process.env.RESEND_API_KEY
+);
+
 const pi = new PiNetwork(
     process.env.PI_API_KEY,
     process.env.PI_WALLET_PRIVATE_SEED
@@ -19,6 +25,61 @@ module.exports = async function handler(req, res) {
     try {
 
         const sql = neon(process.env.POSTGRES_URL);
+
+        if (
+    req.method === "POST" &&
+    req.body?.action === "send_email_verification"
+) {
+    const email =
+        String(req.body?.email || "")
+            .trim()
+            .toLowerCase();
+
+    if (!email) {
+        return res.status(400).json({
+            error: "Email is required"
+        });
+    }
+
+    const verificationCode =
+        String(
+            Math.floor(
+                100000 + Math.random() * 900000
+            )
+        );
+
+    const { error } =
+        await resend.emails.send({
+            from:
+                "OSSVARIUM <onboarding@resend.dev>",
+
+            to: email,
+
+            subject:
+                "OSSVARIUM Creator Verification",
+
+            text:
+                `Your OSSVARIUM verification code is: ${verificationCode}`
+        });
+
+    if (error) {
+        console.error(
+            "OSSVARIUM Resend error:",
+            error
+        );
+
+        return res.status(500).json({
+            error:
+                "Verification email could not be sent"
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message:
+            "Verification email sent"
+    });
+}
 
         let verifiedCreatorPiUid = null;
 let verifiedCreatorPiUsername = null;
