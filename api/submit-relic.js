@@ -422,19 +422,19 @@ const salesHistory = await sql`
         ON r.relic_id = p.relic_id
 
     WHERE
-    (
-        ${verifiedCreatorPiUid} IS NOT NULL
-        AND
-        r.creator_pi_uid = ${verifiedCreatorPiUid}
-    )
-    OR
-    (
-        ${verifiedCreatorPiUid} IS NULL
-        AND
-        ${verifiedCreatorEmail} IS NOT NULL
-        AND
-        LOWER(r.contact_email) = ${verifiedCreatorEmail}
-    )
+(
+    ${verifiedCreatorPiUid}::text IS NOT NULL
+    AND
+    r.creator_pi_uid = ${verifiedCreatorPiUid}::text
+)
+OR
+(
+    ${verifiedCreatorPiUid}::text IS NULL
+    AND
+    ${verifiedCreatorEmail}::text IS NOT NULL
+    AND
+    LOWER(r.contact_email) = ${verifiedCreatorEmail}::text
+)
 
     ORDER BY
         p.created_at DESC;
