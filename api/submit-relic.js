@@ -378,20 +378,19 @@ COALESCE(
         ON p.relic_id = r.relic_id
 
     WHERE
-    (
-        ${verifiedCreatorPiUid} IS NOT NULL
-        AND
-        r.creator_pi_uid = ${verifiedCreatorPiUid}
-    )
-    OR
-    (
-        ${verifiedCreatorPiUid} IS NULL
-        AND
-        ${verifiedCreatorEmail} IS NOT NULL
-        AND
-        LOWER(r.contact_email) = ${verifiedCreatorEmail}
-    )
-
+(
+    CAST(${verifiedCreatorPiUid} AS TEXT) IS NOT NULL
+    AND
+    r.creator_pi_uid = ${verifiedCreatorPiUid}
+)
+OR
+(
+    CAST(${verifiedCreatorPiUid} AS TEXT) IS NULL
+    AND
+    CAST(${verifiedCreatorEmail} AS TEXT) IS NOT NULL
+    AND
+    LOWER(r.contact_email) = ${verifiedCreatorEmail}
+)
     GROUP BY
         r.relic_id,
         r.artist,
