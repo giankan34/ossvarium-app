@@ -66,13 +66,28 @@ async function loadRelease(){
             window.location.search
         );
 
-        releaseId =
-        Number(
-            params.get("id") || 0
-        );
+        const releaseParam =
+    params.get("id") || "0";
 
-        release =
+if (
+    releaseParam
+        .toUpperCase()
+        .startsWith("OSV-")
+) {
+    release =
+        releases.find(item =>
+            String(
+                item.relicId || ""
+            ).toUpperCase() ===
+            releaseParam.toUpperCase()
+        );
+} else {
+    releaseId =
+        Number(releaseParam);
+
+    release =
         releases[releaseId];
+}
 
         if(!release){
 
