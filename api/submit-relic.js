@@ -977,44 +977,91 @@ const existingTracks =
         ? ownedRelic[0].tracks
         : [];
 
-const updatedTracks =
-    incomingTracks
-        ? existingTracks.map(function (track, index) {
+const updatedTracks = existingTracks.map(function (track, index) {
+    const incoming =
+        incomingTracks[index] || {};
 
-            const incoming =
-                incomingTracks[index] || {};
+    const price =
+        Number(incoming.priceEur);
 
-            const price =
-                Number(incoming.priceEur);
+    return {
+        ...track,
 
-            return {
-                ...track,
+        title:
+            String(
+                incoming.title ??
+                track.title ??
+                ""
+            ).trim(),
 
-                title:
-                    String(
-                        incoming.title ??
-                        track.title ??
-                        ""
-                    ).trim(),
+        priceEur:
+            Number.isFinite(price) &&
+            price >= 0
+                ? price
+                : Number(track.priceEur || 0),
 
-                priceEur:
-                    Number.isFinite(price) &&
-                    price >= 0
-                        ? price
-                        : Number(track.priceEur || 0),
+        forSale:
+            typeof incoming.forSale === "boolean"
+                ? incoming.forSale
+                : Boolean(track.forSale),
 
-                forSale:
-                    typeof incoming.forSale === "boolean"
-                        ? incoming.forSale
-                        : Boolean(track.forSale),
+        allowDownload:
+            typeof incoming.allowDownload === "boolean"
+                ? incoming.allowDownload
+                : Boolean(track.allowDownload)
+    };
+});
 
-                allowDownload:
-                    typeof incoming.allowDownload === "boolean"
-                        ? incoming.allowDownload
-                        : Boolean(track.allowDownload)
-            };
-        })
-        : existingTracks;
+if (incomingTracks.length > existingTracks.length) {
+    const newTracks =
+        incomingTracks.slice(existingTracks.length);
+
+    for (const incoming of newTracks) {
+        const title =
+            String(incoming?.title || "").trim();
+
+        const audio =
+            String(incoming?.audio || "").trim();
+
+        const price =
+            Number(incoming?.priceEur);
+
+        if (!title) {
+            return res.status(400).json({
+                error: "New track title is required"
+            });
+        }
+
+        if (
+            !audio ||
+            !audio.startsWith("uploads/") ||
+            !audio.toLowerCase().endsWith(".mp3")
+        ) {
+            return res.status(400).json({
+                error: "Invalid new track audio"
+            });
+        }
+
+        if (
+            !Number.isFinite(price) ||
+            price < 0
+        ) {
+            return res.status(400).json({
+                error: "Invalid new track price"
+            });
+        }
+
+        updatedTracks.push({
+            title: title,
+            audio: audio,
+            forSale:
+                Boolean(incoming.forSale),
+            priceEur: price,
+            allowDownload:
+                Boolean(incoming.allowDownload)
+        });
+    }
+}
 
     const updatedRelics = await sql`
         UPDATE relics

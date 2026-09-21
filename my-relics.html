@@ -130,6 +130,72 @@ connectButton.addEventListener(
     }
 );
 
+async function uploadCreatorTrackAudio(file) {
+
+    if (!file) {
+        throw new Error("Choose an MP3 file.");
+    }
+
+    if (
+        file.type !== "audio/mpeg" &&
+        !file.name.toLowerCase().endsWith(".mp3")
+    ) {
+        throw new Error(
+            "Only MP3 files are allowed."
+        );
+    }
+
+    const urlResponse =
+        await fetch(
+            "/api/audio-upload-url",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    fileName: file.name,
+                    contentType: "audio/mpeg"
+                })
+            }
+        );
+
+    const urlResult =
+        await urlResponse.json();
+
+    if (!urlResponse.ok) {
+        throw new Error(
+            urlResult.error ||
+            "Could not prepare private audio upload."
+        );
+    }
+
+    const uploadResponse =
+        await fetch(
+            urlResult.uploadUrl,
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type":
+                        "audio/mpeg"
+                },
+
+                body: file
+            }
+        );
+
+    if (!uploadResponse.ok) {
+        throw new Error(
+            "Private MP3 upload failed."
+        );
+    }
+
+    return urlResult.objectKey;
+}
 
 async function loadMyRelics() {
 
@@ -677,6 +743,66 @@ editButton.addEventListener("click", function () {
 
 </div>
 
+<div class="add-track-section">
+
+    <h3>☠ ADD TRACK</h3>
+
+    <label>
+        TITLE
+        <input
+            type="text"
+            class="add-track-title"
+            placeholder="Track title"
+        >
+    </label>
+
+    <label>
+        MP3 FILE
+        <input
+            type="file"
+            class="add-track-audio"
+            accept=".mp3,audio/mpeg"
+        >
+    </label>
+
+    <label>
+        PRICE (€)
+        <input
+            type="number"
+            class="add-track-price"
+            min="0"
+            step="0.01"
+            value="0"
+        >
+    </label>
+
+    <label>
+        <input
+            type="checkbox"
+            class="add-track-for-sale"
+        >
+        FOR SALE
+    </label>
+
+    <label>
+        <input
+            type="checkbox"
+            class="add-track-download"
+        >
+        ALLOW DOWNLOAD
+    </label>
+
+    <button
+        type="button"
+        class="submit-btn add-track-btn"
+    >
+        ⚔ ADD TRACK
+    </button>
+
+    <p class="add-track-status"></p>
+
+</div>
+
         <button
             type="button"
             class="submit-btn save-relic-btn"
@@ -686,6 +812,107 @@ editButton.addEventListener("click", function () {
     `;
 
     card.appendChild(editor);
+
+    const addTrackButton =
+    editor.querySelector(".add-track-btn");
+
+const addTrackStatus =
+    editor.querySelector(".add-track-status");
+
+addTrackButton.addEventListener(
+    "click",
+    async function () {
+
+        try {
+            const title =
+                editor.querySelector(
+                    ".add-track-title"
+                ).value.trim();
+
+            const audioFile =
+                editor.querySelector(
+                    ".add-track-audio"
+                ).files[0];
+
+            const price =
+                Number(
+                    editor.querySelector(
+                        ".add-track-price"
+                    ).value
+                );
+
+            const forSale =
+                editor.querySelector(
+                    ".add-track-for-sale"
+                ).checked;
+
+            const allowDownload =
+                editor.querySelector(
+                    ".add-track-download"
+                ).checked;
+
+            if (!title) {
+                throw new Error(
+                    "Track title is required."
+                );
+            }
+
+            if (!audioFile) {
+                throw new Error(
+                    "Choose an MP3 file."
+                );
+            }
+
+            if (
+                !Number.isFinite(price) ||
+                price < 0
+            ) {
+                throw new Error(
+                    "Invalid track price."
+                );
+            }
+
+            addTrackButton.disabled = true;
+            addTrackStatus.textContent =
+                "UPLOADING MP3...";
+
+            const audio =
+                await uploadCreatorTrackAudio(
+                    audioFile
+                );
+
+            if (!Array.isArray(relic.tracks)) {
+                relic.tracks = [];
+            }
+
+            relic.tracks.push({
+                title: title,
+                audio: audio,
+                forSale: forSale,
+                priceEur: price,
+                allowDownload: allowDownload
+            });
+
+            addTrackStatus.textContent =
+                "☠ TRACK READY — SAVE CHANGES";
+
+            addTrackButton.disabled = true;
+
+        } catch (error) {
+
+            console.error(
+                "OSSVARIUM add track error:",
+                error
+            );
+
+            addTrackStatus.textContent =
+                error.message ||
+                "COULD NOT ADD TRACK";
+
+            addTrackButton.disabled = false;
+        }
+    }
+);
 
 const saveButton =
     editor.querySelector(".save-relic-btn");
@@ -755,47 +982,43 @@ saveButton.addEventListener("click", async function () {
         ".edit-bio"
     ).value.trim(),
 
-tracks:
-    Array.from(
-        editor.querySelectorAll(
-            ".edit-track"
-        )
-    ).map(function (trackEditor) {
+tracks: relic.tracks.map(function (originalTrack, index) {
 
-        const index =
+    const trackEditor =
+        editor.querySelector(
+            `.edit-track[data-track-index="${index}"]`
+        );
+
+    if (!trackEditor) {
+        return originalTrack;
+    }
+
+    return {
+        ...originalTrack,
+
+        title:
+            trackEditor.querySelector(
+                ".edit-track-title"
+            ).value.trim(),
+
+        priceEur:
             Number(
-                trackEditor.dataset.trackIndex
-            );
-
-        const originalTrack =
-            relic.tracks[index] || {};
-
-        return {
-            ...originalTrack,
-
-            title:
                 trackEditor.querySelector(
-                    ".edit-track-title"
-                ).value.trim(),
+                    ".edit-track-price"
+                ).value
+            ),
 
-            priceEur:
-                Number(
-                    trackEditor.querySelector(
-                        ".edit-track-price"
-                    ).value
-                ),
+        forSale:
+            trackEditor.querySelector(
+                ".edit-track-for-sale"
+            ).checked,
 
-            forSale:
-                trackEditor.querySelector(
-                    ".edit-track-for-sale"
-                ).checked,
-
-            allowDownload:
-                trackEditor.querySelector(
-                    ".edit-track-download"
-                ).checked
-        };
-    })
+        allowDownload:
+            trackEditor.querySelector(
+                ".edit-track-download"
+            ).checked
+    };
+})
         })
     });
 
