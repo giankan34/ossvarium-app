@@ -349,20 +349,6 @@ if (req.query.ticket) {
         // PROTECTED AUDIO MODE
         // ---------------------------------
 
-        const ownership = await sql`
-            SELECT 1
-            FROM purchases
-            WHERE user_uid = ${userUid}
-              AND relic_id = ${relicId}
-              AND track_title = ${trackTitle}
-            LIMIT 1;
-        `;
-
-        if (ownership.length === 0) {
-            return res.status(403).json({
-                error: "Track not owned"
-            });
-        }
 
         // ---------------------------------
         // LOAD RELIC
@@ -401,6 +387,29 @@ if (req.query.ticket) {
                 error: "Private audio not found"
             });
         }
+
+        // ------------------------------
+// PAID TRACK OWNERSHIP CHECK
+// Free tracks do not require purchase
+// ------------------------------
+
+if (track.forSale === true) {
+
+    const ownership = await sql`
+        SELECT 1
+        FROM purchases
+        WHERE user_uid = ${userUid}
+          AND relic_id = ${relicId}
+          AND track_title = ${trackTitle}
+        LIMIT 1;
+    `;
+
+    if (ownership.length === 0) {
+        return res.status(403).json({
+            error: "Track not owned"
+        });
+    }
+}
 
         if (
     mode === "download" &&
