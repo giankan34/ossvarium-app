@@ -401,7 +401,7 @@ OR
         r.cover,
         r.genre,
         r.country,
-        r.tracks,
+        r.tracks
 
     ORDER BY
         r.created_at DESC;
