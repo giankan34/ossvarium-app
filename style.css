@@ -3859,3 +3859,179 @@ body.codex-entering::before{
         min-height: 46px;
     }
 }
+
+/* =========================================
+   OSSVARIUM — CREATOR MP3 FILE INPUT
+   ========================================= */
+
+.add-track-audio {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px;
+    border: 1px solid rgba(170, 55, 48, 0.55);
+    border-radius: 6px;
+
+    background: rgba(8, 4, 4, 0.85);
+    color: #d7c6bd;
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.add-track-audio::file-selector-button {
+    padding: 10px 14px;
+    margin-right: 12px;
+
+    border: 1px solid rgba(190, 60, 52, 0.7);
+    border-radius: 4px;
+
+    background: rgba(55, 15, 13, 0.9);
+    color: #e0b7aa;
+
+    font-family: inherit;
+    font-weight: bold;
+    letter-spacing: 1px;
+
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .add-track-audio {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .add-track-audio::file-selector-button {
+        display: block;
+        width: 100%;
+        margin: 0 0 8px 0;
+    }
+}
+
+/* =========================================
+   OSSVARIUM — CREATOR EDIT FORM COMPACT
+   ========================================= */
+
+.relic-edit-form {
+    padding: 24px 26px;
+}
+
+.relic-edit-form > h3 {
+    margin: 0 0 24px;
+}
+
+.relic-edit-form > label {
+    display: block;
+    margin: 0 0 16px;
+
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.relic-edit-form > label > input,
+.relic-edit-form > label > textarea {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    margin-top: 7px;
+}
+
+.relic-edit-form > label > textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+@media (max-width: 600px) {
+
+    .relic-edit-form {
+        padding: 20px 14px;
+    }
+
+    .relic-edit-form > h3 {
+        margin-bottom: 20px;
+    }
+
+    .relic-edit-form > label {
+        margin-bottom: 12px;
+    }
+
+    .relic-edit-form > label > input {
+        min-height: 46px;
+    }
+
+    .relic-edit-form > label > textarea {
+        min-height: 105px;
+    }
+}
+
+/* =========================================
+   OSSVARIUM — CREATOR EDIT FINAL POLISH
+   ========================================= */
+
+.edit-tracks-section {
+    margin-top: 32px;
+}
+
+.edit-tracks-section > h3 {
+    margin-bottom: 22px;
+    text-align: center;
+}
+
+.edit-track {
+    margin-bottom: 24px;
+    padding: 22px;
+
+    border: 1px solid rgba(170, 55, 48, 0.55);
+    border-radius: 12px;
+
+    background: rgba(15, 5, 5, 0.72);
+}
+
+.edit-track > p {
+    margin: 0 0 18px;
+
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.add-track-section {
+    margin-top: 28px;
+    padding: 22px;
+
+    border: 1px dashed rgba(190, 90, 75, 0.55);
+    border-radius: 12px;
+
+    background: rgba(8, 3, 3, 0.55);
+}
+
+.add-track-section > h3 {
+    margin: 0 0 22px;
+    text-align: center;
+}
+
+.remove-track-btn {
+    width: 100%;
+    margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+
+    .edit-track,
+    .add-track-section {
+        padding: 18px 14px;
+    }
+
+    .edit-tracks-section {
+        margin-top: 26px;
+    }
+
+    .add-track-section {
+        margin-top: 22px;
+    }
+}
