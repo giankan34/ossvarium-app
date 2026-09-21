@@ -3614,3 +3614,248 @@ body.codex-entering::before{
     }
 
 }
+
+/* =========================================
+   OSSVARIUM — CREATOR RELIC EDITOR
+   ========================================= */
+
+.relic-edit-form {
+    margin-top: 22px;
+    padding: 22px 18px;
+    background: linear-gradient(
+        180deg,
+        rgba(35, 8, 8, 0.96),
+        rgba(12, 5, 5, 0.98)
+    );
+    border: 1px solid rgba(190, 55, 45, 0.55);
+    border-radius: 14px;
+    box-shadow:
+        0 0 22px rgba(120, 20, 20, 0.18),
+        inset 0 0 25px rgba(0, 0, 0, 0.45);
+}
+
+.relic-edit-form > h3 {
+    margin: 0 0 24px;
+    text-align: center;
+    color: #d53b32;
+    font-size: 28px;
+    letter-spacing: 2px;
+}
+
+/* Main relic fields */
+
+.relic-edit-form > label {
+    display: block;
+    margin: 0 0 15px;
+    color: #c9b7ad;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+}
+
+.relic-edit-form > label > input,
+.relic-edit-form > label > textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+    padding: 11px 12px;
+
+    color: #eee;
+    background: #110909;
+
+    border: 1px solid #5c2a26;
+    border-radius: 6px;
+
+    font: inherit;
+    font-size: 15px;
+
+    outline: none;
+}
+
+.relic-edit-form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.relic-edit-form input:focus,
+.relic-edit-form textarea:focus {
+    border-color: #b73a31;
+    box-shadow: 0 0 8px rgba(190, 50, 40, 0.35);
+}
+
+/* =========================================
+   EXISTING TRACKS
+   ========================================= */
+
+.edit-tracks-section {
+    margin-top: 28px;
+}
+
+.edit-tracks-section > h3 {
+    margin-bottom: 18px;
+    text-align: center;
+    color: #d53b32;
+    font-size: 24px;
+    letter-spacing: 2px;
+}
+
+.edit-track {
+    margin-bottom: 18px;
+    padding: 16px;
+
+    background: rgba(20, 8, 8, 0.88);
+    border: 1px solid rgba(145, 48, 40, 0.55);
+    border-radius: 10px;
+}
+
+.edit-track > p {
+    margin: 0 0 14px;
+    text-align: center;
+    color: #d8c2b7;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.edit-track label {
+    display: block;
+    margin-bottom: 13px;
+    color: #c8b7ae;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.edit-track input[type="text"],
+.edit-track input[type="number"] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+    padding: 10px 11px;
+
+    color: #eee;
+    background: #0d0707;
+
+    border: 1px solid #542723;
+    border-radius: 5px;
+
+    font: inherit;
+}
+
+/* Checkbox rows */
+
+.edit-track label:has(input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 10px 0;
+}
+
+.edit-track input[type="checkbox"],
+.add-track-section input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #a72d27;
+}
+
+/* Remove */
+
+.remove-track-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 11px;
+
+    color: #d8645b;
+    background: rgba(80, 12, 12, 0.25);
+
+    border: 1px solid #7d2924;
+    border-radius: 6px;
+
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+}
+
+/* =========================================
+   ADD NEW TRACK
+   ========================================= */
+
+.add-track-section {
+    margin-top: 28px;
+    padding: 18px 16px;
+
+    background: rgba(10, 6, 6, 0.85);
+    border: 1px dashed #70403a;
+    border-radius: 10px;
+}
+
+.add-track-section h3 {
+    margin: 0 0 18px;
+    text-align: center;
+    color: #caa092;
+    letter-spacing: 2px;
+}
+
+.add-track-section label {
+    display: block;
+    margin-bottom: 14px;
+    color: #c8b7ae;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.add-track-section input[type="text"],
+.add-track-section input[type="number"],
+.add-track-section input[type="file"] {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+
+.add-track-section input[type="text"],
+.add-track-section input[type="number"] {
+    padding: 10px 11px;
+    color: #eee;
+    background: #0d0707;
+    border: 1px solid #542723;
+    border-radius: 5px;
+}
+
+.add-track-section label:has(input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .relic-edit-form {
+        margin-top: 18px;
+        padding: 18px 12px;
+    }
+
+    .relic-edit-form > h3 {
+        font-size: 24px;
+    }
+
+    .edit-tracks-section > h3 {
+        font-size: 22px;
+    }
+
+    .edit-track {
+        padding: 14px 12px;
+    }
+
+    .relic-edit-form input,
+    .relic-edit-form textarea {
+        font-size: 16px;
+    }
+
+    .remove-track-btn {
+        min-height: 46px;
+    }
+}
