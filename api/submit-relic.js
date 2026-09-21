@@ -1118,6 +1118,98 @@ if (incomingTracks.length > existingTracks.length) {
     });
 }
 
+if (
+    req.method === "POST" &&
+    req.body?.action === "save_artist_profile"
+) {
+    if (!verifiedCreatorPiUid) {
+        return res.status(401).json({
+            error: "Pi login required"
+        });
+    }
+
+    const artistName =
+        String(req.body?.artistName || "").trim();
+
+    const bio =
+        String(req.body?.bio || "").trim();
+
+    const artistImage =
+        String(req.body?.artistImage || "").trim();
+
+    const banner =
+        String(req.body?.banner || "").trim();
+
+    const links =
+        req.body?.links &&
+        typeof req.body.links === "object"
+            ? req.body.links
+            : {};
+
+    if (!artistName) {
+        return res.status(400).json({
+            error: "Artist name is required"
+        });
+    }
+
+    const savedProfile = await sql`
+        INSERT INTO artist_profiles (
+            creator_pi_uid,
+            creator_pi_username,
+            artist_name,
+            bio,
+            artist_image,
+            banner,
+            links,
+            updated_at
+        )
+        VALUES (
+            ${verifiedCreatorPiUid},
+            ${verifiedCreatorPiUsername || ""},
+            ${artistName},
+            ${bio},
+            ${artistImage},
+            ${banner},
+            ${JSON.stringify(links)}::jsonb,
+            NOW()
+        )
+
+        ON CONFLICT (creator_pi_uid)
+        DO UPDATE SET
+            creator_pi_username =
+                EXCLUDED.creator_pi_username,
+            artist_name =
+                EXCLUDED.artist_name,
+            bio =
+                EXCLUDED.bio,
+            artist_image =
+                EXCLUDED.artist_image,
+            banner =
+                EXCLUDED.banner,
+            links =
+                EXCLUDED.links,
+            updated_at =
+                NOW()
+
+        RETURNING
+            creator_pi_uid,
+            creator_pi_username,
+            artist_name,
+            bio,
+            artist_image,
+            banner,
+            links,
+            created_at,
+            updated_at;
+    `;
+
+    return res.status(200).json({
+        success: true,
+        message: "Artist profile saved successfully",
+        profile: savedProfile[0]
+    });
+}
+
         const {
             artist,
             release,
