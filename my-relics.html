@@ -496,6 +496,12 @@ requestPayoutButton.addEventListener(
 
     result.relics.forEach(function (relic) {
 
+        console.log(
+    "OSSVARIUM CREATOR RELIC:",
+    relic.relic_id,
+    relic.tracks
+);
+
         const card =
             document.createElement("div");
 
@@ -530,6 +536,11 @@ requestPayoutButton.addEventListener(
     <strong>
         ${Number(relic.pi_earned || 0).toFixed(4)} Pi
     </strong>
+</p>
+
+<p style="font-size:12px; word-break:break-all;">
+    DEBUG TRACKS:
+    ${JSON.stringify(relic.tracks)}
 </p>
 
 <a
