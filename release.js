@@ -599,6 +599,50 @@ function initializePlayer(){
                 ".track-buy-btn"
             );
 
+            if (
+    !buyButton &&
+    audioSource?.startsWith("uploads/")
+) {
+    const trackTitle =
+        trackEntry
+            .querySelector(".track-title")
+            ?.textContent
+            ?.trim();
+
+    if (!piAuth) {
+        piAuth =
+            await authenticatePiUser();
+    }
+
+    if (!piAuth) {
+        alert(
+            "Pi authentication is required."
+        );
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "⏳";
+
+    const protectedUrl =
+        await getOwnedAudioUrl(
+            release.relicId,
+            trackTitle
+        );
+
+    button.disabled = false;
+
+    if (!protectedUrl) {
+        button.textContent = "▶";
+        alert(
+            "Protected audio unavailable."
+        );
+        return;
+    }
+
+    audioSource = protectedUrl;
+}
+
         // Paid/private track
         if (buyButton) {
 
