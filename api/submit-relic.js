@@ -354,6 +354,7 @@ if (req.method === "GET") {
         r.cover,
         r.genre,
         r.country,
+        r.tracks,
 
         COUNT(p.id)::int AS track_sales,
 
@@ -399,7 +400,8 @@ OR
         r.created_at,
         r.cover,
         r.genre,
-        r.country
+        r.country,
+        r.tracks,
 
     ORDER BY
         r.created_at DESC;
