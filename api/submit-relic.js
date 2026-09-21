@@ -952,6 +952,70 @@ if (
         });
     }
 
+    const incomingTracks =
+    Array.isArray(req.body?.tracks)
+        ? req.body.tracks
+        : null;
+
+const ownedRelic = await sql`
+    SELECT tracks
+    FROM relics
+    WHERE
+        relic_id = ${relicId}
+        AND creator_pi_uid = ${verifiedCreatorPiUid}
+    LIMIT 1;
+`;
+
+if (ownedRelic.length === 0) {
+    return res.status(403).json({
+        error: "Relic not found or you do not own this relic"
+    });
+}
+
+const existingTracks =
+    Array.isArray(ownedRelic[0].tracks)
+        ? ownedRelic[0].tracks
+        : [];
+
+const updatedTracks =
+    incomingTracks
+        ? existingTracks.map(function (track, index) {
+
+            const incoming =
+                incomingTracks[index] || {};
+
+            const price =
+                Number(incoming.priceEur);
+
+            return {
+                ...track,
+
+                title:
+                    String(
+                        incoming.title ??
+                        track.title ??
+                        ""
+                    ).trim(),
+
+                priceEur:
+                    Number.isFinite(price) &&
+                    price >= 0
+                        ? price
+                        : Number(track.priceEur || 0),
+
+                forSale:
+                    typeof incoming.forSale === "boolean"
+                        ? incoming.forSale
+                        : Boolean(track.forSale),
+
+                allowDownload:
+                    typeof incoming.allowDownload === "boolean"
+                        ? incoming.allowDownload
+                        : Boolean(track.allowDownload)
+            };
+        })
+        : existingTracks;
+
     const updatedRelics = await sql`
         UPDATE relics
 
@@ -963,6 +1027,7 @@ if (
             release_year = ${releaseYear},
             description = ${description},
             bio = ${bio},
+            tracks = ${JSON.stringify(updatedTracks)}::jsonb,
             updated_at = NOW()
 
         WHERE
@@ -978,6 +1043,7 @@ if (
             release_year,
             description,
             bio,
+            tracks,
             status,
             updated_at;
     `;

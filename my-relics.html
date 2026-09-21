@@ -751,12 +751,53 @@ saveButton.addEventListener("click", async function () {
                         ).value.trim(),
 
                     bio:
-                        editor.querySelector(
-                            ".edit-bio"
-                        ).value.trim()
-                })
-            }
-        );
+    editor.querySelector(
+        ".edit-bio"
+    ).value.trim(),
+
+tracks:
+    Array.from(
+        editor.querySelectorAll(
+            ".edit-track"
+        )
+    ).map(function (trackEditor) {
+
+        const index =
+            Number(
+                trackEditor.dataset.trackIndex
+            );
+
+        const originalTrack =
+            relic.tracks[index] || {};
+
+        return {
+            ...originalTrack,
+
+            title:
+                trackEditor.querySelector(
+                    ".edit-track-title"
+                ).value.trim(),
+
+            priceEur:
+                Number(
+                    trackEditor.querySelector(
+                        ".edit-track-price"
+                    ).value
+                ),
+
+            forSale:
+                trackEditor.querySelector(
+                    ".edit-track-for-sale"
+                ).checked,
+
+            allowDownload:
+                trackEditor.querySelector(
+                    ".edit-track-download"
+                ).checked
+        };
+    })
+        })
+    });
 
         const result =
             await response.json();
