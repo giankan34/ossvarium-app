@@ -538,11 +538,6 @@ requestPayoutButton.addEventListener(
     </strong>
 </p>
 
-<p style="font-size:12px; word-break:break-all;">
-    DEBUG TRACKS:
-    ${JSON.stringify(relic.tracks)}
-</p>
-
 <a
     href="release.html?id=${encodeURIComponent(relic.relic_id)}"
     class="submit-btn"
@@ -628,6 +623,59 @@ editButton.addEventListener("click", function () {
         <textarea
             class="edit-bio"
         >${relic.bio || ""}</textarea>
+
+        <div class="edit-tracks-section">
+    <h3>⚔ TRACKS</h3>
+
+    ${(Array.isArray(relic.tracks) ? relic.tracks : []).map((track, index) => `
+        <div class="edit-track" data-track-index="${index}">
+
+            <p>
+                TRACK ${index + 1}
+            </p>
+
+            <label>
+                TITLE
+                <input
+                    type="text"
+                    class="edit-track-title"
+                    value="${track.title || ""}"
+                >
+            </label>
+
+            <label>
+                PRICE (€)
+                <input
+                    type="number"
+                    class="edit-track-price"
+                    min="0"
+                    step="0.01"
+                    value="${Number(track.priceEur || 0)}"
+                >
+            </label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    class="edit-track-for-sale"
+                    ${track.forSale ? "checked" : ""}
+                >
+                FOR SALE
+            </label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    class="edit-track-download"
+                    ${track.allowDownload ? "checked" : ""}
+                >
+                ALLOW DOWNLOAD
+            </label>
+
+        </div>
+    `).join("")}
+
+</div>
 
         <button
             type="button"
