@@ -538,9 +538,97 @@ requestPayoutButton.addEventListener(
 >
     ⚔ VIEW RELIC
 </a>
+
+<button
+    type="button"
+    class="submit-btn edit-relic-btn"
+    data-relic-id="${relic.relic_id}"
+>
+    ⚔ EDIT RELIC
+</button>
         `;
 
         relicsContainer.appendChild(card);
+
+        const editButton =
+    card.querySelector(".edit-relic-btn");
+
+editButton.addEventListener("click", function () {
+
+    const existingEditor =
+        card.querySelector(".relic-edit-form");
+
+    if (existingEditor) {
+        existingEditor.remove();
+        return;
+    }
+
+    const editor =
+        document.createElement("div");
+
+    editor.className = "relic-edit-form";
+
+    editor.innerHTML = `
+        <hr>
+
+        <h3>⚔ EDIT RELIC</h3>
+
+        <label>ARTIST</label>
+        <input
+            type="text"
+            class="edit-artist"
+            value="${relic.artist || ""}"
+        >
+
+        <label>RELEASE TITLE</label>
+        <input
+            type="text"
+            class="edit-release-title"
+            value="${relic.release_title || ""}"
+        >
+
+        <label>COUNTRY</label>
+        <input
+            type="text"
+            class="edit-country"
+            value="${relic.country || ""}"
+        >
+
+        <label>GENRE</label>
+        <input
+            type="text"
+            class="edit-genre"
+            value="${relic.genre || ""}"
+        >
+
+        <label>RELEASE YEAR</label>
+        <input
+            type="number"
+            class="edit-release-year"
+            value="${relic.release_year || ""}"
+        >
+
+        <label>DESCRIPTION</label>
+        <textarea
+            class="edit-description"
+        >${relic.description || ""}</textarea>
+
+        <label>BIO</label>
+        <textarea
+            class="edit-bio"
+        >${relic.bio || ""}</textarea>
+
+        <button
+            type="button"
+            class="submit-btn save-relic-btn"
+        >
+            ☠ SAVE CHANGES
+        </button>
+    `;
+
+    card.appendChild(editor);
+});
+
     });
 }
 

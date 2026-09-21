@@ -902,6 +902,98 @@ const incompletePayments =
     });
 }
 
+if (
+    req.method === "POST" &&
+    req.body?.action === "edit_relic"
+) {
+    if (!verifiedCreatorPiUid) {
+        return res.status(401).json({
+            error: "Pi login required"
+        });
+    }
+
+    const relicId =
+        String(req.body?.relicId || "").trim();
+
+    const artist =
+        String(req.body?.artist || "").trim();
+
+    const releaseTitle =
+        String(req.body?.releaseTitle || "").trim();
+
+    const country =
+        String(req.body?.country || "").trim();
+
+    const genre =
+        String(req.body?.genre || "").trim();
+
+    const releaseYear =
+        req.body?.releaseYear
+            ? Number(req.body.releaseYear)
+            : null;
+
+    const description =
+        String(req.body?.description || "").trim();
+
+    const bio =
+        String(req.body?.bio || "").trim();
+
+    if (!relicId) {
+        return res.status(400).json({
+            error: "Relic ID is required"
+        });
+    }
+
+    if (!artist || !releaseTitle) {
+        return res.status(400).json({
+            error: "Artist and release title are required"
+        });
+    }
+
+    const updatedRelics = await sql`
+        UPDATE relics
+
+        SET
+            artist = ${artist},
+            release_title = ${releaseTitle},
+            country = ${country},
+            genre = ${genre},
+            release_year = ${releaseYear},
+            description = ${description},
+            bio = ${bio},
+            updated_at = NOW()
+
+        WHERE
+            relic_id = ${relicId}
+            AND creator_pi_uid = ${verifiedCreatorPiUid}
+
+        RETURNING
+            relic_id,
+            artist,
+            release_title,
+            country,
+            genre,
+            release_year,
+            description,
+            bio,
+            status,
+            updated_at;
+    `;
+
+    if (updatedRelics.length === 0) {
+        return res.status(403).json({
+            error:
+                "Relic not found or you do not own this relic"
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "Relic updated successfully",
+        relic: updatedRelics[0]
+    });
+}
+
         const {
             artist,
             release,
