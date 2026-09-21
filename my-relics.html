@@ -738,6 +738,14 @@ editButton.addEventListener("click", function () {
                 ALLOW DOWNLOAD
             </label>
 
+            <button
+    type="button"
+    class="remove-track-btn"
+    data-track-index="${index}"
+>
+    ☠ REMOVE TRACK
+</button>
+
         </div>
     `).join("")}
 
@@ -916,6 +924,46 @@ addTrackButton.addEventListener(
 
 const saveButton =
     editor.querySelector(".save-relic-btn");
+
+    const removeTrackButtons =
+    editor.querySelectorAll(".remove-track-btn");
+
+removeTrackButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+
+        const trackIndex =
+            Number(button.dataset.trackIndex);
+
+        if (
+            !Number.isInteger(trackIndex) ||
+            !Array.isArray(relic.tracks) ||
+            !relic.tracks[trackIndex]
+        ) {
+            return;
+        }
+
+        const trackTitle =
+            relic.tracks[trackIndex].title ||
+            `Track ${trackIndex + 1}`;
+
+        const confirmed = confirm(
+            `Remove "${trackTitle}" from this relic?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        relic.tracks.splice(trackIndex, 1);
+
+        alert(
+            '☠ TRACK REMOVED — PRESS "SAVE CHANGES" TO CONFIRM'
+        );
+
+        editButton.click();
+        editButton.click();
+    });
+});
 
 saveButton.addEventListener("click", async function () {
 

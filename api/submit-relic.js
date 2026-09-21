@@ -977,7 +977,16 @@ const existingTracks =
         ? ownedRelic[0].tracks
         : [];
 
-const updatedTracks = existingTracks.map(function (track, index) {
+        const incomingExistingTrackCount =
+    Math.min(
+        incomingTracks.length,
+        existingTracks.length
+    );
+
+const updatedTracks = existingTracks
+    .slice(0, incomingExistingTrackCount)
+    .map(function (track, index) {
+        
     const incoming =
         incomingTracks[index] || {};
 
