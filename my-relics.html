@@ -627,6 +627,112 @@ editButton.addEventListener("click", function () {
     `;
 
     card.appendChild(editor);
+
+const saveButton =
+    editor.querySelector(".save-relic-btn");
+
+saveButton.addEventListener("click", async function () {
+
+    const originalText =
+        saveButton.textContent;
+
+    saveButton.disabled = true;
+    saveButton.textContent =
+        "☠ SAVING...";
+
+    try {
+
+        const response = await fetch(
+            "/api/submit-relic",
+            {
+                method: "POST",
+
+                headers: {
+    "Content-Type":
+        "application/json",
+
+    Authorization:
+        `Bearer ${creatorPiAuth.accessToken}`
+},
+
+                body: JSON.stringify({
+                    action: "edit_relic",
+
+                    relicId:
+                        relic.relic_id,
+
+                    artist:
+                        editor.querySelector(
+                            ".edit-artist"
+                        ).value.trim(),
+
+                    releaseTitle:
+                        editor.querySelector(
+                            ".edit-release-title"
+                        ).value.trim(),
+
+                    country:
+                        editor.querySelector(
+                            ".edit-country"
+                        ).value.trim(),
+
+                    genre:
+                        editor.querySelector(
+                            ".edit-genre"
+                        ).value.trim(),
+
+                    releaseYear:
+                        editor.querySelector(
+                            ".edit-release-year"
+                        ).value,
+
+                    description:
+                        editor.querySelector(
+                            ".edit-description"
+                        ).value.trim(),
+
+                    bio:
+                        editor.querySelector(
+                            ".edit-bio"
+                        ).value.trim()
+                })
+            }
+        );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error ||
+                "Could not update relic"
+            );
+        }
+
+        alert(
+            "☠ RELIC UPDATED SUCCESSFULLY"
+        );
+
+        await loadMyRelics();
+
+    } catch (error) {
+
+        console.error(
+            "OSSVARIUM relic edit error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "COULD NOT UPDATE RELIC"
+        );
+
+        saveButton.disabled = false;
+        saveButton.textContent =
+            originalText;
+    }
+});
+
 });
 
     });
