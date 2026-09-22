@@ -1431,6 +1431,16 @@ editArtistProfileButton.addEventListener(
     "click",
     function () {
 
+        if (artistProfileEditor.style.display === "block") {
+    artistProfileEditor.style.display = "none";
+    editArtistProfileButton.textContent =
+        "⚔ EDIT ARTIST PROFILE";
+    return;
+}
+
+editArtistProfileButton.textContent =
+    "⚔ CLOSE ARTIST PROFILE";
+
         const profile =
             creatorArtistProfile || {};
 
