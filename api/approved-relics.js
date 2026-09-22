@@ -14,31 +14,54 @@ module.exports = async function handler(req, res) {
             neon(process.env.POSTGRES_URL);
 
         const relics = await sql`
-            SELECT
-                id,
-                relic_id,
-                artist,
-                release_title,
-                country,
-                genre,
-                release_year,
-                description,
-                bio,
-                cover,
-                artist_image,
-                banner,
-                price_pi,
-                price_eur,
-                supporters,
-                links,
-                tracks,
-                similar_artists,
-                approved_at,
-                status
-            FROM relics
-            WHERE status = 'approved'
-            ORDER BY approved_at DESC;
-        `;
+    SELECT
+        r.id,
+        r.relic_id,
+        r.artist,
+        r.release_title,
+        r.country,
+        r.genre,
+        r.release_year,
+        r.description,
+
+        COALESCE(ap.bio, r.bio) AS bio,
+
+        r.cover,
+
+        COALESCE(
+            NULLIF(ap.artist_image, ''),
+            r.artist_image
+        ) AS artist_image,
+
+        COALESCE(
+            NULLIF(ap.banner, ''),
+            r.banner
+        ) AS banner,
+
+        r.price_pi,
+        r.price_eur,
+        r.supporters,
+
+        CASE
+            WHEN ap.creator_pi_uid IS NOT NULL
+            THEN ap.links
+            ELSE r.links
+        END AS links,
+
+        r.tracks,
+        r.similar_artists,
+        r.approved_at,
+        r.status
+
+    FROM relics r
+
+    LEFT JOIN artist_profiles ap
+        ON ap.creator_pi_uid = r.creator_pi_uid
+
+    WHERE r.status = 'approved'
+
+    ORDER BY r.approved_at DESC;
+`;
 
         return res.status(200).json({
             success: true,
