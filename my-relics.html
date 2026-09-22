@@ -41,12 +41,81 @@
             </button>
 
             <div
+    id="creatorEmailLogin"
+    style="margin-top:20px;">
+
+    <p class="submission-text">
+        OR ACCESS YOUR CREATOR ARCHIVE BY EMAIL
+    </p>
+
+    <input
+        type="email"
+        id="creatorEmail"
+        placeholder="YOUR CREATOR EMAIL"
+    >
+
+    <button
+        type="button"
+        id="sendCreatorCode"
+        class="submit-btn"
+        style="margin-top:10px;">
+        ⚔ SEND VERIFICATION CODE
+    </button>
+
+    <div
+        id="creatorCodeSection"
+        style="display:none; margin-top:15px;">
+
+        <input
+            type="text"
+            id="creatorVerificationCode"
+            placeholder="6-DIGIT CODE"
+            inputmode="numeric"
+            maxlength="6"
+        >
+
+        <button
+            type="button"
+            id="verifyCreatorCode"
+            class="submit-btn"
+            style="margin-top:10px;">
+            ⚔ VERIFY EMAIL
+        </button>
+
+    </div>
+
+    <div
+        id="creatorEmailStatus"
+        class="submission-text">
+    </div>
+
+</div>
+
+            <div
                 id="creatorStatus"
                 class="submission-text">
 
                 CONNECT YOUR PI ACCOUNT TO VIEW YOUR RELICS
 
             </div>
+
+            <div
+    id="artistProfileSection"
+    style="display:none; margin-top:30px;">
+
+    <button
+        type="button"
+        id="editArtistProfileButton"
+        class="submit-btn">
+        ⚔ EDIT ARTIST PROFILE
+    </button>
+
+    <div
+        id="artistProfileEditor"
+        style="display:none; margin-top:20px;">
+    </div>
+
+</div>
 
             <div id="myRelicsContainer"></div>
 
@@ -82,6 +151,175 @@ const creatorStatus =
 const relicsContainer =
     document.getElementById("myRelicsContainer");
 
+const artistProfileSection =
+    document.getElementById("artistProfileSection");
+
+const editArtistProfileButton =
+    document.getElementById("editArtistProfileButton");
+
+const artistProfileEditor =
+    document.getElementById("artistProfileEditor");
+
+    const creatorEmail =
+    document.getElementById("creatorEmail");
+
+const sendCreatorCode =
+    document.getElementById("sendCreatorCode");
+
+const creatorCodeSection =
+    document.getElementById("creatorCodeSection");
+
+const creatorVerificationCode =
+    document.getElementById("creatorVerificationCode");
+
+const verifyCreatorCode =
+    document.getElementById("verifyCreatorCode");
+
+const creatorEmailStatus =
+    document.getElementById("creatorEmailStatus");
+
+    sendCreatorCode.addEventListener(
+    "click",
+    async function () {
+        const email =
+            creatorEmail.value.trim();
+
+        if (!email) {
+            creatorEmailStatus.textContent =
+                "ENTER YOUR CREATOR EMAIL";
+            return;
+        }
+
+        try {
+            sendCreatorCode.disabled = true;
+            sendCreatorCode.textContent =
+                "SENDING...";
+
+            const response = await fetch(
+                "/api/submit-relic",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        action:
+                            "send_email_verification",
+                        email: email
+                    })
+                }
+            );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error ||
+                    "COULD NOT SEND VERIFICATION CODE"
+                );
+            }
+
+            creatorCodeSection.style.display =
+                "block";
+
+            creatorEmailStatus.textContent =
+                "⚔ VERIFICATION CODE SENT";
+
+        } catch (error) {
+            console.error(
+                "OSSVARIUM email verification error:",
+                error
+            );
+
+            creatorEmailStatus.textContent =
+                error.message ||
+                "COULD NOT SEND VERIFICATION CODE";
+
+        } finally {
+            sendCreatorCode.disabled = false;
+            sendCreatorCode.textContent =
+                "⚔ SEND VERIFICATION CODE";
+        }
+    }
+);
+
+verifyCreatorCode.addEventListener(
+    "click",
+    async function () {
+        const email =
+            creatorEmail.value.trim();
+
+        const code =
+            creatorVerificationCode.value.trim();
+
+        if (!email || !code) {
+            creatorEmailStatus.textContent =
+                "ENTER EMAIL AND VERIFICATION CODE";
+            return;
+        }
+
+        try {
+            verifyCreatorCode.disabled = true;
+            verifyCreatorCode.textContent =
+                "VERIFYING...";
+
+            const response = await fetch(
+                "/api/submit-relic",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        action:
+                            "verify_email_code",
+                        email: email,
+                        code: code
+                    })
+                }
+            );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error ||
+                    "COULD NOT VERIFY CODE"
+                );
+            }
+
+            localStorage.setItem(
+                "ossvariumCreatorSession",
+                result.creatorSession
+            );
+
+            creatorEmailStatus.textContent =
+                "⚔ CREATOR EMAIL VERIFIED";
+
+            await loadMyRelics();
+
+        } catch (error) {
+            console.error(
+                "OSSVARIUM creator verification error:",
+                error
+            );
+
+            creatorEmailStatus.textContent =
+                error.message ||
+                "COULD NOT VERIFY CODE";
+
+        } finally {
+            verifyCreatorCode.disabled = false;
+            verifyCreatorCode.textContent =
+                "⚔ VERIFY CODE";
+        }
+    }
+);
+
 
 connectButton.addEventListener(
     "click",
@@ -109,6 +347,8 @@ connectButton.addEventListener(
 
             connectButton.textContent =
                 "π PI ACCOUNT CONNECTED";
+
+            artistProfileSection.style.display = "block";
 
             await loadMyRelics();
 
@@ -197,24 +437,47 @@ async function uploadCreatorTrackAudio(file) {
     return urlResult.objectKey;
 }
 
+let creatorArtistProfile = null;
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
 async function loadMyRelics() {
 
     relicsContainer.innerHTML =
         "<p class='submission-text'>LOADING RELICS...</p>";
 
-    const response = await fetch(
-        "/api/submit-relic",
-        {
-            method: "GET",
-
-            headers: {
-                Authorization:
-                    `Bearer ${creatorPiAuth.accessToken}`
-            },
-
-            cache: "no-store"
-        }
+    const creatorSession =
+    localStorage.getItem(
+        "ossvariumCreatorSession"
     );
+
+const requestHeaders = {};
+
+if (creatorPiAuth?.accessToken) {
+    requestHeaders.Authorization =
+        `Bearer ${creatorPiAuth.accessToken}`;
+}
+
+if (creatorSession) {
+    requestHeaders["x-creator-session"] =
+        creatorSession;
+}
+
+const response = await fetch(
+    "/api/submit-relic",
+    {
+        method: "GET",
+        headers: requestHeaders,
+        cache: "no-store"
+    }
+);
 
     const result = await response.json();
 
@@ -224,6 +487,9 @@ async function loadMyRelics() {
             "Could not load relics"
         );
     }
+
+    creatorArtistProfile =
+    result.artist_profile || null;
 
     if (!result.relics?.length) {
 
@@ -982,11 +1248,21 @@ saveButton.addEventListener("click", async function () {
                 method: "POST",
 
                 headers: {
-    "Content-Type":
-        "application/json",
-
-    Authorization:
-        `Bearer ${creatorPiAuth.accessToken}`
+    "Content-Type": "application/json",
+    ...(creatorPiAuth?.accessToken
+        ? {
+            Authorization:
+                `Bearer ${creatorPiAuth.accessToken}`
+        }
+        : {}),
+    ...(localStorage.getItem("ossvariumCreatorSession")
+        ? {
+            "x-creator-session":
+                localStorage.getItem(
+                    "ossvariumCreatorSession"
+                )
+        }
+        : {})
 },
 
                 body: JSON.stringify({
@@ -1108,6 +1384,298 @@ tracks: relic.tracks.map(function (originalTrack, index) {
 
     });
 }
+
+editArtistProfileButton.addEventListener(
+    "click",
+    function () {
+
+        const profile =
+            creatorArtistProfile || {};
+
+        const links =
+            profile.links || {};
+
+        artistProfileEditor.innerHTML = `
+            <h2>⚔ ARTIST PROFILE</h2>
+
+            <label>ARTIST NAME</label>
+            <input
+                type="text"
+                id="profileArtistName"
+                value="${escapeHtml(profile.artist_name || "")}"
+            >
+
+            <label>BIO</label>
+            <textarea
+                id="profileBio"
+                rows="6"
+            >${escapeHtml(profile.bio || "")}</textarea>
+
+            <label>ARTIST IMAGE</label>
+            <input
+                type="text"
+                id="profileArtistImage"
+                value="${escapeHtml(profile.artist_image || "")}"
+                placeholder="Image URL"
+            >
+
+            <label>BANNER</label>
+            <input
+                type="text"
+                id="profileBanner"
+                value="${escapeHtml(profile.banner || "")}"
+                placeholder="Banner URL"
+            >
+
+            <label>BANDCAMP</label>
+            <input
+                type="url"
+                id="profileBandcamp"
+                value="${escapeHtml(links.bandcamp || "")}"
+            >
+
+            <label>SPOTIFY</label>
+            <input
+                type="url"
+                id="profileSpotify"
+                value="${escapeHtml(links.spotify || "")}"
+            >
+
+            <label>YOUTUBE</label>
+            <input
+                type="url"
+                id="profileYoutube"
+                value="${escapeHtml(links.youtube || "")}"
+            >
+
+            <label>INSTAGRAM</label>
+            <input
+                type="url"
+                id="profileInstagram"
+                value="${escapeHtml(links.instagram || "")}"
+            >
+
+            <label>FACEBOOK</label>
+            <input
+                type="url"
+                id="profileFacebook"
+                value="${escapeHtml(links.facebook || "")}"
+            >
+
+            <label>WEBSITE</label>
+            <input
+                type="url"
+                id="profileWebsite"
+                value="${escapeHtml(links.website || "")}"
+            >
+
+            <label>MERCH</label>
+            <input
+                type="url"
+                id="profileMerch"
+                value="${escapeHtml(links.merch || "")}"
+            >
+
+            <button
+                type="button"
+                id="saveArtistProfileButton"
+                class="submit-btn"
+                style="margin-top:20px;">
+                ⚔ SAVE ARTIST PROFILE
+            </button>
+
+            <div
+                id="artistProfileStatus"
+                class="submission-text">
+            </div>
+        `;
+
+        artistProfileEditor.style.display =
+            "block";
+
+            const saveArtistProfileButton =
+    document.getElementById(
+        "saveArtistProfileButton"
+    );
+
+const artistProfileStatus =
+    document.getElementById(
+        "artistProfileStatus"
+    );
+
+saveArtistProfileButton.addEventListener(
+    "click",
+    async function () {
+
+        const originalText =
+            saveArtistProfileButton.textContent;
+
+        try {
+            saveArtistProfileButton.disabled = true;
+            saveArtistProfileButton.textContent =
+                "⚔ SAVING...";
+
+            artistProfileStatus.textContent = "";
+
+            const response = await fetch(
+                "/api/submit-relic",
+                {
+                    method: "POST",
+
+                    headers: {
+    "Content-Type": "application/json",
+    ...(creatorPiAuth?.accessToken
+        ? {
+            Authorization:
+                `Bearer ${creatorPiAuth.accessToken}`
+        }
+        : {}),
+    ...(localStorage.getItem("ossvariumCreatorSession")
+        ? {
+            "x-creator-session":
+                localStorage.getItem(
+                    "ossvariumCreatorSession"
+                )
+        }
+        : {})
+},
+
+                    body: JSON.stringify({
+                        action:
+                            "save_artist_profile",
+
+                        artistName:
+                            document
+                                .getElementById(
+                                    "profileArtistName"
+                                )
+                                .value
+                                .trim(),
+
+                        bio:
+                            document
+                                .getElementById(
+                                    "profileBio"
+                                )
+                                .value
+                                .trim(),
+
+                        artistImage:
+                            document
+                                .getElementById(
+                                    "profileArtistImage"
+                                )
+                                .value
+                                .trim(),
+
+                        banner:
+                            document
+                                .getElementById(
+                                    "profileBanner"
+                                )
+                                .value
+                                .trim(),
+
+                        links: {
+                            bandcamp:
+                                document
+                                    .getElementById(
+                                        "profileBandcamp"
+                                    )
+                                    .value
+                                    .trim(),
+
+                            spotify:
+                                document
+                                    .getElementById(
+                                        "profileSpotify"
+                                    )
+                                    .value
+                                    .trim(),
+
+                            youtube:
+                                document
+                                    .getElementById(
+                                        "profileYoutube"
+                                    )
+                                    .value
+                                    .trim(),
+
+                            instagram:
+                                document
+                                    .getElementById(
+                                        "profileInstagram"
+                                    )
+                                    .value
+                                    .trim(),
+
+                            facebook:
+                                document
+                                    .getElementById(
+                                        "profileFacebook"
+                                    )
+                                    .value
+                                    .trim(),
+
+                            website:
+                                document
+                                    .getElementById(
+                                        "profileWebsite"
+                                    )
+                                    .value
+                                    .trim(),
+
+                            merch:
+                                document
+                                    .getElementById(
+                                        "profileMerch"
+                                    )
+                                    .value
+                                    .trim()
+                        }
+                    })
+                }
+            );
+
+            const result =
+                await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error ||
+                    "Could not save artist profile"
+                );
+            }
+
+            creatorArtistProfile =
+                result.profile;
+
+            artistProfileStatus.textContent =
+                "☠ ARTIST PROFILE SAVED SUCCESSFULLY";
+
+        } catch (error) {
+
+            console.error(
+                "OSSVARIUM artist profile error:",
+                error
+            );
+
+            artistProfileStatus.textContent =
+                error.message ||
+                "COULD NOT SAVE ARTIST PROFILE";
+
+        } finally {
+
+            saveArtistProfileButton.disabled =
+                false;
+
+            saveArtistProfileButton.textContent =
+                originalText;
+        }
+    }
+);
+    }
+);
 
     </script>
 

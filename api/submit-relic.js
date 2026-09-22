@@ -516,6 +516,34 @@ const availableBalancePi =
         pendingPayoutPi
     );
 
+    const artistProfile = await sql`
+    SELECT
+        id,
+        creator_pi_uid,
+        creator_pi_username,
+        creator_email,
+        artist_name,
+        bio,
+        artist_image,
+        banner,
+        links,
+        created_at,
+        updated_at
+    FROM artist_profiles
+    WHERE
+        (
+            ${verifiedCreatorPiUid}::text IS NOT NULL
+            AND creator_pi_uid = ${verifiedCreatorPiUid}::text
+        )
+        OR
+        (
+            ${verifiedCreatorPiUid}::text IS NULL
+            AND ${verifiedCreatorEmail}::text IS NOT NULL
+            AND LOWER(creator_email) = ${verifiedCreatorEmail}::text
+        )
+    LIMIT 1;
+`;
+
     return res.status(200).json({
     success: true,
     username: verifiedCreatorPiUsername,
@@ -534,7 +562,8 @@ const availableBalancePi =
     Number(availableBalancePi.toFixed(4))
 },
 payout_history: payoutHistory,
-sales_history: salesHistory
+sales_history: salesHistory,
+artist_profile: artistProfile[0] || null
 });
 
 }
@@ -1122,11 +1151,14 @@ if (
     req.method === "POST" &&
     req.body?.action === "save_artist_profile"
 ) {
-    if (!verifiedCreatorPiUid) {
-        return res.status(401).json({
-            error: "Pi login required"
-        });
-    }
+    if (
+    !verifiedCreatorPiUid &&
+    !verifiedCreatorEmail
+) {
+    return res.status(401).json({
+        error: "Creator authentication required"
+    });
+}
 
     const artistName =
         String(req.body?.artistName || "").trim();
@@ -1152,10 +1184,15 @@ if (
         });
     }
 
-    const savedProfile = await sql`
+    let savedProfile;
+
+if (verifiedCreatorPiUid) {
+
+    savedProfile = await sql`
         INSERT INTO artist_profiles (
             creator_pi_uid,
             creator_pi_username,
+            creator_email,
             artist_name,
             bio,
             artist_image,
@@ -1166,6 +1203,7 @@ if (
         VALUES (
             ${verifiedCreatorPiUid},
             ${verifiedCreatorPiUsername || ""},
+            ${verifiedCreatorEmail || null},
             ${artistName},
             ${bio},
             ${artistImage},
@@ -1175,9 +1213,16 @@ if (
         )
 
         ON CONFLICT (creator_pi_uid)
+        WHERE creator_pi_uid IS NOT NULL
+
         DO UPDATE SET
             creator_pi_username =
                 EXCLUDED.creator_pi_username,
+            creator_email =
+                COALESCE(
+                    EXCLUDED.creator_email,
+                    artist_profiles.creator_email
+                ),
             artist_name =
                 EXCLUDED.artist_name,
             bio =
@@ -1192,8 +1237,10 @@ if (
                 NOW()
 
         RETURNING
+            id,
             creator_pi_uid,
             creator_pi_username,
+            creator_email,
             artist_name,
             bio,
             artist_image,
@@ -1202,6 +1249,60 @@ if (
             created_at,
             updated_at;
     `;
+
+} else {
+
+    savedProfile = await sql`
+        INSERT INTO artist_profiles (
+            creator_email,
+            artist_name,
+            bio,
+            artist_image,
+            banner,
+            links,
+            updated_at
+        )
+        VALUES (
+            ${verifiedCreatorEmail},
+            ${artistName},
+            ${bio},
+            ${artistImage},
+            ${banner},
+            ${JSON.stringify(links)}::jsonb,
+            NOW()
+        )
+
+        ON CONFLICT (LOWER(creator_email))
+        WHERE creator_email IS NOT NULL
+
+        DO UPDATE SET
+            artist_name =
+                EXCLUDED.artist_name,
+            bio =
+                EXCLUDED.bio,
+            artist_image =
+                EXCLUDED.artist_image,
+            banner =
+                EXCLUDED.banner,
+            links =
+                EXCLUDED.links,
+            updated_at =
+                NOW()
+
+        RETURNING
+            id,
+            creator_pi_uid,
+            creator_pi_username,
+            creator_email,
+            artist_name,
+            bio,
+            artist_image,
+            banner,
+            links,
+            created_at,
+            updated_at;
+    `;
+}
 
     return res.status(200).json({
         success: true,
