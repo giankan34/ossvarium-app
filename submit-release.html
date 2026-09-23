@@ -57,20 +57,23 @@
     placeholder="Short artist biography...">
 </textarea>
 
-<label for="artistImage">Artist Image URL</label>
+<label for="artistImage">Artist Image</label>
 <input
-    type="url"
+    type="file"
     id="artistImage"
-    placeholder="https://...">
+    accept="image/jpeg,image/png,image/webp">
 
-<label for="banner">Artist Banner URL</label>
+<label for="banner">Artist Banner</label>
 <input
-    type="url"
+    type="file"
     id="banner"
-    placeholder="https://...">
+    accept="image/jpeg,image/png,image/webp">
 
-                <label for="coverArtwork">Cover Artwork URL</label>
-                <input type="url" id="coverArtwork">
+                <label for="coverArtwork">Cover Artwork</label>
+<input
+    type="file"
+    id="coverArtwork"
+    accept="image/jpeg,image/png,image/webp">
 
                 <label for="bandcamp">Bandcamp Release</label>
 <input
@@ -459,6 +462,71 @@ async function uploadPrivateAudio(file) {
     return urlResult.objectKey;
 }
 
+async function uploadImage(file) {
+    if (!file) {
+        return "";
+    }
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+        throw new Error(
+            "Only JPEG, PNG and WEBP images are allowed."
+        );
+    }
+
+    const urlResponse = await fetch(
+        "/api/audio-upload-url",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                fileName: file.name,
+                contentType: file.type
+            })
+        }
+    );
+
+    const urlResult =
+        await urlResponse.json();
+
+    if (!urlResponse.ok) {
+        throw new Error(
+            urlResult.error ||
+            "Could not prepare image upload."
+        );
+    }
+
+    const uploadResponse = await fetch(
+        urlResult.uploadUrl,
+        {
+            method: "PUT",
+
+            headers: {
+                "Content-Type": file.type
+            },
+
+            body: file
+        }
+    );
+
+    if (!uploadResponse.ok) {
+        throw new Error(
+            "Image upload failed."
+        );
+    }
+
+    return urlResult.objectKey;
+}
+
 document.getElementById("relicSubmissionForm")
 .addEventListener("submit", async function(event){
 
@@ -541,6 +609,24 @@ for (const row of trackRows) {
     });
 }
 
+const artistImageFile =
+    document.getElementById("artistImage").files[0];
+
+const bannerFile =
+    document.getElementById("banner").files[0];
+
+const coverArtworkFile =
+    document.getElementById("coverArtwork").files[0];
+
+const artistImageObjectKey =
+    await uploadImage(artistImageFile);
+
+const bannerObjectKey =
+    await uploadImage(bannerFile);
+
+const coverArtworkObjectKey =
+    await uploadImage(coverArtworkFile);
+
     const submission = {
     id: Date.now(),
 
@@ -552,7 +638,7 @@ for (const row of trackRows) {
 
     tracks: tracks,
         
-        artist: document.getElementById("artistName").value.trim(),
+        artistImage: artistImageObjectKey,
         release: document.getElementById("releaseTitle").value.trim(),
         country: document.getElementById("country").value.trim(),
         genre: document.getElementById("genre").value.trim(),
@@ -560,8 +646,8 @@ for (const row of trackRows) {
         description: document.getElementById("description").value.trim(),
         bio:document.getElementById("bio").value.trim(),
         artistImage:document.getElementById("artistImage").value.trim(),
-        banner:document.getElementById("banner").value.trim(),
-        cover: document.getElementById("coverArtwork").value.trim(),
+        banner: bannerObjectKey,
+        cover: coverArtworkObjectKey,
         bandcamp:document.getElementById("bandcamp").value.trim(),
         spotify:document.getElementById("spotify").value.trim(),
         youtube:document.getElementById("youtube").value.trim(),

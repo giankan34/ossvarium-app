@@ -28,13 +28,18 @@ module.exports = async function handler(req, res) {
             });
         }
 
-        if (
-            contentType !== "audio/mpeg"
-        ) {
-            return res.status(400).json({
-                error: "Only MP3 files are allowed"
-            });
-        }
+        const allowedContentTypes = [
+    "audio/mpeg",
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+];
+
+if (!allowedContentTypes.includes(contentType)) {
+    return res.status(400).json({
+        error: "Only MP3, JPEG, PNG and WEBP files are allowed"
+    });
+}
 
         const safeName =
             fileName.replace(
@@ -42,8 +47,13 @@ module.exports = async function handler(req, res) {
                 "_"
             );
 
+        const uploadFolder =
+            contentType === "audio/mpeg"
+        ? "uploads"
+        : "artist-images";
+
         const objectKey =
-            `uploads/${Date.now()}-${safeName}`;
+            `${uploadFolder}/${Date.now()}-${safeName}`;
 
         const s3 = new S3Client({
             endpoint:
@@ -72,7 +82,7 @@ module.exports = async function handler(req, res) {
                     objectKey,
 
                 ContentType:
-                    "audio/mpeg"
+                    contentType
             });
 
         const uploadUrl =

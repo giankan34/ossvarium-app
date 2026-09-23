@@ -1,5 +1,14 @@
 const { neon } = require("@neondatabase/serverless");
 
+const {
+    S3Client,
+    GetObjectCommand
+} = require("@aws-sdk/client-s3");
+
+const {
+    getSignedUrl
+} = require("@aws-sdk/s3-request-presigner");
+
 module.exports = async function handler(req, res) {
 
     if (req.method !== "GET") {
@@ -12,6 +21,24 @@ module.exports = async function handler(req, res) {
 
         const sql =
             neon(process.env.POSTGRES_URL);
+
+        const s3 = new S3Client({
+    endpoint:
+        process.env.AWS_ENDPOINT_URL_S3,
+
+    region:
+        process.env.AWS_REGION,
+
+    credentials: {
+        accessKeyId:
+            process.env.AWS_ACCESS_KEY_ID,
+
+        secretAccessKey:
+            process.env.AWS_SECRET_ACCESS_KEY
+    },
+
+    forcePathStyle: true
+});
 
         const relics = await sql`
     SELECT
@@ -62,6 +89,50 @@ module.exports = async function handler(req, res) {
 
     ORDER BY r.approved_at DESC;
 `;
+
+const signPublicImage = async (objectKey) => {
+    if (
+        !objectKey ||
+        !objectKey.startsWith("artist-images/")
+    ) {
+        return objectKey;
+    }
+
+    const command = new GetObjectCommand({
+        Bucket: "ossvarium-private-audio",
+        Key: objectKey
+    });
+
+    return await getSignedUrl(
+        s3,
+        command,
+        {
+            expiresIn: 3600
+        }
+    );
+};
+
+const relicsWithSignedImages =
+    await Promise.all(
+        relics.map(async (relic) => ({
+            ...relic,
+
+            cover:
+                await signPublicImage(
+                    relic.cover
+                ),
+
+            artist_image:
+                await signPublicImage(
+                    relic.artist_image
+                ),
+
+            banner:
+                await signPublicImage(
+                    relic.banner
+                )
+        }))
+    );
 
         return res.status(200).json({
             success: true,

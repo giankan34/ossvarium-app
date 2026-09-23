@@ -490,6 +490,71 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
+async function uploadImage(file) {
+    if (!file) {
+        return "";
+    }
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+        throw new Error(
+            "Only JPEG, PNG and WEBP images are allowed."
+        );
+    }
+
+    const urlResponse = await fetch(
+        "/api/audio-upload-url",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                fileName: file.name,
+                contentType: file.type
+            })
+        }
+    );
+
+    const urlResult =
+        await urlResponse.json();
+
+    if (!urlResponse.ok) {
+        throw new Error(
+            urlResult.error ||
+            "Could not prepare image upload."
+        );
+    }
+
+    const uploadResponse = await fetch(
+        urlResult.uploadUrl,
+        {
+            method: "PUT",
+
+            headers: {
+                "Content-Type": file.type
+            },
+
+            body: file
+        }
+    );
+
+    if (!uploadResponse.ok) {
+        throw new Error(
+            "Image upload failed."
+        );
+    }
+
+    return urlResult.objectKey;
+}
+
 async function loadMyRelics() {
 
     relicsContainer.innerHTML =
@@ -1464,20 +1529,18 @@ editArtistProfileButton.textContent =
             >${escapeHtml(profile.bio || "")}</textarea>
 
             <label>ARTIST IMAGE</label>
-            <input
-                type="text"
-                id="profileArtistImage"
-                value="${escapeHtml(profile.artist_image || "")}"
-                placeholder="Image URL"
-            >
+<input
+    type="file"
+    id="profileArtistImage"
+    accept="image/jpeg,image/png,image/webp"
+>
 
-            <label>BANNER</label>
-            <input
-                type="text"
-                id="profileBanner"
-                value="${escapeHtml(profile.banner || "")}"
-                placeholder="Banner URL"
-            >
+<label>BANNER</label>
+<input
+    type="file"
+    id="profileBanner"
+    accept="image/jpeg,image/png,image/webp"
+>
 
             <label>BANDCAMP</label>
             <input
@@ -1569,6 +1632,32 @@ saveArtistProfileButton.addEventListener(
 
             artistProfileStatus.textContent = "";
 
+            const artistImageFile =
+    document.getElementById(
+        "profileArtistImage"
+    ).files[0];
+
+const bannerFile =
+    document.getElementById(
+        "profileBanner"
+    ).files[0];
+
+let artistImageObjectKey =
+    creatorArtistProfile?.artist_image || "";
+
+let bannerObjectKey =
+    creatorArtistProfile?.banner || "";
+
+if (artistImageFile) {
+    artistImageObjectKey =
+        await uploadImage(artistImageFile);
+}
+
+if (bannerFile) {
+    bannerObjectKey =
+        await uploadImage(bannerFile);
+}
+
             const response = await fetch(
                 "/api/submit-relic",
                 {
@@ -1613,20 +1702,10 @@ saveArtistProfileButton.addEventListener(
                                 .trim(),
 
                         artistImage:
-                            document
-                                .getElementById(
-                                    "profileArtistImage"
-                                )
-                                .value
-                                .trim(),
+                            artistImageObjectKey,
 
                         banner:
-                            document
-                                .getElementById(
-                                    "profileBanner"
-                                )
-                                .value
-                                .trim(),
+                            bannerObjectKey,
 
                         links: {
                             bandcamp:
