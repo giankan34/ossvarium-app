@@ -78,7 +78,7 @@ async function getPrivateImageUrl(objectKey) {
         );
     }
 
-    return result.viewUrl;
+    return result.imageUrl;
 }
 
 async function loadPendingRelics() {
