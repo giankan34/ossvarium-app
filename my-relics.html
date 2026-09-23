@@ -342,6 +342,8 @@ verifyCreatorCode.addEventListener(
             creatorEmailStatus.textContent =
                 "⚔ CREATOR EMAIL VERIFIED";
 
+                artistProfileSection.style.display = "block";
+
             await loadMyRelics();
 
         } catch (error) {
