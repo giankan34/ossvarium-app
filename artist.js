@@ -49,11 +49,11 @@ async function loadArtist(){
 
         <div class="release-card">
 
-            ${artist.artist_image
+            ${artist.artistImage
 ? `
     <img
     class="artist-image"
-    src="${artist.artist_image}"
+    src="${artist.artistImage}"
     alt="${artist.artist}">
 `
 : `
