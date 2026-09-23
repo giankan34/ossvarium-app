@@ -136,7 +136,7 @@ const relicsWithSignedImages =
 
         return res.status(200).json({
             success: true,
-            relics: relics
+            relics: relicsWithSignedImages
         });
 
     } catch (error) {
