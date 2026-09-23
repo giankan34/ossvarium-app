@@ -1,6 +1,7 @@
 const {
     S3Client,
-    PutObjectCommand
+    PutObjectCommand,
+    GetObjectCommand
 } = require("@aws-sdk/client-s3");
 
 const {
@@ -8,6 +9,74 @@ const {
 } = require("@aws-sdk/s3-request-presigner");
 
 module.exports = async function handler(req, res) {
+
+    if (req.method === "GET") {
+    try {
+        const objectKey =
+            String(req.query?.objectKey || "").trim();
+
+        if (
+            !objectKey ||
+            !objectKey.startsWith("artist-images/")
+        ) {
+            return res.status(400).json({
+                error: "Invalid image object key"
+            });
+        }
+
+        const s3 = new S3Client({
+            endpoint:
+                process.env.AWS_ENDPOINT_URL_S3,
+
+            region:
+                process.env.AWS_REGION,
+
+            credentials: {
+                accessKeyId:
+                    process.env.AWS_ACCESS_KEY_ID,
+
+                secretAccessKey:
+                    process.env.AWS_SECRET_ACCESS_KEY
+            },
+
+            forcePathStyle: true
+        });
+
+        const command =
+            new GetObjectCommand({
+                Bucket:
+                    "ossvarium-private-audio",
+
+                Key:
+                    objectKey
+            });
+
+        const imageUrl =
+            await getSignedUrl(
+                s3,
+                command,
+                {
+                    expiresIn: 3600
+                }
+            );
+
+        return res.status(200).json({
+            success: true,
+            imageUrl: imageUrl
+        });
+
+    } catch (error) {
+        console.error(
+            "OSSVARIUM image URL error:",
+            error
+        );
+
+        return res.status(500).json({
+            error:
+                "Failed to create image URL"
+        });
+    }
+}
 
     if (req.method !== "POST") {
         return res.status(405).json({

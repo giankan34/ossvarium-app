@@ -55,6 +55,32 @@ async function unlockAdmin() {
     }
 }
 
+async function getPrivateImageUrl(objectKey) {
+    if (!objectKey) {
+        return "";
+    }
+
+    if (!objectKey.startsWith("artist-images/")) {
+        return objectKey;
+    }
+
+    const response = await fetch(
+        "/api/audio-upload-url?objectKey=" +
+        encodeURIComponent(objectKey)
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.error ||
+            "Failed to load private image"
+        );
+    }
+
+    return result.viewUrl;
+}
+
 async function loadPendingRelics() {
 
     const container =
@@ -78,7 +104,8 @@ try {
     }
 
     submissions =
-        result.relics.map(item => ({
+        await Promise.all(
+            result.relics.map(async item => ({
 
             id: item.id,
             relicId: item.relic_id,
@@ -93,9 +120,11 @@ try {
             description: item.description,
             bio: item.bio,
 
-            cover: item.cover,
-            artistImage: item.artist_image,
-            banner: item.banner,
+            cover: await getPrivateImageUrl(item.cover),
+
+            artistImage: await getPrivateImageUrl(item.artist_image),
+
+            banner:await getPrivateImageUrl(item.banner),
 
             pricePi: item.price_eur,
             contactEmail: item.contact_email,
@@ -127,7 +156,7 @@ try {
             status:
                 item.status
 
-        }));
+        })));
 
 } catch (error) {
 
