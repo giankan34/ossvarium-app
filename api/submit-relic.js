@@ -387,8 +387,6 @@ COALESCE(
 )
 OR
 (
-    CAST(${verifiedCreatorPiUid} AS TEXT) IS NULL
-    AND
     CAST(${verifiedCreatorEmail} AS TEXT) IS NOT NULL
     AND
     LOWER(r.contact_email) = ${verifiedCreatorEmail}
