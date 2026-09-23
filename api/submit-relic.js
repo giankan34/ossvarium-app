@@ -266,6 +266,11 @@ if (creatorSessionHeader) {
                 .trim()
                 .toLowerCase();
 
+                console.log(
+    "OSSVARIUM VERIFIED CREATOR EMAIL:",
+    verifiedCreatorEmail
+);
+
     } catch (error) {
 
         console.error(
