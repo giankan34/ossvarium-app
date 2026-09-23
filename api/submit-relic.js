@@ -1202,7 +1202,7 @@ if (verifiedCreatorPiUid) {
         VALUES (
             ${verifiedCreatorPiUid},
             ${verifiedCreatorPiUsername || ""},
-            ${verifiedCreatorEmail || null},
+            ${null},
             ${artistName},
             ${bio},
             ${artistImage},
@@ -1217,11 +1217,7 @@ if (verifiedCreatorPiUid) {
         DO UPDATE SET
             creator_pi_username =
                 EXCLUDED.creator_pi_username,
-            creator_email =
-                COALESCE(
-                    EXCLUDED.creator_email,
-                    artist_profiles.creator_email
-                ),
+            
             artist_name =
                 EXCLUDED.artist_name,
             bio =
