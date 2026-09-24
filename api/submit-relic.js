@@ -360,19 +360,28 @@ if (req.method === "GET") {
         COUNT(p.id)::int AS track_sales,
 
         COALESCE(
-    SUM(p.amount_pi),
+    SUM(p.amount_pi)
+        FILTER (
+            WHERE p.payment_method = 'pi'
+        ),
     0
 ) AS gross_pi,
 
 COALESCE(
-    SUM(p.artist_share_pi),
+    SUM(p.artist_share_pi)
+        FILTER (
+            WHERE p.payment_method = 'pi'
+        ),
     0
 ) AS pi_earned,
 
 COALESCE(
-    SUM(p.ossvarium_fee_pi),
+    SUM(p.ossvarium_fee_pi)
+        FILTER (
+            WHERE p.payment_method = 'pi'
+        ),
     0
-) AS ossvarium_fee_pi
+) AS ossvarium_fee_pi,
 
     FROM relics r
 
@@ -623,25 +632,45 @@ if (
         });
     }
 
+    const payoutMethod =
+    String(
+        req.body?.payoutMethod || "pi"
+    )
+        .trim()
+        .toLowerCase();
+
+    if (
+    payoutMethod !== "pi" &&
+    payoutMethod !== "eur"
+) {
+    return res.status(400).json({
+        error: "Invalid payout method"
+    });
+}
+
     // -------------------------------------------------
     // 1. RESUME AN EXISTING PENDING PAYOUT FIRST
     // -------------------------------------------------
 
+    if (payoutMethod === "pi") {
+
     const existingPendingPayouts = await sql`
-        SELECT
-            id,
-            amount_pi,
-            status,
-            pi_payment_id,
-            txid,
-            created_at
-        FROM creator_payouts
-        WHERE
-            creator_pi_uid = ${verifiedCreatorPiUid}
-            AND status = 'pending'
-        ORDER BY created_at ASC
-        LIMIT 1;
-    `;
+    SELECT
+        id,
+        amount_pi,
+        payout_method,
+        status,
+        pi_payment_id,
+        txid,
+        created_at
+    FROM creator_payouts
+    WHERE
+        creator_pi_uid = ${verifiedCreatorPiUid}
+        AND status = 'pending'
+        AND payout_method = 'pi'
+    ORDER BY created_at ASC
+    LIMIT 1;
+`;
 
     if (existingPendingPayouts.length > 0) {
         const existingPayout = existingPendingPayouts[0];
@@ -841,42 +870,68 @@ const incompletePayments =
         });
     }
 
+    }
     // -------------------------------------------------
     // 6. NO PENDING PAYOUT:
     //    CALCULATE AVAILABLE CREATOR BALANCE
     // -------------------------------------------------
 
     const earnings = await sql`
-        SELECT
-            COALESCE(
-                SUM(p.artist_share_pi),
-                0
-            ) AS total_earned_pi
-        FROM purchases p
-        INNER JOIN relics r
-            ON r.relic_id = p.relic_id
-        WHERE
-            r.creator_pi_uid =
-                ${verifiedCreatorPiUid};
-    `;
+    SELECT
+        COALESCE(
+            SUM(p.artist_share_pi)
+                FILTER (
+                    WHERE p.payment_method = 'pi'
+                ),
+            0
+        ) AS total_earned_pi,
+
+        COALESCE(
+            SUM(p.artist_share_eur)
+                FILTER (
+                    WHERE p.payment_method = 'eur'
+                ),
+            0
+        ) AS total_earned_eur
+
+    FROM purchases p
+
+    INNER JOIN relics r
+        ON r.relic_id = p.relic_id
+
+    WHERE
+    r.creator_pi_uid =
+        ${verifiedCreatorPiUid}
+    AND p.creator_payout_id IS NULL
+    AND p.payment_method = ${payoutMethod};
+`;
 
     const payouts = await sql`
-        SELECT
-            COALESCE(
-                SUM(amount_pi)
-                    FILTER (
-                        WHERE status IN (
-                            'pending',
-                            'completed'
-                        )
-                    ),
-                0
-            ) AS reserved_pi
-        FROM creator_payouts
-        WHERE
-            creator_pi_uid =
-                ${verifiedCreatorPiUid};
-    `;
+    SELECT
+        COALESCE(
+            SUM(amount_pi)
+                FILTER (
+                    WHERE status IN ('pending', 'completed')
+                    AND payout_method = 'pi'
+                ),
+            0
+        ) AS reserved_pi,
+
+        COALESCE(
+            SUM(amount_eur)
+                FILTER (
+                    WHERE status IN ('pending', 'completed')
+                    AND payout_method = 'eur'
+                ),
+            0
+        ) AS reserved_eur
+
+    FROM creator_payouts
+
+    WHERE
+        creator_pi_uid =
+            ${verifiedCreatorPiUid};
+`;
 
     const totalEarnedPi =
         Number(
@@ -888,6 +943,24 @@ const incompletePayments =
             payouts[0]?.reserved_pi || 0
         );
 
+        const totalEarnedEur =
+    Number(
+        earnings[0]?.total_earned_eur || 0
+    );
+
+const reservedEur =
+    Number(
+        payouts[0]?.reserved_eur || 0
+    );
+
+const availableEur =
+    Number(
+        Math.max(
+            0,
+            totalEarnedEur - reservedEur
+        ).toFixed(2)
+    );
+
     const availablePi =
         Number(
             Math.max(
@@ -896,35 +969,76 @@ const incompletePayments =
             ).toFixed(4)
         );
 
-    if (availablePi <= 0) {
-        return res.status(400).json({
-            error: "No balance available for payout"
-        });
-    }
-
+    if (
+    payoutMethod === "pi" &&
+    availablePi <= 0
+) {
+    return res.status(400).json({
+        error: "No Pi balance available for payout"
+    });
+}
+if (
+    payoutMethod === "eur" &&
+    availableEur <= 0
+) {
+    return res.status(400).json({
+        error: "No EUR balance available for payout"
+    });
+}
     // -------------------------------------------------
     // 7. CREATE NEW LOCAL PAYOUT REQUEST ONLY
     // -------------------------------------------------
 
-    const payout = await sql`
-        INSERT INTO creator_payouts (
-            creator_pi_uid,
-            creator_pi_username,
-            amount_pi,
-            status
-        )
-        VALUES (
-            ${verifiedCreatorPiUid},
-            ${verifiedCreatorPiUsername},
-            ${availablePi},
-            'pending'
-        )
-        RETURNING
-            id,
-            amount_pi,
-            status,
-            created_at;
-    `;
+   const payout = await sql`
+    INSERT INTO creator_payouts (
+        creator_pi_uid,
+        creator_pi_username,
+        amount_pi,
+        amount_eur,
+        payout_method,
+        status
+    )
+    VALUES (
+        ${verifiedCreatorPiUid},
+        ${verifiedCreatorPiUsername},
+        ${payoutMethod === "pi" ? availablePi : null},
+        ${payoutMethod === "eur" ? availableEur : null},
+        ${payoutMethod},
+        'pending'
+    )
+    RETURNING
+        id,
+        amount_pi,
+        amount_eur,
+        payout_method,
+        status,
+        created_at;
+`;
+
+await sql`
+    UPDATE purchases p
+    SET creator_payout_id = ${payout[0].id}
+    FROM relics r
+    WHERE
+        r.relic_id = p.relic_id
+        AND r.creator_pi_uid = ${verifiedCreatorPiUid}
+        AND p.creator_payout_id IS NULL
+        AND (
+    (
+        ${payoutMethod} = 'pi'
+        AND p.payment_method = 'pi'
+        AND p.artist_share_pi IS NOT NULL
+        AND p.artist_share_pi > 0
+    )
+    OR
+    (
+        ${payoutMethod} = 'eur'
+        AND p.payment_method = 'eur'
+        AND p.artist_share_eur IS NOT NULL
+        AND p.artist_share_eur > 0
+    )
+);
+`;
 
     return res.status(201).json({
         success: true,

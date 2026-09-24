@@ -140,6 +140,7 @@ await sql`
         amount_eur,
         artist_share_eur,
         ossvarium_fee_eur
+        payment_method
     )
     VALUES (
         ${paymentId},
@@ -153,6 +154,7 @@ await sql`
         ${amountEur},
         ${artistShareEur},
         ${ossvariumFeeEur}
+        'pi'
     )
     ON CONFLICT
     DO NOTHING;
