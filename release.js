@@ -431,9 +431,9 @@ function renderSimilarArtists(){
             <div class="submission-text">
 
                 ${
-                    release.similar && release.similar.length
-                    ?
-                    release.similar.map(artist => `
+                    release.similar_artists && release.similar_artists.length
+                        ?
+                        release.similar_artists.map(artist => `
                         <a
                             href="artist.html?artist=${encodeURIComponent(artist)}"
                             class="similar-link">
