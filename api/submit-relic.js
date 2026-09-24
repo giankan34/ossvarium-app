@@ -400,6 +400,8 @@ OR
     AND
     LOWER(r.contact_email) = ${verifiedCreatorEmail}
 )
+
+)
     GROUP BY
         r.relic_id,
         r.artist,
