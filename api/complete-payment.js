@@ -86,6 +86,47 @@ const artistSharePi =
 const ossvariumFeePi =
     Number((amountPi * 0.10).toFixed(4));
 
+    const relicRows = await sql`
+    SELECT tracks
+    FROM relics
+    WHERE relic_id = ${metadata.relicId}
+      AND status = 'approved'
+    LIMIT 1;
+`;
+
+if (relicRows.length === 0) {
+    return res.status(404).json({
+        error: "Relic not found"
+    });
+}
+
+const tracks = Array.isArray(relicRows[0].tracks)
+    ? relicRows[0].tracks
+    : [];
+
+const track = tracks.find(
+    item => item.title === metadata.trackTitle
+);
+
+if (
+    !track ||
+    !track.priceEur ||
+    Number(track.priceEur) <= 0
+) {
+    return res.status(400).json({
+        error: "Invalid track EUR price"
+    });
+}
+
+const amountEur =
+    Number(Number(track.priceEur).toFixed(4));
+
+const artistShareEur =
+    Number((amountEur * 0.90).toFixed(4));
+
+const ossvariumFeeEur =
+    Number((amountEur * 0.10).toFixed(4));
+
 await sql`
     INSERT INTO purchases (
         payment_id,
@@ -95,7 +136,10 @@ await sql`
         track_title,
         amount_pi,
         artist_share_pi,
-        ossvarium_fee_pi
+        ossvarium_fee_pi,
+        amount_eur,
+        artist_share_eur,
+        ossvarium_fee_eur
     )
     VALUES (
         ${paymentId},
@@ -105,7 +149,10 @@ await sql`
         ${metadata.trackTitle},
         ${amountPi},
         ${artistSharePi},
-        ${ossvariumFeePi}
+        ${ossvariumFeePi},
+        ${amountEur},
+        ${artistShareEur},
+        ${ossvariumFeeEur}
     )
     ON CONFLICT
     DO NOTHING;
