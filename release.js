@@ -423,6 +423,33 @@ function renderArtistBio(){
 
 function renderSimilarArtists(){
 
+    const currentGenre =
+        String(release.genre || "")
+            .trim()
+            .toLowerCase();
+
+    const similarReleases =
+        releases
+            .filter(item => {
+
+                const itemGenre =
+                    String(item.genre || "")
+                        .trim()
+                        .toLowerCase();
+
+                const isCurrentRelease =
+                    String(item.relicId || "") ===
+                    String(release.relicId || "");
+
+                return (
+                    !isCurrentRelease &&
+                    currentGenre &&
+                    itemGenre === currentGenre
+                );
+
+            })
+            .slice(0, 4);
+
     return `
         <div class="submission-box">
 
@@ -431,17 +458,17 @@ function renderSimilarArtists(){
             <div class="submission-text">
 
                 ${
-                    release.similar_artists && release.similar_artists.length
-                        ?
-                        release.similar_artists.map(artist => `
+                    similarReleases.length
+                    ?
+                    similarReleases.map(item => `
                         <a
-                            href="artist.html?artist=${encodeURIComponent(artist)}"
+                            href="release.html?id=${encodeURIComponent(item.relicId)}"
                             class="similar-link">
-                            ${artist}
+                            ${item.artist} — ${item.release}
                         </a>
                     `).join("<br>")
                     :
-                    "No similar artists"
+                    "No similar relics yet"
                 }
 
             </div>
