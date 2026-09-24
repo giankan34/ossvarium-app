@@ -64,13 +64,10 @@ async function loadGenreRelics() {
         results.innerHTML =
             filtered.map(item => {
 
-                const originalIndex =
-                    data.indexOf(item);
-
                 return `
 
                     <a
-                    href="release.html?id=${originalIndex}"
+                    href="release.html?id=${encodeURIComponent(item.relicId)}"
                     style="text-decoration:none;">
 
                         <div class="release-card">
