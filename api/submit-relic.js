@@ -381,7 +381,7 @@ COALESCE(
             WHERE p.payment_method = 'pi'
         ),
     0
-) AS ossvarium_fee_pi,
+) AS ossvarium_fee_pi
 
     FROM relics r
 
@@ -401,7 +401,6 @@ OR
     LOWER(r.contact_email) = ${verifiedCreatorEmail}
 )
 
-)
     GROUP BY
         r.relic_id,
         r.artist,
