@@ -1451,8 +1451,8 @@ if (verifiedCreatorPiUid) {
             facebook,
             website,
             merch,
+            contactEmail,
             supportPi,
-            priceEur,
             tracks
         } = req.body;
 
