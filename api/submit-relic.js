@@ -424,6 +424,10 @@ const salesHistory = await sql`
         p.amount_pi,
         p.artist_share_pi,
         p.ossvarium_fee_pi,
+        p.amount_eur,
+        p.artist_share_eur,
+        p.ossvarium_fee_eur,
+        p.payment_method,
         p.created_at,
         r.artist,
         r.release_title

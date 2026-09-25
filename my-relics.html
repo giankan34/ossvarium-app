@@ -774,14 +774,40 @@ if (salesHistory.length > 0) {
         <h2>☠ SALES HISTORY ☠</h2>
 
         ${salesHistory.map(sale => {
+
+            const paymentMethod =
+                String(sale.payment_method || "pi")
+                .toLowerCase();
+
+            const isEur =
+                paymentMethod === "eur";
+
             const gross =
-                Number(sale.amount_pi || 0).toFixed(4);
+                isEur
+            ? Number(sale.amount_eur || 0).toFixed(2)
+            : Number(sale.amount_pi || 0).toFixed(4);
 
-            const artistShare =
-                Number(sale.artist_share_pi || 0).toFixed(4);
+           const artistShare =
+                isEur
+            ? Number(sale.artist_share_eur || 0).toFixed(2)
+            : Number(sale.artist_share_pi || 0).toFixed(4);
 
-            const ossvariumFee =
-                Number(sale.ossvarium_fee_pi || 0).toFixed(4);
+           const ossvariumFee =
+                isEur
+            ? Number(sale.ossvarium_fee_eur || 0).toFixed(2)
+            : Number(sale.ossvarium_fee_pi || 0).toFixed(4);
+
+        const eurValue =
+            Number(sale.amount_eur || 0);
+
+        const artistShareEur =
+        Number(sale.artist_share_eur || 0);
+
+        const ossvariumFeeEur =
+        Number(sale.ossvarium_fee_eur || 0);
+
+        const hasEurValue =
+        !isEur && eurValue > 0;
 
             const date =
                 sale.created_at
@@ -798,13 +824,34 @@ if (salesHistory.length > 0) {
                     <br>
                     ${sale.relic_id || ""}
                     <br>
-                    SALE: <strong>${gross} Pi</strong>
-                    <br>
-                    YOUR SHARE (90%):
-                    <strong>${artistShare} Pi</strong>
-                    <br>
-                    OSSVARIUM FEE (10%):
-                    ${ossvariumFee} Pi
+                    SALE:
+<strong>
+    ${isEur ? "€" : ""}${gross}${isEur ? "" : " Pi"}
+</strong>
+
+${hasEurValue ? `
+    <br>
+    PRICE VALUE:
+    <strong>€${eurValue.toFixed(2)}</strong>
+` : ""}
+
+<br>
+YOUR SHARE (90%):
+<strong>
+    ${isEur ? "€" : ""}${artistShare}${isEur ? "" : " Pi"}
+</strong>
+
+${hasEurValue ? `
+    (€${artistShareEur.toFixed(2)} value)
+` : ""}
+
+<br>
+OSSVARIUM FEE (10%):
+${isEur ? "€" : ""}${ossvariumFee}${isEur ? "" : " Pi"}
+
+${hasEurValue ? `
+    (€${ossvariumFeeEur.toFixed(2)} value)
+` : ""}
                     <br>
                     ${date}
                 </p>
