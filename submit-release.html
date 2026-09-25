@@ -169,21 +169,22 @@
     class="track-audio">
 
         <input
-            type="number"
-            class="track-price"
-            min="0"
-            step="0.01"
-            placeholder="Track Price (€)"
+    type="number"
+    class="track-price"
+    min="0"
+    step="0.01"
+    placeholder="Suggested Support (Pi)">
 
-        <label class="track-sale-option">
+<label class="track-sale-option">
 
-            <input
-                type="checkbox"
-                class="track-for-sale">
+    <input
+        type="checkbox"
+        class="track-allow-download"
+        checked>
 
-            Available for individual purchase
+    Make track downloadable
 
-        </label>
+</label>
 
         <label class="track-sale-option">
 
@@ -208,17 +209,18 @@
 
 </button>
 
-                <label for="pricePi">Full Release Price (€)</label>
+                <label for="supportPi">Suggested Artist Support (Pi)</label>
+
 <input
     type="number"
-    id="pricePi"
+    id="supportPi"
     min="0"
     step="0.01"
-    placeholder="Example: 5.00">
+    placeholder="Example: 2">
 
 <div class="submission-text">
-    Set your price in EUR. OSSVARIUM will calculate
-    the equivalent Pi price automatically at purchase.
+    Suggest an amount in Pi for listeners who wish to support you.
+    Listeners may choose a different amount. Downloads remain free.
 </div>
 
                 <div class="submission-permission">
@@ -344,20 +346,20 @@ connectPiCreatorButton.addEventListener(
         <label class="track-sale-option">
 
             <input
-                type="checkbox"
-                class="track-for-sale">
+    type="number"
+    class="track-price"
+    min="0"
+    step="0.01"
+    placeholder="Suggested Support (Pi)">
 
-            Available for individual purchase
-
-        </label>
-
-        <label class="track-sale-option">
+<label class="track-sale-option">
 
     <input
         type="checkbox"
-        class="track-allow-download">
+        class="track-allow-download"
+        checked>
 
-    Allow buyer to download track
+    Make track downloadable
 
 </label>
 
@@ -565,22 +567,17 @@ for (const row of trackRows) {
     let audio =
         audioInput.value.trim();
 
-    const price =
-        Number(
-            row.querySelector(
-                ".track-price"
-            ).value || 0
-        );
-
-    const forSale =
+    const supportPi =
+    Number(
         row.querySelector(
-            ".track-for-sale"
-        ).checked;
+            ".track-price"
+        ).value || 0
+    );
 
-    const allowDownload =
-        row.querySelector(
-            ".track-allow-download"
-        ).checked;
+const allowDownload =
+    row.querySelector(
+        ".track-allow-download"
+    ).checked;
 
     if (audioFile) {
 
@@ -595,18 +592,16 @@ for (const row of trackRows) {
 
     tracks.push({
 
-        title: title,
+    title: title,
 
-        audio: audio,
+    audio: audio,
 
-        forSale: forSale,
+    supportPi: supportPi,
 
-        priceEur: price,
+    allowDownload:
+        allowDownload
 
-        allowDownload:
-            allowDownload
-
-    });
+});
 }
 
 const artistImageFile =
@@ -656,10 +651,11 @@ const coverArtworkObjectKey =
         website:document.getElementById("website").value.trim(),
         merch:document.getElementById("merch").value.trim(),
         contactEmail: document.getElementById("contactEmail").value.trim(),
-        priceEur: document.getElementById("pricePi").value,
+        supportPi: Number(document.getElementById("supportPi").value || 0
+    ),
 
-        submittedAt: new Date().toISOString(),
-        status: "pending"
+submittedAt: new Date().toISOString(),
+status: "pending"
     };
 
 

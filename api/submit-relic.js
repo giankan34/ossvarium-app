@@ -1451,7 +1451,7 @@ if (verifiedCreatorPiUid) {
             facebook,
             website,
             merch,
-            contactEmail,
+            supportPi,
             priceEur,
             tracks
         } = req.body;
@@ -1484,7 +1484,7 @@ if (verifiedCreatorPiUid) {
                 artist_image,
                 banner,
                 cover,
-                price_eur,
+                price_pi,
                 contact_email,
                 creator_pi_uid,
                 creator_pi_username,
@@ -1504,7 +1504,7 @@ if (verifiedCreatorPiUid) {
                 ${artistImage || ""},
                 ${banner || ""},
                 ${cover || ""},
-                ${priceEur ? Number(priceEur) : 0},
+                ${supportPi ? Number(supportPi) : 0},
                 ${contactEmail || ""},
                 ${verifiedCreatorPiUid},
                 ${verifiedCreatorPiUsername},
