@@ -196,7 +196,15 @@ let verifiedCreatorEmail = null;
 const creatorSessionHeader =
     req.headers["x-creator-session"] || "";
 
-if (creatorSessionHeader) {
+const hasPiAuthorization =
+    String(
+        req.headers.authorization || ""
+    ).startsWith("Bearer ");
+
+if (
+    creatorSessionHeader &&
+    !hasPiAuthorization
+) {
 
     try {
 
