@@ -38,6 +38,9 @@ const approvedResult =
                 relicId:
                     item.relic_id,
 
+                creatorPiUid:
+                    item.creator_pi_uid ?? "",    
+
                 artist:
                     item.artist,
 
