@@ -892,31 +892,44 @@ const incompletePayments =
     const earnings = await sql`
     SELECT
         COALESCE(
-            SUM(p.artist_share_pi)
-                FILTER (
-                    WHERE p.payment_method = 'pi'
-                ),
+            (
+                SELECT SUM(p.artist_share_pi)
+                FROM purchases p
+                INNER JOIN relics r
+                    ON r.relic_id = p.relic_id
+                WHERE
+                    r.creator_pi_uid = ${verifiedCreatorPiUid}
+                    AND p.creator_payout_id IS NULL
+                    AND p.payment_method = 'pi'
+            ),
+            0
+        )
+        +
+        COALESCE(
+            (
+                SELECT SUM(s.artist_share_pi)
+                FROM artist_supports s
+                WHERE
+                    s.creator_pi_uid = ${verifiedCreatorPiUid}
+                    AND s.creator_payout_id IS NULL
+                    AND s.status = 'completed'
+            ),
             0
         ) AS total_earned_pi,
 
         COALESCE(
-            SUM(p.artist_share_eur)
-                FILTER (
-                    WHERE p.payment_method = 'eur'
-                ),
+            (
+                SELECT SUM(p.artist_share_eur)
+                FROM purchases p
+                INNER JOIN relics r
+                    ON r.relic_id = p.relic_id
+                WHERE
+                    r.creator_pi_uid = ${verifiedCreatorPiUid}
+                    AND p.creator_payout_id IS NULL
+                    AND p.payment_method = 'eur'
+            ),
             0
-        ) AS total_earned_eur
-
-    FROM purchases p
-
-    INNER JOIN relics r
-        ON r.relic_id = p.relic_id
-
-    WHERE
-    r.creator_pi_uid =
-        ${verifiedCreatorPiUid}
-    AND p.creator_payout_id IS NULL
-    AND p.payment_method = ${payoutMethod};
+        ) AS total_earned_eur;
 `;
 
     const payouts = await sql`
@@ -1051,6 +1064,16 @@ await sql`
         AND p.artist_share_eur > 0
     )
 );
+`;
+
+await sql`
+    UPDATE artist_supports
+    SET creator_payout_id = ${payout[0].id}
+    WHERE
+        creator_pi_uid = ${verifiedCreatorPiUid}
+        AND creator_payout_id IS NULL
+        AND status = 'completed'
+        AND ${payoutMethod} = 'pi';
 `;
 
     return res.status(201).json({
