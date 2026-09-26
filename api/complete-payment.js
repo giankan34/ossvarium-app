@@ -42,10 +42,17 @@ module.exports = async (req, res) => {
     const metadata =
     completedPayment?.metadata || {};
 
+const validPurpose =
+    metadata.purpose === "track_purchase" ||
+    metadata.purpose === "artist_support";
+
 if (
-    metadata.purpose !== "track_purchase" ||
+    !validPurpose ||
     !metadata.relicId ||
-    !metadata.trackTitle
+    (
+        metadata.purpose === "track_purchase" &&
+        !metadata.trackTitle
+    )
 ) {
     return res.status(400).json({
         error: "Invalid completed payment metadata"
@@ -87,7 +94,7 @@ const ossvariumFeePi =
     Number((amountPi * 0.10).toFixed(4));
 
     const relicRows = await sql`
-    SELECT tracks
+    SELECT tracks, creator_pi_uid
     FROM relics
     WHERE relic_id = ${metadata.relicId}
       AND status = 'approved'
@@ -97,6 +104,67 @@ const ossvariumFeePi =
 if (relicRows.length === 0) {
     return res.status(404).json({
         error: "Relic not found"
+    });
+}
+
+if (metadata.purpose === "artist_support") {
+    const amountPi =
+        Number(completedPayment.amount);
+
+    if (!amountPi || amountPi <= 0) {
+        return res.status(400).json({
+            error: "Invalid support amount"
+        });
+    }
+
+    const creatorPiUid =
+        relicRows[0].creator_pi_uid;
+
+    if (!creatorPiUid) {
+        return res.status(400).json({
+            error: "Artist has no connected Pi account"
+        });
+    }
+
+    const artistSharePi =
+        Number((amountPi * 0.90).toFixed(4));
+
+    const ossvariumFeePi =
+        Number((amountPi * 0.10).toFixed(4));
+
+    await sql`
+        INSERT INTO artist_supports (
+            payment_id,
+            txid,
+            supporter_pi_uid,
+            relic_id,
+            track_title,
+            creator_pi_uid,
+            amount_pi,
+            artist_share_pi,
+            ossvarium_fee_pi,
+            status
+        )
+        VALUES (
+            ${paymentId},
+            ${txid},
+            ${userUid},
+            ${metadata.relicId},
+            ${metadata.trackTitle},
+            ${creatorPiUid},
+            ${amountPi},
+            ${artistSharePi},
+            ${ossvariumFeePi},
+            'completed'
+        )
+        ON CONFLICT (payment_id)
+        DO NOTHING;
+    `;
+
+    return res.status(200).json({
+        success: true,
+        purpose: "artist_support",
+        payment: completedPayment
     });
 }
 

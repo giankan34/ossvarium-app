@@ -45,8 +45,12 @@ const relicId =
 const trackTitle =
     metadata.trackTitle;
 
+const validPurpose =
+    metadata.purpose === "track_purchase" ||
+    metadata.purpose === "artist_support";
+
 if (
-    metadata.purpose !== "track_purchase" ||
+    !validPurpose ||
     !relicId ||
     !trackTitle
 ) {
@@ -84,6 +88,8 @@ const track =
                 item.title === trackTitle
         )
         : null;
+
+        if (metadata.purpose === "track_purchase") {
 
 if (
     !track ||
@@ -164,6 +170,7 @@ if (
     });
 }
 
+}
         const response = await axios.post(
             `https://api.minepi.com/v2/payments/${paymentId}/approve`,
             {},

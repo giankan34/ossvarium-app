@@ -504,8 +504,8 @@ function renderTracklist(){
 
         const supportPi =
     typeof track === "object"
-        ? Number(track.supportPi || 0)
-        : 0;
+        ? Number(track.supportPi || 0.1)
+        : 0.1;
 
 const allowDownload =
     typeof track === "object" &&
@@ -1344,6 +1344,102 @@ async function downloadOwnedTrack(trackTitle) {
     }
 }
 
+function createArtistSupportPayment(
+    supportPi,
+    trackTitle,
+    relicId
+) {
+    const amount = Number(supportPi);
+
+    if (!amount || amount <= 0) {
+        alert("Invalid support amount.");
+        return;
+    }
+
+    Pi.createPayment(
+        {
+            amount: amount,
+            memo: `OSSVARIUM Artist Support: ${trackTitle}`,
+            metadata: {
+                purpose: "artist_support",
+                relicId: relicId,
+                trackTitle: trackTitle
+            }
+        },
+        {
+            onReadyForServerApproval: async function (paymentId) {
+                const response = await fetch(
+                    "/api/approve-payment",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            paymentId: paymentId
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Support payment approval failed"
+                    );
+                }
+            },
+
+            onReadyForServerCompletion: async function (
+                paymentId,
+                txid
+            ) {
+                const response = await fetch(
+                    "/api/complete-payment",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            paymentId: paymentId,
+                            txid: txid
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Support payment completion failed"
+                    );
+                }
+
+                alert(
+                    `☠ ARTIST SUPPORTED ☠\n\n${trackTitle}\n${amount} π`
+                );
+            },
+
+            onCancel: function (paymentId) {
+                console.log(
+                    "Artist support payment cancelled:",
+                    paymentId
+                );
+            },
+
+            onError: function (error, payment) {
+                console.error(
+                    "Artist support payment error:",
+                    error,
+                    payment
+                );
+
+                alert(
+                    "Artist support payment failed.\n\n" +
+                    (error.message || error)
+                );
+            }
+        }
+    );
+}
+
 function initializeSupportButtons() {
     const supportButtons =
         document.querySelectorAll(".track-support-btn");
@@ -1370,14 +1466,21 @@ function initializeSupportButtons() {
             const supportPi =
                 Number(button.dataset.supportPi || 0);
 
-            console.log(
-                "OSSVARIUM SUPPORT READY:",
-                {
-                    trackTitle,
-                    supportPi,
-                    creatorPiUid
-                }
-            );
+            if (!supportPi || supportPi <= 0) {
+    alert("Invalid support amount.");
+    return;
+}
+
+if (typeof createArtistSupportPayment !== "function") {
+    alert("Artist support payment is not available.");
+    return;
+}
+
+createArtistSupportPayment(
+    supportPi,
+    trackTitle,
+    release.relicId
+);
         });
     });
 }

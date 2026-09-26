@@ -149,6 +149,96 @@ document.getElementById(
     "searchInput"
 );
 
+function supportArtistWithPi(
+    amountPi,
+    artistName,
+    relicId
+) {
+    const amount = Number(amountPi);
+
+    if (!amount || amount <= 0) {
+        alert("Invalid Pi support amount.");
+        return;
+    }
+
+    console.log(
+        "OSSVARIUM ARTIST SUPPORT:",
+        {
+            amount,
+            artistName,
+            relicId
+        }
+    );
+
+    Pi.createPayment(
+    {
+        amount: amount,
+        memo: `OSSVARIUM Artist Support: ${artistName}`,
+        metadata: {
+            purpose: "artist_support",
+            relicId: relicId,
+            artistName: artistName
+        }
+    },
+    {
+        onReadyForServerApproval: async function (paymentId) {
+            const response = await fetch(
+                "/api/approve-payment",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        paymentId: paymentId
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Artist support approval failed"
+                );
+            }
+        },
+
+        onReadyForServerCompletion: async function (
+            paymentId,
+            txid
+        ) {
+            console.log(
+                "OSSVARIUM ARTIST SUPPORT PAYMENT READY:",
+                {
+                    paymentId,
+                    txid
+                }
+            );
+        },
+
+        onCancel: function (paymentId) {
+            console.log(
+                "Artist support cancelled:",
+                paymentId
+            );
+        },
+
+        onError: function (error, payment) {
+            console.error(
+                "Artist support payment error:",
+                error,
+                payment
+            );
+
+            alert(
+                "Artist support payment failed.\n\n" +
+                (error.message || error)
+            );
+        }
+    }
+);
+
+}
+
 if(searchInput){
 
 searchInput.addEventListener(
