@@ -154,6 +154,8 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializePurchasePanel();
 
+       initializeSupportButtons();
+
        if (!piAuth) {
           piAuth = await authenticatePiUser();
     }
@@ -1340,6 +1342,44 @@ async function downloadOwnedTrack(trackTitle) {
             error.message
         );
     }
+}
+
+function initializeSupportButtons() {
+    const supportButtons =
+        document.querySelectorAll(".track-support-btn");
+
+    supportButtons.forEach(button => {
+        button.addEventListener("click", () => {
+
+            const creatorPiUid =
+                release?.creator_pi_uid ||
+                release?.creatorPiUid ||
+                "";
+
+            if (!creatorPiUid) {
+                alert(
+                    "Artist support is not available yet. " +
+                    "The artist needs to connect a Pi account first."
+                );
+                return;
+            }
+
+            const trackTitle =
+                button.dataset.trackTitle || "";
+
+            const supportPi =
+                Number(button.dataset.supportPi || 0);
+
+            console.log(
+                "OSSVARIUM SUPPORT READY:",
+                {
+                    trackTitle,
+                    supportPi,
+                    creatorPiUid
+                }
+            );
+        });
+    });
 }
 
 function initializePurchasePanel(){
