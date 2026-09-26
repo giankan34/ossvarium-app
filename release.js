@@ -500,17 +500,14 @@ function renderTracklist(){
             typeof track === "object" &&
             track.audio;
 
-        const isForSale =
-            typeof track === "object" &&
-            track.forSale;
+        const supportPi =
+    typeof track === "object"
+        ? Number(track.supportPi || 0)
+        : 0;
 
-        const pricePi =
-            typeof track === "object" &&
-            track.pricePi;
-
-        const priceEur =
-            typeof track === "object" &&
-            track.priceEur;
+const allowDownload =
+    typeof track === "object" &&
+    track.allowDownload === true;
 
         const trackTitle =
             typeof track === "object"
@@ -539,20 +536,24 @@ function renderTracklist(){
                     ${hasAudio ? "0:00 / 0:00" : "--:--"}
                 </span>
 
-                ${isForSale ? `
-                <button
-                   class="track-buy-btn"
-                   type="button"
-                   data-track-title="${trackTitle}"
-                   data-price-pi="${pricePi || ""}"
-                   data-price-eur="${priceEur || ""}">
-                   BUY TRACK · ${
-                       priceEur
-                           ? `€${priceEur}`
-                           : `${pricePi} π`
-               }
-               </button>
-            ` : ''}
+                ${allowDownload && hasAudio ? `
+    <a
+        class="track-download-btn"
+        href="${track.audio}"
+        download>
+        ⬇ DOWNLOAD
+    </a>
+` : ''}
+
+${supportPi > 0 ? `
+    <button
+        class="track-support-btn"
+        type="button"
+        data-track-title="${trackTitle}"
+        data-support-pi="${supportPi}">
+        π SUPPORT ARTIST · ${supportPi} Pi
+    </button>
+` : ''}
 
                 <div class="track-progress">
                     <div class="track-progress-fill"></div>
