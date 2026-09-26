@@ -44,6 +44,7 @@ module.exports = async function handler(req, res) {
     SELECT
         r.id,
         r.relic_id,
+        r.creator_pi_uid,
         r.artist,
         r.release_title,
         r.country,
