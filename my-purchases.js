@@ -43,17 +43,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
         connectButton.textContent = "π PI ACCOUNT CONNECTED";
 
-purchasesContainer.innerHTML = `
-    <p>
-        PURCHASES FOUND:
-        <strong>
-            ${Array.isArray(result.purchases)
-                ? result.purchases.length
-                : 0}
-        </strong>
-    </p>
-`;
+const purchases =
+    Array.isArray(result.purchases)
+        ? result.purchases
+        : [];
 
+if (purchases.length === 0) {
+    purchasesContainer.innerHTML =
+        "<p>NO PURCHASES YET.</p>";
+} else {
+    purchasesContainer.innerHTML =
+        purchases.map(purchase => {
+
+            const amountPi =
+                Number(
+                    purchase.amount_pi || 0
+                ).toFixed(4);
+
+            const date =
+                purchase.created_at
+                    ? new Date(
+                        purchase.created_at
+                    ).toLocaleDateString()
+                    : "-";
+
+            return `
+                <div class="purchase-card">
+                    <h2>
+                        ${purchase.track_title || "UNKNOWN TRACK"}
+                    </h2>
+
+                    <p>
+                        ${purchase.relic_id || ""}
+                    </p>
+
+                    <p>
+                        PAID:
+                        <strong>${amountPi} Pi</strong>
+                    </p>
+
+                    <p>
+                        PURCHASED:
+                        <strong>${date}</strong>
+                    </p>
+                </div>
+            `;
+        }).join("");
+}
         console.log(
             "MY PURCHASES:",
             result
