@@ -373,6 +373,17 @@ if (req.method === "GET") {
             WHERE p.payment_method = 'pi'
         ),
     0
+)
++
+COALESCE(
+    (
+        SELECT SUM(s.amount_pi)
+        FROM artist_supports s
+        WHERE
+            s.creator_pi_uid = r.creator_pi_uid
+            AND s.status = 'completed'
+    ),
+    0
 ) AS gross_pi,
 
 COALESCE(
@@ -381,6 +392,17 @@ COALESCE(
             WHERE p.payment_method = 'pi'
         ),
     0
+)
++
+COALESCE(
+    (
+        SELECT SUM(s.artist_share_pi)
+        FROM artist_supports s
+        WHERE
+            s.creator_pi_uid = r.creator_pi_uid
+            AND s.status = 'completed'
+    ),
+    0
 ) AS pi_earned,
 
 COALESCE(
@@ -388,6 +410,17 @@ COALESCE(
         FILTER (
             WHERE p.payment_method = 'pi'
         ),
+    0
+)
++
+COALESCE(
+    (
+        SELECT SUM(s.ossvarium_fee_pi)
+        FROM artist_supports s
+        WHERE
+            s.creator_pi_uid = r.creator_pi_uid
+            AND s.status = 'completed'
+    ),
     0
 ) AS ossvarium_fee_pi
 
