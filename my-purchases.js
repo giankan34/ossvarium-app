@@ -1,8 +1,18 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
     const purchasesContainer =
         document.getElementById("purchasesContainer");
 
-    try {
+    const connectButton =
+        document.getElementById("connectButton");
+
+    connectButton.addEventListener(
+        "click",
+        async function () {
+
+            connectButton.disabled = true;
+            connectButton.textContent = "π CONNECTING...";
+
+            try {
         const scopes = ["username", "wallet_address"];
 
         const auth = await Pi.authenticate(
@@ -41,4 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         purchasesContainer.innerHTML =
             "<p>COULD NOT LOAD YOUR PURCHASES.</p>";
     }
+
+    });
+
 });
