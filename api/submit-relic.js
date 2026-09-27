@@ -380,7 +380,7 @@ COALESCE(
         SELECT SUM(s.amount_pi)
         FROM artist_supports s
         WHERE
-            s.creator_pi_uid = r.creator_pi_uid
+            s.creator_pi_uid = ${verifiedCreatorPiUid}
             AND s.status = 'completed'
     ),
     0
@@ -399,7 +399,7 @@ COALESCE(
         SELECT SUM(s.artist_share_pi)
         FROM artist_supports s
         WHERE
-            s.creator_pi_uid = r.creator_pi_uid
+            s.creator_pi_uid = ${verifiedCreatorPiUid}
             AND s.status = 'completed'
     ),
     0
@@ -418,7 +418,7 @@ COALESCE(
         SELECT SUM(s.ossvarium_fee_pi)
         FROM artist_supports s
         WHERE
-            s.creator_pi_uid = r.creator_pi_uid
+            s.creator_pi_uid = ${verifiedCreatorPiUid}
             AND s.status = 'completed'
     ),
     0
