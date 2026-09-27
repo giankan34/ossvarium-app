@@ -864,6 +864,63 @@ ${hasEurValue ? `
     );
 }
 
+const supportHistory =
+    Array.isArray(result.support_history)
+        ? result.support_history
+        : [];
+
+        if (supportHistory.length > 0) {
+    const supportHistorySection =
+        document.createElement("div");
+
+    supportHistorySection.className =
+        "submission-card";
+
+    supportHistorySection.innerHTML = `
+    <h2>☠ ARTIST SUPPORT HISTORY ☠</h2>
+
+    ${supportHistory.map(support => {
+        const amountPi =
+            Number(support.amount_pi || 0).toFixed(4);
+
+        const artistShare =
+            Number(support.artist_share_pi || 0).toFixed(4);
+
+        const ossvariumFee =
+            Number(support.ossvarium_fee_pi || 0).toFixed(4);
+
+        const date =
+    support.created_at
+        ? new Date(
+            support.created_at
+        ).toLocaleDateString()
+        : "-";    
+
+        return `
+            <p>
+                <strong>
+                    ${support.track_title || "Unknown Track"}
+                </strong>
+                <br>
+                SUPPORT: <strong>${amountPi} Pi</strong>
+                <br>
+                YOUR SHARE (90%):
+                <strong>${artistShare} Pi</strong>
+                <br>
+                OSSVARIUM FEE (10%):
+                ${ossvariumFee} Pi
+                <br>
+                ${date}
+            </p>
+        `;
+    }).join("")}
+`;
+
+    relicsContainer.appendChild(
+        supportHistorySection
+    );
+}
+
 const requestPayoutButton =
     document.getElementById(
         "requestPayoutButton"

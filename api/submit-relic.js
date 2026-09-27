@@ -499,6 +499,34 @@ OR
         p.created_at DESC;
 `;
 
+let supportHistory = [];
+
+if (verifiedCreatorPiUid) {
+    supportHistory = await sql`
+        SELECT
+            s.relic_id,
+            s.track_title,
+            s.amount_pi,
+            s.artist_share_pi,
+            s.ossvarium_fee_pi,
+            s.created_at,
+            r.artist,
+            r.release_title
+
+        FROM artist_supports s
+
+        INNER JOIN relics r
+            ON r.relic_id = s.relic_id
+
+        WHERE
+            s.creator_pi_uid = ${verifiedCreatorPiUid}
+            AND s.status = 'completed'
+
+        ORDER BY
+            s.created_at DESC;
+    `;
+}
+
 let payoutSummary = [{
     paid_out_pi: 0,
     pending_payout_pi: 0
@@ -620,6 +648,7 @@ const availableBalancePi =
 },
 payout_history: payoutHistory,
 sales_history: salesHistory,
+support_history: supportHistory,
 artist_profile: artistProfile[0] || null
 });
 
