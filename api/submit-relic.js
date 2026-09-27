@@ -970,7 +970,7 @@ const incompletePayments =
         COALESCE(
             SUM(amount_pi)
                 FILTER (
-                    WHERE status IN ('pending', 'completed')
+                    WHERE status = 'pending'
                     AND payout_method = 'pi'
                 ),
             0
@@ -979,7 +979,7 @@ const incompletePayments =
         COALESCE(
             SUM(amount_eur)
                 FILTER (
-                    WHERE status IN ('pending', 'completed')
+                    WHERE status = 'pending'
                     AND payout_method = 'eur'
                 ),
             0
