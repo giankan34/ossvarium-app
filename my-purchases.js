@@ -1,3 +1,7 @@
+Pi.init({
+    version: "2.0"
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const purchasesContainer =
         document.getElementById("purchasesContainer");
