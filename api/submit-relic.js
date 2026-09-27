@@ -381,6 +381,7 @@ COALESCE(
         FROM artist_supports s
         WHERE
             s.creator_pi_uid = ${verifiedCreatorPiUid}
+            AND s.relic_id = r.relic_id
             AND s.status = 'completed'
     ),
     0
@@ -400,7 +401,10 @@ COALESCE(
         FROM artist_supports s
         WHERE
             s.creator_pi_uid = ${verifiedCreatorPiUid}
-            AND s.status = 'completed'
+            WHERE
+    s.creator_pi_uid = ${verifiedCreatorPiUid}
+    AND s.relic_id = r.relic_id
+    AND s.status = 'completed'
     ),
     0
 ) AS pi_earned,
@@ -419,6 +423,7 @@ COALESCE(
         FROM artist_supports s
         WHERE
             s.creator_pi_uid = ${verifiedCreatorPiUid}
+            AND s.relic_id = r.relic_id
             AND s.status = 'completed'
     ),
     0
