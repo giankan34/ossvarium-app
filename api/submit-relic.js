@@ -399,8 +399,6 @@ COALESCE(
     (
         SELECT SUM(s.artist_share_pi)
         FROM artist_supports s
-        WHERE
-            s.creator_pi_uid = ${verifiedCreatorPiUid}
             WHERE
     s.creator_pi_uid = ${verifiedCreatorPiUid}
     AND s.relic_id = r.relic_id
