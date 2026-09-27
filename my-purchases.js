@@ -41,6 +41,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const result = await response.json();
 
+        connectButton.textContent = "π PI ACCOUNT CONNECTED";
+
+purchasesContainer.innerHTML = `
+    <p>
+        PURCHASES FOUND:
+        <strong>
+            ${Array.isArray(result.purchases)
+                ? result.purchases.length
+                : 0}
+        </strong>
+    </p>
+`;
+
         console.log(
             "MY PURCHASES:",
             result
