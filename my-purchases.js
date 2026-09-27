@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("purchasesContainer");
 
     try {
-        const scopes = ["username"];
+        const scopes = ["username", "wallet_address"];
 
         const auth = await Pi.authenticate(
             scopes,
