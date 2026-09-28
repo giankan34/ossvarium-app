@@ -528,14 +528,6 @@ const allowDownload =
                     ${hasAudio ? "0:00 / 0:00" : "--:--"}
                 </span>
 
-                ${allowDownload && hasAudio ? `
-    <a
-        class="track-download-btn"
-        href="${track.audio}"
-        download>
-        ⬇ DOWNLOAD
-    </a>
-` : ''}
 
 ${supportPi > 0 ? `
     <button
