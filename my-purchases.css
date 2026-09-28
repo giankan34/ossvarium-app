@@ -129,3 +129,34 @@ body {
 .play-purchased-track:active {
     transform: scale(0.97);
 }
+
+.view-purchased-relic {
+    display: inline-flex;
+    align-items: center;
+
+    margin-left: 6px;
+    padding: 11px 16px;
+
+    color: #b8b8b8;
+    background: transparent;
+
+    border: 1px solid #3f3f3f;
+    border-radius: 6px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.view-purchased-relic:hover {
+    color: #ffffff;
+    border-color: #777;
+    background: #171717;
+}
