@@ -629,6 +629,11 @@ function initializePlayer() {
         ".track-download-btn"
     );
 
+const downloadButton =
+    trackEntry.querySelector(
+        ".track-download-btn"
+    );
+
 if (
     downloadButton &&
     !downloadButton.dataset.secureBound
