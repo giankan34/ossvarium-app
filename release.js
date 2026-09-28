@@ -766,7 +766,7 @@ button.textContent = "❚❚";
                 const visualizer =
                     trackEntry.querySelector(".track-visualizer");
 
-                if(false && visualizer){
+                if(visualizer){
 
     audioContext =
         new (
@@ -788,8 +788,9 @@ button.textContent = "❚❚";
             currentAudio
         );
 
-    audioSourceNode.connect(analyser);
     audioSourceNode.connect(audioContext.destination);
+
+    audioSourceNode.connect(analyser);
 
     const visualizerCtx =
         visualizer.getContext("2d");
