@@ -988,6 +988,18 @@ currentAudio.addEventListener(
     "timeupdate",
     () => {
 
+        const progress =
+            currentAudio.duration
+                ? (currentAudio.currentTime / currentAudio.duration) * 100
+                : 0;
+
+        progressFill.style.width =
+            `${progress}%`;
+
+        timeDisplay.textContent =
+            `${formatTime(currentAudio.currentTime)} / ${formatTime(currentAudio.duration)}`;
+    }
+);
         progressBar.addEventListener(
     "click",
     event => {
@@ -1048,8 +1060,6 @@ currentAudio.addEventListener(
 
             }
         );
-
-    });
 
 }
 
