@@ -624,34 +624,7 @@ function initializePlayer() {
                         ?.textContent
                         ?.trim();
 
-                        const downloadButton =
-    trackEntry.querySelector(
-        ".track-download-btn"
-    );
-
-const downloadButton =
-    trackEntry.querySelector(
-        ".track-download-btn"
-    );
-
-if (
-    downloadButton &&
-    !downloadButton.dataset.secureBound
-) {
-    downloadButton.dataset.secureBound = "true";
-
-    downloadButton.addEventListener(
-        "click",
-        async event => {
-
-            event.preventDefault();
-
-            await downloadOwnedTrack(
-                trackTitle
-            );
-        }
-    );
-}
+                        
 
                 let audioSource =
                     button.dataset.audio;
@@ -1077,6 +1050,47 @@ if (
             }
         );
     });
+
+    
+
+    const downloadButtons =
+        document.querySelectorAll(
+            ".track-download-btn"
+        );
+
+    downloadButtons.forEach(
+        downloadButton => {
+
+            downloadButton.addEventListener(
+                "click",
+                async event => {
+
+                    event.preventDefault();
+
+                    const trackEntry =
+                        downloadButton.closest(
+                            ".track-entry"
+                        );
+
+                    const trackTitle =
+                        trackEntry
+                            ?.querySelector(
+                                ".track-title"
+                            )
+                            ?.textContent
+                            ?.trim();
+
+                    if (!trackTitle) {
+                        return;
+                    }
+
+                    await downloadOwnedTrack(
+                        trackTitle
+                    );
+                }
+            );
+        }
+    );
 }
 
 async function loadMyPurchases() {
@@ -1701,5 +1715,6 @@ function addToCollection(id) {
             "ALREADY IN COLLECTION"
         );
 
+        }
+
     }
-}
