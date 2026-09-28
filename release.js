@@ -876,10 +876,43 @@ visualizerCtx.fillRect(
         );
     }
 
-    drawTrackVisualizer();
+    drawSafeVisualizer();
 }
 
-                try {
+if (visualizer) {
+
+    const visualizerCtx =
+        visualizer.getContext("2d");
+
+function drawSafeVisualizer() {
+
+    if (
+        !currentAudio ||
+        currentAudio.paused
+    ) {
+        visualizerCtx.clearRect(
+            0,
+            0,
+            visualizer.width,
+            visualizer.height
+        );
+
+        return;
+    }
+
+    visualizerCtx.clearRect(
+        0,
+        0,
+        visualizer.width,
+        visualizer.height
+    );
+
+    requestAnimationFrame(
+        drawSafeVisualizer
+    );
+}
+     }
+       try {
 
     await currentAudio.play();
 
