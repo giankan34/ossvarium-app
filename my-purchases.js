@@ -86,9 +86,64 @@ if (purchases.length === 0) {
                         PURCHASED:
                         <strong>${date}</strong>
                     </p>
+
+                    <button
+    class="play-purchased-track"
+    data-relic-id="${purchase.relic_id}"
+    data-track-title="${purchase.track_title}"
+>
+    ▶ PLAY
+</button>
+
                 </div>
             `;
         }).join("");
+
+        document
+    .querySelectorAll(".play-purchased-track")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            async function () {
+
+                const relicId =
+                    button.dataset.relicId;
+
+                const trackTitle =
+                    button.dataset.trackTitle;
+
+                const response = await fetch(
+    `/api/my-purchases?relicId=${encodeURIComponent(relicId)}&trackTitle=${encodeURIComponent(trackTitle)}&mode=stream`,
+    {
+        headers: {
+            Authorization:
+                `Bearer ${auth.accessToken}`
+        }
+    }
+);
+
+const streamResult =
+    await response.json();
+
+if (
+    !response.ok ||
+    !streamResult.audioUrl
+) {
+    throw new Error(
+        streamResult.error ||
+        "Could not load audio"
+    );
+}
+
+const audio =
+    new Audio(streamResult.audioUrl);
+
+await audio.play();
+            }
+        );
+    });
+
 }
         console.log(
             "MY PURCHASES:",
