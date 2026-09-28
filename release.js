@@ -528,6 +528,14 @@ const allowDownload =
                     ${hasAudio ? "0:00 / 0:00" : "--:--"}
                 </span>
 
+${allowDownload && hasAudio ? `
+    <a
+        class="track-download-btn"
+        href="${track.audio}"
+        download>
+        ⬇ DOWNLOAD
+    </a>
+` : ''}
 
 ${supportPi > 0 ? `
     <button
@@ -615,6 +623,30 @@ function initializePlayer() {
                         .querySelector(".track-title")
                         ?.textContent
                         ?.trim();
+
+                        const downloadButton =
+    trackEntry.querySelector(
+        ".track-download-btn"
+    );
+
+if (
+    downloadButton &&
+    !downloadButton.dataset.secureBound
+) {
+    downloadButton.dataset.secureBound = "true";
+
+    downloadButton.addEventListener(
+        "click",
+        async event => {
+
+            event.preventDefault();
+
+            await downloadOwnedTrack(
+                trackTitle
+            );
+        }
+    );
+}
 
                 let audioSource =
                     button.dataset.audio;
