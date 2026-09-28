@@ -3,6 +3,10 @@ Pi.init({
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    let currentAudio = null;
+    let currentPlayButton = null;
+
     const purchasesContainer =
         document.getElementById("purchasesContainer");
 
@@ -141,10 +145,46 @@ if (
     );
 }
 
-const audio =
+if (
+    currentAudio &&
+    currentPlayButton === button
+) {
+    if (currentAudio.paused) {
+        await currentAudio.play();
+        button.textContent = "⏸ PAUSE";
+    } else {
+        currentAudio.pause();
+        button.textContent = "▶ PLAY";
+    }
+
+    return;
+}
+
+if (currentAudio) {
+    currentAudio.pause();
+
+    if (currentPlayButton) {
+        currentPlayButton.textContent = "▶ PLAY";
+    }
+}
+
+currentAudio =
     new Audio(streamResult.audioUrl);
 
-await audio.play();
+currentPlayButton = button;
+
+await currentAudio.play();
+
+button.textContent = "⏸ PAUSE";
+
+currentAudio.addEventListener(
+    "ended",
+    () => {
+        button.textContent = "▶ PLAY";
+        currentAudio = null;
+        currentPlayButton = null;
+    }
+);
             }
         );
     });
