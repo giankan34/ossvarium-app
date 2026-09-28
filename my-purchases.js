@@ -99,6 +99,13 @@ if (purchases.length === 0) {
     ▶ PLAY
 </button>
 
+<a
+    class="view-purchased-relic"
+    href="release.html?id=${encodeURIComponent(purchase.relic_id)}"
+>
+    VIEW RELIC →
+</a>
+
                 </div>
             `;
         }).join("");
