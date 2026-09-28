@@ -126,6 +126,11 @@ if (purchases.length === 0) {
 const streamResult =
     await response.json();
 
+    console.log(
+    "STREAM RESULT:",
+    streamResult
+);
+
 if (
     !response.ok ||
     !streamResult.audioUrl
