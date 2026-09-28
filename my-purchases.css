@@ -160,3 +160,33 @@ body {
     border-color: #777;
     background: #171717;
 }
+
+.back-to-ossvarium {
+    display: inline-block;
+
+    margin-top: 30px;
+    padding: 10px 16px;
+
+    color: #b8b8b8;
+    background: transparent;
+
+    border: 1px solid #3f3f3f;
+    border-radius: 6px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.back-to-ossvarium:hover {
+    color: #ffffff;
+    border-color: #777;
+    background: #171717;
+}
