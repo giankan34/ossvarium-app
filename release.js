@@ -766,7 +766,7 @@ button.textContent = "❚❚";
                 const visualizer =
                     trackEntry.querySelector(".track-visualizer");
 
-                if(false && visualizer){
+                if(visualizer){
 
     audioContext =
         new (
