@@ -826,10 +826,41 @@ style="text-decoration:none;">
 
 </a>
 
+<button
+    class="submit-btn"
+    type="button"
+    onclick="removeFromCollection(${id})">
+    ✕ REMOVE FROM COLLECTION
+</button>
+
 `;
 
     }).join("");
 
+}
+
+function removeFromCollection(id) {
+
+    let collection =
+        JSON.parse(
+            localStorage.getItem(
+                "ossvariumCollection"
+            ) || "[]"
+        );
+
+    collection =
+        collection.filter(
+            item => Number(item) !== Number(id)
+        );
+
+    localStorage.setItem(
+        "ossvariumCollection",
+        JSON.stringify(collection)
+    );
+
+    loadCollection();
+    loadCatacombMap();
+    loadCatacombLevel();
 }
 
 loadCollection();
