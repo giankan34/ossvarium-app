@@ -85,7 +85,7 @@ body {
     color: #ffffff;
 }
 
-#connectPiButton:disabled {
+#connectButton:disabled {
     background: transparent;
     color: #8f8f8f;
 
