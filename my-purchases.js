@@ -26,10 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const auth = await Pi.authenticate(
             scopes,
             function (payment) {
-                console.log(
-                    "Incomplete payment found:",
-                    payment
-                );
+                
             }
         );
 
@@ -137,11 +134,6 @@ if (purchases.length === 0) {
 const streamResult =
     await response.json();
 
-    console.log(
-    "STREAM RESULT:",
-    streamResult
-);
-
 if (
     !response.ok ||
     !streamResult.audioUrl
@@ -197,11 +189,7 @@ currentAudio.addEventListener(
     });
 
 }
-        console.log(
-            "MY PURCHASES:",
-            result
-        );
-
+        
     } catch (error) {
         console.error(
             "Could not load purchases:",

@@ -378,10 +378,7 @@ connectButton.addEventListener(
             creatorPiAuth = await Pi.authenticate(
                 ["username", "wallet_address"],
                 function (payment) {
-                    console.log(
-                        "OSSVARIUM incomplete payment:",
-                        payment
-                    );
+                    
                 }
             );
 
@@ -1041,11 +1038,6 @@ requestPayoutButton.addEventListener(
 
     result.relics.forEach(function (relic) {
 
-        console.log(
-    "OSSVARIUM CREATOR RELIC:",
-    relic.relic_id,
-    relic.tracks
-);
 
         const card =
             document.createElement("div");

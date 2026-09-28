@@ -13,11 +13,6 @@ async function authenticatePiUser(){
             onIncompletePaymentFound
         );
 
-        console.log(
-            "Pi user authenticated:",
-            piAuth.user.username
-        );
-
 
         return piAuth;
 
@@ -33,11 +28,6 @@ async function authenticatePiUser(){
 }
 
 function onIncompletePaymentFound(payment){
-
-    console.log(
-        "Incomplete Pi payment found:",
-        payment
-    );
 
 }
 
@@ -726,19 +716,6 @@ function initializePlayer(){
                     if(currentAudio.paused){
 
                         currentAudio.play()
-    .then(() => {
-
-        console.log(
-            "☠ AUDIO PLAYING",
-            {
-                src: currentAudio.src,
-                volume: currentAudio.volume,
-                muted: currentAudio.muted,
-                readyState: currentAudio.readyState
-            }
-        );
-
-    })
     .catch(error => {
 
         console.error(
@@ -904,15 +881,6 @@ visualizerCtx.fillRect(
                 try {
 
     await currentAudio.play();
-
-    console.log(
-        "☠ OSSVARIUM AUDIO STARTED",
-        {
-            volume: currentAudio.volume,
-            muted: currentAudio.muted,
-            readyState: currentAudio.readyState
-        }
-    );
 
 } catch (error) {
 
@@ -1418,10 +1386,7 @@ function createArtistSupportPayment(
             },
 
             onCancel: function (paymentId) {
-                console.log(
-                    "Artist support payment cancelled:",
-                    paymentId
-                );
+                
             },
 
             onError: function (error, payment) {
