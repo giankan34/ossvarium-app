@@ -38,16 +38,6 @@ async function loadArtist(){
         const artist =
         artistReleases[0];
 
-        console.log(
-    "OSSVARIUM ARTIST IMAGE:",
-    artist.artistImage
-);
-
-console.log(
-    "OSSVARIUM BANNER:",
-    artist.banner
-);
-
         const totalArtistSupporters =
     artistReleases.reduce(
         (sum, release) =>

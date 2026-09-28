@@ -7,14 +7,9 @@ async function loginWithPi() {
         const auth = await Pi.authenticate(
             scopes,
             function (payment) {
-                console.log(
-                    "Incomplete Pi payment found:",
-                    payment
-                );
+               
             }
         );
-
-        console.log("Pi authentication successful:", auth);
 
         localStorage.setItem(
             "ossvariumPiUser",
@@ -122,10 +117,7 @@ function testPiPayment(
             },
 
             onCancel: function (paymentId) {
-                console.log(
-                    "Pi payment cancelled:",
-                    paymentId
-                );
+                
             },
 
             onError: function (error, payment) {
@@ -160,15 +152,6 @@ function supportArtistWithPi(
         alert("Invalid Pi support amount.");
         return;
     }
-
-    console.log(
-        "OSSVARIUM ARTIST SUPPORT:",
-        {
-            amount,
-            artistName,
-            relicId
-        }
-    );
 
     Pi.createPayment(
     {
@@ -206,20 +189,11 @@ function supportArtistWithPi(
             paymentId,
             txid
         ) {
-            console.log(
-                "OSSVARIUM ARTIST SUPPORT PAYMENT READY:",
-                {
-                    paymentId,
-                    txid
-                }
-            );
+            
         },
 
         onCancel: function (paymentId) {
-            console.log(
-                "Artist support cancelled:",
-                paymentId
-            );
+            
         },
 
         onError: function (error, payment) {
@@ -1363,7 +1337,6 @@ function unlockAchievement(name) {
             JSON.stringify(achievements)
         );
 
-        console.log("🏆 ACHIEVEMENT UNLOCKED:", name);
     }
 }
 
