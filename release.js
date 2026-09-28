@@ -597,7 +597,7 @@ let analyser = null;
 let audioSourceNode = null;
 let visualizerAnimation = null;
 
-function initializePlayer(){
+function initializePlayer() {
 
     const playButtons =
         document.querySelectorAll(
@@ -606,461 +606,448 @@ function initializePlayer(){
 
     playButtons.forEach(button => {
 
-        button.addEventListener("click", async () => {
+        button.addEventListener(
+            "click",
+            async () => {
 
-        let audioSource =
-            button.dataset.audio;
+                const trackEntry =
+                    button.closest(".track-entry");
 
-        const trackEntry =
-            button.closest(".track-entry");
+                const buyButton =
+                    trackEntry.querySelector(
+                        ".track-buy-btn"
+                    );
 
-        const buyButton =
-            trackEntry.querySelector(
-                ".track-buy-btn"
-            );
+                const trackTitle =
+                    trackEntry
+                        .querySelector(".track-title")
+                        ?.textContent
+                        ?.trim();
 
-            if (
-    !buyButton &&
-    audioSource?.startsWith("uploads/")
-) {
-    const trackTitle =
-        trackEntry
-            .querySelector(".track-title")
-            ?.textContent
-            ?.trim();
+                let audioSource =
+                    button.dataset.audio;
 
-    if (!piAuth) {
-        piAuth =
-            await authenticatePiUser();
-    }
+                // ---------------------------------
+                // PROTECTED / PRIVATE AUDIO
+                // ---------------------------------
 
-    if (!piAuth) {
-        alert(
-            "Pi authentication is required."
-        );
-        return;
-    }
+                if (
+                    audioSource?.startsWith("uploads/")
+                ) {
 
-    button.disabled = true;
-    button.textContent = "⏳";
+                    if (!piAuth) {
+                        piAuth =
+                            await authenticatePiUser();
+                    }
 
-    const protectedUrl =
-        await getOwnedAudioUrl(
-            release.relicId,
-            trackTitle
-        );
+                    if (!piAuth) {
+                        alert(
+                            "Pi authentication is required."
+                        );
+                        return;
+                    }
 
-    button.disabled = false;
+                    button.disabled = true;
+                    button.textContent = "⏳";
 
-    if (!protectedUrl) {
-        button.textContent = "▶";
-        alert(
-            "Protected audio unavailable."
-        );
-        return;
-    }
+                    const protectedUrl =
+                        await getOwnedAudioUrl(
+                            release.relicId,
+                            trackTitle
+                        );
 
-    audioSource = protectedUrl;
-}
+                    button.disabled = false;
 
-        // Paid/private track
-        if (buyButton) {
+                    if (!protectedUrl) {
 
-            const trackTitle =
-                buyButton.dataset.trackTitle;
+                        button.textContent = "▶";
 
-            if (!piAuth) {
-                piAuth =
-                    await authenticatePiUser();
-            }
+                        alert(
+                            buyButton
+                                ? "☠ This relic has not been acquired."
+                                : "Protected audio unavailable."
+                        );
 
-            if (!piAuth) {
-                alert(
-                    "Pi authentication is required."
-                );
-                return;
-            }
+                        return;
+                    }
 
-            button.disabled = true;
-            button.textContent = "⌛";
+                    audioSource = protectedUrl;
+                }
 
-            const protectedUrl =
-                await getOwnedAudioUrl(
-                    release.relicId,
-                    trackTitle
-                );
+                // ---------------------------------
+                // SAME TRACK — PLAY / PAUSE
+                // ---------------------------------
 
-            button.disabled = false;
-
-            if (!protectedUrl) {
-
-                button.textContent = "▶";
-
-                alert(
-                    "☠ This relic has not been acquired."
-                );
-
-                return;
-            }
-
-            audioSource =
-                protectedUrl;
-        }
-
-                // Αν παίζει ήδη το ίδιο track
-                if(
+                if (
                     currentAudio &&
                     currentButton === button
-                ){
+                ) {
 
-                    if(currentAudio.paused){
+                    if (currentAudio.paused) {
 
-                        currentAudio.play()
-    .catch(error => {
+                        try {
+                            await currentAudio.play();
+                            button.textContent = "❚❚";
+                        } catch (error) {
 
-        console.error(
-            "☠ AUDIO PLAY FAILED:",
-            error
-        );
+                            console.error(
+                                "☠ AUDIO PLAY FAILED:",
+                                error
+                            );
+                        }
 
-        alert(
-            "AUDIO ERROR:\n" +
-            error.message
-        );
-    });
-
-button.textContent = "❚❚";
-
-                    }else{
+                    } else {
 
                         currentAudio.pause();
                         button.textContent = "▶";
-
                     }
 
                     return;
                 }
 
-                // Αν παίζει άλλο track
-                if(currentAudio){
+                // ---------------------------------
+                // STOP PREVIOUS TRACK
+                // ---------------------------------
+
+                if (currentAudio) {
 
                     currentAudio.pause();
 
-                    if(currentButton){
+                    if (currentButton) {
                         currentButton.textContent = "▶";
                     }
-
                 }
 
-                currentAudio =
+                // ---------------------------------
+                // CREATE NORMAL HTML AUDIO
+                // ---------------------------------
+
+                const audio =
                     new Audio(audioSource);
 
-                    currentAudio.muted = false;
-                    currentAudio.volume = 1;
-                    currentAudio.preload = "auto";
+                currentAudio = audio;
+                currentButton = button;
 
-                currentButton =
-                    button;
+                audio.muted = false;
+                audio.volume = 1;
+                audio.preload = "metadata";
 
+                const timeDisplay =
+                    trackEntry.querySelector(
+                        ".track-time"
+                    );
+
+                const progressBar =
+                    trackEntry.querySelector(
+                        ".track-progress"
+                    );
+
+                const progressFill =
+                    trackEntry.querySelector(
+                        ".track-progress-fill"
+                    );
+
+                const volumeControl =
+                    trackEntry.querySelector(
+                        ".track-volume"
+                    );
 
                 const visualizer =
-                    trackEntry.querySelector(".track-visualizer");
-
-                if(visualizer){
-
-    audioContext =
-        new (
-            window.AudioContext ||
-            window.webkitAudioContext
-        )();
-
-        if (audioContext.state === "suspended") {
-    await audioContext.resume();
-}
-
-    analyser =
-        audioContext.createAnalyser();
-
-    analyser.fftSize = 128;
-
-    audioSourceNode =
-        audioContext.createMediaElementSource(
-            currentAudio
-        );
-
-    audioSourceNode.connect(audioContext.destination);
-
-    audioSourceNode.connect(analyser);
-
-    const visualizerCtx =
-        visualizer.getContext("2d");
-
-    const dataArray =
-        new Uint8Array(
-            analyser.frequencyBinCount
-        );
-
-    function drawTrackVisualizer(){
-
-        visualizerAnimation =
-            requestAnimationFrame(
-                drawTrackVisualizer
-            );
-
-        analyser.getByteFrequencyData(
-            dataArray
-        );
-
-        visualizerCtx.clearRect(
-            0,
-            0,
-            visualizer.width,
-            visualizer.height
-        );
-
-        const barWidth =
-            visualizer.width /
-            dataArray.length;
-
-        dataArray.forEach(
-            (value, index) => {
-
-                const barHeight =
-                    (value / 255) *
-                    visualizer.height;
-
-              const gradient =
-    visualizerCtx.createLinearGradient(
-        0,
-        visualizer.height,
-        0,
-        visualizer.height - barHeight
-    );
-
-gradient.addColorStop(
-    0,
-    "#2a0505"
-);
-
-gradient.addColorStop(
-    0.45,
-    "#7d1717"
-);
-
-gradient.addColorStop(
-    0.8,
-    "#b52a2a"
-);
-
-gradient.addColorStop(
-    1,
-    "#e04444"
-);
-
-visualizerCtx.fillStyle =
-    gradient;
-
-visualizerCtx.shadowColor =
-    "rgba(180,25,25,.65)";
-
-visualizerCtx.shadowBlur =
-    8;
-
-visualizerCtx.fillRect(
-    index * barWidth,
-    visualizer.height - barHeight,
-    Math.max(barWidth - 2, 1),
-    barHeight
-);
-            }
-        );
-    }
-
-    drawSafeVisualizer();
-}
-
-if (visualizer) {
-
-    const visualizerCtx =
-        visualizer.getContext("2d");
-
-function drawSafeVisualizer() {
-
-    if (
-        !currentAudio ||
-        currentAudio.paused
-    ) {
-        visualizerCtx.clearRect(
-            0,
-            0,
-            visualizer.width,
-            visualizer.height
-        );
-
-        return;
-    }
-
-    visualizerCtx.clearRect(
-        0,
-        0,
-        visualizer.width,
-        visualizer.height
-    );
-
-    requestAnimationFrame(
-        drawSafeVisualizer
-    );
-}
-     }
-       try {
-
-    await currentAudio.play();
-
-} catch (error) {
-
-    console.error(
-        "☠ OSSVARIUM AUDIO FAILED:",
-        error
-    );
-
-    button.textContent = "▶";
-
-    alert(
-        "Audio playback failed.\n\n" +
-        error.message
-    );
-
-    return;
-}
-
-                button.textContent = "❚❚";
-
-const timeDisplay =
-    trackEntry.querySelector(".track-time");
-
-const progressFill =
-    trackEntry.querySelector(".track-progress-fill");
-
-    const progressBar =
-    trackEntry.querySelector(".track-progress");
-
-    const volumeControl =
-    trackEntry.querySelector(".track-volume");
-
-    volumeControl.addEventListener(
-    "input",
-    () => {
-
-        if(currentAudio){
-            currentAudio.volume =
-                Number(volumeControl.value);
-        }
-
-    }
-);
-
-function formatTime(seconds){
-
-    if(!Number.isFinite(seconds)){
-        return "0:00";
-    }
-
-    const minutes =
-        Math.floor(seconds / 60);
-
-    const secs =
-        Math.floor(seconds % 60);
-
-    return `${minutes}:${String(secs).padStart(2, "0")}`;
-}
-
-currentAudio.addEventListener(
-    "loadedmetadata",
-    () => {
-
-        timeDisplay.textContent =
-            `0:00 / ${formatTime(currentAudio.duration)}`;
-
-    }
-);
-
-currentAudio.addEventListener(
-    "timeupdate",
-    () => {
-
-        const progress =
-            currentAudio.duration
-                ? (currentAudio.currentTime / currentAudio.duration) * 100
-                : 0;
-
-        progressFill.style.width =
-            `${progress}%`;
-
-        timeDisplay.textContent =
-            `${formatTime(currentAudio.currentTime)} / ${formatTime(currentAudio.duration)}`;
-    }
-);
-        progressBar.addEventListener(
-    "click",
-    event => {
-
-        const rect =
-            progressBar.getBoundingClientRect();
-
-        const clickX =
-            event.clientX - rect.left;
-
-        const percentage =
-            clickX / rect.width;
-
-        if(
-            currentAudio &&
-            Number.isFinite(currentAudio.duration)
-        ){
-            currentAudio.currentTime =
-                percentage * currentAudio.duration;
-        }
-
-    }
-);
-
-        const current =
-            currentAudio.currentTime;
-
-        const duration =
-            currentAudio.duration;
-
-        timeDisplay.textContent =
-            `${formatTime(current)} / ${formatTime(duration)}`;
-
-        if(duration){
-
-            const percentage =
-                (current / duration) * 100;
-
-            progressFill.style.width =
-                `${percentage}%`;
-
-        }
-
-    }
-);
-
-                currentAudio.addEventListener(
+                    trackEntry.querySelector(
+                        ".track-visualizer"
+                    );
+
+                // ---------------------------------
+                // TIME FORMAT
+                // ---------------------------------
+
+                function formatTime(seconds) {
+
+                    if (!Number.isFinite(seconds)) {
+                        return "0:00";
+                    }
+
+                    const minutes =
+                        Math.floor(seconds / 60);
+
+                    const secs =
+                        Math.floor(seconds % 60);
+
+                    return (
+                        `${minutes}:` +
+                        String(secs).padStart(2, "0")
+                    );
+                }
+
+                // ---------------------------------
+                // METADATA / DURATION
+                // ---------------------------------
+
+                audio.addEventListener(
+                    "loadedmetadata",
+                    () => {
+
+                        timeDisplay.textContent =
+                            `0:00 / ${formatTime(audio.duration)}`;
+                    }
+                );
+
+                // ---------------------------------
+                // TIME + PROGRESS
+                // ---------------------------------
+
+                audio.addEventListener(
+                    "timeupdate",
+                    () => {
+
+                        const current =
+                            audio.currentTime;
+
+                        const duration =
+                            audio.duration;
+
+                        timeDisplay.textContent =
+                            `${formatTime(current)} / ${formatTime(duration)}`;
+
+                        if (
+                            Number.isFinite(duration) &&
+                            duration > 0
+                        ) {
+
+                            const percentage =
+                                (current / duration) * 100;
+
+                            progressFill.style.width =
+                                `${percentage}%`;
+                        }
+                    }
+                );
+
+                // ---------------------------------
+                // SEEK
+                // ---------------------------------
+
+                progressBar.addEventListener(
+                    "click",
+                    event => {
+
+                        if (
+                            !Number.isFinite(audio.duration) ||
+                            audio.duration <= 0
+                        ) {
+                            return;
+                        }
+
+                        const rect =
+                            progressBar
+                                .getBoundingClientRect();
+
+                        const percentage =
+                            Math.min(
+                                1,
+                                Math.max(
+                                    0,
+                                    (event.clientX - rect.left) /
+                                    rect.width
+                                )
+                            );
+
+                        audio.currentTime =
+                            percentage * audio.duration;
+                    }
+                );
+
+                // ---------------------------------
+                // VOLUME
+                // ---------------------------------
+
+                if (volumeControl) {
+
+                    volumeControl.value = "1";
+
+                    volumeControl.addEventListener(
+                        "input",
+                        () => {
+
+                            audio.volume =
+                                Number(
+                                    volumeControl.value
+                                );
+                        }
+                    );
+                }
+
+                // ---------------------------------
+                // SAFE VISUALIZER
+                // NO AudioContext
+                // ---------------------------------
+
+                if (visualizer) {
+
+                    const ctx =
+                        visualizer.getContext("2d");
+
+                    const audioForVisualizer =
+                        audio;
+
+                    function drawVisualizer() {
+
+                        if (
+                            currentAudio !==
+                            audioForVisualizer
+                        ) {
+
+                            ctx.clearRect(
+                                0,
+                                0,
+                                visualizer.width,
+                                visualizer.height
+                            );
+
+                            return;
+                        }
+
+                        ctx.clearRect(
+                            0,
+                            0,
+                            visualizer.width,
+                            visualizer.height
+                        );
+
+                        if (!audioForVisualizer.paused) {
+
+                            const bars = 24;
+                            const gap = 2;
+
+                            const barWidth =
+                                (
+                                    visualizer.width -
+                                    gap * (bars - 1)
+                                ) / bars;
+
+                            for (
+                                let i = 0;
+                                i < bars;
+                                i++
+                            ) {
+
+                                const wave =
+                                    (
+                                        Math.sin(
+                                            Date.now() / 160 +
+                                            i * 0.75
+                                        ) + 1
+                                    ) / 2;
+
+                                const barHeight =
+                                    Math.max(
+                                        3,
+                                        wave *
+                                        visualizer.height *
+                                        0.85
+                                    );
+
+                                const gradient =
+                                    ctx.createLinearGradient(
+                                        0,
+                                        visualizer.height,
+                                        0,
+                                        visualizer.height -
+                                        barHeight
+                                    );
+
+                                gradient.addColorStop(
+                                    0,
+                                    "#2a0505"
+                                );
+
+                                gradient.addColorStop(
+                                    0.55,
+                                    "#7d1717"
+                                );
+
+                                gradient.addColorStop(
+                                    1,
+                                    "#e04444"
+                                );
+
+                                ctx.fillStyle =
+                                    gradient;
+
+                                ctx.fillRect(
+                                    i *
+                                    (barWidth + gap),
+                                    visualizer.height -
+                                    barHeight,
+                                    barWidth,
+                                    barHeight
+                                );
+                            }
+                        }
+
+                        requestAnimationFrame(
+                            drawVisualizer
+                        );
+                    }
+
+                    drawVisualizer();
+                }
+
+                // ---------------------------------
+                // ENDED
+                // ---------------------------------
+
+                audio.addEventListener(
                     "ended",
                     () => {
 
                         button.textContent = "▶";
 
-                        currentAudio = null;
-                        currentButton = null;
+                        progressFill.style.width =
+                            "0%";
 
+                        timeDisplay.textContent =
+                            `0:00 / ${formatTime(audio.duration)}`;
+
+                        if (currentAudio === audio) {
+                            currentAudio = null;
+                            currentButton = null;
+                        }
                     }
                 );
 
+                // ---------------------------------
+                // PLAY
+                // ---------------------------------
+
+                try {
+
+                    await audio.play();
+
+                    button.textContent = "❚❚";
+
+                } catch (error) {
+
+                    console.error(
+                        "☠ OSSVARIUM AUDIO FAILED:",
+                        error
+                    );
+
+                    button.textContent = "▶";
+
+                    if (currentAudio === audio) {
+                        currentAudio = null;
+                        currentButton = null;
+                    }
+
+                    alert(
+                        "Audio playback failed.\n\n" +
+                        error.message
+                    );
+                }
             }
         );
-
+    });
 }
 
 async function loadMyPurchases() {
