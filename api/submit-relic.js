@@ -1606,8 +1606,16 @@ if (verifiedCreatorPiUid) {
 
         const id = inserted[0].id;
 
-        const relicId =
-            `OSV-${String(id).padStart(5, "0")}`;
+const publicIdResult = await sql`
+    SELECT nextval('relic_public_id_seq') AS public_id;
+`;
+
+const publicId = Number(
+    publicIdResult[0].public_id
+);
+
+const relicId =
+    `OSV-${String(publicId).padStart(5, "0")}`;
 
         const updated = await sql`
             UPDATE relics
