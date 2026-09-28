@@ -789,7 +789,7 @@ button.textContent = "❚❚";
         );
 
     audioSourceNode.connect(analyser);
-    analyser.connect(audioContext.destination);
+    audioSourceNode.connect(audioContext.destination);
 
     const visualizerCtx =
         visualizer.getContext("2d");
