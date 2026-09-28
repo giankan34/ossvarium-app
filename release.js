@@ -72,6 +72,11 @@ if (
             ).toUpperCase() ===
             releaseParam.toUpperCase()
         );
+
+        if (release) {
+    releaseId = releases.indexOf(release);
+}
+
 } else {
     releaseId =
         Number(releaseParam);
