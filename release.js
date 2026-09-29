@@ -499,8 +499,8 @@ function renderTracklist(){
 
         const supportPi =
     typeof track === "object"
-        ? Number(track.supportPi || 0.1)
-        : 0.1;
+        ? Number(track.supportPi || 0)
+        : 0;
 
 const allowDownload =
     typeof track === "object" &&

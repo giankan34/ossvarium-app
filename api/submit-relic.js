@@ -1252,6 +1252,12 @@ const updatedTracks = existingTracks
                 ? price
                 : Number(track.priceEur || 0),
 
+        supportPi:
+    Number.isFinite(Number(incoming.supportPi)) &&
+    Number(incoming.supportPi) >= 0
+        ? Number(incoming.supportPi)
+        : Number(track.supportPi || 0),        
+
         forSale:
             typeof incoming.forSale === "boolean"
                 ? incoming.forSale
@@ -1309,6 +1315,7 @@ if (incomingTracks.length > existingTracks.length) {
             forSale:
                 Boolean(incoming.forSale),
             priceEur: price,
+            supportPi: Number(incoming.supportPi || 0),
             allowDownload:
                 Boolean(incoming.allowDownload)
         });
@@ -1606,25 +1613,13 @@ if (verifiedCreatorPiUid) {
 
         const id = inserted[0].id;
 
-const publicIdResult = await sql`
-    SELECT nextval('relic_public_id_seq') AS public_id;
+
+const updated = await sql`
+    SELECT *
+    FROM relics
+    WHERE id = ${id}
+    LIMIT 1;
 `;
-
-const publicId = Number(
-    publicIdResult[0].public_id
-);
-
-const relicId =
-    `OSV-${String(publicId).padStart(5, "0")}`;
-
-        const updated = await sql`
-            UPDATE relics
-            SET
-                relic_id = ${relicId},
-                updated_at = NOW()
-            WHERE id = ${id}
-            RETURNING *;
-        `;
 
         return res.status(201).json({
             success: true,

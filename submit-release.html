@@ -323,13 +323,6 @@ connectPiCreatorButton.addEventListener(
     type="hidden"
     class="track-audio">
 
-        <input
-            type="number"
-            class="track-price"
-            min="0"
-            step="0.01"
-            placeholder="Track Price (€)">
-
         <label class="track-sale-option">
 
             <input
@@ -626,7 +619,7 @@ const coverArtworkObjectKey =
         year: document.getElementById("releaseYear").value,
         description: document.getElementById("description").value.trim(),
         bio:document.getElementById("bio").value.trim(),
-        artistImage:document.getElementById("artistImage").value.trim(),
+        artistImage: artistImageObjectKey,
         banner: bannerObjectKey,
         cover: coverArtworkObjectKey,
         bandcamp:document.getElementById("bandcamp").value.trim(),

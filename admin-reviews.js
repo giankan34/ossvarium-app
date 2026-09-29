@@ -453,7 +453,7 @@ async function rejectRelic(id) {
 
         alert(
             "☠ RELIC REJECTED ☠\n\n" +
-            result.relic.relic_id +
+            "PENDING SUBMISSION" +
             "\n" +
             result.relic.artist +
             " — " +

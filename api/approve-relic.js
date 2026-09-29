@@ -70,9 +70,21 @@ module.exports = async function handler(req, res) {
 
         // ----- APPROVE -----
 
+        const publicIdResult = await sql`
+    SELECT nextval('relic_public_id_seq') AS public_id;
+`;
+
+const publicId = Number(
+    publicIdResult[0].public_id
+);
+
+const relicId =
+    `OSV-${String(publicId).padStart(5, "0")}`;
+
         const updated = await sql`
             UPDATE relics
             SET
+                relic_id = ${relicId},
                 status = 'approved',
                 approved_at = NOW(),
                 rejected_at = NULL,
