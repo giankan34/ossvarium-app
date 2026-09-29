@@ -434,6 +434,8 @@ COALESCE(
 
     WHERE
 (
+
+(
     CAST(${verifiedCreatorPiUid} AS TEXT) IS NOT NULL
     AND
     r.creator_pi_uid = ${verifiedCreatorPiUid}
@@ -444,6 +446,10 @@ OR
     AND
     LOWER(r.contact_email) = ${verifiedCreatorEmail}
 )
+
+)
+
+AND r.status <> 'rejected'
 
     GROUP BY
         r.relic_id,
