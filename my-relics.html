@@ -1192,6 +1192,17 @@ editButton.addEventListener("click", function () {
             </label>
 
             <label>
+    SUGGESTED SUPPORT (Pi)
+    <input
+        type="number"
+        class="edit-track-support-pi"
+        min="0"
+        step="0.01"
+        value="${Number(track.supportPi || 0)}"
+    >
+</label>
+
+            <label>
                 <input
                     type="checkbox"
                     class="edit-track-for-sale"
@@ -1254,6 +1265,17 @@ editButton.addEventListener("click", function () {
             value="0"
         >
     </label>
+
+    <label>
+    SUGGESTED SUPPORT (Pi)
+    <input
+        type="number"
+        class="add-track-support-pi"
+        min="0"
+        step="0.01"
+        value="0"
+    >
+</label>
 
     <label>
         <input
@@ -1320,6 +1342,13 @@ addTrackButton.addEventListener(
                     ).value
                 );
 
+            const supportPi =
+    Number(
+        editor.querySelector(
+            ".add-track-support-pi"
+        ).value
+    );    
+
             const forSale =
                 editor.querySelector(
                     ".add-track-for-sale"
@@ -1369,6 +1398,7 @@ addTrackButton.addEventListener(
                 audio: audio,
                 forSale: forSale,
                 priceEur: price,
+                supportPi: supportPi,
                 allowDownload: allowDownload
             });
 
@@ -1536,6 +1566,13 @@ tracks: relic.tracks.map(function (originalTrack, index) {
                     ".edit-track-price"
                 ).value
             ),
+
+            supportPi:
+    Number(
+        trackEditor.querySelector(
+            ".edit-track-support-pi"
+        ).value
+    ),
 
         forSale:
             trackEditor.querySelector(
