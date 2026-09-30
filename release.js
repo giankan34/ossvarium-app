@@ -151,6 +151,8 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializeSupportButtons();
 
+       initializeArtistSupportButton();
+
        if (!piAuth) {
           piAuth = await authenticatePiUser();
     }
@@ -412,6 +414,14 @@ function renderArtistBio(){
 
         </p>
 
+<button
+    class="artist-support-btn"
+    type="button">
+    π SUPPORT ARTIST
+</button>
+
+</div>
+
     </div>
 
     `;
@@ -548,7 +558,7 @@ ${supportPi > 0 ? `
         type="button"
         data-track-title="${trackTitle}"
         data-support-pi="${supportPi}">
-        π SUPPORT ARTIST · ${supportPi} Pi
+        π SUPPORT TRACK · ${supportPi} Pi
     </button>
 ` : ''}
 
@@ -1406,12 +1416,15 @@ function createArtistSupportPayment(
     Pi.createPayment(
         {
             amount: amount,
-            memo: `OSSVARIUM Artist Support: ${trackTitle}`,
-            metadata: {
-                purpose: "artist_support",
-                relicId: relicId,
-                trackTitle: trackTitle
-            }
+            memo: trackTitle
+    ? `OSSVARIUM Track Support: ${trackTitle}`
+    : "OSSVARIUM Artist Support",
+
+metadata: {
+    purpose: "artist_support",
+    relicId: relicId,
+    trackTitle: trackTitle || ""
+}
         },
         {
             onReadyForServerApproval: async function (paymentId) {
@@ -1526,6 +1539,53 @@ createArtistSupportPayment(
     release.relicId
 );
         });
+    });
+}
+
+function initializeArtistSupportButton() {
+    const button =
+        document.querySelector(".artist-support-btn");
+
+    if (!button) {
+        return;
+    }
+
+    button.addEventListener("click", () => {
+        const creatorPiUid =
+            release?.creator_pi_uid ||
+            release?.creatorPiUid ||
+            "";
+
+        if (!creatorPiUid) {
+            alert(
+                "Artist support is not available yet. " +
+                "The artist needs to connect a Pi account first."
+            );
+            return;
+        }
+
+        const amountText =
+            prompt(
+                "Enter the amount of Pi you want to support the artist with:"
+            );
+
+        if (amountText === null) {
+            return;
+        }
+
+        const amount =
+            Number(amountText);
+
+        if (!amount || amount <= 0) {
+            alert("Invalid support amount.");
+            return;
+        }
+
+        createArtistSupportPayment(
+            amount,
+            "",
+            release.relicId
+        );
     });
 }
 

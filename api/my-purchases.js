@@ -393,24 +393,6 @@ if (req.query.ticket) {
 // Free tracks do not require purchase
 // ------------------------------
 
-if (track.forSale === true) {
-
-    const ownership = await sql`
-        SELECT 1
-        FROM purchases
-        WHERE user_uid = ${userUid}
-          AND relic_id = ${relicId}
-          AND track_title = ${trackTitle}
-        LIMIT 1;
-    `;
-
-    if (ownership.length === 0) {
-        return res.status(403).json({
-            error: "Track not owned"
-        });
-    }
-}
-
         if (
     mode === "download" &&
     track.allowDownload !== true
