@@ -4035,3 +4035,260 @@ body.codex-entering::before{
         margin-top: 22px;
     }
 }
+
+/* ====================================
+   OSSVARIUM — FOR ARTISTS
+==================================== */
+
+.for-artists-box{
+    max-width:720px;
+    margin-left:auto;
+    margin-right:auto;
+    padding:34px 28px;
+}
+
+.for-artists-box > h1{
+    font-family:"Cinzel", serif;
+    font-size:42px;
+    letter-spacing:4px;
+    margin-bottom:34px;
+}
+
+.artist-manifesto{
+    padding:30px 20px;
+    margin-bottom:38px;
+
+    border-top:1px solid rgba(150,55,45,.35);
+    border-bottom:1px solid rgba(150,55,45,.35);
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(120,20,20,.12),
+            transparent 70%
+        );
+}
+
+.artist-manifesto h2{
+    font-family:"Cinzel", serif;
+    font-size:25px !important;
+    line-height:1.45;
+    letter-spacing:2px !important;
+    white-space:normal !important;
+    color:#d93434;
+}
+
+.artist-opening{
+    margin-top:24px;
+
+    font-family:"Cinzel", serif;
+    font-size:16px;
+    line-height:1.8;
+
+    color:#b7a3a0;
+}
+
+.artist-opening strong{
+    color:#e2c4b5;
+}
+
+
+.artist-section{
+    position:relative;
+
+    margin:0 auto 28px;
+    padding:26px 24px;
+
+    max-width:600px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(27,18,18,.82),
+            rgba(12,8,8,.88)
+        );
+
+    border:1px solid rgba(110,65,55,.32);
+    border-radius:5px;
+
+    text-align:left;
+}
+
+.artist-section::before{
+    content:"";
+
+    position:absolute;
+    top:0;
+    left:15%;
+    right:15%;
+
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(170,70,55,.45),
+            transparent
+        );
+}
+
+.artist-section h2{
+    text-align:center;
+
+    font-family:"Cinzel", serif;
+    font-size:21px !important;
+    letter-spacing:2px !important;
+
+    white-space:normal !important;
+
+    margin-bottom:20px;
+
+    color:#d93434;
+}
+
+.artist-section p{
+    margin:0 0 16px;
+
+    color:#b9aaa5;
+
+    font-size:14px;
+    line-height:1.8;
+}
+
+.artist-section p:last-child{
+    margin-bottom:0;
+}
+
+.artist-highlight{
+    text-align:center;
+
+    font-family:"Cinzel", serif;
+
+    color:#c9b2aa !important;
+}
+
+.artist-highlight strong{
+    color:#e0a078;
+}
+
+
+.artist-split{
+    margin:24px 0;
+
+    padding:18px 12px;
+
+    text-align:center;
+
+    border-top:1px solid rgba(150,55,45,.28);
+    border-bottom:1px solid rgba(150,55,45,.28);
+}
+
+.artist-split strong{
+    display:block;
+
+    font-family:"Cinzel", serif;
+
+    color:#d93434;
+
+    font-size:18px;
+    letter-spacing:2px;
+
+    margin-bottom:8px;
+}
+
+.artist-split span{
+    display:block;
+
+    font-family:"Cinzel", serif;
+
+    color:#8f7770;
+
+    font-size:12px;
+    letter-spacing:2px;
+}
+
+
+.artist-statement{
+    text-align:center;
+
+    border-color:rgba(145,65,48,.48);
+
+    box-shadow:
+        inset 0 0 25px rgba(120,30,25,.07);
+}
+
+.artist-statement p{
+    text-align:center;
+}
+
+
+.artist-submit-link{
+    display:block;
+
+    width:max-content;
+    max-width:100%;
+
+    margin:38px auto 30px;
+
+    padding:16px 30px;
+
+    font-size:14px;
+
+    letter-spacing:2px;
+}
+
+
+.for-artists-box .back-link{
+    display:block;
+
+    margin-top:10px;
+
+    text-align:center;
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .for-artists-box{
+        padding:24px 14px;
+    }
+
+    .for-artists-box > h1{
+        font-size:31px;
+        letter-spacing:2px;
+    }
+
+    .artist-manifesto{
+        padding:24px 10px;
+    }
+
+    .artist-manifesto h2{
+        font-size:20px !important;
+        letter-spacing:1px !important;
+    }
+
+    .artist-opening{
+        font-size:14px;
+    }
+
+    .artist-section{
+        padding:22px 16px;
+    }
+
+    .artist-section h2{
+        font-size:19px !important;
+    }
+
+    .artist-split strong{
+        font-size:16px;
+    }
+
+    .artist-submit-link{
+        width:100%;
+        box-sizing:border-box;
+    }
+
+}
