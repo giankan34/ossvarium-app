@@ -621,17 +621,6 @@ box-shadow:
         0 0 10px rgba(150,30,25,.15);
 }
 
-img{
-
-    width:100% !important;
-
-    height:250px !important;
-
-    object-fit:cover !important;
-
-    display:block !important;
-
-}
 .featured-release{
 
     margin-bottom:35px;
