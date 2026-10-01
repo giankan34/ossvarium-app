@@ -4309,3 +4309,23 @@ body.codex-entering::before{
     margin: 0 auto 20px;
     border-radius: 12px;
 }
+
+/* OSSVARIUM — HALL OF FAME MOBILE FIX */
+@media (max-width: 600px) {
+
+    .hall-cover {
+        width: 150px;
+        height: 150px;
+        display: block;
+        margin: 0 auto 15px;
+    }
+
+    .hall-card {
+        text-align: center;
+    }
+
+    .hall-card .hall-artist {
+        display: block;
+        margin-top: 10px;
+    }
+}
