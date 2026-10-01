@@ -26,15 +26,15 @@ body{
 }
 
 .release-cover{
-
+    display:block;
     width:100%;
+    height:auto;
+    max-height:none;
+    object-fit:contain;
 
     border-radius:10px;
-
     border:1px solid #402727;
-
     margin-bottom:25px;
-
 }
 
 .release-title{
