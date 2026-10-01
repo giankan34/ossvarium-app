@@ -52,7 +52,10 @@ module.exports = async function handler(req, res) {
         r.release_year,
         r.description,
 
-        COALESCE(ap.bio, r.bio) AS bio,
+        COALESCE(
+    NULLIF(ap.bio, ''),
+    r.bio
+) AS bio,
 
         r.cover,
 
@@ -71,10 +74,11 @@ module.exports = async function handler(req, res) {
         r.supporters,
 
         CASE
-            WHEN ap.creator_pi_uid IS NOT NULL
-            THEN ap.links
-            ELSE r.links
-        END AS links,
+    WHEN ap.links IS NOT NULL
+         AND ap.links <> '{}'::jsonb
+    THEN ap.links
+    ELSE r.links
+END AS links,
 
         r.tracks,
         r.similar_artists,
