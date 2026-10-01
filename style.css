@@ -4329,3 +4329,17 @@ body.codex-entering::before{
         margin-top: 10px;
     }
 }
+
+/* OSSVARIUM — GENRE / COUNTRY VAULT MOBILE COVERS */
+@media (max-width: 600px) {
+
+    .release-card > a > .release-cover {
+        width: 180px;
+        max-width: 180px;
+        height: 180px;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        margin: 0 auto 18px;
+    }
+
+}
