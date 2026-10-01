@@ -415,12 +415,25 @@ async function loadCollection(){
     
     if(!container) return;
 
-    const collection =
+    let collection =
     JSON.parse(
         localStorage.getItem(
             "ossvariumCollection"
         ) || "[]"
     );
+
+    // Remove legacy numeric collection IDs.
+// OSSVARIUM collections now use permanent public relic IDs (OSV-xxxxx).
+collection = collection.filter(
+    item =>
+        typeof item === "string" &&
+        item.startsWith("OSV-")
+);
+
+localStorage.setItem(
+    "ossvariumCollection",
+    JSON.stringify(collection)
+);
 
     const xp =
 
@@ -579,7 +592,7 @@ ${nextRank}
 
         const release =
     releases.find(item => item.relicId === id);
-    
+
         if(release){
 
             countriesCollected.add(
@@ -829,7 +842,7 @@ style="text-decoration:none;">
 <button
     class="submit-btn"
     type="button"
-    onclick="removeFromCollection(${id})">
+    onclick="removeFromCollection('${release.relicId}')">
     ✕ REMOVE FROM COLLECTION
 </button>
 
