@@ -4298,7 +4298,7 @@ body.codex-entering::before{
 }
 
 /* OSSVARIUM — GENRE / COUNTRY RELEASE CARD COVER */
-.release-card > .release-cover {
+.release-card .release-cover {
     display: block;
     width: 100%;
     max-width: 280px;
