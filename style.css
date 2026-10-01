@@ -4301,7 +4301,7 @@ body.codex-entering::before{
 .release-card > .release-cover {
     display: block;
     width: 100%;
-    max-width: 520px;
+    max-width: 280px;
     height: auto;
     aspect-ratio: 1 / 1;
     object-fit: contain;
