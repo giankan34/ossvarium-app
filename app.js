@@ -800,7 +800,7 @@ style="text-decoration:none;">
 ? `
     <img
     src="${release.cover}"
-    class="release-cover"
+    class="release-cover collection-cover"
     alt="${release.release}">
 `
 : `
@@ -1099,12 +1099,9 @@ async function loadReleaseOfTheDay(){
     ${release.cover
 ? `
     <img
-    src="${release.cover}"
-    style="
-    width:150px;
-    border-radius:10px;
-    margin-bottom:10px;
-    ">
+src="${release.cover}"
+class="release-day-cover"
+>
 `
 : `
     <div class="release-cover no-cover">

@@ -4270,3 +4270,29 @@ body.codex-entering::before{
     }
 
 }
+
+/* OSSVARIUM — RELEASE OF THE DAY COVER */
+.release-day-cover {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    object-position: center;
+    margin: 0 auto 20px;
+    border-radius: 12px;
+}
+
+/* OSSVARIUM — MY COLLECTION COVER */
+.collection-cover {
+    display: block;
+    width: 100% !important;
+    max-width: 520px;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+    object-fit: contain !important;
+    object-position: center;
+    margin: 0 auto 20px;
+    border-radius: 12px;
+}
