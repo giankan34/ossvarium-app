@@ -175,7 +175,9 @@ ${nextRank}
     collection.forEach(id => {
 
         const release =
-        releases[id];
+    releases.find(
+        release => release.relicId === id
+    );
 
         if(release){
 
@@ -258,7 +260,9 @@ if(countriesCollected.size >= 10){
     collection.filter(id => {
 
         const release =
-        releases[id];
+    releases.find(
+        release => release.relicId === id
+    );
 
         return release &&
         release.country ===
@@ -285,7 +289,9 @@ if(countriesCollected.size >= 10){
      collection.filter(id => {
 
     const release =
-    releases[id];
+    releases.find(
+        release => release.relicId === id
+    );
 
     return release &&
     release.country ===
@@ -304,7 +310,9 @@ if(swedenCount >= 1){
 collection.filter(id => {
 
     const release =
-    releases[id];
+    releases.find(
+        release => release.relicId === id
+    );
 
     return release &&
     release.country ===
@@ -323,7 +331,9 @@ if(finlandCount >= 1){
 collection.filter(id => {
 
     const release =
-    releases[id];
+    releases.find(
+        release => release.relicId === id
+    );
 
     return release &&
     release.country ===
@@ -381,7 +391,9 @@ if(collection.length === 0){
     collection.map(id => {
 
         const release =
-        releases[id];
+    releases.find(
+        release => release.relicId === id
+    );
 
         if(!release) return "";
 

@@ -578,8 +578,8 @@ ${nextRank}
     collection.forEach(id => {
 
         const release =
-        releases[id];
-
+    releases.find(item => item.relicId === id);
+    
         if(release){
 
             countriesCollected.add(
@@ -661,7 +661,7 @@ if(countriesCollected.size >= 10){
     collection.filter(id => {
 
         const release =
-        releases[id];
+    releases.find(item => item.relicId === id);
 
         return release &&
         release.country ===
@@ -688,7 +688,7 @@ if(countriesCollected.size >= 10){
      collection.filter(id => {
 
     const release =
-    releases[id];
+    releases.find(item => item.relicId === id);
 
     return release &&
     release.country ===
@@ -707,7 +707,7 @@ if(swedenCount >= 1){
 collection.filter(id => {
 
     const release =
-    releases[id];
+    releases.find(item => item.relicId === id);
 
     return release &&
     release.country ===
@@ -726,7 +726,7 @@ if(finlandCount >= 1){
 collection.filter(id => {
 
     const release =
-    releases[id];
+    releases.find(item => item.relicId === id);
 
     return release &&
     release.country ===
@@ -784,7 +784,7 @@ if(norwayCount >= 1){
     collection.map(id => {
 
         const release =
-        releases[id];
+    releases.find(item => item.relicId === id);
 
         if(!release) return "";
 
@@ -849,9 +849,9 @@ function removeFromCollection(id) {
         );
 
     collection =
-        collection.filter(
-            item => Number(item) !== Number(id)
-        );
+    collection.filter(
+        item => String(item) !== String(id)
+    );
 
     localStorage.setItem(
         "ossvariumCollection",

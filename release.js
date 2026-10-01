@@ -237,7 +237,7 @@ function renderHeader(){
 
         ${JSON.parse(
         localStorage.getItem("ossvariumCollection") || "[]"
-        ).includes(releaseId)
+        ).includes(release.relicId)
 
         ? `
 
@@ -255,7 +255,7 @@ function renderHeader(){
 
         <button
         class="certificate-btn"
-        onclick="addToCollection(${releaseId})">
+        onclick="addToCollection('${release.relicId}')">
 
         ⚔ ADD TO COLLECTION
 
