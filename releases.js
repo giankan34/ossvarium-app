@@ -369,6 +369,8 @@ releaseContainer.innerHTML += `
 
         <br><br>
 
+        ${topThree[1] ? `
+
         <a
         class="hall-card"
         href="release.html?id=${releases.indexOf(topThree[1])}">
@@ -403,7 +405,11 @@ releaseContainer.innerHTML += `
 
         </a>
 
+        ` : ""}
+
         <br><br>
+
+        ${topThree[2] ? `
 
         <a
         class="hall-card"
@@ -438,6 +444,8 @@ releaseContainer.innerHTML += `
         ❤️ ${topThree[2]?.supporters} PIONEERS 
 
         </a>
+
+        ` : ""}
 
     </div>
 
