@@ -60,25 +60,24 @@ module.exports = async function handler(req, res) {
         r.cover,
 
         COALESCE(
-            NULLIF(ap.artist_image, ''),
-            r.artist_image
-        ) AS artist_image,
+    NULLIF(r.artist_image, ''),
+    ap.artist_image
+) AS artist_image,
 
-        COALESCE(
-            NULLIF(ap.banner, ''),
-            r.banner
-        ) AS banner,
+COALESCE(
+    NULLIF(r.banner, ''),
+    ap.banner
+) AS banner,
 
         r.price_pi,
         r.price_eur,
         r.supporters,
 
-        CASE
-    WHEN ap.links IS NOT NULL
-         AND ap.links <> '{}'::jsonb
-    THEN ap.links
-    ELSE r.links
-END AS links,
+        COALESCE(
+    r.links,
+    ap.links,
+    '{}'::jsonb
+) AS links,
 
         r.tracks,
         r.similar_artists,
