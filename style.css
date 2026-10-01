@@ -845,17 +845,20 @@ img{
     margin-top:8px;
 
 }
-.artist-image{
-    display:block;
-    width:100%;
-    height:auto;
-    max-height:none;
-    object-fit:contain;
-    object-position:center;
+.artist-image {
+    display: block;
 
-    border-radius:12px;
-    margin-bottom:20px;
-    border:2px solid #2d2424;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+
+    object-fit: contain;
+    object-position: center;
+
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 2px solid #2d2424;
 }
 .artist-stats{
 
@@ -900,22 +903,25 @@ img{
     font-weight:bold;
 
 }
-.artist-banner{
-    width:100%;
-    height:auto;
-    overflow:hidden;
-    border-radius:12px;
-    margin-bottom:20px;
-    border:2px solid #2d2424;
-    background:#000;
+.artist-banner {
+    width: 100%;
+    height: auto;
+
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 2px solid #2d2424;
+    background: #000;
 }
 
-.artist-banner img{
-    display:block;
-    width:100%;
-    height:auto;
-    object-fit:contain;
-    object-position:center;
+.artist-banner img {
+    display: block;
+
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+
+    object-fit: contain;
+    object-position: center;
 }
 .similar-item{
 

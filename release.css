@@ -25,16 +25,19 @@ body{
 
 }
 
-.release-cover{
-    display:block;
-    width:100%;
-    height:auto;
-    max-height:none;
-    object-fit:contain;
+.release-cover {
+    display: block;
 
-    border-radius:10px;
-    border:1px solid #402727;
-    margin-bottom:25px;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+
+    object-fit: contain;
+    object-position: center;
+
+    border-radius: 10px;
+    border: 1px solid #402727;
+    margin-bottom: 25px;
 }
 
 .release-title{
@@ -343,11 +346,11 @@ transform:translateY(-2px);
     }
 
     .release-cover {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-    }
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
 
     .release-title {
         max-width: 100%;
