@@ -94,44 +94,16 @@ const track =
 if (
     !track ||
     track.forSale !== true ||
-    !track.priceEur ||
-    Number(track.priceEur) <= 0
+    !track.price ||
+    Number(track.price) <= 0
 ) {
     return res.status(400).json({
         error: "Invalid track purchase"
     });
 }
 
-const priceEur =
-    Number(track.priceEur);
-
-    const rateResponse = await axios.get(
-    "https://api.coingecko.com/api/v3/simple/price",
-    {
-        params: {
-            ids: "pi-network",
-            vs_currencies: "eur"
-        },
-        timeout: 5000
-    }
-);
-
-const piEur =
-    Number(
-        rateResponse.data?.["pi-network"]?.eur
-    );
-
-if (
-    !piEur ||
-    piEur <= 0
-) {
-    return res.status(503).json({
-        error: "Pi exchange rate unavailable"
-    });
-}
-
 const expectedPi =
-    priceEur / piEur;
+    Number(track.price);
 
 const paymentAmount =
     Number(payment.amount);
@@ -156,13 +128,11 @@ if (
     console.error(
         "OSSVARIUM payment amount mismatch:",
         {
-            relicId,
-            trackTitle,
-            priceEur,
-            piEur,
-            expectedPi,
-            paymentAmount
-        }
+    relicId,
+    trackTitle,
+    expectedPi,
+    paymentAmount
+}
     );
 
     return res.status(400).json({

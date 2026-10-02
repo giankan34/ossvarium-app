@@ -1575,9 +1575,6 @@ function initializePurchasePanel(){
             const pricePi =
                 button.dataset.pricePi;
 
-            const priceEur =
-                button.dataset.priceEur;
-
             const overlay =
                 document.createElement("div");
 
@@ -1626,86 +1623,6 @@ function initializePurchasePanel(){
                 overlay
             );
 
-            let calculatedPi = null;
-
-            if (priceEur) {
-
-    try {
-
-        const rateResponse =
-            await fetch("/api/pi-rate");
-
-        const rateResult =
-            await rateResponse.json();
-
-        if (
-            rateResponse.ok &&
-            rateResult.piEur
-        ) {
-
-            calculatedPi =
-    (
-        Number(priceEur) /
-        Number(rateResult.piEur)
-    ).toFixed(4);
-
-            const priceElement =
-                overlay.querySelector(
-                    ".purchase-price"
-                );
-
-            priceElement.textContent =
-                `€${priceEur} · ${calculatedPi} π`;
-        }
-
-    } catch (error) {
-
-        console.error(
-            "OSSVARIUM Pi rate display error:",
-            error
-        );
-
-    }
-}
-
-            overlay
-                .querySelector(".purchase-pay-btn")
-                .addEventListener(
-                    "click",
-                    async () => {
-
-                     if (!piAuth) {
-                         piAuth = await authenticatePiUser();
-                     }
-
-                    if (!piAuth) {
-                        alert("Pi authentication is required.");
-                        return;
-                   }
-
-                   const finalPricePi =
-    priceEur
-        ? calculatedPi
-        : pricePi;
-
-if (
-    !finalPricePi ||
-    Number(finalPricePi) <= 0
-) {
-    alert(
-        "Could not calculate Pi price."
-    );
-    return;
-}
-
-testPiPayment(
-    finalPricePi,
-    trackTitle,
-    release.relicId
-);
-                }         
-            );
-
             overlay
                 .querySelector(".purchase-close-btn")
                 .addEventListener(
@@ -1714,6 +1631,109 @@ testPiPayment(
                         overlay.remove();
                     }
                 );
+
+                overlay
+    .querySelector(".purchase-pay-btn")
+    .addEventListener("click", async () => {
+
+        if (!piAuth) {
+            piAuth = await authenticatePiUser();
+        }
+
+        if (!piAuth) {
+            alert("Pi authentication is required.");
+            return;
+        }
+
+        const finalPricePi = Number(pricePi);
+
+        if (!finalPricePi || finalPricePi <= 0) {
+            alert("Invalid track price.");
+            return;
+        }
+
+        Pi.createPayment(
+            {
+                amount: finalPricePi,
+                memo: `OSSVARIUM Track Purchase: ${trackTitle}`,
+                metadata: {
+                    purpose: "track_purchase",
+                    relicId: release.relicId,
+                    trackTitle: trackTitle
+                }
+            },
+            {
+                onReadyForServerApproval: async function (paymentId) {
+                    const response = await fetch(
+                        "/api/approve-payment",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                paymentId: paymentId
+                            })
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "Track payment approval failed"
+                        );
+                    }
+                },
+
+                onReadyForServerCompletion: async function (
+                    paymentId,
+                    txid
+                ) {
+                    const response = await fetch(
+                        "/api/complete-payment",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                paymentId: paymentId,
+                                txid: txid
+                            })
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            "Track payment completion failed"
+                        );
+                    }
+
+                    alert(
+                        `☠ RELIC ACQUIRED ☠\n\n${trackTitle}\n${finalPricePi} π`
+                    );
+
+                    overlay.remove();
+
+                    await updateOwnedTracks();
+                },
+
+                onCancel: function () {},
+
+                onError: function (error, payment) {
+                    console.error(
+                        "Track purchase payment error:",
+                        error,
+                        payment
+                    );
+
+                    alert(
+                        "Track purchase failed.\n\n" +
+                        (error.message || error)
+                    );
+                }
+            }
+        );
+    });
 
         });
 

@@ -178,22 +178,13 @@ const track = tracks.find(
 
 if (
     !track ||
-    !track.priceEur ||
-    Number(track.priceEur) <= 0
+    !track.price ||
+    Number(track.price) <= 0
 ) {
     return res.status(400).json({
-        error: "Invalid track EUR price"
+        error: "Invalid track Pi price"
     });
 }
-
-const amountEur =
-    Number(Number(track.priceEur).toFixed(4));
-
-const artistShareEur =
-    Number((amountEur * 0.90).toFixed(4));
-
-const ossvariumFeeEur =
-    Number((amountEur * 0.10).toFixed(4));
 
 await sql`
     INSERT INTO purchases (
@@ -205,9 +196,6 @@ await sql`
         amount_pi,
         artist_share_pi,
         ossvarium_fee_pi,
-        amount_eur,
-        artist_share_eur,
-        ossvarium_fee_eur
         payment_method
     )
     VALUES (
@@ -219,9 +207,6 @@ await sql`
         ${amountPi},
         ${artistSharePi},
         ${ossvariumFeePi},
-        ${amountEur},
-        ${artistShareEur},
-        ${ossvariumFeeEur}
         'pi'
     )
     ON CONFLICT
