@@ -1294,17 +1294,7 @@ async function downloadOwnedTrack(trackTitle) {
 
     try {
 
-        if (!piAuth?.accessToken) {
-
-            await authenticatePiUser();
-
-            if (!piAuth?.accessToken) {
-                throw new Error(
-                    piAuth = await authenticatePiUser();
-                );
-            }
-        }
-
+        
         const params =
             new URLSearchParams({
                 relicId:
