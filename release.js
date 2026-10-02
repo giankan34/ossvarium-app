@@ -649,48 +649,11 @@ function initializePlayer() {
                 // ---------------------------------
 
                 if (
-                    audioSource?.startsWith("uploads/")
-                ) {
-
-                    if (!piAuth) {
-                        piAuth =
-                            await authenticatePiUser();
-                    }
-
-                    if (!piAuth) {
-                        alert(
-                            "Pi authentication is required."
-                        );
-                        return;
-                    }
-
-                    button.disabled = true;
-                    button.textContent = "⏳";
-
-                    const protectedUrl =
-                        await getOwnedAudioUrl(
-                            release.relicId,
-                            trackTitle
-                        );
-
-                    button.disabled = false;
-
-                    if (!protectedUrl) {
-
-                        button.textContent = "▶";
-
-                        alert(
-                            buyButton
-                                ? "☠ This relic has not been acquired."
-                                : "Protected audio unavailable."
-                        );
-
-                        return;
-                    }
-
-                    audioSource = protectedUrl;
-                }
-
+    audioSource?.startsWith("uploads/")
+) {
+    audioSource =
+        `/${audioSource}`;
+}
                 // ---------------------------------
                 // SAME TRACK — PLAY / PAUSE
                 // ---------------------------------
