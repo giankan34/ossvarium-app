@@ -139,26 +139,47 @@ if (req.query.ticket) {
     }
 
     const {
-        relicId,
-        trackTitle,
-        audioKey,
-        allowDownload
-    } = ticketData;
+    purchaseId,
+    relicId,
+    trackTitle,
+    audioKey,
+    allowDownload
+} = ticketData;
 
-    if (
-        !relicId ||
-        !trackTitle ||
-        !audioKey ||
-        allowDownload !== true ||
-        !audioKey.startsWith("uploads/")
-    ) {
-        return res.status(403).json({
-            error:
-                "Invalid download ticket"
-        });
-    }
+if (
+    !purchaseId ||
+    !relicId ||
+    !trackTitle ||
+    !audioKey ||
+    allowDownload !== true ||
+    !audioKey.startsWith("uploads/")
+) {
+    return res.status(403).json({
+        error: "Invalid download ticket"
+    });
+}
+
 
     try {
+
+        const sql =
+    neon(process.env.POSTGRES_URL);
+
+const claimedPurchase = await sql`
+    UPDATE purchases
+    SET downloaded_at = NOW()
+    WHERE id = ${purchaseId}
+      AND relic_id = ${relicId}
+      AND track_title = ${trackTitle}
+      AND downloaded_at IS NULL
+    RETURNING id;
+`;
+
+if (claimedPurchase.length === 0) {
+    return res.status(403).json({
+        error: "Download already used"
+    });
+}
 
         const s3 =
             new S3Client({
@@ -337,15 +358,16 @@ if (!isPublicMediaRequest) {
         if (!relicId || !trackTitle) {
 
             const purchases = await sql`
-                SELECT
-                    relic_id,
-                    track_title,
-                    amount_pi,
-                    created_at
-                FROM purchases
-                WHERE user_uid = ${userUid}
-                ORDER BY created_at DESC;
-            `;
+    SELECT
+        relic_id,
+        track_title,
+        amount_pi,
+        created_at,
+        downloaded_at
+    FROM purchases
+    WHERE user_uid = ${userUid}
+    ORDER BY created_at DESC;
+`;
 
             return res.status(200).json({
                 success: true,
@@ -405,17 +427,26 @@ if (!isPublicMediaRequest) {
     }
 
     const purchaseRows = await sql`
-        SELECT 1
+        SELECT
+            id,
+            downloaded_at
         FROM purchases
         WHERE user_uid = ${userUid}
           AND relic_id = ${relicId}
           AND track_title = ${trackTitle}
+        ORDER BY created_at DESC
         LIMIT 1;
     `;
 
     if (purchaseRows.length === 0) {
         return res.status(403).json({
             error: "Track purchase required"
+        });
+    }
+
+    if (purchaseRows[0].downloaded_at) {
+        return res.status(403).json({
+            error: "Download already used"
         });
     }
 }
@@ -487,15 +518,16 @@ if (!isPublicMediaRequest) {
 if (mode === "download") {
 
     const downloadTicket =
-        createDownloadTicket({
-            relicId,
-            trackTitle,
-            audioKey: track.audio,
-            allowDownload: true,
-            exp:
-                Date.now() +
-                (2 * 60 * 1000)
-        });
+    createDownloadTicket({
+        purchaseId: purchaseRows[0].id,
+        relicId,
+        trackTitle,
+        audioKey: track.audio,
+        allowDownload: true,
+        exp:
+            Date.now() +
+            (2 * 60 * 1000)
+    });
 
     const downloadUrl =
         `/api/my-purchases?ticket=${encodeURIComponent(

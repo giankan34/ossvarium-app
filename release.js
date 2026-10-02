@@ -1168,26 +1168,12 @@ async function getOwnedAudioUrl(
 
 async function updateOwnedTracks() {
 
-    if (!piAuth) {
+    if (!piAuth?.accessToken) {
         return;
     }
 
     const purchases =
         await loadMyPurchases();
-
-    if (!purchases.length) {
-        return;
-    }
-
-    const ownedTracks =
-        purchases.filter(
-            purchase =>
-                purchase.relic_id === release.relicId
-        );
-
-    if (!ownedTracks.length) {
-        return;
-    }
 
     const buyButtons =
         document.querySelectorAll(
@@ -1199,48 +1185,82 @@ async function updateOwnedTracks() {
         const trackTitle =
             button.dataset.trackTitle;
 
-        const owned =
-            ownedTracks.some(
-                purchase =>
-                    purchase.track_title === trackTitle
+        const purchase =
+            purchases.find(
+                item =>
+                    item.relic_id === release.relicId &&
+                    item.track_title === trackTitle
             );
 
-        if (!owned) {
+        // ---------------------------------
+        // NOT PURCHASED
+        // Keep SUPPORT TRACK button
+        // ---------------------------------
+
+        if (!purchase) {
             return;
         }
 
-        button.textContent =
-            "☠ RELIC OWNED ☠";
+        const trackEntry =
+            button.closest(
+                ".track-entry"
+            );
 
-        button.disabled = true;
+        if (!trackEntry) {
+            return;
+        }
 
-        button.classList.add(
-            "track-owned-btn"
-        );
+        // ---------------------------------
+        // PURCHASED
+        // SUPPORT button must disappear
+        // ---------------------------------
+
+        button.remove();
+
+        // ---------------------------------
+        // DOWNLOAD ALREADY USED
+        // Nothing else should appear
+        // ---------------------------------
+
+        if (purchase.downloaded_at) {
+
+            const existingDownload =
+                trackEntry.querySelector(
+                    ".track-download-btn"
+                );
+
+            if (existingDownload) {
+                existingDownload.remove();
+            }
+
+            return;
+        }
+
+        // ---------------------------------
+        // PURCHASED + DOWNLOAD AVAILABLE
+        // ---------------------------------
 
         const track =
-    release.tracks.find(
-        item =>
-            typeof item === "object" &&
-            item.title === trackTitle
-    );
+            release.tracks.find(
+                item =>
+                    typeof item === "object" &&
+                    item.title === trackTitle
+            );
 
-if (
-    track &&
-    track.allowDownload === true
-) {
+        if (
+            !track ||
+            track.allowDownload !== true
+        ) {
+            return;
+        }
 
-    const trackEntry =
-        button.closest(
-            ".track-entry"
-        );
-
-    if (
-        trackEntry &&
-        !trackEntry.querySelector(
-            ".track-download-btn"
-        )
-    ) {
+        if (
+            trackEntry.querySelector(
+                ".track-download-btn"
+            )
+        ) {
+            return;
+        }
 
         const downloadButton =
             document.createElement(
@@ -1264,29 +1284,36 @@ if (
         );
 
         downloadButton.addEventListener(
-    "click",
-    async () => {
+            "click",
+            async () => {
 
-        const originalText =
-            downloadButton.textContent;
+                downloadButton.disabled =
+                    true;
 
-        downloadButton.disabled = true;
+                downloadButton.textContent =
+                    "☠ PREPARING RELIC... ☠";
 
-        downloadButton.textContent =
-            "☠ PREPARING RELIC... ☠";
+                const success =
+                    await downloadOwnedTrack(
+                        trackTitle
+                    );
 
-        await downloadOwnedTrack(
-            trackTitle
+                if (success) {
+
+                    // One-time download:
+                    // remove button immediately.
+                    downloadButton.remove();
+
+                    return;
+                }
+
+                downloadButton.disabled =
+                    false;
+
+                downloadButton.textContent =
+                    "☠ DOWNLOAD RELIC ☠";
+            }
         );
-
-        downloadButton.disabled = false;
-
-        downloadButton.textContent =
-            originalText;
-    }
-);
-    }
-}
     });
 }
 
