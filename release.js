@@ -1127,10 +1127,6 @@ async function getOwnedAudioUrl(
     trackTitle
 ) {
 
-    if (!piAuth?.accessToken) {
-        return null;
-    }
-
     try {
 
         const params =
