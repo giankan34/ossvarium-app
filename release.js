@@ -1300,7 +1300,7 @@ async function downloadOwnedTrack(trackTitle) {
 
             if (!piAuth?.accessToken) {
                 throw new Error(
-                    "Pi authentication required"
+                    piAuth = await authenticatePiUser();
                 );
             }
         }
