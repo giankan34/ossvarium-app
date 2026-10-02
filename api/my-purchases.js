@@ -281,8 +281,7 @@ const sql =
             req.query.mode || "stream";
 
         const isPublicMediaRequest =
-              mode === "stream" ||
-              mode === "download";
+    mode === "stream";
 
     const authHeader =
     req.headers.authorization;
