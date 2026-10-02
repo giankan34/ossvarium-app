@@ -268,48 +268,7 @@ if (req.query.ticket) {
     }
 }
 
-    const authHeader =
-        req.headers.authorization;
-
-    if (
-        !authHeader ||
-        !authHeader.startsWith("Bearer ")
-    ) {
-        return res.status(401).json({
-            error: "Missing Pi access token"
-        });
-    }
-
-    const accessToken =
-        authHeader.substring(7);
-
-    try {
-
-        // ---------------------------------
-        // VERIFY PI USER
-        // ---------------------------------
-
-        const meResponse =
-            await axios.get(
-                "https://api.minepi.com/v2/me",
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${accessToken}`
-                    }
-                }
-            );
-
-        const userUid =
-            meResponse.data?.uid;
-
-        if (!userUid) {
-            return res.status(401).json({
-                error: "Invalid Pi user"
-            });
-        }
-
-        const sql =
+const sql =
             neon(process.env.POSTGRES_URL);
 
         const relicId =
@@ -320,6 +279,56 @@ if (req.query.ticket) {
 
         const mode =
             req.query.mode || "stream";
+
+        const isPublicMediaRequest =
+              mode === "stream" ||
+              mode === "download";
+
+    const authHeader =
+    req.headers.authorization;
+
+const accessToken =
+    authHeader?.startsWith("Bearer ")
+        ? authHeader.substring(7)
+        : null;
+
+    try {
+
+        // ---------------------------------
+        // VERIFY PI USER
+        // ---------------------------------
+
+        let userUid = null;
+
+if (!isPublicMediaRequest) {
+
+    if (!accessToken) {
+        return res.status(401).json({
+            error: "Missing Pi access token"
+        });
+    }
+
+    const meResponse =
+        await axios.get(
+            "https://api.minepi.com/v2/me",
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${accessToken}`
+                }
+            }
+        );
+
+    userUid =
+        meResponse.data?.uid;
+
+    if (!userUid) {
+        return res.status(401).json({
+            error: "Invalid Pi user"
+        });
+    }
+}
+        
 
         // ---------------------------------
         // NORMAL MODE:
@@ -387,6 +396,10 @@ if (req.query.ticket) {
                 error: "Private audio not found"
             });
         }
+
+        if (isPublicMediaRequest) {
+    userUid = null;
+}
 
         // ------------------------------
 // PAID TRACK OWNERSHIP CHECK
