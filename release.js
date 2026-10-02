@@ -1294,6 +1294,13 @@ async function downloadOwnedTrack(trackTitle) {
 
     try {
 
+        if (!piAuth?.accessToken) {
+    piAuth = await authenticatePiUser();
+}
+
+if (!piAuth?.accessToken) {
+    throw new Error("Pi authentication required");
+}
         
         const params =
             new URLSearchParams({
