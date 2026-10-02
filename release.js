@@ -651,8 +651,18 @@ function initializePlayer() {
                 if (
     audioSource?.startsWith("uploads/")
 ) {
-    audioSource =
-        `/${audioSource}`;
+    const protectedUrl =
+        await getOwnedAudioUrl(
+            release.relicId,
+            trackTitle
+        );
+
+    if (!protectedUrl) {
+        alert("Protected audio unavailable.");
+        return;
+    }
+
+    audioSource = protectedUrl;
 }
                 // ---------------------------------
                 // SAME TRACK — PLAY / PAUSE
