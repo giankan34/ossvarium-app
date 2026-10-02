@@ -153,13 +153,9 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializeArtistSupportButton();
 
-       if (!piAuth) {
-          piAuth = await authenticatePiUser();
-    }
-
-       if (piAuth) {
-          await updateOwnedTracks();
-    }
+       if (piAuth?.accessToken) {
+    await updateOwnedTracks();
+}
 }
 
 function renderHeader(){
