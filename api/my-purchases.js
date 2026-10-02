@@ -397,6 +397,30 @@ if (!isPublicMediaRequest) {
             });
         }
 
+        if (mode === "download") {
+
+    if (!userUid) {
+        return res.status(401).json({
+            error: "Pi authentication required"
+        });
+    }
+
+    const purchaseRows = await sql`
+        SELECT 1
+        FROM purchases
+        WHERE user_uid = ${userUid}
+          AND relic_id = ${relicId}
+          AND track_title = ${trackTitle}
+        LIMIT 1;
+    `;
+
+    if (purchaseRows.length === 0) {
+        return res.status(403).json({
+            error: "Track purchase required"
+        });
+    }
+}
+
         if (isPublicMediaRequest) {
     userUid = null;
 }
