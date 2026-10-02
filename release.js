@@ -1138,10 +1138,12 @@ async function getOwnedAudioUrl(
         const response = await fetch(
             `/api/my-purchases?${params.toString()}`,
             {
-                headers: {
-                    Authorization:
-                        `Bearer ${piAuth.accessToken}`
-                }
+                headers: piAuth?.accessToken
+    ? {
+        Authorization:
+            `Bearer ${piAuth.accessToken}`
+    }
+    : {}
             }
         );
 
