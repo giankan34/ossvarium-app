@@ -420,9 +420,6 @@ if (!isPublicMediaRequest) {
     }
 }
 
-        if (isPublicMediaRequest) {
-    userUid = null;
-}
 
         // ------------------------------
 // PAID TRACK OWNERSHIP CHECK
