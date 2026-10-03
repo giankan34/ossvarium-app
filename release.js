@@ -1165,9 +1165,9 @@ async function updateOwnedTracks() {
         await loadMyPurchases();
 
     const buyButtons =
-        document.querySelectorAll(
-            ".track-buy-btn"
-        );
+    document.querySelectorAll(
+        ".track-support-btn"
+    );
 
     buyButtons.forEach(button => {
 
@@ -1504,20 +1504,7 @@ function initializeSupportButtons() {
         document.querySelectorAll(".track-support-btn");
 
     supportButtons.forEach(button => {
-        button.addEventListener("click", () => {
-
-            const creatorPiUid =
-                release?.creator_pi_uid ||
-                release?.creatorPiUid ||
-                "";
-
-            if (!creatorPiUid) {
-                alert(
-                    "Artist support is not available yet. " +
-                    "The artist needs to connect a Pi account first."
-                );
-                return;
-            }
+        button.addEventListener("click", async () => {
 
             const trackTitle =
                 button.dataset.trackTitle || "";
@@ -1525,21 +1512,144 @@ function initializeSupportButtons() {
             const supportPi =
                 Number(button.dataset.supportPi || 0);
 
+            if (!trackTitle) {
+                alert("Track title is missing.");
+                return;
+            }
+
             if (!supportPi || supportPi <= 0) {
-    alert("Invalid support amount.");
-    return;
-}
+                alert("Invalid track price.");
+                return;
+            }
 
-if (typeof createArtistSupportPayment !== "function") {
-    alert("Artist support payment is not available.");
-    return;
-}
+            try {
+                // Authenticate only when needed
+                if (!piAuth?.accessToken) {
+                    piAuth = await authenticatePiUser();
+                }
 
-createArtistSupportPayment(
-    supportPi,
-    trackTitle,
-    release.relicId
-);
+                if (!piAuth?.accessToken) {
+                    throw new Error("Pi authentication required");
+                }
+
+                button.disabled = true;
+                const originalText = button.textContent;
+                button.textContent = "π PREPARING RELIC...";
+
+                Pi.createPayment(
+                    {
+                        amount: supportPi,
+                        memo: `OSSVARIUM Track Purchase: ${trackTitle}`,
+                        metadata: {
+                            purpose: "track_purchase",
+                            relicId: release.relicId,
+                            trackTitle: trackTitle
+                        }
+                    },
+                    {
+                        onReadyForServerApproval: async function (paymentId) {
+                            const response = await fetch(
+                                "/api/approve-payment",
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        paymentId: paymentId
+                                    })
+                                }
+                            );
+
+                            if (!response.ok) {
+                                throw new Error(
+                                    "Track payment approval failed"
+                                );
+                            }
+                        },
+
+                        onReadyForServerCompletion: async function (
+                            paymentId,
+                            txid
+                        ) {
+                            const response = await fetch(
+                                "/api/complete-payment",
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        paymentId: paymentId,
+                                        txid: txid
+                                    })
+                                }
+                            );
+
+                            const result = await response.json();
+
+                            if (!response.ok) {
+                                throw new Error(
+                                    result.error ||
+                                    "Track payment completion failed"
+                                );
+                            }
+
+                            alert(
+                                `☠ RELIC ACQUIRED ☠\n\n${trackTitle}\n${supportPi} π`
+                            );
+
+                            // Reload purchases from DB.
+                            // updateOwnedTracks() will remove SUPPORT TRACK
+                            // and show DOWNLOAD RELIC.
+                            await updateOwnedTracks();
+                        },
+
+                        onCancel: function (paymentId) {
+                            console.log(
+                                "Track purchase cancelled:",
+                                paymentId
+                            );
+
+                            button.disabled = false;
+                            button.textContent =
+                                `π SUPPORT TRACK · ${supportPi} Pi`;
+                        },
+
+                        onError: function (error, payment) {
+                            console.error(
+                                "Track purchase payment error:",
+                                error,
+                                payment
+                            );
+
+                            button.disabled = false;
+                            button.textContent =
+                                `π SUPPORT TRACK · ${supportPi} Pi`;
+
+                            alert(
+                                "Track purchase failed.\n\n" +
+                                (error.message || error)
+                            );
+                        }
+                    }
+                );
+
+            } catch (error) {
+                console.error(
+                    "OSSVARIUM TRACK PURCHASE ERROR:",
+                    error
+                );
+
+                button.disabled = false;
+                button.textContent =
+                    `π SUPPORT TRACK · ${supportPi} Pi`;
+
+                alert(
+                    "Track purchase failed.\n\n" +
+                    error.message
+                );
+            }
         });
     });
 }
