@@ -1175,6 +1175,13 @@ async function updateOwnedTracks() {
     const purchases =
         await loadMyPurchases();
 
+        alert(
+    "OWNERSHIP CHECK\n\n" +
+    "RELIC: " + release.relicId + "\n" +
+    "PURCHASES: " +
+    JSON.stringify(purchases)
+);
+
     const buyButtons =
     document.querySelectorAll(
         ".track-buy-btn"
