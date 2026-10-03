@@ -1315,12 +1315,23 @@ async function updateOwnedTracks() {
 
                 if (success) {
 
-                    // One-time download:
-                    // remove button immediately.
-                    downloadButton.remove();
+    downloadButton.remove();
 
-                    return;
-                }
+    const ownedLabel =
+        document.createElement("span");
+
+    ownedLabel.className =
+        "track-owned-label";
+
+    ownedLabel.textContent =
+        "☠ RELIC OWNED ☠";
+
+    trackEntry.appendChild(
+        ownedLabel
+    );
+
+    return;
+}
 
                 downloadButton.disabled =
                     false;
