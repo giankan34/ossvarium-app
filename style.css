@@ -2638,7 +2638,7 @@ body.codex-entering::before{
 
     border-bottom:1px solid rgba(120,70,60,.18);
     text-align:left;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
 }
 
 .track-play{
@@ -2662,6 +2662,15 @@ body.codex-entering::before{
     font-family:"Cormorant Garamond", serif;
     font-size:15px;
     color:#b9a6a0;
+}
+
+.track-title{
+    font-family:"Cormorant Garamond", serif;
+    font-size:15px;
+    color:#b9a6a0;
+
+    flex:1;
+    min-width:0;
 }
 
 .track-play.active{
