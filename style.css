@@ -2680,7 +2680,7 @@ body.codex-entering::before{
 }
 
 .track-time{
-    margin-left:auto;
+    margin-left:0;
     font-family:"Cinzel", serif;
     font-size:10px;
     color:#725f5a;

@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         const response = await fetch(
-            "/api/my-purchases",
+            "/api/my-purchases?mode=purchases",
             {
                 headers: {
                     Authorization:
