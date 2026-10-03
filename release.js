@@ -149,8 +149,6 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializePurchasePanel();
 
-       initializeSupportButtons();
-
        initializeArtistSupportButton();
 
        if (piAuth?.accessToken) {
@@ -539,21 +537,12 @@ const allowDownload =
                     ${hasAudio ? "0:00 / 0:00" : "--:--"}
                 </span>
 
-${allowDownload && hasAudio ? `
-    <a
-        class="track-download-btn"
-        href="${track.audio}"
-        download>
-        ⬇ DOWNLOAD
-    </a>
-` : ''}
-
 ${supportPi > 0 ? `
     <button
-        class="track-support-btn"
+        class="track-buy-btn"
         type="button"
         data-track-title="${trackTitle}"
-        data-support-pi="${supportPi}">
+        data-price-pi="${supportPi}">
         π SUPPORT TRACK · ${supportPi} Pi
     </button>
 ` : ''}
@@ -1223,18 +1212,36 @@ async function updateOwnedTracks() {
         // ---------------------------------
 
         if (purchase.downloaded_at) {
+    const existingDownload =
+        trackEntry.querySelector(
+            ".track-download-btn"
+        );
 
-            const existingDownload =
-                trackEntry.querySelector(
-                    ".track-download-btn"
-                );
+    if (existingDownload) {
+        existingDownload.remove();
+    }
 
-            if (existingDownload) {
-                existingDownload.remove();
-            }
+    if (
+        !trackEntry.querySelector(
+            ".track-owned-label"
+        )
+    ) {
+        const ownedLabel =
+            document.createElement("span");
 
-            return;
-        }
+        ownedLabel.className =
+            "track-owned-label";
+
+        ownedLabel.textContent =
+            "☠ RELIC OWNED ☠";
+
+        trackEntry.appendChild(
+            ownedLabel
+        );
+    }
+
+    return;
+}
 
         // ---------------------------------
         // PURCHASED + DOWNLOAD AVAILABLE
@@ -1378,6 +1385,8 @@ if (!piAuth?.accessToken) {
         window.location.href =
             data.downloadUrl;
 
+            return true;
+
     } catch (error) {
 
         console.error(
@@ -1389,6 +1398,8 @@ if (!piAuth?.accessToken) {
             "Download failed.\n\n" +
             error.message
         );
+
+        return false;
     }
 }
 
@@ -1617,11 +1628,8 @@ function initializePurchasePanel(){
                     </div>
 
                    <div class="purchase-price">
-                        ${
-                           priceEur
-                               ? `€${priceEur} · calculating Pi...`
-                               : `${pricePi} π`
-                    }
+                        ${pricePi} π
+                           
                    </div>
 
                     <button

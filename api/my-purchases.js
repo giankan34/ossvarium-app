@@ -418,6 +418,8 @@ if (!isPublicMediaRequest) {
             });
         }
 
+        let downloadPurchaseId = null;
+
         if (mode === "download") {
 
     if (!userUid) {
@@ -449,6 +451,9 @@ if (!isPublicMediaRequest) {
             error: "Download already used"
         });
     }
+
+    downloadPurchaseId = purchaseRows[0].id;
+
 }
 
 
@@ -519,7 +524,7 @@ if (mode === "download") {
 
     const downloadTicket =
     createDownloadTicket({
-        purchaseId: purchaseRows[0].id,
+        purchaseId: downloadPurchaseId,
         relicId,
         trackTitle,
         audioKey: track.audio,
