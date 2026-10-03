@@ -1164,14 +1164,9 @@ async function updateOwnedTracks() {
     const purchases =
         await loadMyPurchases();
 
-        console.log("OSSVARIUM OWNERSHIP DEBUG", {
-    currentRelic: release?.relicId,
-    purchases
-});
-
     const buyButtons =
     document.querySelectorAll(
-        ".track-support-btn"
+        ".track-buy-btn"
     );
 
     buyButtons.forEach(button => {
