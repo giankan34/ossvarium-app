@@ -1086,7 +1086,7 @@ async function loadMyPurchases() {
     try {
 
         const response = await fetch(
-            "/api/my-purchases",
+            "/api/my-purchases?mode=purchases",
             {
                 headers: {
                     Authorization:
@@ -1174,13 +1174,6 @@ async function updateOwnedTracks() {
 
     const purchases =
         await loadMyPurchases();
-
-        alert(
-    "OWNERSHIP CHECK\n\n" +
-    "RELIC: " + release.relicId + "\n" +
-    "PURCHASES: " +
-    JSON.stringify(purchases)
-);
 
     const buyButtons =
     document.querySelectorAll(
