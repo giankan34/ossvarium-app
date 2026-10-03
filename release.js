@@ -540,13 +540,15 @@ const allowDownload =
                     ${String(index + 1).padStart(2, "0")}
                 </span>
 
-                <span class="track-title">
-                    ${trackTitle}
-                </span>  
+                <div class="track-info">
+    <span class="track-title">
+        ${trackTitle}
+    </span>
 
-                <span class="track-time">
-                    ${hasAudio ? "0:00 / 0:00" : "--:--"}
-                </span>
+    <span class="track-time">
+        ${hasAudio ? "0:00 / 0:00" : "--:--"}
+    </span>
+</div>
 
 ${supportPi > 0 ? `
     <button

@@ -2658,6 +2658,23 @@ body.codex-entering::before{
     color:#725f5a;
 }
 
+.track-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex:1;
+    min-width:0;
+}
+
+.track-info .track-title{
+    min-width:0;
+}
+
+.track-info .track-time{
+    margin-left:auto;
+    flex-shrink:0;
+}
+
 .track-title{
     font-family:"Cormorant Garamond", serif;
     font-size:15px;
