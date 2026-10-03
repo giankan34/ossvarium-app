@@ -2680,11 +2680,15 @@ body.codex-entering::before{
 }
 
 .track-time{
-    margin-left:0;
+    margin-left:auto;
+    width:52px;
+    flex:0 0 52px;
+
     font-family:"Cinzel", serif;
     font-size:10px;
     color:#725f5a;
     white-space:nowrap;
+    text-align:right;
 }
 
 .track-play.active ~ .track-time{
