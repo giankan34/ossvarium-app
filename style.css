@@ -2638,7 +2638,7 @@ body.codex-entering::before{
 
     border-bottom:1px solid rgba(120,70,60,.18);
     text-align:left;
-    flex-wrap:nowrap;
+    flex-wrap: wrap;
 }
 
 .track-play{
@@ -2664,15 +2664,6 @@ body.codex-entering::before{
     color:#b9a6a0;
 }
 
-.track-title{
-    font-family:"Cormorant Garamond", serif;
-    font-size:15px;
-    color:#b9a6a0;
-
-    flex:1;
-    min-width:0;
-}
-
 .track-play.active{
     color:#c83232;
     border-color:rgba(200,50,50,.65);
@@ -2690,14 +2681,10 @@ body.codex-entering::before{
 
 .track-time{
     margin-left:auto;
-    width:52px;
-    flex:0 0 52px;
-
     font-family:"Cinzel", serif;
     font-size:10px;
     color:#725f5a;
     white-space:nowrap;
-    text-align:right;
 }
 
 .track-play.active ~ .track-time{
