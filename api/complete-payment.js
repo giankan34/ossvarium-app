@@ -178,8 +178,8 @@ const track = tracks.find(
 
 if (
     !track ||
-    !track.price ||
-    Number(track.price) <= 0
+    !track.supportPi ||
+    Number(track.supportPi) <= 0
 ) {
     return res.status(400).json({
         error: "Invalid track Pi price"
