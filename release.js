@@ -151,8 +151,19 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializeArtistSupportButton();
 
-       if (piAuth?.accessToken) {
-    await updateOwnedTracks();
+       try {
+    if (!piAuth?.accessToken) {
+        piAuth = await authenticatePiUser();
+    }
+
+    if (piAuth?.accessToken) {
+        await updateOwnedTracks();
+    }
+} catch (error) {
+    console.error(
+        "OSSVARIUM ownership initialization failed:",
+        error
+    );
 }
 }
 
@@ -1254,12 +1265,9 @@ async function updateOwnedTracks() {
                     item.title === trackTitle
             );
 
-        if (
-            !track ||
-            track.allowDownload !== true
-        ) {
-            return;
-        }
+        if (!track) {
+    return;
+}
 
         if (
             trackEntry.querySelector(
