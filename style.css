@@ -2478,7 +2478,15 @@ body.codex-entering::before{
 
 .submission-box h2{
     white-space: nowrap;
-    font-size: 30px;
+    font-size: 26px;
+}
+
+.submission-box h2.discover-title {
+    font-size: 24px;
+}
+
+.submission-box h2.quote-title {
+    font-size: 21px !important;
 }
 
 .about-box{
