@@ -364,6 +364,9 @@ if (req.method === "GET") {
         r.genre,
         r.country,
         r.tracks,
+        r.release_year,
+        r.description,
+        r.bio,
 
         COUNT(p.id)::int AS track_sales,
 
