@@ -463,7 +463,10 @@ AND r.status <> 'rejected'
         r.cover,
         r.genre,
         r.country,
-        r.tracks
+        r.tracks,
+        r.release_year,
+        r.description,
+        r.bio
 
     ORDER BY
         r.created_at DESC;
