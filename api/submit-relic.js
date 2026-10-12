@@ -1157,11 +1157,11 @@ if (
     req.method === "POST" &&
     req.body?.action === "edit_relic"
 ) {
-    if (!verifiedCreatorPiUid) {
-        return res.status(401).json({
-            error: "Pi login required"
-        });
-    }
+    if (!verifiedCreatorPiUid && !verifiedCreatorEmail) {
+    return res.status(401).json({
+        error: "Creator authentication required"
+    });
+}
 
     const relicId =
         String(req.body?.relicId || "").trim();
@@ -1211,7 +1211,17 @@ const ownedRelic = await sql`
     FROM relics
     WHERE
         relic_id = ${relicId}
-        AND creator_pi_uid = ${verifiedCreatorPiUid}
+        AND (
+            (
+                ${verifiedCreatorPiUid}::text IS NOT NULL
+                AND creator_pi_uid = ${verifiedCreatorPiUid}
+            )
+            OR
+            (
+                ${verifiedCreatorEmail}::text IS NOT NULL
+                AND LOWER(contact_email) = ${verifiedCreatorEmail}
+            )
+        )
     LIMIT 1;
 `;
 
@@ -1343,8 +1353,18 @@ if (incomingTracks.length > existingTracks.length) {
             updated_at = NOW()
 
         WHERE
-            relic_id = ${relicId}
+    relic_id = ${relicId}
+    AND (
+        (
+            ${verifiedCreatorPiUid}::text IS NOT NULL
             AND creator_pi_uid = ${verifiedCreatorPiUid}
+        )
+        OR
+        (
+            ${verifiedCreatorEmail}::text IS NOT NULL
+            AND LOWER(contact_email) = LOWER(${verifiedCreatorEmail})
+        )
+    )
 
         RETURNING
             relic_id,

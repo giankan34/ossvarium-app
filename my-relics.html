@@ -1403,9 +1403,16 @@ addTrackButton.addEventListener(
             });
 
             addTrackStatus.textContent =
-                "☠ TRACK READY — SAVE CHANGES";
+                `☠ ${relic.tracks.length} TRACK(S) READY — PRESS SAVE CHANGES`;
 
-            addTrackButton.disabled = true;
+            editor.querySelector(".add-track-title").value = "";
+            editor.querySelector(".add-track-audio").value = "";
+            editor.querySelector(".add-track-price").value = "0";
+            editor.querySelector(".add-track-support-pi").value = "0";
+            editor.querySelector(".add-track-for-sale").checked = false;
+            editor.querySelector(".add-track-download").checked = false;
+
+            addTrackButton.disabled = false;
 
         } catch (error) {
 
