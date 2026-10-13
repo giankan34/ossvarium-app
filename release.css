@@ -493,7 +493,11 @@ transform:translateY(-2px);
 .release-ossvarium-title {
     font-family: 'UnifrakturMaguntia', cursive;
     font-weight: 400;
-    letter-spacing: 2px;
+    letter-spacing: 0;
+    font-size: clamp(32px, 7vw, 64px);
+    max-width: 100%;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
 /* =========================================
