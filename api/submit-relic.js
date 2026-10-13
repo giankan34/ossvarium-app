@@ -76,7 +76,7 @@ await sql`
     const { error } =
         await resend.emails.send({
             from:
-                "OSSVARIUM <onboarding@resend.dev>",
+                "OSSVARIUM <verification@ossvarium.com>",
 
             to: email,
 
