@@ -124,6 +124,12 @@
   id="liveShows"
   placeholder="https://...">
 
+  <label for="publicEmail">Public Contact Email (optional)</label>
+<input
+  type="email"
+  id="publicEmail"
+  placeholder="contact@band.com">
+
                 
                 <label for="contactEmail">Contact Email</label>
                 <input type="email" id="contactEmail" required>
@@ -639,6 +645,7 @@ const coverArtworkObjectKey =
         website:document.getElementById("website").value.trim(),
         merch:document.getElementById("merch").value.trim(),
         liveShows:document.getElementById("liveShows").value.trim(),
+        publicEmail: document.getElementById("publicEmail").value.trim(),
         contactEmail: document.getElementById("contactEmail").value.trim(),
         supportPi: Number(document.getElementById("supportPi").value || 0
     ),

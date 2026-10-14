@@ -1597,6 +1597,7 @@ if (verifiedCreatorPiUid) {
             merch,
             liveShows,
             contactEmail,
+            publicEmail,
             supportPi,
             tracks
         } = req.body;
@@ -1632,6 +1633,7 @@ if (verifiedCreatorPiUid) {
                 cover,
                 price_pi,
                 contact_email,
+                public_email,
                 creator_pi_uid,
                 creator_pi_username,
                 status,
@@ -1652,6 +1654,7 @@ if (verifiedCreatorPiUid) {
                 ${cover || ""},
                 ${supportPi ? Number(supportPi) : 0},
                 ${contactEmail || ""},
+                ${publicEmail || ""},
                 ${verifiedCreatorPiUid},
                 ${verifiedCreatorPiUsername},
                 'pending',
