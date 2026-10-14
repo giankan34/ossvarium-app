@@ -57,7 +57,10 @@ module.exports = async function handler(req, res) {
     r.bio
 ) AS bio,
 
-ap.public_email AS "publicEmail",
+COALESCE(
+  NULLIF(ap.public_email, ''),
+  NULLIF(r.public_email, '')
+) AS "publicEmail",
 
         r.cover,
 
