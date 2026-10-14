@@ -77,10 +77,9 @@ COALESCE(
 
         
 (
-  COALESCE(r.links, '{}'::jsonb) ||
-  COALESCE(ap.links, '{}'::jsonb)
+  COALESCE(ap.links, '{}'::jsonb) ||
+  COALESCE(r.links, '{}'::jsonb)
 ) AS links,
-
 
         r.tracks,
         r.similar_artists,
