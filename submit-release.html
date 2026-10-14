@@ -116,6 +116,14 @@
     type="url"
     id="merch"
     placeholder="https://...">
+
+    
+<label for="liveShows">Live Shows / Tour Dates</label>
+<input
+  type="url"
+  id="liveShows"
+  placeholder="https://...">
+
                 
                 <label for="contactEmail">Contact Email</label>
                 <input type="email" id="contactEmail" required>
@@ -630,6 +638,7 @@ const coverArtworkObjectKey =
         facebook:document.getElementById("facebook").value.trim(),
         website:document.getElementById("website").value.trim(),
         merch:document.getElementById("merch").value.trim(),
+        liveShows:document.getElementById("liveShows").value.trim(),
         contactEmail: document.getElementById("contactEmail").value.trim(),
         supportPi: Number(document.getElementById("supportPi").value || 0
     ),

@@ -57,6 +57,8 @@ module.exports = async function handler(req, res) {
     r.bio
 ) AS bio,
 
+ap.public_email AS "publicEmail",
+
         r.cover,
 
         COALESCE(
@@ -73,11 +75,12 @@ COALESCE(
         r.price_eur,
         r.supporters,
 
-        COALESCE(
-    r.links,
-    ap.links,
-    '{}'::jsonb
+        
+(
+  COALESCE(r.links, '{}'::jsonb) ||
+  COALESCE(ap.links, '{}'::jsonb)
 ) AS links,
+
 
         r.tracks,
         r.similar_artists,
@@ -87,7 +90,17 @@ COALESCE(
     FROM relics r
 
     LEFT JOIN artist_profiles ap
-        ON ap.creator_pi_uid = r.creator_pi_uid
+  ON (
+    (
+      r.creator_pi_uid IS NOT NULL
+      AND ap.creator_pi_uid = r.creator_pi_uid
+    )
+    OR (
+      r.creator_pi_uid IS NULL
+      AND r.contact_email IS NOT NULL
+      AND LOWER(ap.creator_email) = LOWER(r.contact_email)
+    )
+  )
 
     WHERE r.status = 'approved'
 

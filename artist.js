@@ -106,6 +106,16 @@ async function loadArtist(){
                 ${artist.bio}
 
             </div>
+
+            ${artist.publicEmail ? `
+  <div class="release-desc">
+    <strong>CONTACT EMAIL:</strong>
+    <a href="mailto:${encodeURIComponent(artist.publicEmail)}">
+      ${escapeHtml(artist.publicEmail)}
+    </a>
+  </div>
+` : ""}
+
 <div class="artist-stats">
 
     <div class="stat-row">
@@ -294,6 +304,18 @@ ${artist.similar && artist.similar.length ? `
                 FACEBOOK
             </a>
         ` : ''}
+
+        
+${artist.links?.liveShows ? `
+  <a class="submit-btn"
+     href="${artist.links.liveShows}"
+     target="_blank"
+     rel="noopener noreferrer">
+    LIVE SHOWS / TOUR DATES
+  </a>
+  <br><br>
+` : ''}
+
 
     </div>
 

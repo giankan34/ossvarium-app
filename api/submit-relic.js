@@ -1413,6 +1413,15 @@ if (
     });
 }
 
+    const publicEmail =
+  String(req.body?.publicEmail || "").trim();
+
+  if (publicEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(publicEmail)) {
+  return res.status(400).json({
+    error: "Invalid public email address"
+  });
+}
+
     const artistName =
         String(req.body?.artistName || "").trim();
 
@@ -1447,6 +1456,7 @@ if (verifiedCreatorPiUid) {
             creator_pi_username,
             creator_email,
             artist_name,
+            public_email,
             bio,
             artist_image,
             banner,
@@ -1458,6 +1468,7 @@ if (verifiedCreatorPiUid) {
             ${verifiedCreatorPiUsername || ""},
             ${null},
             ${artistName},
+            ${publicEmail || null},
             ${bio},
             ${artistImage},
             ${banner},
@@ -1474,6 +1485,8 @@ if (verifiedCreatorPiUid) {
             
             artist_name =
                 EXCLUDED.artist_name,
+            public_email =
+                EXCLUDED.public_email,
             bio =
                 EXCLUDED.bio,
             artist_image =
@@ -1505,6 +1518,7 @@ if (verifiedCreatorPiUid) {
         INSERT INTO artist_profiles (
             creator_email,
             artist_name,
+            public_email,
             bio,
             artist_image,
             banner,
@@ -1514,6 +1528,7 @@ if (verifiedCreatorPiUid) {
         VALUES (
             ${verifiedCreatorEmail},
             ${artistName},
+            ${publicEmail || null},
             ${bio},
             ${artistImage},
             ${banner},
@@ -1527,6 +1542,8 @@ if (verifiedCreatorPiUid) {
         DO UPDATE SET
             artist_name =
                 EXCLUDED.artist_name,
+            public_email =
+                EXCLUDED.public_email,
             bio =
                 EXCLUDED.bio,
             artist_image =
@@ -1578,6 +1595,7 @@ if (verifiedCreatorPiUid) {
             facebook,
             website,
             merch,
+            liveShows,
             contactEmail,
             supportPi,
             tracks
@@ -1596,7 +1614,8 @@ if (verifiedCreatorPiUid) {
             instagram: instagram || "",
             facebook: facebook || "",
             website: website || "",
-            merch: merch || ""
+            merch: merch || "",
+            liveShows: liveShows || ""
         };
 
         const inserted = await sql`

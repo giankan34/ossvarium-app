@@ -1664,6 +1664,14 @@ editArtistProfileButton.textContent =
                 value="${escapeHtml(profile.artist_name || "")}"
             >
 
+            <label>PUBLIC CONTACT EMAIL (OPTIONAL)</label>
+<input
+  type="email"
+  id="profilePublicEmail"
+  placeholder="contact@yourband.com"
+  value="${escapeHtml(profile.public_contact_email || "")}"
+>
+
             <label>BIO</label>
             <textarea
                 id="profileBio"
@@ -1732,6 +1740,14 @@ editArtistProfileButton.textContent =
                 id="profileMerch"
                 value="${escapeHtml(links.merch || "")}"
             >
+
+            <label>LIVE SHOWS / TOUR DATES</label>
+<input
+  type="url"
+  id="profileLiveShows"
+  value="${escapeHtml(links.liveShows || "")}"
+  placeholder="https://..."
+>
 
             <button
                 type="button"
@@ -1843,6 +1859,11 @@ if (bannerFile) {
                                 .value
                                 .trim(),
 
+                                publicEmail: document
+  .getElementById("profilePublicEmail")
+  .value
+  .trim(),
+
                         artistImage:
                             artistImageObjectKey,
 
@@ -1898,13 +1919,8 @@ if (bannerFile) {
                                     .value
                                     .trim(),
 
-                            merch:
-                                document
-                                    .getElementById(
-                                        "profileMerch"
-                                    )
-                                    .value
-                                    .trim()
+                            merch: document.getElementById("profileMerch").value.trim(),
+                            liveShows: document.getElementById("profileLiveShows").value.trim()
                         }
                     })
                 }
