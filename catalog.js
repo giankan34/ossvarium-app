@@ -86,8 +86,8 @@ const approvedResult =
                 links:
                     item.links ?? {},
 
-                publicEmail: 
-                    item.public_email ?? "",
+                publicEmail:
+                    item.publicEmail ?? "",
 
                 tracks:
                     item.tracks ?? [],
