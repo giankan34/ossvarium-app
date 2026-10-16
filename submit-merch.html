@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SUBMIT MERCH | OSSVARIUM</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse at top, #35100d, #090707 65%);
+      color: #e4c8b8;
+      font-family: Georgia, serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 65px 20px 35px;
+    }
+
+    .brand {
+      color: #a67c70;
+      letter-spacing: 5px;
+      font-size: 12px;
+    }
+
+    h1 {
+      font-size: clamp(32px, 6vw, 55px);
+      letter-spacing: 4px;
+      color: #dfb8a4;
+    }
+
+    .subtitle {
+      color: #a67c70;
+      letter-spacing: 2px;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 20px auto 80px;
+      padding: 35px;
+      background: linear-gradient(155deg, #211111, #0b0808);
+      border: 1px solid #792b22;
+      border-radius: 8px;
+      box-shadow: 0 0 65px rgba(140, 20, 10, 0.15);
+    }
+
+    label {
+      display: block;
+      margin: 24px 0 9px;
+      color: #d7aa94;
+      letter-spacing: 1px;
+    }
+
+    input, select, textarea {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      background: #160e0e;
+      color: #eee0d7;
+      border: 1px solid #653027;
+      border-radius: 4px;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 1px solid #bd4b35;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 35px;
+      padding: 17px;
+      background: linear-gradient(#832d22, #43110e);
+      border: 1px solid #a74230;
+      color: #f4d7c6;
+      font: inherit;
+      letter-spacing: 3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #a33425;
+    }
+
+    .notice {
+      margin-top: 25px;
+      color: #aa8c7e;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        margin: 15px;
+        padding: 22px;
+      }
+    }
+
+    /* MERCH PHOTO PREVIEW */
+
+.photo-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border: 1px solid #873126;
+  border-radius: 5px;
+}
+
+.photo-preview img[data-main-photo="true"] {
+  outline: 3px solid #e8b9a1;
+  outline-offset: 2px;
+}
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">OSSVARIUM · THE DESCENT</div>
+    <h1>SUBMIT YOUR MERCH</h1>
+    <p class="subtitle">
+      Bring your creations into the underworld.
+    </p>
+  </header>
+
+  <main>
+    <form id="merchForm">
+
+      <label for="productName">PRODUCT NAME</label>
+      <input id="productName" type="text" required>
+
+      <label for="productType">PRODUCT TYPE</label>
+      <select id="productType" required>
+        <option value="">Select product type</option>
+        <option>T-Shirt</option>
+        <option>CD</option>
+        <option>Vinyl</option>
+        <option>Patch</option>
+        <option>Hoodie</option>
+        <option>Other</option>
+      </select>
+
+      <label for="description">DESCRIPTION</label>
+      <textarea id="description" required></textarea>
+
+      <label for="pricePi">PRICE (Pi)</label>
+      <input
+        id="pricePi"
+        type="number"
+        min="0.01"
+        step="0.01"
+        required
+      >
+
+      <label for="quantity">AVAILABLE QUANTITY</label>
+      <input
+        id="quantity"
+        type="number"
+        min="1"
+        step="1"
+        required
+      >
+
+      <label for="sizes">AVAILABLE SIZES (IF APPLICABLE)</label>
+      <input
+        id="sizes"
+        type="text"
+        placeholder="S, M, L, XL, XXL"
+      >
+
+      <p class="notice">
+  Upload all photos of the same product together
+  (front, back, details).
+  Hold Ctrl to select multiple photos at once.
+  Click any photo in the preview to set it as
+  the MAIN PRODUCT PHOTO.
+</p>
+
+      <label for="photos">PRODUCT PHOTOS</label>
+      <input
+        id="photos"
+        type="file"
+        accept="image/*"
+        multiple
+        required
+      >
+
+      <div id="photoPreview" class="photo-preview"></div>
+
+      <input type="hidden" id="mainPhotoIndex" name="mainPhotoIndex" value="0">
+
+      <p id="mainPhotoStatus" class="notice">
+  MAIN PHOTO: Photo 1
+</p>
+
+      <p class="notice">
+        Product purchases will be made using Pi.
+        Shipping arrangements and any shipping costs
+        are agreed directly between the artist and buyer.
+      </p>
+
+      <button type="button" disabled>
+        SUBMIT MERCH — COMING SOON
+      </button>
+
+    </form>
+  </main>
+
+  <script>
+  const photosInput = document.getElementById("photos");
+  const photoPreview = document.getElementById("photoPreview");
+
+  photosInput.addEventListener("change", () => {
+    photoPreview.innerHTML = "";
+
+    Array.from(photosInput.files).forEach((file) => {
+      if (!file.type.startsWith("image/")) return;
+
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+
+      const img = document.createElement("img");
+img.src = event.target.result;
+img.alt = "Product photo preview";
+img.style.cursor = "pointer";
+
+img.addEventListener("click", () => {
+  photoPreview.querySelectorAll("img").forEach((photo) => {
+    photo.style.border = "1px solid #873126";
+    photo.title = "Click to set as main photo";
+    photo.dataset.mainPhoto = "false";
+  });
+
+  img.style.border = "3px solid #e8b9a1";
+  img.title = "Main product photo";
+  img.dataset.mainPhoto = "true";
+
+  document.getElementById("mainPhotoIndex").value =
+  Array.from(photoPreview.children).indexOf(img);
+
+  const photoNumber =
+  Array.from(photoPreview.children).indexOf(img) + 1;
+
+document.getElementById("mainPhotoStatus").textContent =
+  `MAIN PHOTO: Photo ${photoNumber}`;
+});
+
+photoPreview.appendChild(img);
+
+if (photoPreview.children.length === 1) {
+  img.click();
+}
+
+    };
+
+reader.readAsDataURL(file);
+});
+});
+
+  // Reuse existing OSSVARIUM creator session
+const merchCreatorSession = localStorage.getItem(
+  "ossvariumCreatorSession"
+);
+
+console.log(
+  "OSSVARIUM Merch creator session:",
+  merchCreatorSession ? "AVAILABLE" : "NOT FOUND"
+);
+
+</script>
+
+</body>
+</html>

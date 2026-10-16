@@ -132,10 +132,10 @@
   background: #170f0f;
   border: 1px solid #742828;
   border-radius: 12px;
-  padding: 35px;
+  padding: 15px 25px;
   width: 100%;
-  max-width: 520px;
-  max-height: 90vh;
+  max-width: 650px;
+  max-height: 95vh;
   overflow-y: auto;
   text-align: center;
 }
@@ -166,24 +166,388 @@
   cursor: not-allowed;
 }
 
+/* OSSVARIUM MERCH PRODUCT GALLERY */
+
+.modal-gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 15px 0 25px;
+}
+
+.modal-gallery img {
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  border: 1px solid #742828;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.modal-gallery img:hover {
+  opacity: 1;
+  border-color: #c0392b;
+  transform: scale(1.05);
+}
+
+/* OSSVARIUM MERCH - LARGE PRODUCT IMAGE */
+
+#modalImage {
+  width: 100%;
+  height: 210px;
+  min-height: 210px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+}
+
+/* OSSVARIUM — THE DESCENT */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.descent-header {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 90px 20px;
+  text-align: center;
+
+  background:
+    radial-gradient(ellipse at 50% 100%,
+      rgba(170, 30, 10, 0.45) 0%,
+      rgba(75, 8, 8, 0.25) 35%,
+      transparent 70%),
+    linear-gradient(180deg,
+      #050404 0%,
+      #170606 55%,
+      #300909 85%,
+      #090505 100%);
+}
+
+.descent-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    115deg,
+    transparent 0,
+    transparent 75px,
+    rgba(180, 35, 20, 0.035) 76px,
+    transparent 78px
+  );
+}
+
+.descent-header > * {
+  position: relative;
+  z-index: 1;
+}
+
+.descent-symbol {
+  font-size: 65px;
+  color: #a32920;
+  margin: 30px 0 10px;
+  text-shadow: 0 0 35px rgba(220, 35, 15, 0.55);
+}
+
+.descent-overline {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: #a67d74;
+}
+
+.descent-header h1 {
+  font-size: clamp(48px, 9vw, 105px);
+  letter-spacing: 7px;
+  color: #d4b3a0;
+  text-shadow:
+    0 3px 0 #410b0b,
+    0 0 35px rgba(190, 25, 10, 0.5);
+}
+
+.descent-header .subtitle {
+  color: #c44737;
+  font-size: 19px;
+  letter-spacing: 5px;
+}
+
+.descent-description {
+  max-width: 550px;
+  color: #a99a92;
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 25px auto 40px;
+}
+
+.descent-enter {
+  display: inline-block;
+  padding: 17px 30px;
+  color: #e7c9b5;
+  background: rgba(65, 12, 12, 0.7);
+  border: 1px solid #96352b;
+  border-radius: 4px;
+  text-decoration: none;
+  letter-spacing: 3px;
+  font-size: 12px;
+  transition: 0.3s ease;
+}
+
+.descent-enter:hover {
+  background: #87231b;
+  box-shadow: 0 0 30px rgba(190, 35, 15, 0.4);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 600px) {
+  .descent-header h1 {
+    letter-spacing: 2px;
+  }
+
+  .descent-header .subtitle {
+    letter-spacing: 2px;
+  }
+
+  .descent-overline {
+    letter-spacing: 2px;
+  }
+}
+
+/* THE MERCH VAULT — ENTRANCE */
+
+.vault-intro {
+  text-align: center;
+  padding: 65px 20px 75px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(100, 15, 15, 0.18),
+    transparent 70%
+  );
+}
+
+.vault-mark {
+  color: #a33428;
+  font-size: 22px;
+  letter-spacing: 8px;
+  margin-bottom: 25px;
+}
+
+.vault-overline {
+  color: #9d6c60;
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.vault-intro h2 {
+  color: #d8b5a0;
+  font-size: clamp(32px, 5vw, 56px);
+  letter-spacing: 5px;
+  margin: 20px 0;
+}
+
+.vault-description {
+  max-width: 550px;
+  margin: auto;
+  color: #a99a92;
+  line-height: 1.8;
+}
+
+/* OSSVARIUM — UNDERWORLD PRODUCT CARDS */
+
+.product {
+  position: relative;
+  background: linear-gradient(155deg, #211414, #0b0808 85%);
+  border: 1px solid #51201c;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: transform 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.product:hover {
+  transform: translateY(-7px);
+  border-color: #a63b2b;
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.65),
+    0 0 25px rgba(160, 30, 15, 0.16);
+}
+
+.product-image {
+  height: 270px;
+  background:
+    radial-gradient(circle at center,
+      #43201b 0%,
+      #1b1010 55%,
+      #090707 100%);
+  border-bottom: 1px solid #49211b;
+}
+
+.product-info {
+  padding: 24px;
+}
+
+.product .artist {
+  color: #b66b59;
+  text-transform: uppercase;
+}
+
+.product h2 {
+  color: #e2c6b6;
+}
+
+.product button {
+  background: linear-gradient(180deg, #73271f, #3d100e);
+  border: 1px solid #9d3b2d;
+}
+
+.product button:hover {
+  background: #a33324;
+  box-shadow: 0 0 18px rgba(190, 40, 20, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product {
+    transition: none;
+  }
+
+  .product:hover {
+    transform: none;
+  }
+}
+
+/* OSSVARIUM — MERCH PRODUCT PHOTOGRAPHY */
+
+.merch-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 18px;
+  transition: transform 0.35s ease;
+}
+
+.product:hover .merch-cover {
+  transform: scale(1.06);
+}
+
+/* OSSVARIUM — UNDERWORLD PRODUCT MODAL */
+
+.modal-content {
+  background:
+    radial-gradient(
+      ellipse at top,
+      rgba(110, 25, 18, 0.25),
+      transparent 65%
+    ),
+    linear-gradient(160deg, #211111, #090707 85%);
+
+  border: 1px solid #8b3025;
+  box-shadow:
+    0 0 70px rgba(140, 25, 15, 0.2),
+    0 25px 80px rgba(0, 0, 0, 0.85);
+}
+
+#modalImage {
+  background-color: #100909;
+  border: 1px solid #49201b;
+}
+
+.modal-content h2 {
+  color: #e3c4b0;
+  letter-spacing: 2px;
+}
+
+.modal-price {
+  color: #e6a080;
+  text-shadow: 0 0 18px rgba(180, 45, 20, 0.25);
+}
+
+.modal-close {
+  background: #351310;
+  border: 1px solid #873126;
+  z-index: 2;
+}
+
+.modal-gallery img {
+  border-color: #6c2921;
+  background: #100909;
+}
+
+.modal-gallery img:hover {
+  border-color: #d04a32;
+  box-shadow: 0 0 12px rgba(190, 45, 25, 0.3);
+}
+
   </style>
 </head>
 
 <body>
 
-  <header>
-    <div class="brand">OSSVARIUM</div>
-    <h1>☠ MERCH MARKETPLACE</h1>
-    <p class="subtitle">
-      Underground merchandise. Support the artists.
-    </p>
-  </header>
+  <!-- OSSVARIUM - THE DESCENT -->
+<header class="descent-header">
 
-  <main>
-    <section class="products">
+  <div class="brand">OSSVARIUM PRESENTS</div>
+
+  <div class="descent-symbol">⛧</div>
+
+  <div class="descent-overline">
+    BEYOND THE MUSIC · BENEATH THE SURFACE
+  </div>
+
+  <h1>THE DESCENT</h1>
+
+  <p class="subtitle">
+    ENTER THE MERCH VAULT
+  </p>
+
+  <p class="descent-description">
+    Descend into the underground.
+    Discover artifacts forged by the artists.
+  </p>
+
+  <a href="#merchVault" class="descent-enter">
+    DESCEND INTO THE VAULT ↓
+  </a>
+
+</header>
+
+  <main id="merchVault">
+
+  <div class="vault-intro">
+    <div class="vault-mark">✦ ─── ☠ ─── ✦</div>
+
+    <p class="vault-overline">
+      YOU HAVE ENTERED THE UNDERWORLD
+    </p>
+
+    <h2>THE MERCH VAULT</h2>
+
+    <p class="vault-description">
+      Forbidden artifacts. Underground creations.
+      Support the artists who keep the darkness alive.
+    </p>
+  </div>
+
+  <section class="products">
 
       <article class="product">
-        <div class="product-image">👕</div>
+        <div class="product-image">
+  <img
+    src="images/merch/tshirt-front.jpg"
+    alt="Official Band T-Shirt"
+    class="merch-cover"
+  >
+</div>
         <div class="product-info">
           <div class="artist">DEMO ARTIST</div>
           <h2>Official Band T-Shirt</h2>
@@ -194,7 +558,13 @@
       </article>
 
       <article class="product">
-        <div class="product-image">💿</div>
+        <div class="product-image">
+  <img
+    src="images/merch/cd-demo.png"
+    alt="Underground CD - Demo"
+    class="merch-cover"
+  >
+</div>
         <div class="product-info">
           <div class="artist">DEMO ARTIST</div>
           <h2>Limited Edition CD</h2>
@@ -205,7 +575,13 @@
       </article>
 
       <article class="product">
-        <div class="product-image">🎵</div>
+        <div class="product-image">
+  <img
+    src="images/merch/vinyl-demo.png"
+    alt="Underground Vinyl - Demo"
+    class="merch-cover"
+  >
+</div>
         <div class="product-info">
           <div class="artist">DEMO ARTIST</div>
           <h2>12" Vinyl Record</h2>
@@ -216,7 +592,13 @@
       </article>
 
       <article class="product">
-        <div class="product-image">☠</div>
+        <div class="product-image">
+  <img
+    src="images/merch/patch-demo.png"
+    alt="OSSVARIUM Embroidered Patch - Demo"
+    class="merch-cover"
+  >
+</div>
         <div class="product-info">
           <div class="artist">DEMO ARTIST</div>
           <h2>Embroidered Patch</h2>
@@ -240,6 +622,21 @@
     >✕</button>
 
     <div id="modalImage" class="modal-image"></div>
+
+    <!-- PRODUCT IMAGE GALLERY -->
+<div id="modalGallery" class="modal-gallery">
+  <img src="images/merch/tshirt-front.jpg"
+       alt="Front view"
+       onclick="changeProductImage(this.src)">
+
+  <img src="images/merch/tshirt-back.jpg"
+       alt="Back view"
+       onclick="changeProductImage(this.src)">
+
+  <img src="images/merch/tshirt-detail.jpg"
+       alt="Detail view"
+       onclick="changeProductImage(this.src)">
+</div>
 
     <h2 id="modalTitle"></h2>
     <p id="modalArtist"></p>
@@ -284,6 +681,19 @@
 <script>
   const productModal = document.getElementById("productModal");
 
+  function changeProductImage(imageSrc) {
+  const modalImage = document.getElementById("modalImage");
+
+  // Remove demo emoji
+  modalImage.textContent = "";
+
+  // Display selected product photo
+  modalImage.style.backgroundImage = `url("${imageSrc}")`;
+  modalImage.style.backgroundSize = "contain";
+  modalImage.style.backgroundPosition = "center";
+  modalImage.style.backgroundRepeat = "no-repeat";
+}
+ 
   function closeProduct() {
     productModal.style.display = "none";
   }
@@ -294,6 +704,31 @@
     button.addEventListener("click", () => {
       document.getElementById("modalImage").textContent =
         product.querySelector(".product-image").textContent;
+
+        // PRODUCT GALLERY - DEFAULT IMAGE
+const productImage = product.querySelector(".product-image").textContent.trim();
+
+const gallery = document.getElementById("modalGallery");
+
+// Show gallery only for T-shirt demo
+const isTshirt = product.querySelector("h2").textContent
+  .toLowerCase().includes("shirt");
+
+gallery.style.display = isTshirt ? "flex" : "none";
+
+// Set initial product image
+if (isTshirt) {
+  changeProductImage("images/merch/tshirt-front.jpg");
+} else {
+  const productPhoto = product.querySelector(".merch-cover");
+
+  if (productPhoto) {
+    changeProductImage(productPhoto.src);
+  } else {
+    const modalImage = document.getElementById("modalImage");
+    modalImage.style.backgroundImage = "none";
+  }
+}
 
       document.getElementById("modalTitle").textContent =
         product.querySelector("h2").textContent;

@@ -344,10 +344,20 @@ ${submission.tracks && submission.tracks.length
             }
 
             ${
-                track.audio
-                ? `<br>Audio: ${track.audio}`
-                : ""
-            }
+    track.audio
+    ? `
+        <br>
+        <button
+            type="button"
+            class="submit-btn"
+            onclick="playAdminTrack(this, ${JSON.stringify(track.audio).replace(/"/g, "&quot;")})"
+        >
+            ▶ PLAY TRACK
+        </button>
+        <audio controls preload="none" style="display:none; width:100%; margin-top:10px;"></audio>
+    `
+    : ""
+}
 
         </div>
 
@@ -517,3 +527,38 @@ window.addEventListener(
     "DOMContentLoaded",
     checkAdminSession
 );
+
+async function playAdminTrack(button, objectKey) {
+    const player = button.parentElement.querySelector("audio");
+
+    if (!player) return;
+
+    try {
+        button.disabled = true;
+        button.textContent = "LOADING...";
+
+        const response = await fetch(
+            "/api/admin-audio-preview?objectKey=" +
+            encodeURIComponent(objectKey)
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Audio preview failed");
+        }
+
+        player.src = result.audioUrl;
+        player.style.display = "block";
+
+        await player.play();
+
+        button.textContent = "▶ PLAY TRACK";
+    } catch (error) {
+        console.error("Admin audio preview:", error);
+        alert(error.message);
+        button.textContent = "▶ PLAY TRACK";
+    } finally {
+        button.disabled = false;
+    }
+}
