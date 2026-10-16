@@ -393,14 +393,15 @@ async function approveRelic(id) {
     try {
 
         const response =
-            await fetch("/api/approve-relic", {
+            await fetch("/api/review-relic", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    id: id
-                })
+               body: JSON.stringify({
+    id: id,
+    action: "approve"
+})
             });
 
         const result =
@@ -441,16 +442,18 @@ async function rejectRelic(id) {
 
     try {
 
-        const response =
-            await fetch("/api/reject-relic", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    id: id
-                })
-            });
+        
+const response = await fetch("/api/review-relic", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        id: id,
+        action: "reject"
+    })
+});
+
 
         const result =
             await response.json();
@@ -538,7 +541,7 @@ async function playAdminTrack(button, objectKey) {
         button.textContent = "LOADING...";
 
         const response = await fetch(
-            "/api/admin-audio-preview?objectKey=" +
+            "/api/admin-status?action=audio-preview?objectKey=" +
             encodeURIComponent(objectKey)
         );
 
