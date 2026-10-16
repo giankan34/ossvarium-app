@@ -46,7 +46,12 @@ module.exports = async function handler(req, res) {
             crypto.timingSafeEqual(provided, expected);
 
         // Admin-only audio preview
-        if (req.query?.action === "audio-preview") {
+        const requestUrl = new URL(
+    req.url,
+    "https://www.ossvarium.com"
+);
+
+if (requestUrl.searchParams.get("action") === "audio-preview") {
             if (!isAdmin) {
                 return res.status(403).json({
                     error: "Admin access required"
@@ -54,8 +59,8 @@ module.exports = async function handler(req, res) {
             }
 
             const objectKey = String(
-                req.query?.objectKey || ""
-            ).trim();
+    requestUrl.searchParams.get("objectKey") || ""
+).trim();
 
             if (
                 !objectKey.startsWith("uploads/") ||
