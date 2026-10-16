@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hall of Relics | OSSVARIUM Catalog</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #080606;
+      color: #e8d8ce;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 45px 16px 30px;
+      border-bottom: 1px solid #492020;
+      background: linear-gradient(#1c0808, #080606);
+    }
+
+    h1 {
+      color: #e23a3a;
+      letter-spacing: 5px;
+      font-size: clamp(30px, 6vw, 52px);
+      margin: 0 0 12px;
+    }
+
+    header p {
+      color: #bd9585;
+      letter-spacing: 2px;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    input, select {
+      padding: 13px;
+      background: #170d0d;
+      color: #eee;
+      border: 1px solid #673030;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+
+    input { flex: 1; min-width: 220px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 25px;
+    }
+
+    .relic {
+      background: #150c0c;
+      border: 1px solid #542323;
+      border-radius: 9px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .relic img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: #251313;
+    }
+
+    .relic-content { padding: 20px; }
+
+    .code {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #b78969;
+    }
+
+    .artist {
+      color: #e84b4b;
+      font-size: 21px;
+      margin: 12px 0 6px;
+    }
+
+    .release {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .meta {
+      color: #ad9990;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    a.button {
+      display: inline-block;
+      color: #f4c3a0;
+      border: 1px solid #793636;
+      background: #251010;
+      padding: 12px 20px;
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    a.button:hover {
+      background: #562020;
+    }
+
+    #message {
+      text-align: center;
+      color: #bca29b;
+      margin: 35px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 35px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>OSSVARIUM</h1>
+  <p>THE UNDERGROUND ARCHIVE</p>
+  <h2>HALL OF RELICS</h2>
+  <p>Explore the preserved releases</p>
+</header>
+
+<main>
+  <div class="toolbar">
+    <input id="search" type="search"
+      placeholder="Search artist or release...">
+
+    <select id="genre">
+      <option value="">All Genres</option>
+    </select>
+  </div>
+
+  <p id="message">Loading the archive...</p>
+  <div class="grid" id="catalog"></div>
+</main>
+
+<footer>
+  <a class="button" href="/index.html">
+    ← BACK TO OSSVARIUM
+  </a>
+</footer>
+
+<script>
+  let allRelics = [];
+
+  const catalog = document.getElementById("catalog");
+  const message = document.getElementById("message");
+  const search = document.getElementById("search");
+  const genre = document.getElementById("genre");
+
+  function renderCatalog() {
+    const term = search.value.toLowerCase().trim();
+    const selectedGenre = genre.value;
+
+    const filtered = allRelics.filter(relic => {
+      const matchesSearch =
+        String(relic.artist || "").toLowerCase().includes(term) ||
+        String(relic.release_title || "").toLowerCase().includes(term);
+
+      const matchesGenre =
+        !selectedGenre || relic.genre === selectedGenre;
+
+      return matchesSearch && matchesGenre;
+    });
+
+    catalog.replaceChildren();
+
+    message.textContent = filtered.length
+      ? ""
+      : "No matching relics found.";
+
+    filtered.forEach(relic => {
+      const card = document.createElement("article");
+      card.className = "relic";
+
+      const cover = document.createElement("img");
+      cover.alt = "Release artwork";
+      cover.loading = "lazy";
+      if (relic.cover) cover.src = relic.cover;
+
+      const content = document.createElement("div");
+      content.className = "relic-content";
+
+      const code = document.createElement("div");
+      code.className = "code";
+      code.textContent = relic.relic_id || "OSSVARIUM RELIC";
+
+      const artist = document.createElement("h3");
+      artist.className = "artist";
+      artist.textContent = relic.artist || "Unknown Artist";
+
+      const release = document.createElement("div");
+      release.className = "release";
+      release.textContent = relic.release_title || "Untitled";
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = [
+        relic.genre,
+        relic.country,
+        relic.release_year
+      ].filter(Boolean).join(" • ");
+
+      const link = document.createElement("a");
+      link.className = "button";
+      link.textContent = "VIEW RELIC";
+      link.href = "/release.html?id=" +
+  encodeURIComponent(relic.relic_id);
+
+      content.append(code, artist, release, meta, link);
+      card.append(cover, content);
+      catalog.append(card);
+    });
+  }
+
+  async function loadCatalog() {
+    try {
+      const response = await fetch(
+        "/api/approved-relics",
+        { cache: "no-store" }
+      );
+
+      if (!response.ok) {
+        throw new Error("Archive request failed");
+      }
+
+      const data = await response.json();
+
+      if (!data.success || !Array.isArray(data.relics)) {
+        throw new Error("Invalid archive response");
+      }
+
+      allRelics = data.relics;
+
+      const genres = [...new Set(
+        allRelics.map(relic => relic.genre).filter(Boolean)
+      )].sort();
+
+      genres.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        genre.append(option);
+      });
+
+      renderCatalog();
+
+    } catch (error) {
+      console.error("Catalog error:", error);
+      message.textContent =
+        "Unable to load the archive. Please try again.";
+    }
+  }
+
+  search.addEventListener("input", renderCatalog);
+  genre.addEventListener("change", renderCatalog);
+
+  loadCatalog();
+</script>
+
+</body>
+</html>

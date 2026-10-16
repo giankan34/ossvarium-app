@@ -311,7 +311,7 @@ function renderMuseumRecord(){
         <div class="museum-row">
             <span class="museum-label">ARCHIVE CODE</span>
             <span class="museum-value">
-                OSV-${String(releaseId+1).padStart(5,"0")}
+                ${release.relicId}
             </span>
         </div>
 
