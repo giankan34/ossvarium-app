@@ -541,7 +541,7 @@ async function playAdminTrack(button, objectKey) {
         button.textContent = "LOADING...";
 
         const response = await fetch(
-            "/api/admin-status?action=audio-preview?objectKey=" +
+            "/api/admin-status?action=audio-preview&objectKey=" +
             encodeURIComponent(objectKey)
         );
 
