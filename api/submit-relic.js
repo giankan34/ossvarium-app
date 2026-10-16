@@ -355,6 +355,7 @@ if (req.method === "GET") {
 
     const relics = await sql`
     SELECT
+        r.id,
         r.relic_id,
         r.artist,
         r.release_title,
@@ -455,6 +456,7 @@ OR
 AND r.status <> 'rejected'
 
     GROUP BY
+        r.id,
         r.relic_id,
         r.artist,
         r.release_title,
@@ -1172,6 +1174,17 @@ if (
     const relicId =
         String(req.body?.relicId || "").trim();
 
+        const internalId = Number(req.body?.internalId);
+
+if (
+    !Number.isSafeInteger(internalId) ||
+    internalId <= 0
+) {
+    return res.status(400).json({
+        error: "Valid internal relic ID is required"
+    });
+}
+
     const artist =
         String(req.body?.artist || "").trim();
 
@@ -1195,9 +1208,9 @@ if (
     const bio =
         String(req.body?.bio || "").trim();
 
-    if (!relicId) {
+    if (!Number.isSafeInteger(internalId) || internalId <= 0) {
         return res.status(400).json({
-            error: "Relic ID is required"
+            error: "Valid internal relic ID is required"
         });
     }
 
@@ -1216,7 +1229,7 @@ const ownedRelic = await sql`
     SELECT tracks
     FROM relics
     WHERE
-        relic_id = ${relicId}
+        id = ${internalId}
         AND (
             (
                 ${verifiedCreatorPiUid}::text IS NOT NULL
@@ -1359,7 +1372,7 @@ if (incomingTracks.length > existingTracks.length) {
             updated_at = NOW()
 
         WHERE
-    relic_id = ${relicId}
+    id = ${internalId}
     AND (
         (
             ${verifiedCreatorPiUid}::text IS NOT NULL

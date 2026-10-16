@@ -1085,7 +1085,7 @@ requestPayoutButton.addEventListener(
 <button
     type="button"
     class="submit-btn edit-relic-btn"
-    data-relic-id="${relic.relic_id}"
+    data-relic-id="${relic.id}"
 >
     ⚔ EDIT RELIC
 </button>
@@ -1509,9 +1509,9 @@ saveButton.addEventListener("click", async function () {
 
                 body: JSON.stringify({
                     action: "edit_relic",
+                    internalId: relic.id,
 
-                    relicId:
-                        relic.relic_id,
+                    relicId: relic.relic_id || relic.relicId || null,
 
                     artist:
                         editor.querySelector(
