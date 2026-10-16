@@ -51,7 +51,11 @@ module.exports = async function handler(req, res) {
     "https://www.ossvarium.com"
 );
 
-if (requestUrl.searchParams.get("action") === "audio-preview") {
+const action =
+    req.query?.action ||
+    requestUrl.searchParams.get("action");
+
+if (action === "audio-preview") {
             if (!isAdmin) {
                 return res.status(403).json({
                     error: "Admin access required"
