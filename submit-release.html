@@ -707,6 +707,61 @@ status: "pending"
 }
 
 });
+
+async function uploadMerchImage(file) {
+    if (!file) {
+        throw new Error("No image selected");
+    }
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+        throw new Error("Only JPEG, PNG and WEBP images are allowed");
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        throw new Error("Image must be 10 MB or smaller");
+    }
+
+    const response = await fetch("/api/audio-upload-url", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            fileName: file.name,
+            contentType: file.type,
+            uploadPurpose: "merch",
+            fileSize: file.size
+        })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.error || "Could not prepare merch upload");
+    }
+
+    const uploadResponse = await fetch(result.uploadUrl, {
+        method: "PUT",
+        headers: {
+            "Content-Type": file.type,
+            "Content-Length": String(file.size)
+        },
+        body: file
+    });
+
+    if (!uploadResponse.ok) {
+        throw new Error("Merch image upload failed");
+    }
+
+    return result.objectKey;
+}
+
 </script>
 
 </body>

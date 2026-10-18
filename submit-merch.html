@@ -144,6 +144,60 @@
   <main>
     <form id="merchForm">
 
+        <!-- MERCH CREATOR PI CONNECTION -->
+<button
+  type="button"
+  id="connectMerchPi"
+>
+  π CONNECT PI ACCOUNT
+</button>
+
+<p id="merchPiStatus" class="notice">
+  Pi account not connected.
+</p>
+
+<!-- MERCH CREATOR EMAIL CONNECTION -->
+<div id="merchEmailConnection">
+  <label for="merchCreatorEmail">OR CONNECT WITH EMAIL</label>
+
+  <input
+    id="merchCreatorEmail"
+    type="email"
+    placeholder="Your email address"
+    autocomplete="email"
+  >
+
+  <button type="button" id="sendMerchEmailCode">
+    SEND VERIFICATION CODE
+  </button>
+
+  <div id="merchEmailCodeSection" style="display: none;">
+    <label for="merchEmailCode">VERIFICATION CODE</label>
+
+    <input
+      id="merchEmailCode"
+      type="text"
+      placeholder="Enter verification code"
+    >
+
+    <button type="button" id="verifyMerchEmailCode">
+      VERIFY EMAIL
+    </button>
+  </div>
+
+  <p id="merchEmailStatus" class="notice">
+    Email not verified.
+  </p>
+</div>
+
+<label for="artistName">ARTIST / BAND NAME *</label>
+<input
+  id="artistName"
+  type="text"
+  maxlength="150"
+  required
+>
+
       <label for="productName">PRODUCT NAME</label>
       <input id="productName" type="text" required>
 
@@ -217,14 +271,24 @@
         are agreed directly between the artist and buyer.
       </p>
 
-      <button type="button" disabled>
-        SUBMIT MERCH — COMING SOON
-      </button>
+      <button id="submitMerchButton" type="submit">
+  SUBMIT MERCH FOR REVIEW
+</button>
 
     </form>
   </main>
 
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
   <script>
+
+// Initialize Pi Network SDK
+if (typeof Pi !== "undefined") {
+  Pi.init({
+    version: "2.0"
+  });
+}
+
   const photosInput = document.getElementById("photos");
   const photoPreview = document.getElementById("photoPreview");
 
@@ -277,14 +341,315 @@ reader.readAsDataURL(file);
 });
 
   // Reuse existing OSSVARIUM creator session
-const merchCreatorSession = localStorage.getItem(
+let merchCreatorSession = localStorage.getItem(
   "ossvariumCreatorSession"
 );
+
+// Pi authentication for MERCH
+let merchCreatorPiAccessToken = null;
+
+// Send MERCH creator email verification code
+document.getElementById("sendMerchEmailCode")
+  .addEventListener("click", async function () {
+
+    const email = document
+      .getElementById("merchCreatorEmail")
+      .value.trim();
+
+    const status = document.getElementById("merchEmailStatus");
+
+    if (!email) {
+      status.textContent = "ENTER YOUR EMAIL ADDRESS";
+      return;
+    }
+
+    this.disabled = true;
+    status.textContent = "SENDING VERIFICATION CODE...";
+
+    try {
+      const response = await fetch("/api/submit-relic", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "send_email_verification",
+          email: email
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Could not send code");
+      }
+
+      document.getElementById("merchEmailCodeSection")
+        .style.display = "block";
+
+      status.textContent = "✉ VERIFICATION CODE SENT";
+
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      this.disabled = false;
+    }
+  });
+
+  // Verify MERCH creator email code
+document.getElementById("verifyMerchEmailCode")
+  .addEventListener("click", async function () {
+
+    const email = document
+      .getElementById("merchCreatorEmail")
+      .value.trim();
+
+    const code = document
+      .getElementById("merchEmailCode")
+      .value.trim();
+
+    const status = document
+      .getElementById("merchEmailStatus");
+
+    if (!email || !code) {
+      status.textContent = "ENTER EMAIL AND VERIFICATION CODE";
+      return;
+    }
+
+    this.disabled = true;
+    status.textContent = "VERIFYING...";
+
+    try {
+      const response = await fetch("/api/submit-relic", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "verify_email_code",
+          email: email,
+          code: code
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.creatorSession) {
+        throw new Error(result.error || "Email verification failed");
+      }
+
+      localStorage.setItem(
+        "ossvariumCreatorSession",
+        result.creatorSession
+      );
+
+      merchCreatorSession = result.creatorSession;
+
+      status.textContent = "✓ CREATOR EMAIL VERIFIED";
+
+      document.getElementById("merchCreatorEmail").readOnly = true;
+
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      this.disabled = false;
+    }
+  });
+
+// Connect MERCH creator to Pi Network
+const connectMerchPiButton =
+  document.getElementById("connectMerchPi");
+
+const merchPiStatus =
+  document.getElementById("merchPiStatus");
+
+connectMerchPiButton.addEventListener("click", async () => {
+  try {
+    if (typeof Pi === "undefined") {
+      throw new Error("Pi SDK is not available");
+    }
+
+    connectMerchPiButton.disabled = true;
+    connectMerchPiButton.textContent = "π CONNECTING...";
+
+    const auth = await Pi.authenticate(
+      ["username"],
+      function (payment) {}
+    );
+
+    if (!auth.accessToken || !auth.user?.uid) {
+      throw new Error("Pi authentication incomplete");
+    }
+
+    merchCreatorPiAccessToken = auth.accessToken;
+
+    merchPiStatus.textContent =
+      "π CONNECTED AS @" + auth.user.username;
+
+    connectMerchPiButton.textContent =
+      "π PI ACCOUNT CONNECTED";
+
+  } catch (error) {
+    console.error("MERCH Pi authentication error:", error);
+
+    merchCreatorPiAccessToken = null;
+
+    merchPiStatus.textContent =
+      "Pi connection failed. Please try again.";
+
+    connectMerchPiButton.disabled = false;
+    connectMerchPiButton.textContent =
+      "π CONNECT PI ACCOUNT";
+  }
+});
 
 console.log(
   "OSSVARIUM Merch creator session:",
   merchCreatorSession ? "AVAILABLE" : "NOT FOUND"
 );
+
+async function uploadMerchImage(file) {
+  if (!file) {
+    throw new Error("No image selected");
+  }
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("Only JPEG, PNG and WEBP images are allowed");
+  }
+
+  if (file.size <= 0 || file.size > 10 * 1024 * 1024) {
+    throw new Error("Image must be 10 MB or smaller");
+  }
+
+  const response = await fetch("/api/audio-upload-url", {
+    method: "POST",
+    headers: {
+    "Content-Type": "application/json",
+    ...(merchCreatorPiAccessToken
+        ? {
+            "Authorization":
+                `Bearer ${merchCreatorPiAccessToken}`
+        }
+        : merchCreatorSession
+            ? {
+                "x-creator-session": merchCreatorSession
+            }
+            : {})
+},
+    body: JSON.stringify({
+      fileName: file.name,
+      contentType: file.type,
+      uploadPurpose: "merch",
+      fileSize: file.size
+    })
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Could not prepare merch upload");
+  }
+
+  const uploadResponse = await fetch(result.uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type
+    },
+    body: file
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error("Merch image upload failed");
+  }
+
+  return result.objectKey;
+}
+
+// MERCH submission — authentication check
+document.getElementById("merchForm")
+  .addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const creatorSession = localStorage.getItem(
+      "ossvariumCreatorSession"
+    );
+
+    if (!merchCreatorPiAccessToken && !creatorSession) {
+      alert("Please connect your Pi account or verify your creator email.");
+      return;
+    }
+
+    const productName = document.getElementById("productName").value.trim();
+const productType = document.getElementById("productType").value;
+const description = document.getElementById("description").value.trim();
+const pricePi = Number(document.getElementById("pricePi").value);
+const quantity = Number(document.getElementById("quantity").value);
+
+const sizes = document.getElementById("sizes").value
+  .split(",")
+  .map(size => size.trim())
+  .filter(Boolean);
+
+const mainPhotoIndex = Number(
+  document.getElementById("mainPhotoIndex").value
+);
+
+const photoFiles = Array.from(
+  document.getElementById("photos").files
+);
+
+const photos = [];
+
+for (const file of photoFiles) {
+  const objectKey = await uploadMerchImage(file);
+  photos.push(objectKey);
+}
+
+const merchSubmission = {
+  artistName: document.getElementById("artistName").value.trim(),
+  productName,
+  productType,
+  description,
+  pricePi,
+  quantity,
+  sizes,
+  photos,
+  mainPhotoIndex
+};
+
+const response = await fetch("/api/submit-merch", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    ...(merchCreatorPiAccessToken
+      ? {
+          Authorization: `Bearer ${merchCreatorPiAccessToken}`
+        }
+      : creatorSession
+        ? {
+            "x-creator-session": creatorSession
+          }
+        : {})
+  },
+  body: JSON.stringify(merchSubmission)
+});
+
+const result = await response.json();
+
+if (!response.ok) {
+  alert("MERCH SUBMISSION FAILED: " + (result.error || "Unknown error"));
+  return;
+}
+
+alert("☠ MERCH SUBMITTED FOR REVIEW ☠");
+
+  });
 
 </script>
 

@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 const {
     S3Client,
     PutObjectCommand,
@@ -84,11 +86,116 @@ module.exports = async function handler(req, res) {
         });
     }
 
+    // Creator authentication headers for MERCH
+const creatorSessionHeader =
+    req.headers["x-creator-session"] || "";
+
+const authHeader =
+    req.headers.authorization || "";
+
+    // Verify email creator session for MERCH
+if (
+    req.body?.uploadPurpose === "merch" &&
+    creatorSessionHeader &&
+    !authHeader.startsWith("Bearer ")
+) {
+    try {
+        const [payload, signature] =
+            creatorSessionHeader.split(".");
+
+        if (!payload || !signature) {
+            throw new Error("Invalid session format");
+        }
+
+        const expectedSignature = crypto
+            .createHmac(
+                "sha256",
+                process.env.CREATOR_SESSION_SECRET
+            )
+            .update(payload)
+            .digest("base64url");
+
+        const supplied = Buffer.from(signature);
+        const expected = Buffer.from(expectedSignature);
+
+        if (
+            supplied.length !== expected.length ||
+            !crypto.timingSafeEqual(supplied, expected)
+        ) {
+            throw new Error("Invalid session signature");
+        }
+
+        const session = JSON.parse(
+            Buffer.from(payload, "base64url").toString("utf8")
+        );
+
+        if (
+            !session.email ||
+            !session.expiresAt ||
+            Date.now() >= Number(session.expiresAt)
+        ) {
+            throw new Error("Session expired");
+        }
+
+    } catch (error) {
+        return res.status(401).json({
+            error: "Invalid or expired creator session"
+        });
+    }
+}
+
+// Verify Pi creator authentication for MERCH
+if (
+    req.body?.uploadPurpose === "merch" &&
+    authHeader.startsWith("Bearer ")
+) {
+    try {
+        const accessToken = authHeader.substring(7);
+
+        const piResponse = await fetch(
+            "https://api.minepi.com/v2/me",
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            }
+        );
+
+        if (!piResponse.ok) {
+            throw new Error("Pi authentication failed");
+        }
+
+        const piUser = await piResponse.json();
+
+        if (!piUser.uid) {
+            throw new Error("Missing Pi user ID");
+        }
+
+    } catch (error) {
+        return res.status(401).json({
+            error: "Invalid Pi authentication"
+        });
+    }
+}
+
+    // Require creator authentication for MERCH uploads
+if (
+    req.body?.uploadPurpose === "merch" &&
+    !creatorSessionHeader &&
+    !authHeader.startsWith("Bearer ")
+) {
+    return res.status(401).json({
+        error: "Creator authentication required for merch uploads"
+    });
+}
+
     try {
 
         const {
             fileName,
-            contentType
+            contentType,
+            uploadPurpose,
+            fileSize
         } = req.body || {};
 
         if (!fileName) {
@@ -116,10 +223,47 @@ if (!allowedContentTypes.includes(contentType)) {
                 "_"
             );
 
+            // Validate merch image size
+if (uploadPurpose === "merch") {
+    const imageSize = Number(fileSize);
+
+    if (
+        !Number.isSafeInteger(imageSize) ||
+        imageSize <= 0 ||
+        imageSize > 10 * 1024 * 1024
+    ) {
+        return res.status(400).json({
+            error: "Merch image must be 10 MB or smaller"
+        });
+    }
+}
+
+            // Validate upload purpose
+if (
+    uploadPurpose !== undefined &&
+    uploadPurpose !== "merch"
+) {
+    return res.status(400).json({
+        error: "Invalid upload purpose"
+    });
+}
+
+            // Merch uploads must contain images only
+if (
+    uploadPurpose === "merch" &&
+    contentType === "audio/mpeg"
+) {
+    return res.status(400).json({
+        error: "Merch uploads must be images"
+    });
+}
+
         const uploadFolder =
-            contentType === "audio/mpeg"
+    contentType === "audio/mpeg"
         ? "uploads"
-        : "artist-images";
+        : uploadPurpose === "merch"
+            ? "merch-images"
+            : "artist-images";
 
         const objectKey =
             `${uploadFolder}/${Date.now()}-${safeName}`;
@@ -143,16 +287,20 @@ if (!allowedContentTypes.includes(contentType)) {
         });
 
         const command =
-            new PutObjectCommand({
-                Bucket:
-                    "ossvarium-private-audio",
+    new PutObjectCommand({
+        Bucket:
+            "ossvarium-private-audio",
 
-                Key:
-                    objectKey,
+        Key:
+            objectKey,
 
-                ContentType:
-                    contentType
-            });
+        ContentType:
+            contentType,
+
+        ...(uploadPurpose === "merch"
+            ? { ContentLength: Number(fileSize) }
+            : {})
+    });
 
         const uploadUrl =
             await getSignedUrl(
