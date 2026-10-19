@@ -161,6 +161,9 @@
 
             <div id="myRelicsContainer"></div>
 
+            <h2 style="margin-top:40px;">☠ MY MERCH ☠</h2>
+            <div id="myMerchContainer"></div>
+
             <a
                 href="index.html"
                 class="back-link">
@@ -345,6 +348,7 @@ verifyCreatorCode.addEventListener(
                 artistProfileSection.style.display = "block";
 
             await loadMyRelics();
+            await loadMyMerch();
 
         } catch (error) {
             console.error(
@@ -392,6 +396,7 @@ connectButton.addEventListener(
             artistProfileSection.style.display = "block";
 
             await loadMyRelics();
+            await loadMyMerch();
 
         } catch (error) {
 
@@ -552,6 +557,59 @@ async function uploadImage(file) {
     }
 
     return urlResult.objectKey;
+}
+
+async function loadMyMerch() {
+  const merchContainer = document.getElementById("myMerchContainer");
+  if (!merchContainer) return;
+
+  merchContainer.textContent = "Loading your merchandise...";
+
+  const creatorSession = localStorage.getItem("ossvariumCreatorSession");
+  const headers = {};
+
+  if (creatorPiAuth?.accessToken) {
+    headers.Authorization = `Bearer ${creatorPiAuth.accessToken}`;
+  } else if (creatorSession) {
+    headers["x-creator-session"] = creatorSession;
+  } else {
+    merchContainer.textContent = "Connect your Pi account or verify your email.";
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/submit-merch", {
+      method: "GET",
+      headers
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to load merchandise");
+    }
+
+    const products = result.products || [];
+
+    merchContainer.replaceChildren();
+
+if (products.length === 0) {
+  merchContainer.textContent = "No merchandise submitted yet.";
+} else {
+  products.forEach((product) => {
+    const item = document.createElement("div");
+    item.className = "submission-text";
+
+    item.textContent =
+      `${product.product_name} — ${product.price_pi} Pi — ${product.status}`;
+
+    merchContainer.appendChild(item);
+  });
+}
+
+  } catch (error) {
+    merchContainer.textContent = error.message;
+  }
 }
 
 async function loadMyRelics() {

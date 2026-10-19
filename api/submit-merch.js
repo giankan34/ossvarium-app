@@ -3,7 +3,7 @@ const { neon } = require("@neondatabase/serverless");
 const crypto = require("crypto");
 
 module.exports = async function handler(req, res) {
-  if (req.method !== "POST") {
+  if (req.method !== "POST" && req.method !== "GET") {
     return res.status(405).json({
       error: "Method not allowed"
     });
@@ -107,6 +107,45 @@ module.exports = async function handler(req, res) {
       });
     }
   }
+
+  // Load merchandise belonging to the authenticated creator
+if (req.method === "GET") {
+  try {
+    const products = await sql`
+      SELECT
+        id,
+        artist_name,
+        product_name,
+        product_type,
+        description,
+        price_pi,
+        quantity,
+        sizes,
+        photos,
+        main_photo_index,
+        status,
+        created_at
+      FROM merch_products
+      WHERE (
+        (${verifiedCreatorPiUid}::text IS NOT NULL
+          AND creator_pi_uid = ${verifiedCreatorPiUid})
+        OR
+        (${verifiedCreatorEmail}::text IS NOT NULL
+          AND creator_email = ${verifiedCreatorEmail})
+      )
+      ORDER BY created_at DESC
+    `;
+
+    return res.status(200).json({ products });
+
+  } catch (error) {
+    console.error("Failed to load creator merch:", error);
+
+    return res.status(500).json({
+      error: "Failed to load merchandise"
+    });
+  }
+}
 
     // Read incoming merch product details
   const {
