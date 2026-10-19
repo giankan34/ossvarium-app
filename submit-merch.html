@@ -408,6 +408,11 @@ document.getElementById("verifyMerchEmailCode")
       .getElementById("merchEmailCode")
       .value.trim();
 
+      console.log("MERCH VERIFY DEBUG:", {
+  emailFound: Boolean(email),
+  codeLength: code.length
+});
+
     const status = document
       .getElementById("merchEmailStatus");
 
