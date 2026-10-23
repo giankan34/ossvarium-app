@@ -12,6 +12,13 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function safeArtistUrl(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    return ["https:", "http:"].includes(url.protocol) ? escapeHtml(url.href) : "";
+  } catch { return ""; }
+}
+
 async function loadArtist(){
 
     try{
@@ -62,8 +69,8 @@ async function loadArtist(){
 ? `
     <img
     class="artist-image"
-    src="${artist.artistImage}"
-    alt="${artist.artist}">
+    src="${escapeHtml(artist.artistImage)}"
+    alt="${escapeHtml(artist.artist)}">
 `
 : `
     <div class="artist-image artist-image-fallback">
@@ -77,8 +84,8 @@ async function loadArtist(){
     ${artist.banner
     ? `
         <img
-        src="${artist.banner}"
-        alt="${artist.artist}">
+        src="${escapeHtml(artist.banner)}"
+        alt="${escapeHtml(artist.artist)}">
     `
     : `
         <div class="no-cover">
@@ -91,20 +98,20 @@ async function loadArtist(){
         
             <div class="release-title">
 
-                ${artist.artist}
+                ${escapeHtml(artist.artist)}
 
             </div>
 
             <div class="release-meta">
 
-                ${artist.country}
+                ${escapeHtml(artist.country)}
                 •
 
                 <a
-                href="genre.html?genre=${encodeURIComponent(artist.genre)}"
+                href="genre.html?genre=${escapeHtml(encodeURIComponent(artist.genre))}"
                 class="genre-link">
 
-                    ${artist.genre}
+                    ${escapeHtml(artist.genre)}
 
                 </a>
 
@@ -112,7 +119,7 @@ async function loadArtist(){
 
             <div class="release-desc">
 
-                ${artist.bio}
+                ${escapeHtml(artist.bio)}
 
             </div>
 
@@ -139,7 +146,7 @@ async function loadArtist(){
 
         <span>COUNTRY</span>
 
-        <span>${artist.country}</span>
+        <span>${escapeHtml(artist.country)}</span>
 
     </div>
 
@@ -147,7 +154,7 @@ async function loadArtist(){
 
         <span>GENRE</span>
 
-        <span>${artist.genre}</span>
+        <span>${escapeHtml(artist.genre)}</span>
 
     </div>
 
@@ -181,14 +188,14 @@ async function loadArtist(){
         class="submit-btn"
         href="release.html?id=${releases.indexOf(release)}">
 
-            ${release.release}
+            ${escapeHtml(release.release)}
 
         </a>
 
         <div class="artist-release-meta">
-            ${release.year || "UNKNOWN YEAR"}
+            ${escapeHtml(release.year || "UNKNOWN YEAR")}
             •
-            ${release.genre || artist.genre}
+            ${escapeHtml(release.genre || artist.genre)}
         </div>
 
     </div>
@@ -220,9 +227,9 @@ ${artist.similar && artist.similar.length ? `
                 return `
                     <a
                     class="submit-btn"
-                    href="artist.html?artist=${encodeURIComponent(name)}">
+                    href="artist.html?artist=${escapeHtml(encodeURIComponent(name))}">
 
-                        ${name}
+                        ${escapeHtml(name)}
 
                     </a>
 
@@ -232,7 +239,7 @@ ${artist.similar && artist.similar.length ? `
 
             return `
                 <span class="similar-unavailable">
-                    ${name}
+                    ${escapeHtml(name)}
                 </span>
 
                 <br><br>
@@ -246,6 +253,16 @@ ${artist.similar && artist.similar.length ? `
 
 ` : ''}
 
+
+<div class="submission-box" id="artistMerchSection" style="display:none;">
+
+    <h2>☠ OFFICIAL ARTIST MERCH ☠</h2>
+
+    <div class="submission-text" id="artistMerchProducts"></div>
+
+</div>
+
+
 <div class="submission-box">
 
     <h2>🔗 OFFICIAL LINKS</h2>
@@ -254,8 +271,8 @@ ${artist.similar && artist.similar.length ? `
 
         ${artist.links?.bandcamp ? `
             <a class="submit-btn"
-               href="${artist.links.bandcamp}"
-               target="_blank">
+               href="${safeArtistUrl(artist.links.bandcamp)}"
+               target="_blank" rel="noopener noreferrer">
                 BANDCAMP
             </a>
             <br><br>
@@ -263,8 +280,8 @@ ${artist.similar && artist.similar.length ? `
 
         ${artist.links?.spotify ? `
             <a class="submit-btn"
-               href="${artist.links.spotify}"
-               target="_blank">
+               href="${safeArtistUrl(artist.links.spotify)}"
+               target="_blank" rel="noopener noreferrer">
                 SPOTIFY
             </a>
             <br><br>
@@ -272,8 +289,8 @@ ${artist.similar && artist.similar.length ? `
 
         ${artist.links?.youtube ? `
             <a class="submit-btn"
-               href="${artist.links.youtube}"
-               target="_blank">
+               href="${safeArtistUrl(artist.links.youtube)}"
+               target="_blank" rel="noopener noreferrer">
                 YOUTUBE
             </a>
             <br><br>
@@ -281,8 +298,8 @@ ${artist.similar && artist.similar.length ? `
 
         ${artist.links?.website ? `
             <a class="submit-btn"
-               href="${artist.links.website}"
-               target="_blank">
+               href="${safeArtistUrl(artist.links.website)}"
+               target="_blank" rel="noopener noreferrer">
                 WEBSITE
             </a>
             <br><br>
@@ -290,8 +307,8 @@ ${artist.similar && artist.similar.length ? `
 
         ${artist.links?.merch ? `
             <a class="submit-btn"
-               href="${artist.links.merch}"
-               target="_blank">
+               href="${safeArtistUrl(artist.links.merch)}"
+               target="_blank" rel="noopener noreferrer">
                 MERCH
             </a>
             <br><br>
@@ -299,8 +316,8 @@ ${artist.similar && artist.similar.length ? `
 
         ${artist.links?.instagram ? `
             <a class="submit-btn"
-               href="${artist.links.instagram}"
-               target="_blank">
+               href="${safeArtistUrl(artist.links.instagram)}"
+               target="_blank" rel="noopener noreferrer">
                 INSTAGRAM
             </a>
             <br><br>
@@ -308,8 +325,8 @@ ${artist.similar && artist.similar.length ? `
 
         ${artist.links?.facebook ? `
             <a class="submit-btn"
-               href="${artist.links.facebook}"
-               target="_blank">
+               href="${safeArtistUrl(artist.links.facebook)}"
+               target="_blank" rel="noopener noreferrer">
                 FACEBOOK
             </a>
         ` : ''}
@@ -317,7 +334,7 @@ ${artist.similar && artist.similar.length ? `
         
 ${artist.links?.liveShows ? `
   <a class="submit-btn"
-     href="${artist.links.liveShows}"
+     href="${safeArtistUrl(artist.links.liveShows)}"
      target="_blank"
      rel="noopener noreferrer">
     LIVE SHOWS / TOUR DATES
@@ -331,6 +348,43 @@ ${artist.links?.liveShows ? `
 </div>
 
         `;
+
+        try {
+
+const merchResponse = await fetch("/api/submit-merch?action=catalog");
+
+if (merchResponse.ok) {
+    const merchData = await merchResponse.json();
+
+    const artistMerch = (Array.isArray(merchData.products)
+        ? merchData.products
+        : []
+    ).filter(product => product.artist_name === artistName);
+
+    const merchSection = document.getElementById("artistMerchSection");
+    const merchContainer = document.getElementById("artistMerchProducts");
+
+    if (artistMerch.length > 0 && merchSection && merchContainer) {
+        for (const product of artistMerch) {
+            const entry = document.createElement("div");
+            entry.className = "artist-release-entry";
+
+            const link = document.createElement("a");
+            link.className = "submit-btn";
+            link.href = `merch.html?product=${encodeURIComponent(product.id)}`;
+            link.textContent = product.product_name;
+
+            entry.appendChild(link);
+            merchContainer.appendChild(entry);
+        }
+
+        merchSection.style.display = "block";
+    }
+}
+
+} catch (merchError) {
+    console.warn("Artist merch unavailable:", merchError);
+}
 
     }catch(error){
 

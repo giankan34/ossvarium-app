@@ -2,6 +2,11 @@ const { neon } = require("@neondatabase/serverless");
 
 const crypto = require("crypto");
 
+const {
+  S3Client,
+  HeadObjectCommand
+} = require("@aws-sdk/client-s3");
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST" && req.method !== "GET") {
     return res.status(405).json({
@@ -10,6 +15,44 @@ module.exports = async function handler(req, res) {
   }
 
     const sql = neon(process.env.POSTGRES_URL);
+
+    
+  // Public MERCH catalog — approved products only
+  if (
+    req.method === "GET" &&
+    req.query?.action === "catalog"
+  ) {
+    try {
+      const products = await sql`
+        SELECT
+          id,
+          artist_name,
+          product_name,
+          product_type,
+          description,
+          price_pi,
+          quantity,
+          sizes,
+          photos,
+          main_photo_index
+        FROM merch_products
+        WHERE status = 'approved'
+        ORDER BY created_at DESC
+      `;
+
+      return res.status(200).json({
+        success: true,
+        products
+      });
+    } catch (error) {
+      console.error("Public merch catalog error:", error);
+
+      return res.status(500).json({
+        error: "Failed to load merch catalog"
+      });
+    }
+  }
+
 
       // OSSVARIUM creator authentication
   const creatorSessionHeader =
@@ -182,6 +225,31 @@ if (req.method === "GET") {
     });
   }
 
+  // Bind merch to the authenticated creator's existing artist profile.
+  // Never trust the submitted artistName as proof of ownership.
+  let creatorArtistName;
+  try {
+    const profiles = await sql`
+      SELECT artist_name FROM artist_profiles
+      WHERE (
+        (${verifiedCreatorPiUid}::text IS NOT NULL AND creator_pi_uid = ${verifiedCreatorPiUid})
+        OR
+        (${verifiedCreatorPiUid}::text IS NULL AND ${verifiedCreatorEmail}::text IS NOT NULL
+          AND LOWER(creator_email) = ${verifiedCreatorEmail})
+      )
+      LIMIT 1
+    `;
+    creatorArtistName = String(profiles[0]?.artist_name || "").trim();
+  } catch (error) {
+    console.error("Merch artist ownership lookup failed:", error);
+    return res.status(500).json({ error: "Failed to verify artist profile" });
+  }
+  if (!creatorArtistName || creatorArtistName.toLowerCase() !== cleanArtistName.toLowerCase()) {
+    return res.status(403).json({
+      error: "Merch artist must match your saved creator profile"
+    });
+  }
+
   const productPrice = Number(pricePi);
   const productQuantity = Number(quantity);
 
@@ -282,6 +350,90 @@ if (req.method === "GET") {
     });
   }
 
+    try {
+    const ownedPhotos = await sql`
+      SELECT object_key
+      FROM merch_uploads
+      WHERE object_key IN (
+    SELECT jsonb_array_elements_text(${JSON.stringify(productPhotos)}::jsonb)
+)
+        AND (
+          (${verifiedCreatorPiUid}::text IS NOT NULL
+            AND creator_pi_uid = ${verifiedCreatorPiUid})
+          OR
+          (${verifiedCreatorEmail}::text IS NOT NULL
+            AND creator_email = ${verifiedCreatorEmail})
+        )
+    `;
+
+    const ownedKeys = new Set(
+      ownedPhotos.map(row => row.object_key)
+    );
+
+    if (
+      new Set(productPhotos).size !== productPhotos.length ||
+      productPhotos.some(photo => !ownedKeys.has(photo))
+    ) {
+      return res.status(403).json({
+        error: "Invalid or unauthorized merch photos"
+      });
+    }
+  } catch (error) {
+    console.error("Merch photo ownership check failed:", error);
+
+    return res.status(500).json({
+      error: "Failed to verify merch photos"
+    });
+  }
+
+    const s3 = new S3Client({
+  endpoint: process.env.AWS_ENDPOINT_URL_S3,
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  },
+  forcePathStyle: true
+});
+
+for (const photoKey of productPhotos) {
+  try {
+    
+    const photoInfo = await s3.send(new HeadObjectCommand({
+  Bucket: "ossvarium-private-audio",
+  Key: photoKey
+}));
+
+const allowedImageTypes = [
+  "image/jpeg",
+  "image/png",
+  "image/webp"
+];
+
+if (
+  !allowedImageTypes.includes(photoInfo.ContentType) ||
+  !Number.isSafeInteger(photoInfo.ContentLength) ||
+  photoInfo.ContentLength <= 0 ||
+  photoInfo.ContentLength > 10 * 1024 * 1024
+) {
+  return res.status(400).json({
+    error: "Invalid merch image type or size"
+  });
+}
+
+  } catch (error) {
+    if (error.name === "NotFound" || error.$metadata?.httpStatusCode === 404) {
+      return res.status(400).json({
+        error: "One or more merch photos have not been uploaded"
+      });
+    }
+
+    throw error;
+  }
+}
+
+    
+
   try {
   const rows = await sql`
     INSERT INTO merch_products (
@@ -299,14 +451,14 @@ if (req.method === "GET") {
       status
     )
     VALUES (
-      ${cleanArtistName},
+      ${creatorArtistName},
       ${verifiedCreatorPiUid},
       ${verifiedCreatorEmail},
       ${cleanProductName},
       ${cleanProductType},
-      ${description},
-      ${pricePi},
-      ${quantity},
+      ${cleanDescription},
+      ${productPrice},
+      ${productQuantity},
       ${JSON.stringify(productSizes)}::jsonb,
       ${JSON.stringify(productPhotos)}::jsonb,
       ${selectedMainPhoto},

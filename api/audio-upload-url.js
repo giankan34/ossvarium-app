@@ -1,5 +1,8 @@
 const crypto = require("crypto");
 
+const { neon } = require("@neondatabase/serverless");
+
+
 const {
     S3Client,
     PutObjectCommand,
@@ -17,14 +20,40 @@ module.exports = async function handler(req, res) {
         const objectKey =
             String(req.query?.objectKey || "").trim();
 
-        if (
-            !objectKey ||
-            !objectKey.startsWith("artist-images/")
-        ) {
+        
+if (
+    !objectKey ||
+    (
+        !objectKey.startsWith("artist-images/") &&
+        !objectKey.startsWith("merch-images/")
+    )
+) {
+
             return res.status(400).json({
                 error: "Invalid image object key"
             });
         }
+
+        
+        // Merch images: only approved products may be viewed
+        if (objectKey.startsWith("merch-images/")) {
+            const sql = neon(process.env.POSTGRES_URL);
+
+            const approved = await sql`
+                SELECT id
+                FROM merch_products
+                WHERE status = 'approved'
+                  AND photos @> ${JSON.stringify([objectKey])}::jsonb
+                LIMIT 1
+            `;
+
+            if (approved.length === 0) {
+                return res.status(404).json({
+                    error: "Approved merch image not found"
+                });
+            }
+        }
+
 
         const s3 = new S3Client({
             endpoint:
@@ -90,6 +119,9 @@ module.exports = async function handler(req, res) {
 const creatorSessionHeader =
     req.headers["x-creator-session"] || "";
 
+    let verifiedCreatorEmail = null;
+let verifiedCreatorPiUid = null;
+
 const authHeader =
     req.headers.authorization || "";
 
@@ -137,6 +169,10 @@ if (
             throw new Error("Session expired");
         }
 
+        verifiedCreatorEmail = String(session.email)
+    .trim()
+    .toLowerCase();
+
     } catch (error) {
         return res.status(401).json({
             error: "Invalid or expired creator session"
@@ -170,6 +206,8 @@ if (
         if (!piUser.uid) {
             throw new Error("Missing Pi user ID");
         }
+
+        verifiedCreatorPiUid = String(piUser.uid);
 
     } catch (error) {
         return res.status(401).json({
@@ -266,7 +304,24 @@ if (
             : "artist-images";
 
         const objectKey =
-            `${uploadFolder}/${Date.now()}-${safeName}`;
+    `${uploadFolder}/${crypto.randomUUID()}-${safeName}`;
+
+    if (uploadPurpose === "merch") {
+    const sql = neon(process.env.POSTGRES_URL);
+
+    await sql`
+        INSERT INTO merch_uploads (
+            object_key,
+            creator_pi_uid,
+            creator_email
+        )
+        VALUES (
+            ${objectKey},
+            ${verifiedCreatorPiUid},
+            ${verifiedCreatorEmail}
+        )
+    `;
+}
 
         const s3 = new S3Client({
             endpoint:
@@ -294,12 +349,7 @@ if (
         Key:
             objectKey,
 
-        ContentType:
-            contentType,
-
-        ...(uploadPurpose === "merch"
-            ? { ContentLength: Number(fileSize) }
-            : {})
+        ContentType: contentType
     });
 
         const uploadUrl =

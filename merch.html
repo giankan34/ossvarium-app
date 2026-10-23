@@ -496,6 +496,12 @@ html {
   <!-- OSSVARIUM - THE DESCENT -->
 <header class="descent-header">
 
+  
+<a href="index.html" class="descent-enter">
+    ← BACK TO OSSVARIUM
+</a>
+
+
   <div class="brand">OSSVARIUM PRESENTS</div>
 
   <div class="descent-symbol">⛧</div>
@@ -538,77 +544,10 @@ html {
     </p>
   </div>
 
-  <section class="products">
-
-      <article class="product">
-        <div class="product-image">
-  <img
-    src="images/merch/tshirt-front.jpg"
-    alt="Official Band T-Shirt"
-    class="merch-cover"
-  >
-</div>
-        <div class="product-info">
-          <div class="artist">DEMO ARTIST</div>
-          <h2>Official Band T-Shirt</h2>
-          <p>Black cotton shirt</p>
-          <div class="price">π25</div>
-          <button type="button">VIEW PRODUCT</button>
-        </div>
-      </article>
-
-      <article class="product">
-        <div class="product-image">
-  <img
-    src="images/merch/cd-demo.png"
-    alt="Underground CD - Demo"
-    class="merch-cover"
-  >
-</div>
-        <div class="product-info">
-          <div class="artist">DEMO ARTIST</div>
-          <h2>Limited Edition CD</h2>
-          <p>Physical album edition</p>
-          <div class="price">π15</div>
-          <button type="button">VIEW PRODUCT</button>
-        </div>
-      </article>
-
-      <article class="product">
-        <div class="product-image">
-  <img
-    src="images/merch/vinyl-demo.png"
-    alt="Underground Vinyl - Demo"
-    class="merch-cover"
-  >
-</div>
-        <div class="product-info">
-          <div class="artist">DEMO ARTIST</div>
-          <h2>12" Vinyl Record</h2>
-          <p>Collector's edition</p>
-          <div class="price">π30</div>
-          <button type="button">VIEW PRODUCT</button>
-        </div>
-      </article>
-
-      <article class="product">
-        <div class="product-image">
-  <img
-    src="images/merch/patch-demo.png"
-    alt="OSSVARIUM Embroidered Patch - Demo"
-    class="merch-cover"
-  >
-</div>
-        <div class="product-info">
-          <div class="artist">DEMO ARTIST</div>
-          <h2>Embroidered Patch</h2>
-          <p>Official band patch</p>
-          <div class="price">π8</div>
-          <button type="button">VIEW PRODUCT</button>
-        </div>
-      </article>
-
-    </section>
+  
+<section class="products" id="merchProducts">
+  <p>LOADING THE MERCH VAULT...</p>
+</section>
   </main>
 
   
@@ -624,19 +563,7 @@ html {
     <div id="modalImage" class="modal-image"></div>
 
     <!-- PRODUCT IMAGE GALLERY -->
-<div id="modalGallery" class="modal-gallery">
-  <img src="images/merch/tshirt-front.jpg"
-       alt="Front view"
-       onclick="changeProductImage(this.src)">
-
-  <img src="images/merch/tshirt-back.jpg"
-       alt="Back view"
-       onclick="changeProductImage(this.src)">
-
-  <img src="images/merch/tshirt-detail.jpg"
-       alt="Detail view"
-       onclick="changeProductImage(this.src)">
-</div>
+<div id="modalGallery" class="modal-gallery"></div>
 
     <h2 id="modalTitle"></h2>
     <p id="modalArtist"></p>
@@ -680,6 +607,225 @@ html {
   
 <script>
   const productModal = document.getElementById("productModal");
+  
+let activeMerchGalleryRequest = 0;
+
+
+  
+async function loadApprovedMerch() {
+  const container = document.getElementById("merchProducts");
+
+  try {
+    const response = await fetch("/api/submit-merch?action=catalog");
+
+    if (!response.ok) {
+      throw new Error("Failed to load merch catalog");
+    }
+
+    const result = await response.json();
+    const products = Array.isArray(result.products)
+      ? result.products
+      : [];
+
+    if (products.length === 0) {
+      container.textContent = "NO APPROVED MERCH AVAILABLE YET.";
+      return;
+    }
+
+    console.log("Approved merch loaded:", products.length);
+
+    
+    container.replaceChildren();
+
+    for (const product of products) {
+      const card = document.createElement("article");
+      card.className = "product";
+
+      
+const imageBox = document.createElement("div");
+imageBox.className = "product-image";
+imageBox.textContent = "☠";
+
+const photos = Array.isArray(product.photos)
+  ? product.photos
+  : [];
+
+const mainIndex = Number(product.main_photo_index) || 0;
+const mainPhoto = photos[mainIndex] || photos[0];
+
+
+if (mainPhoto) {
+  try {
+    const img = document.createElement("img");
+    img.className = "merch-cover";
+    img.alt = product.product_name || "Merch product";
+
+    const imageResponse = await fetch(
+      `/api/audio-upload-url?objectKey=${encodeURIComponent(mainPhoto)}`
+    );
+
+    if (imageResponse.ok) {
+      const imageResult = await imageResponse.json();
+
+      if (imageResult.imageUrl) {
+        img.src = imageResult.imageUrl;
+        imageBox.replaceChildren(img);
+      }
+    }
+  } catch (error) {
+    console.error("Merch cover error:", error);
+  }
+}
+
+
+      const info = document.createElement("div");
+      info.className = "product-info";
+
+      const artist = document.createElement("div");
+      artist.className = "artist";
+      artist.textContent = product.artist_name;
+
+      const title = document.createElement("h2");
+      title.textContent = product.product_name;
+
+      const description = document.createElement("p");
+      description.textContent = product.description || "";
+
+      const price = document.createElement("div");
+      price.className = "price";
+      price.textContent = `π${product.price_pi}`;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "VIEW PRODUCT";
+      const requestedProductId =
+  new URLSearchParams(window.location.search).get("product");
+
+const shouldOpenProduct =
+  requestedProductId !== null &&
+  String(product.id) === requestedProductId;
+      button.addEventListener("click", async () => {
+      const galleryRequestId = ++activeMerchGalleryRequest;
+  document.getElementById("modalTitle").textContent =
+    product.product_name;
+
+  document.getElementById("modalArtist").textContent =
+    product.artist_name;
+
+  document.getElementById("modalDescription").textContent =
+    product.description || "";
+
+  document.getElementById("modalPrice").textContent =
+    `π${product.price_pi}`;
+
+    const modalGallery = document.getElementById("modalGallery");
+modalGallery.replaceChildren();
+modalGallery.style.display = "none";
+
+  
+  const modalImage = document.getElementById("modalImage");
+
+  modalImage.style.backgroundImage = "none";
+  modalImage.textContent = "☠";
+
+  const mainImage = imageBox.querySelector("img");
+
+  if (mainImage?.src) {
+    changeProductImage(mainImage.src);
+  }
+
+  const sizeContainer = document.getElementById("modalSizeContainer");
+  const sizeSelect = document.getElementById("modalSize");
+
+  sizeSelect.replaceChildren(new Option("Choose size", ""));
+
+  const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+
+  for (const size of sizes) {
+    sizeSelect.add(new Option(size, size));
+  }
+
+  sizeContainer.style.display = sizes.length > 0 ? "block" : "none";
+
+productModal.style.display = "flex";
+  
+const galleryImages = [];
+
+for (const photoKey of photos) {
+  try {
+    const response = await fetch(
+      `/api/audio-upload-url?objectKey=${encodeURIComponent(photoKey)}`
+    );
+
+    if (!response.ok) continue;
+
+    const result = await response.json();
+
+    if (result.imageUrl) {
+      galleryImages.push(result.imageUrl);
+    }
+  } catch (error) {
+    console.error("Merch gallery image error:", error);
+  }
+}
+
+
+
+
+if (galleryRequestId !== activeMerchGalleryRequest) {
+  return;
+}
+
+modalGallery.replaceChildren();
+
+// The catalog cover may still be loading when the modal opens.
+// Prefer the selected main photo once the signed gallery URLs arrive.
+const preferredMainImage = galleryImages[mainIndex] || galleryImages[0];
+if (preferredMainImage) changeProductImage(preferredMainImage);
+
+galleryImages.forEach((imageUrl) => {
+  const thumbnail = document.createElement("img");
+  thumbnail.src = imageUrl;
+  thumbnail.alt = "Merch photo";
+  thumbnail.style.cursor = "pointer";
+
+  thumbnail.addEventListener("click", () => {
+  if (galleryRequestId !== activeMerchGalleryRequest) {
+    return;
+  }
+
+  changeProductImage(imageUrl);
+});
+
+  modalGallery.appendChild(thumbnail);
+});
+
+
+
+  
+modalGallery.style.display =
+  galleryImages.length > 0 ? "flex" : "none";
+
+  
+  
+});
+
+if (shouldOpenProduct) {
+  button.click();
+}
+
+      info.append(artist, title, description, price, button);
+      card.append(imageBox, info);
+      container.appendChild(card);
+    }
+
+
+  } catch (error) {
+    console.error("Merch catalog error:", error);
+    container.textContent = "MERCH CATALOG TEMPORARILY UNAVAILABLE.";
+  }
+}
+
 
   function changeProductImage(imageSrc) {
   const modalImage = document.getElementById("modalImage");
@@ -695,79 +841,20 @@ html {
 }
  
   function closeProduct() {
-    productModal.style.display = "none";
-  }
-
-  document.querySelectorAll(".product").forEach((product) => {
-    const button = product.querySelector("button");
-
-    button.addEventListener("click", () => {
-      document.getElementById("modalImage").textContent =
-        product.querySelector(".product-image").textContent;
-
-        // PRODUCT GALLERY - DEFAULT IMAGE
-const productImage = product.querySelector(".product-image").textContent.trim();
-
-const gallery = document.getElementById("modalGallery");
-
-// Show gallery only for T-shirt demo
-const isTshirt = product.querySelector("h2").textContent
-  .toLowerCase().includes("shirt");
-
-gallery.style.display = isTshirt ? "flex" : "none";
-
-// Set initial product image
-if (isTshirt) {
-  changeProductImage("images/merch/tshirt-front.jpg");
-} else {
-  const productPhoto = product.querySelector(".merch-cover");
-
-  if (productPhoto) {
-    changeProductImage(productPhoto.src);
-  } else {
-    const modalImage = document.getElementById("modalImage");
-    modalImage.style.backgroundImage = "none";
-  }
+  activeMerchGalleryRequest++;
+  productModal.style.display = "none";
 }
-
-      document.getElementById("modalTitle").textContent =
-        product.querySelector("h2").textContent;
-
-      document.getElementById("modalArtist").textContent =
-        product.querySelector(".artist").textContent;
-
-      document.getElementById("modalDescription").textContent =
-        product.querySelector(".product-info p").textContent;
-
-      document.getElementById("modalPrice").textContent =
-        product.querySelector(".price").textContent;
-
-    
-const productTitle = product.querySelector("h2").textContent;
-
-const sizeContainer =
-  document.getElementById("modalSizeContainer");
-
-const sizeSelect =
-  document.getElementById("modalSize");
-
-if (productTitle.toLowerCase().includes("t-shirt")) {
-  sizeContainer.style.display = "block";
-  sizeSelect.value = "";
-} else {
-  sizeContainer.style.display = "none";
-}
-
-
-      productModal.style.display = "flex";
-    });
-  });
 
   productModal.addEventListener("click", (event) => {
     if (event.target === productModal) {
       closeProduct();
     }
   });
+
+  
+loadApprovedMerch();
+
+
 </script>
 
 

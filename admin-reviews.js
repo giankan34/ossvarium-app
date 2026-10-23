@@ -1,3 +1,26 @@
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function safeExternalUrl(value) {
+    try {
+        const url = new URL(String(value || "").trim());
+
+        if (!["https:", "http:"].includes(url.protocol)) {
+            return "";
+        }
+
+        return escapeHtml(url.href);
+    } catch {
+        return "";
+    }
+}
+
 async function unlockAdmin() {
 
     const password =
@@ -41,6 +64,7 @@ async function unlockAdmin() {
         
 
         loadPendingRelics();
+        loadPendingMerch();
 
     } catch (error) {
 
@@ -190,16 +214,16 @@ try {
 
             <div class="review-relic-card">
 
-                <h2>${submission.artist}</h2>
+                <h2>${escapeHtml(submission.artist)}</h2>
 
-                <h3>${submission.release}</h3>
+                <h3>${escapeHtml(submission.release)}</h3>
 
-                <p>🌍 ${submission.country}</p>
+                <p>🌍 ${escapeHtml(submission.country)}</p>
 
-                <p>☠ ${submission.genre}</p>
+                <p>☠ ${escapeHtml(submission.genre)}</p>
 
                 <p>
-                    📅 ${submission.year || "Unknown year"}
+                    ${escapeHtml(submission.year || "Unknown year")}
                 </p>
 
                 <p>
@@ -211,9 +235,9 @@ try {
                     submission.cover
                     ? `
                         <img
-                        src="${submission.cover}"
+                        src="${escapeHtml(submission.cover)}"
                         class="review-cover"
-                        alt="${submission.release}">
+                        alt="${escapeHtml(submission.release)}"
                     `
                     : ""
                 }
@@ -240,7 +264,7 @@ try {
 
                 <p>
                     Contact:
-                    ${submission.contactEmail}
+                    ${escapeHtml(submission.contactEmail)}
                 </p>
 
                 ${submission.description
@@ -248,7 +272,7 @@ try {
 <p>
     <b>DESCRIPTION</b>
     <br>
-    ${submission.description}
+    ${escapeHtml(submission.description)}
 </p>
 `
 : ""}
@@ -258,7 +282,7 @@ ${submission.bio
 <p>
     <b>ARTIST BIO</b>
     <br>
-    ${submission.bio}
+    ${escapeHtml(submission.bio)}
 </p>
 `
 : ""}
@@ -270,9 +294,9 @@ ${submission.artistImage
 </p>
 
 <img
-    src="${submission.artistImage}"
+    src="${escapeHtml(submission.artistImage)}"
     class="review-cover"
-    alt="${submission.artist}">
+    alt="${escapeHtml(submission.artist)}"
 `
 : ""}
 
@@ -283,40 +307,45 @@ ${submission.banner
 </p>
 
 <img
-    src="${submission.banner}"
+    src="${escapeHtml(submission.banner)}"
     class="review-cover"
-    alt="${submission.artist} banner">
+    alt="${escapeHtml(submission.artist)} banner"
 `
 : ""}
 
 <div class="review-links">
 
     ${submission.bandcamp
-    ? `<a class="submit-btn" href="${submission.bandcamp}" target="_blank">BANDCAMP</a>`
+    ? `<a class="submit-btn" href="${safeExternalUrl(submission.bandcamp)}" target="_blank">BANDCAMP</a>`
     : ""}
 
     ${submission.spotify
-    ? `<a class="submit-btn" href="${submission.spotify}" target="_blank">SPOTIFY</a>`
+    ? `<a class="submit-btn" href="${safeExternalUrl(submission.spotify)}"
+ target="_blank">SPOTIFY</a>`
     : ""}
 
     ${submission.youtube
-    ? `<a class="submit-btn" href="${submission.youtube}" target="_blank">YOUTUBE</a>`
+    ? `<a class="submit-btn" href="${safeExternalUrl(submission.youtube)}"
+ target="_blank">YOUTUBE</a>`
     : ""}
 
     ${submission.instagram
-    ? `<a class="submit-btn" href="${submission.instagram}" target="_blank">INSTAGRAM</a>`
+    ? `<a class="submit-btn" href="${safeExternalUrl(submission.instagram)}"
+ target="_blank">INSTAGRAM</a>`
     : ""}
 
     ${submission.facebook
-    ? `<a class="submit-btn" href="${submission.facebook}" target="_blank">FACEBOOK</a>`
+    ? `<a class="submit-btn" href="${safeExternalUrl(submission.facebook)}"
+ target="_blank">FACEBOOK</a>`
     : ""}
 
     ${submission.website
-    ? `<a class="submit-btn" href="${submission.website}" target="_blank">WEBSITE</a>`
+    ? `<a class="submit-btn" href="${safeExternalUrl(submission.website)}"
+ target="_blank">WEBSITE</a>`
     : ""}
 
     ${submission.merch
-    ? `<a class="submit-btn" href="${submission.merch}" target="_blank">MERCH</a>`
+    ? `<a class="submit-btn" href="${safeExternalUrl(submission.merch)}" target="_blank">MERCH</a>`
     : ""}
 
 </div>
@@ -333,15 +362,15 @@ ${submission.tracks && submission.tracks.length
 
             ${String(index + 1).padStart(2,"0")}
             —
-            ${track.title}
+            ${escapeHtml(track.title)}
 
             <br>
 
             ${
-                track.forSale
-                ? `Price: €${track.priceEur || 0}`
-                : "Not for individual sale"
-            }
+    track.forSale
+    ? `Price: €${escapeHtml(track.priceEur || 0)}`
+    : "Not for individual sale"
+}
 
             ${
     track.audio
@@ -350,7 +379,7 @@ ${submission.tracks && submission.tracks.length
         <button
             type="button"
             class="submit-btn"
-            onclick="playAdminTrack(this, ${JSON.stringify(track.audio).replace(/"/g, "&quot;")})"
+            onclick="playAdminTrack(this, ${escapeHtml(JSON.stringify(track.audio))})"
         >
             ▶ PLAY TRACK
         </button>
@@ -511,6 +540,7 @@ async function checkAdminSession() {
             ).style.display = "block";
 
             loadPendingRelics();
+            loadPendingMerch();
 
         }
 
@@ -563,5 +593,163 @@ async function playAdminTrack(button, objectKey) {
         button.textContent = "▶ PLAY TRACK";
     } finally {
         button.disabled = false;
+    }
+}
+
+
+async function loadPendingMerch() {
+    const container = document.getElementById("pendingMerch");
+    if (!container) return;
+
+    container.innerHTML = `
+        <p class="submission-text">
+            ☠ LOADING PENDING MERCH ☠
+        </p>
+    `;
+
+    try {
+        const response = await fetch(
+            "/api/admin-status?action=pending-merch",
+            { credentials: "same-origin" }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to load pending merch");
+        }
+
+        const data = await response.json();
+        const products = data.products || [];
+
+        if (products.length === 0) {
+            container.innerHTML = `
+                <p class="submission-text">
+                    ☠ NO MERCH AWAITING JUDGEMENT ☠
+                </p>
+            `;
+            return;
+        }
+
+        container.innerHTML = products.map(product => `
+            <div class="submission-card">
+                <h2>${escapeHtml(product.product_name)}</h2>
+                <p><strong>Artist:</strong> ${escapeHtml(product.artist_name)}</p>
+                <p><strong>Type:</strong> ${escapeHtml(product.product_type)}</p>
+                <p><strong>Price:</strong> ${escapeHtml(product.price_pi)} Pi</p>
+                <p><strong>Quantity:</strong> ${escapeHtml(product.quantity)}</p>
+                <p><strong>Status:</strong> PENDING</p>
+                <div
+    class="admin-merch-photos"
+    data-merch-id="${Number(product.id)}"
+    style="display:flex; flex-wrap:wrap; gap:12px; margin-top:15px;">
+</div>
+                <div style="display:flex; gap:12px; margin-top:20px;">
+    <button
+        type="button"
+        onclick="reviewMerch(${Number(product.id)}, 'approve')">
+        ☠ APPROVE MERCH
+    </button>
+
+    <button
+        type="button"
+        onclick="reviewMerch(${Number(product.id)}, 'reject')">
+        ✕ REJECT MERCH
+    </button>
+</div>
+            </div>
+        `).join("");
+
+        for (const product of products) {
+    const photoContainer = Array.from(
+        container.querySelectorAll(".admin-merch-photos")
+    ).find(element =>
+        element.dataset.merchId === String(product.id)
+    );
+
+    if (!photoContainer) continue;
+
+    const photos = Array.isArray(product.photos)
+        ? product.photos
+        : [];
+
+    for (const photoKey of photos) {
+        try {
+            const response = await fetch(
+                "/api/admin-status?action=merch-preview&objectKey=" +
+                encodeURIComponent(photoKey),
+                { credentials: "same-origin" }
+            );
+
+            if (!response.ok) {
+                throw new Error("Merch photo preview failed");
+            }
+
+            const result = await response.json();
+
+            const img = document.createElement("img");
+            img.src = result.imageUrl;
+            img.alt = "Merch product photo";
+            img.loading = "lazy";
+            img.style.width = "120px";
+            img.style.height = "120px";
+            img.style.objectFit = "contain";
+
+            photoContainer.appendChild(img);
+
+        } catch (error) {
+            console.error("Admin merch photo error:", error);
+        }
+    }
+}
+
+    } catch (error) {
+        console.error("Pending merch error:", error);
+
+        container.innerHTML = `
+            <p class="submission-text">
+                ERROR LOADING PENDING MERCH
+            </p>
+        `;
+    }
+}
+
+
+async function reviewMerch(id, action) {
+    if (action !== "approve" && action !== "reject") return;
+
+    const confirmed = confirm(
+        action === "approve"
+            ? "Approve this merch product?"
+            : "Reject this merch product?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+        const response = await fetch("/api/admin-status", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ id, action })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || "Merch review failed");
+        }
+
+        alert(
+            action === "approve"
+                ? "☠ MERCH APPROVED ☠"
+                : "☠ MERCH REJECTED ☠"
+        );
+
+        await loadPendingMerch();
+
+    } catch (error) {
+        console.error("Merch review error:", error);
+        alert("Failed to review merch: " + error.message);
     }
 }

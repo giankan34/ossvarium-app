@@ -141,6 +141,22 @@
     </p>
   </header>
 
+  
+<a href="index.html" style="
+    display: inline-block;
+    margin-bottom: 28px;
+    padding: 12px 22px;
+    border: 1px solid #873126;
+    color: #dfb8a4;
+    background: #160e0e;
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 2px;
+">
+    ← BACK TO OSSVARIUM
+</a>
+
+
   <main>
     <form id="merchForm">
 
@@ -293,52 +309,38 @@ if (typeof Pi !== "undefined") {
   const photoPreview = document.getElementById("photoPreview");
 
   photosInput.addEventListener("change", () => {
-    photoPreview.innerHTML = "";
+    photoPreview.replaceChildren();
+    const files = Array.from(photosInput.files);
+    document.getElementById("mainPhotoIndex").value = "0";
+    document.getElementById("mainPhotoStatus").textContent = "MAIN PHOTO: Photo 1";
 
-    Array.from(photosInput.files).forEach((file) => {
+    files.forEach((file, index) => {
       if (!file.type.startsWith("image/")) return;
-
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-
       const img = document.createElement("img");
-img.src = event.target.result;
-img.alt = "Product photo preview";
-img.style.cursor = "pointer";
-
-img.addEventListener("click", () => {
-  photoPreview.querySelectorAll("img").forEach((photo) => {
-    photo.style.border = "1px solid #873126";
-    photo.title = "Click to set as main photo";
-    photo.dataset.mainPhoto = "false";
+      img.alt = "Product photo preview";
+      img.style.cursor = "pointer";
+      img.style.border = index === 0 ? "3px solid #e8b9a1" : "1px solid #873126";
+      img.dataset.mainPhoto = index === 0 ? "true" : "false";
+      img.title = index === 0 ? "Main product photo" : "Click to set as main photo";
+      img.addEventListener("click", () => {
+        photoPreview.querySelectorAll("img").forEach(photo => {
+          photo.style.border = "1px solid #873126";
+          photo.title = "Click to set as main photo";
+          photo.dataset.mainPhoto = "false";
+        });
+        img.style.border = "3px solid #e8b9a1";
+        img.title = "Main product photo";
+        img.dataset.mainPhoto = "true";
+        document.getElementById("mainPhotoIndex").value = String(index);
+        document.getElementById("mainPhotoStatus").textContent = `MAIN PHOTO: Photo ${index + 1}`;
+      });
+      // Insert before async reading so preview order matches uploaded file order.
+      photoPreview.appendChild(img);
+      const reader = new FileReader();
+      reader.onload = event => { img.src = event.target.result; };
+      reader.readAsDataURL(file);
+    });
   });
-
-  img.style.border = "3px solid #e8b9a1";
-  img.title = "Main product photo";
-  img.dataset.mainPhoto = "true";
-
-  document.getElementById("mainPhotoIndex").value =
-  Array.from(photoPreview.children).indexOf(img);
-
-  const photoNumber =
-  Array.from(photoPreview.children).indexOf(img) + 1;
-
-document.getElementById("mainPhotoStatus").textContent =
-  `MAIN PHOTO: Photo ${photoNumber}`;
-});
-
-photoPreview.appendChild(img);
-
-if (photoPreview.children.length === 1) {
-  img.click();
-}
-
-    };
-
-reader.readAsDataURL(file);
-});
-});
 
   // Reuse existing OSSVARIUM creator session
 let merchCreatorSession = localStorage.getItem(
@@ -581,14 +583,25 @@ document.getElementById("merchForm")
   .addEventListener("submit", async function (event) {
     event.preventDefault();
 
+    const submitButton = document.getElementById("submitMerchButton");
+
+if (submitButton.disabled) return;
+
+submitButton.disabled = true;
+submitButton.textContent = "SUBMITTING MERCH...";
+
     const creatorSession = localStorage.getItem(
       "ossvariumCreatorSession"
     );
 
-    if (!merchCreatorPiAccessToken && !creatorSession) {
-      alert("Please connect your Pi account or verify your creator email.");
-      return;
-    }
+    
+if (!merchCreatorPiAccessToken && !creatorSession) {
+  alert("Please connect your Pi account or verify your creator email.");
+  submitButton.disabled = false;
+  submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
+  return;
+}
+
 
     const productName = document.getElementById("productName").value.trim();
 const productType = document.getElementById("productType").value;
@@ -604,6 +617,8 @@ const sizes = document.getElementById("sizes").value
 const mainPhotoIndex = Number(
   document.getElementById("mainPhotoIndex").value
 );
+
+try {
 
 const photoFiles = Array.from(
   document.getElementById("photos").files
@@ -649,12 +664,27 @@ const result = await response.json();
 
 if (!response.ok) {
   alert("MERCH SUBMISSION FAILED: " + (result.error || "Unknown error"));
+  submitButton.disabled = false;
+submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
   return;
 }
 
 alert("☠ MERCH SUBMITTED FOR REVIEW ☠");
+document.getElementById("merchForm").reset();
+document.getElementById("photoPreview").innerHTML = "";
+document.getElementById("mainPhotoIndex").value = "0";
+document.getElementById("mainPhotoStatus").textContent = "MAIN PHOTO: Photo 1";
+submitButton.disabled = false;
+submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
 
-  });
+} catch (error) {
+  console.error("Merch submission error:", error);
+  alert("MERCH SUBMISSION FAILED: " + error.message);
+  submitButton.disabled = false;
+  submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
+}
+
+});
 
 </script>
 
