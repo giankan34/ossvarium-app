@@ -24,21 +24,29 @@ module.exports = async function handler(req, res) {
   ) {
     try {
       const products = await sql`
-        SELECT
-          id,
-          artist_name,
-          product_name,
-          product_type,
-          description,
-          price_pi,
-          quantity,
-          sizes,
-          photos,
-          main_photo_index
-        FROM merch_products
-        WHERE status = 'approved'
-        ORDER BY created_at DESC
-      `;
+  SELECT
+    m.id,
+    m.artist_name,
+    m.product_name,
+    m.product_type,
+    m.description,
+    m.price_pi,
+    m.quantity,
+    m.sizes,
+    m.photos,
+    m.main_photo_index,
+    (
+      SELECT NULLIF(TRIM(ap.public_email), '')
+      FROM artist_profiles ap
+      WHERE LOWER(TRIM(ap.artist_name)) =
+            LOWER(TRIM(m.artist_name))
+        AND ap.public_email IS NOT NULL
+      LIMIT 1
+    ) AS public_email
+  FROM merch_products m
+  WHERE m.status = 'approved'
+  ORDER BY m.created_at DESC
+`;
 
       return res.status(200).json({
         success: true,

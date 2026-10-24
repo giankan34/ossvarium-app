@@ -593,9 +593,31 @@ html {
 
     <div id="modalPrice" class="modal-price"></div>
 
-    <button type="button" disabled>
-      π BUY WITH PI — COMING SOON
-    </button>
+    <div class="merch-shipping-info" style="margin:20px 0; text-align:center;">
+  <h3>☠ SHIPPING & FULFILLMENT ☠</h3>
+  <p>
+    Shipping is arranged directly between the artist and buyer.
+    Contact the artist to confirm availability and shipping costs
+    before purchasing.
+  </p>
+  <a
+    id="merchContactArtist"
+    class="submit-btn"
+    style="display:none; margin:15px auto;"
+  >
+    ✉ CONTACT ARTIST
+  </a>
+</div>
+
+    
+<button
+  type="button"
+  id="buyMerchButton"
+  disabled
+>
+  π BUY WITH PI — COMING SOON
+</button>
+
   </div>
 </div>
 
@@ -729,6 +751,25 @@ const shouldOpenProduct =
 
   document.getElementById("modalPrice").textContent =
     `π${product.price_pi}`;
+
+    const contactArtistButton =
+  document.getElementById("merchContactArtist");
+
+const publicEmail = String(product.public_email || "").trim();
+
+if (contactArtistButton) {
+  if (publicEmail) {
+    contactArtistButton.href =
+      `mailto:${publicEmail}?subject=${encodeURIComponent(
+        "OSSVARIUM Merch Inquiry - " + product.product_name
+      )}`;
+
+    contactArtistButton.style.display = "inline-block";
+  } else {
+    contactArtistButton.removeAttribute("href");
+    contactArtistButton.style.display = "none";
+  }
+}
 
     const modalGallery = document.getElementById("modalGallery");
 modalGallery.replaceChildren();
