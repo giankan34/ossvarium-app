@@ -34,6 +34,13 @@ async function loadArtist(){
         const artistName =
         params.get("artist");
 
+        const artistMerchLink = document.getElementById("artistMerchLink");
+
+if (artistMerchLink && artistName) {
+  artistMerchLink.href =
+    `merch.html?artist=${encodeURIComponent(artistName)}`;
+}
+
         const artistReleases =
         releases.filter(
             release =>

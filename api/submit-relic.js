@@ -7,10 +7,16 @@ const resend = new Resend(
     process.env.RESEND_API_KEY
 );
 
-const pi = new PiNetwork(
-    process.env.PI_API_KEY,
-    process.env.PI_WALLET_PRIVATE_SEED
-);
+function getPiClient() {
+    if (!process.env.PI_API_KEY || !process.env.PI_WALLET_PRIVATE_SEED) {
+        throw new Error("Pi configuration unavailable");
+    }
+
+    return new PiNetwork(
+        process.env.PI_API_KEY,
+        process.env.PI_WALLET_PRIVATE_SEED
+    );
+}
 
 module.exports = async function handler(req, res) {
 

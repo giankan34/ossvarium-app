@@ -623,9 +623,21 @@ async function loadApprovedMerch() {
     }
 
     const result = await response.json();
-    const products = Array.isArray(result.products)
-      ? result.products
-      : [];
+
+const params = new URLSearchParams(window.location.search);
+const artistFilter = params.get("artist");
+
+const allProducts = Array.isArray(result.products)
+  ? result.products
+  : [];
+
+const products = artistFilter
+  ? allProducts.filter(product =>
+      String(product.artist_name || "")
+        .trim()
+        .toLowerCase() === artistFilter.trim().toLowerCase()
+    )
+  : allProducts;
 
     if (products.length === 0) {
       container.textContent = "NO APPROVED MERCH AVAILABLE YET.";
