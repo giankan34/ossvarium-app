@@ -605,15 +605,62 @@ async function loadMyMerch() {
 if (products.length === 0) {
   merchContainer.textContent = "No merchandise submitted yet.";
 } else {
-  products.forEach((product) => {
-    const item = document.createElement("div");
-    item.className = "submission-text";
+  
+products.forEach(async (product) => {
+  const card = document.createElement("div");
+  card.className = "submission-box";
+  card.style.cssText =
+    "margin:18px 0;padding:22px;text-align:center;border:1px solid #642b24;border-radius:8px;";
 
-    item.textContent =
-      `${product.product_name} — ${product.price_pi} Pi — ${product.status}`;
+  const name = document.createElement("h3");
+  name.textContent = product.product_name || "Unnamed merch";
+  name.style.color = "#e13b35";
 
-    merchContainer.appendChild(item);
-  });
+  const price = document.createElement("p");
+  const priceValue = Number(product.price_pi);
+  price.textContent = `π ${Number.isFinite(priceValue) ? priceValue.toString() : "—"} Pi`;
+
+  const status = document.createElement("p");
+  const currentStatus = String(product.status || "pending").toLowerCase();
+  status.textContent = `STATUS: ${currentStatus.toUpperCase()}`;
+  status.style.color =
+    currentStatus === "approved" ? "#7fbd8a" :
+    currentStatus === "rejected" ? "#e13b35" : "#d6aa76";
+
+    
+const photos = Array.isArray(product.photos) ? product.photos : [];
+const mainIndex = Number(product.main_photo_index) || 0;
+const mainPhoto = photos[mainIndex] || photos[0];
+
+if (mainPhoto) {
+  const img = document.createElement("img");
+  img.alt = product.product_name || "Merch";
+  img.style.cssText =
+    "width:100%;max-width:240px;height:240px;object-fit:cover;border-radius:6px;margin-bottom:15px;";
+
+  try {
+    const imageResponse = await fetch(
+      `/api/audio-upload-url?objectKey=${encodeURIComponent(mainPhoto)}`
+    );
+
+    if (imageResponse.ok) {
+      const imageResult = await imageResponse.json();
+
+      if (imageResult.imageUrl) {
+        img.src = imageResult.imageUrl;
+        card.prepend(img);
+      }
+    }
+  } catch (error) {
+    console.error("My Merch image error:", error);
+  }
+}
+
+
+  card.append(name, price, status);
+  merchContainer.appendChild(card);
+});
+
 }
 
   } catch (error) {
