@@ -359,7 +359,10 @@ if (merchResponse.ok) {
     const artistMerch = (Array.isArray(merchData.products)
         ? merchData.products
         : []
-    ).filter(product => product.artist_name === artistName);
+    ).filter(product =>
+    String(product.artist_name || "").trim().toLowerCase() ===
+    String(artistName || "").trim().toLowerCase()
+);
 
     const merchSection = document.getElementById("artistMerchSection");
     const merchContainer = document.getElementById("artistMerchProducts");
