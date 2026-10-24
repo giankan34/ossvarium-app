@@ -634,7 +634,7 @@ async function loadPendingMerch() {
                 <h2>${escapeHtml(product.product_name)}</h2>
                 <p><strong>Artist:</strong> ${escapeHtml(product.artist_name)}</p>
                 <p><strong>Type:</strong> ${escapeHtml(product.product_type)}</p>
-                <p><strong>Price:</strong> ${escapeHtml(product.price_pi)} Pi</p>
+                <p><strong>Price:</strong> ${escapeHtml(String(Number(product.price_pi)))} Pi</p>
                 <p><strong>Quantity:</strong> ${escapeHtml(product.quantity)}</p>
                 <p><strong>Status:</strong> PENDING</p>
                 <div
