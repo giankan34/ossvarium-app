@@ -626,6 +626,13 @@ html {
     MUSIC FIRST · ARTIST FIRST · OSSVARIUM
   </footer>
 
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script>
+  if (window.Pi) {
+    Pi.init({ version: "2.0", sandbox: true });
+  }
+</script>
+
   
 <script>
   const productModal = document.getElementById("productModal");
@@ -741,6 +748,7 @@ const shouldOpenProduct =
       button.addEventListener("click", async () => {
       const galleryRequestId = ++activeMerchGalleryRequest;
   document.getElementById("modalTitle").textContent =
+  window.selectedMerchProduct = product;
     product.product_name;
 
   document.getElementById("modalArtist").textContent =
@@ -904,6 +912,165 @@ if (shouldOpenProduct) {
     }
   });
 
+  const buyMerchButton = document.getElementById("buyMerchButton");
+
+buyMerchButton.addEventListener("click", async () => {
+  if (buyMerchButton.dataset.processing === "true") {
+  return;
+}
+
+  const product = window.selectedMerchProduct;
+  const selectedSize = document.getElementById("modalSize").value;
+
+  if (!product) {
+    alert("Please select a product.");
+    return;
+  }
+
+  if (
+    Array.isArray(product.sizes) &&
+    product.sizes.length > 0 &&
+    !selectedSize
+  ) {
+    alert("Please select a size.");
+    return;
+  }
+
+  if (!window.Pi) {
+  alert("Please open OSSVARIUM in Pi Browser.");
+  return;
+}
+
+buyMerchButton.dataset.processing = "true";
+
+try {
+  let hasIncompletePayment = false;
+  const auth = await Pi.authenticate(
+    ["username", "payments"],
+  async (incompletePayment) => {
+  console.warn(
+    "OSSVARIUM merch payment requires recovery:",
+    incompletePayment.identifier
+  );
+
+  hasIncompletePayment = true;
+  }
+);
+  if (hasIncompletePayment) {
+  throw new Error(
+    "An unfinished Pi payment exists. Please do not start another purchase until it is verified."
+  );
+}
+
+  if (!auth?.accessToken || !auth?.user?.uid) {
+    throw new Error("Pi authentication failed");
+  }
+
+  const statusResponse = await fetch(
+  "/api/submit-merch?action=order-status",
+  {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${auth.accessToken}`
+    }
+  }
+);
+
+if (!statusResponse.ok) {
+  throw new Error("Unable to verify previous merch orders.");
+}
+
+const statusData = await statusResponse.json();
+
+if (statusData.order?.status === "pending") {
+  throw new Error(
+    "You already have a pending merch order. Please wait for payment verification before purchasing again."
+  );
+}
+
+  const orderResponse = await fetch(
+  "/api/submit-merch?action=create-order",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth.accessToken}`
+    },
+    body: JSON.stringify({
+      productId: product.id,
+      selectedSize
+    })
+  }
+);
+
+const order = await orderResponse.json();
+
+if (!orderResponse.ok || !order.success) {
+  throw new Error(order.error || "Unable to create merch order");
+}
+
+console.log("Merch Testnet order created:", order.orderId);
+
+await Pi.createPayment(
+  {
+    amount: Number(order.pricePi),
+    memo: `OSSVARIUM Merch - ${product.product_name}`,
+    metadata: {
+      purpose: "merch_purchase",
+      checkoutToken: order.checkoutToken
+    }
+  },
+  {
+    onReadyForServerApproval: async (paymentId) => {
+      const response = await fetch("/api/approve-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId })
+      });
+
+      if (!response.ok) {
+        throw new Error("Merch payment approval failed");
+      }
+    },
+
+    onReadyForServerCompletion: async (paymentId, txid) => {
+      const response = await fetch("/api/complete-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentId, txid })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Merch payment completion failed");
+      }
+
+      alert("✓ MERCH PURCHASE COMPLETED");
+      buyMerchButton.dataset.processing = "false";
+      closeProduct();
+      await loadApprovedMerch();
+    },
+
+    onCancel: (paymentId) => {
+      console.log("Merch payment cancelled:", paymentId);
+      buyMerchButton.dataset.processing = "false";
+    },
+
+    onError: (error, payment) => {
+      console.error("Merch payment error:", error, payment);
+        buyMerchButton.dataset.processing = "false";
+      alert("Merch payment could not be completed.");
+    }
+  }
+);
+
+} catch (error) {
+  console.error("Merch checkout error:", error);
+    buyMerchButton.dataset.processing = "false";
+  alert(error.message || "Merch checkout failed.");
+}
+});
   
 loadApprovedMerch();
 

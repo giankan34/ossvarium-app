@@ -16,6 +16,240 @@ module.exports = async function handler(req, res) {
 
     const sql = neon(process.env.POSTGRES_URL);
 
+    // Public merch checkout configuration
+if (
+  req.method === "GET" &&
+  req.query?.action === "checkout-config"
+) {
+  return res.status(200).json({
+    success: true,
+    maxQuantityPerOrder: 1,
+    shippingArrangement: "direct_with_artist",
+    currency: "PI"
+  });
+}
+
+
+  // Check the authenticated buyer's latest merch order
+  if (
+    req.method === "GET" &&
+    req.query?.action === "order-status"
+  ) {
+    try {
+      const authHeader = req.headers.authorization || "";
+
+      if (!authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({
+          error: "Pi authentication required"
+        });
+      }
+
+      const piResponse = await fetch(
+        "https://api.minepi.com/v2/me",
+        { headers: { Authorization: authHeader } }
+      );
+
+      if (!piResponse.ok) {
+        return res.status(401).json({
+          error: "Invalid Pi authentication"
+        });
+      }
+
+      const piUser = await piResponse.json();
+
+      if (!piUser.uid) {
+        return res.status(401).json({
+          error: "Missing Pi user identity"
+        });
+      }
+
+      const orders = await sql`
+        SELECT id, status, pi_payment_id, pi_txid,
+               checkout_token, expires_at
+        FROM merch_orders
+        WHERE buyer_pi_uid = ${String(piUser.uid)}
+        ORDER BY created_at DESC
+        LIMIT 1
+      `;
+
+      if (!orders.length) {
+        return res.status(200).json({
+          success: true,
+          order: null
+        });
+      }
+
+      const order = orders[0];
+
+      return res.status(200).json({
+        success: true,
+        order: {
+          id: String(order.id),
+          status: order.status,
+          hasPayment: Boolean(order.pi_payment_id),
+          completed: order.status === "paid",
+          expired: new Date(order.expires_at).getTime() < Date.now()
+        }
+      });
+
+    } catch (error) {
+      console.error("Merch order status error:", error);
+
+      return res.status(500).json({
+        error: "Unable to check merch order"
+      });
+    }
+  }
+
+
+// Validate merch checkout details before creating an order
+if (
+  req.method === "POST" &&
+  req.query?.action === "create-order"
+) {
+
+  const authHeader = req.headers.authorization || "";
+
+if (!authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+        error: "Pi authentication required for merch checkout"
+    });
+}
+
+const accessToken = authHeader.slice(7).trim();
+
+if (!accessToken) {
+    return res.status(401).json({
+        error: "Missing Pi access token"
+    });
+}
+
+const piResponse = await fetch(
+    "https://api.minepi.com/v2/me",
+    {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    }
+);
+
+if (!piResponse.ok) {
+    return res.status(401).json({
+        error: "Invalid Pi authentication"
+    });
+}
+
+const piUser = await piResponse.json();
+
+if (!piUser.uid) {
+    return res.status(401).json({
+        error: "Missing Pi user identity"
+    });
+}
+  
+  const productId = String(req.body?.productId ?? "").trim();
+  const selectedSize = String(req.body?.selectedSize ?? "").trim();
+
+  if (!/^\d+$/.test(productId) || productId === "0") {
+    return res.status(400).json({
+      error: "Invalid product ID"
+    });
+  }
+
+  try {
+    const products = await sql`
+      SELECT id, price_pi, quantity, sizes
+      FROM merch_products
+      WHERE id = ${productId}::bigint
+        AND status = 'approved'
+      LIMIT 1
+    `;
+
+    if (!products.length || Number(products[0].quantity) < 1) {
+      return res.status(409).json({
+        error: "Product unavailable"
+      });
+    }
+
+    const product = products[0];
+    const sizes = Array.isArray(product.sizes) ? product.sizes : [];
+
+    if (
+      (sizes.length > 0 && !sizes.includes(selectedSize)) ||
+      (sizes.length === 0 && selectedSize !== "")
+    ) {
+      return res.status(400).json({
+        error: "Invalid size selection"
+      });
+    }
+
+    const pricePi = String(product.price_pi);
+const totalUnits = BigInt(
+  pricePi.includes(".")
+    ? pricePi.split(".")[0] + pricePi.split(".")[1].padEnd(7, "0")
+    : pricePi + "0000000"
+);
+
+const artistUnits = totalUnits * 90n / 100n;
+const feeUnits = totalUnits - artistUnits;
+
+const toPi = (units) =>
+  `${units / 10000000n}.${String(units % 10000000n).padStart(7, "0")}`;
+
+const checkoutToken = crypto.randomUUID();
+const buyerPiUid = String(piUser.uid);
+
+const orders = await sql`
+  SELECT *
+  FROM create_reserved_merch_order(
+    ${productId}::bigint,
+    ${selectedSize || null}::text,
+    ${pricePi}::numeric,
+    ${toPi(artistUnits)}::numeric,
+    ${toPi(feeUnits)}::numeric,
+    ${checkoutToken}::uuid,
+    ${buyerPiUid}::text
+  )
+`;
+
+   if (!orders.length) {
+  return res.status(409).json({
+    error: "Product unavailable or insufficient stock"
+  });
+}
+
+return res.status(201).json({
+  success: true,
+  orderId: String(orders[0].order_id),
+  checkoutToken: orders[0].order_token,
+  expiresAt: orders[0].order_expires_at,
+  productId: String(product.id),
+  selectedSize,
+  quantity: 1,
+  pricePi: String(product.price_pi),
+  shippingArrangement: "direct_with_artist"
+});
+  } catch (error) {
+  console.error("Merch checkout validation failed:", error);
+
+  if (
+    error.code === "23505" &&
+    String(error.message || "").includes(
+      "idx_merch_one_active_order_per_buyer"
+    )
+  ) {
+    return res.status(409).json({
+      error: "You already have a pending merch order. Please resolve it before starting another purchase.",
+      code: "MERCH_ORDER_PENDING"
+    });
+  }
+
+  return res.status(500).json({
+    error: "Unable to validate merch checkout"
+  });
+}
+}
+
     
   // Public MERCH catalog — approved products only
   if (

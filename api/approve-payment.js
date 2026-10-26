@@ -39,6 +39,135 @@ const payment =
 const metadata =
     payment.metadata || {};
 
+    // Merch payments use a separate validation flow.
+if (metadata.purpose === "merch_purchase") {
+    const checkoutToken = String(metadata.checkoutToken || "");
+
+    if (!/^[0-9a-f-]{36}$/i.test(checkoutToken)) {
+        return res.status(400).json({
+            error: "Invalid merch checkout token"
+        });
+    }
+
+    const sql = neon(process.env.POSTGRES_URL);
+
+    const orders = await sql`
+        SELECT
+            o.id,
+            o.buyer_pi_uid,
+            o.total_price_pi,
+            o.expires_at,
+            o.status,
+            m.status AS product_status,
+            m.quantity AS stock
+        FROM merch_orders o
+        JOIN merch_products m ON m.id = o.product_id
+        WHERE o.checkout_token = ${checkoutToken}::uuid
+        LIMIT 1
+    `;
+
+    const order = orders[0];
+
+    if (
+        !order ||
+        order.status !== "pending" ||
+        order.product_status !== "approved" ||
+        Number(order.stock) < 1 ||
+        new Date(order.expires_at).getTime() <= Date.now()
+    ) {
+        return res.status(409).json({
+            error: "Merch order unavailable or expired"
+        });
+    }
+
+    const buyerPiUid = String(payment.user_uid || "").trim();
+
+    if (order.buyer_pi_uid !== buyerPiUid) {
+    return res.status(403).json({
+        error: "Pi buyer does not match checkout owner"
+    });
+}
+
+if (!buyerPiUid) {
+    return res.status(400).json({
+        error: "Missing Pi buyer identity"
+    });
+}
+
+if (
+    payment.status?.developer_completed === true ||
+    payment.status?.cancelled === true
+) {
+    return res.status(409).json({
+        error: "Pi payment already completed or cancelled"
+    });
+}
+
+if (payment.direction !== "user_to_app") {
+    return res.status(400).json({
+        error: "Invalid Pi payment direction"
+    });
+}
+
+    if (
+        Number(payment.amount) !== Number(order.total_price_pi)
+    ) {
+        return res.status(400).json({
+            error: "Merch payment amount mismatch"
+        });
+    }
+
+    const linkedOrders = await sql`
+    UPDATE merch_orders
+    SET
+        pi_payment_id = ${paymentId},
+        buyer_pi_uid = ${buyerPiUid}
+    WHERE id = ${order.id}
+      AND status = 'pending'
+      AND expires_at > NOW()
+      AND (
+          pi_payment_id IS NULL
+          OR pi_payment_id = ${paymentId}
+      )
+      AND (
+          buyer_pi_uid IS NULL
+          OR buyer_pi_uid = ${buyerPiUid}
+      )
+    RETURNING id, pi_payment_id
+`;
+
+if (linkedOrders.length !== 1) {
+    return res.status(409).json({
+        error: "Merch order already linked to another payment"
+    });
+}
+
+let approvalResponse;
+
+if (payment.status?.developer_approved === true) {
+  approvalResponse = { data: payment };
+} else {
+  approvalResponse = await axios.post(
+    `https://api.minepi.com/v2/payments/${paymentId}/approve`,
+    {},
+    {
+      headers: {
+        Authorization: `Key ${process.env.PI_API_KEY}`
+      }
+    }
+  );
+}
+
+return res.status(200).json({
+    success: true,
+    orderId: String(linkedOrders[0].id),
+    paymentId: linkedOrders[0].pi_payment_id,
+    paymentLinked: true,
+    paymentApproved: true,
+    payment: approvalResponse.data
+});
+}
+
 const relicId =
     metadata.relicId;
 

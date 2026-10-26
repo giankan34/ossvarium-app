@@ -24,6 +24,153 @@ module.exports = async (req, res) => {
 
     try {
 
+        const paymentInfoResponse = await axios.get(
+    `https://api.minepi.com/v2/payments/${paymentId}`,
+    {
+        headers: {
+            Authorization: `Key ${process.env.PI_API_KEY}`
+        }
+    }
+);
+
+const paymentInfo = paymentInfoResponse.data;
+
+if (paymentInfo?.metadata?.purpose === "merch_purchase") {
+
+    const checkoutToken = String(
+    paymentInfo.metadata.checkoutToken || ""
+);
+
+if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(checkoutToken)) {
+    return res.status(400).json({
+        error: "Invalid merch checkout token"
+    });
+}
+
+const sql = neon(process.env.POSTGRES_URL);
+
+const orders = await sql`
+    SELECT
+        id,
+        pi_payment_id,
+        buyer_pi_uid,
+        pi_txid,
+        total_price_pi,
+        status,
+        expires_at
+    FROM merch_orders
+    WHERE checkout_token = ${checkoutToken}::uuid
+    LIMIT 1
+`;
+
+const order = orders[0];
+
+if (
+    order?.status === "paid" &&
+    order.pi_payment_id === paymentId &&
+    order.buyer_pi_uid === paymentInfo.user_uid &&
+    Number(order.total_price_pi) === Number(paymentInfo.amount) &&
+    order.pi_txid === txid &&
+    paymentInfo?.status?.developer_completed === true &&
+    paymentInfo?.metadata?.purpose === "merch_purchase" &&
+    paymentInfo?.metadata?.checkoutToken === checkoutToken &&
+    paymentInfo?.transaction?.txid === txid
+){
+    return res.status(200).json({
+        success: true,
+        purpose: "merch_purchase",
+        orderId: String(order.id),
+        paymentId,
+        status: "paid",
+        alreadyCompleted: true
+    });
+}
+
+if (
+    !order ||
+    order.status !== "pending" ||
+    order.pi_payment_id !== paymentId ||
+    order.buyer_pi_uid !== paymentInfo.user_uid ||
+    Number(order.total_price_pi) !== Number(paymentInfo.amount)
+) {
+    return res.status(409).json({
+        error: "Merch payment does not match the order"
+    });
+}
+
+    const blockchainTxid =
+        paymentInfo?.transaction?.txid;
+
+    if (blockchainTxid && blockchainTxid !== txid) {
+        return res.status(400).json({
+            error: "Merch transaction ID mismatch"
+        });
+    }
+
+    
+let completedPayment;
+
+if (paymentInfo.status?.developer_completed === true) {
+    // Pi has already completed this payment.
+    // Recover it without requesting completion again.
+    completedPayment = paymentInfo;
+} else {
+    const completionResponse = await axios.post(
+        `https://api.minepi.com/v2/payments/${paymentId}/complete`,
+        { txid },
+        {
+            headers: {
+                Authorization: `Key ${process.env.PI_API_KEY}`
+            }
+        }
+    );
+
+    completedPayment = completionResponse.data;
+}
+
+
+if (
+    completedPayment?.status?.developer_completed !== true ||
+    completedPayment?.user_uid !== order.buyer_pi_uid ||
+    completedPayment?.metadata?.purpose !== "merch_purchase" ||
+    completedPayment?.metadata?.checkoutToken !== checkoutToken ||
+    Number(completedPayment?.amount) !== Number(order.total_price_pi) ||
+    completedPayment?.transaction?.txid !== txid
+) {
+    return res.status(409).json({
+        error: "Merch payment verification failed"
+    });
+}
+
+const finalized = await sql`
+    SELECT finalize_merch_order(
+        ${order.id}::bigint,
+        ${paymentId}::text,
+        ${txid}::text,
+        ${order.buyer_pi_uid}::text
+    ) AS success
+`;
+
+if (finalized[0]?.success !== true) {
+    console.error("Merch payment completed but order not finalized", {
+        orderId: order.id,
+        paymentId
+    });
+
+    return res.status(409).json({
+        error: "Payment completed but order requires review"
+    });
+}
+
+return res.status(200).json({
+    success: true,
+    purpose: "merch_purchase",
+    orderId: String(order.id),
+    paymentId,
+    status: "paid"
+});
+}
+
         const response = await axios.post(
             `https://api.minepi.com/v2/payments/${paymentId}/complete`,
             {
@@ -41,6 +188,14 @@ module.exports = async (req, res) => {
 
     const metadata =
     completedPayment?.metadata || {};
+
+    // Merch payments require a separate completion flow.
+// Do not record them as relic purchases.
+if (metadata.purpose === "merch_purchase") {
+    return res.status(400).json({
+        error: "Merch payment completion is not enabled yet"
+    });
+}
 
 const validPurpose =
     metadata.purpose === "track_purchase" ||
