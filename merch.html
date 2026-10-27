@@ -747,9 +747,8 @@ const shouldOpenProduct =
   String(product.id) === requestedProductId;
       button.addEventListener("click", async () => {
       const galleryRequestId = ++activeMerchGalleryRequest;
-  document.getElementById("modalTitle").textContent =
   window.selectedMerchProduct = product;
-    product.product_name;
+  document.getElementById("modalTitle").textContent = product.product_name;
 
   document.getElementById("modalArtist").textContent =
     product.artist_name;
@@ -944,27 +943,76 @@ buyMerchButton.addEventListener("click", async () => {
 buyMerchButton.dataset.processing = "true";
 
 try {
-  let hasIncompletePayment = false;
-  const auth = await Pi.authenticate(
-    ["username", "payments"],
-  async (incompletePayment) => {
-  console.warn(
-    "OSSVARIUM merch payment requires recovery:",
-    incompletePayment.identifier
-  );
+  let incompleteMerchPayment = null;
+let hasOtherIncompletePayment = false;
 
-  hasIncompletePayment = true;
+const auth = await Pi.authenticate(
+  ["username", "payments"],
+  (incompletePayment) => {
+    console.warn(
+      "OSSVARIUM incomplete Pi payment:",
+      incompletePayment
+    );
+
+    if (
+      incompletePayment?.metadata?.purpose === "merch_purchase"
+    ) {
+      incompleteMerchPayment = incompletePayment;
+    } else {
+      hasOtherIncompletePayment = true;
+    }
   }
 );
-  if (hasIncompletePayment) {
+
+if (!auth?.accessToken || !auth?.user?.uid) {
+    throw new Error("Pi authentication failed");
+  }
+
+if (hasOtherIncompletePayment) {
   throw new Error(
-    "An unfinished Pi payment exists. Please do not start another purchase until it is verified."
+    "An unfinished Pi payment exists. Please complete it before starting another purchase."
   );
 }
 
-  if (!auth?.accessToken || !auth?.user?.uid) {
-    throw new Error("Pi authentication failed");
+if (incompleteMerchPayment) {
+  const paymentId = incompleteMerchPayment.identifier;
+  const txid = incompleteMerchPayment.transaction?.txid;
+
+  if (!paymentId || !txid) {
+    throw new Error(
+      "Previous merch payment is awaiting blockchain confirmation. No new purchase started."
+    );
   }
+
+  const recoveryResponse = await fetch(
+    "/api/complete-payment",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ paymentId, txid })
+    }
+  );
+
+  const recoveryResult = await recoveryResponse.json();
+
+  if (!recoveryResponse.ok || !recoveryResult.success) {
+    throw new Error(
+      recoveryResult.error ||
+      "Previous merch payment requires verification."
+    );
+  }
+
+  alert("Previous merch payment recovered successfully.");
+
+buyMerchButton.dataset.processing = "false";
+await loadApprovedMerch();
+closeProduct();
+return;
+}
+
+  
 
   const statusResponse = await fetch(
   "/api/submit-merch?action=order-status",
@@ -1055,6 +1103,7 @@ await Pi.createPayment(
     onCancel: (paymentId) => {
       console.log("Merch payment cancelled:", paymentId);
       buyMerchButton.dataset.processing = "false";
+      alert("Payment cancelled. Your order may remain reserved until verified. Please do not retry until its status is resolved.");
     },
 
     onError: (error, payment) => {

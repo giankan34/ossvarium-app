@@ -64,14 +64,14 @@ if (
       }
 
       const orders = await sql`
-        SELECT id, status, pi_payment_id, pi_txid,
-               checkout_token, expires_at
-        FROM merch_orders
-        WHERE buyer_pi_uid = ${String(piUser.uid)}
-        ORDER BY created_at DESC
-        LIMIT 1
-      `;
-
+  SELECT id, status, pi_payment_id, pi_txid,
+         checkout_token, expires_at
+  FROM merch_orders
+  WHERE buyer_pi_uid = ${String(piUser.uid)}
+    AND status = 'pending'
+  ORDER BY created_at DESC
+  LIMIT 1
+`;
       if (!orders.length) {
         return res.status(200).json({
           success: true,
@@ -81,16 +81,52 @@ if (
 
       const order = orders[0];
 
+      let piPaymentStatus = null;
+
+if (order?.status === "pending" && order.pi_payment_id) {
+  const paymentResponse = await fetch(
+    `https://api.minepi.com/v2/payments/${encodeURIComponent(order.pi_payment_id)}`,
+    {
+      headers: {
+        Authorization: `Key ${process.env.PI_API_KEY}`
+      }
+    }
+  );
+
+  if (!paymentResponse.ok) {
+    throw new Error("Unable to verify pending Pi payment");
+  }
+
+  const payment = await paymentResponse.json();
+
+  if (
+    payment.user_uid !== String(piUser.uid) ||
+    payment.identifier !== order.pi_payment_id ||
+    payment.metadata?.purpose !== "merch_purchase" ||
+    payment.metadata?.checkoutToken !== String(order.checkout_token)
+  ) {
+    throw new Error("Pending Pi payment does not match merch order");
+  }
+
+  piPaymentStatus = {
+    developerApproved: payment.status?.developer_approved === true,
+    developerCompleted: payment.status?.developer_completed === true,
+    cancelled: payment.status?.cancelled === true,
+    hasTransaction: Boolean(payment.transaction?.txid)
+  };
+}
+
       return res.status(200).json({
-        success: true,
-        order: {
-          id: String(order.id),
-          status: order.status,
-          hasPayment: Boolean(order.pi_payment_id),
-          completed: order.status === "paid",
-          expired: new Date(order.expires_at).getTime() < Date.now()
-        }
-      });
+  success: true,
+  order: order ? {
+    id: String(order.id),
+    status: order.status,
+    hasPayment: Boolean(order.pi_payment_id),
+    completed: order.status === "paid",
+    expired: new Date(order.expires_at).getTime() < Date.now(),
+    piPaymentStatus
+  } : null
+});
 
     } catch (error) {
       console.error("Merch order status error:", error);
@@ -107,6 +143,15 @@ if (
   req.method === "POST" &&
   req.query?.action === "create-order"
 ) {
+
+  // Fail closed: no new stock reservations until Pi/Neon expiry reconciliation is verified.
+  // This guard intentionally does not block existing payment completion or recovery.
+  if (process.env.MERCH_CHECKOUT_VERIFIED !== "true") {
+    return res.status(503).json({
+      error: "Merch checkout is temporarily unavailable while payment safety is verified.",
+      code: "MERCH_CHECKOUT_DISABLED"
+    });
+  }
 
   const authHeader = req.headers.authorization || "";
 
