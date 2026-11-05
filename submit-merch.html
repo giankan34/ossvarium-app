@@ -620,6 +620,30 @@ const mainPhotoIndex = Number(
 
 try {
 
+  const ownershipResponse = await fetch("/api/submit-merch", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    ...(merchCreatorPiAccessToken
+      ? { Authorization: `Bearer ${merchCreatorPiAccessToken}` }
+      : creatorSession
+        ? { "x-creator-session": creatorSession }
+        : {})
+  },
+  body: JSON.stringify({
+    action: "check_artist_ownership",
+    artistName: document.getElementById("artistName").value.trim()
+  })
+});
+
+const ownershipResult = await ownershipResponse.json();
+
+if (!ownershipResponse.ok) {
+  throw new Error(
+    ownershipResult.error || "Artist ownership verification failed"
+  );
+}
+
 const photoFiles = Array.from(
   document.getElementById("photos").files
 );

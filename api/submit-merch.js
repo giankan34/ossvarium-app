@@ -479,6 +479,7 @@ if (req.method === "GET") {
 
     // Read incoming merch product details
   const {
+    action,
     artistName,
     productName,
     productType,
@@ -512,30 +513,50 @@ if (req.method === "GET") {
     });
   }
 
-  // Bind merch to the authenticated creator's existing artist profile.
+    // Bind merch to the authenticated creator's saved profile or verified releases.
   // Never trust the submitted artistName as proof of ownership.
-  let creatorArtistName;
+  let ownsSubmittedArtist = false;
+
   try {
-    const profiles = await sql`
-      SELECT artist_name FROM artist_profiles
+    const creatorArtists = await sql`
+      SELECT artist_name
+      FROM artist_profiles
       WHERE (
-        (${verifiedCreatorPiUid}::text IS NOT NULL AND creator_pi_uid = ${verifiedCreatorPiUid})
+        (${verifiedCreatorPiUid}::text IS NOT NULL
+          AND creator_pi_uid = ${verifiedCreatorPiUid})
         OR
-        (${verifiedCreatorPiUid}::text IS NULL AND ${verifiedCreatorEmail}::text IS NOT NULL
-          AND LOWER(creator_email) = ${verifiedCreatorEmail})
+        (${verifiedCreatorPiUid}::text IS NULL
+          AND ${verifiedCreatorEmail}::text IS NOT NULL
+          AND LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail})
       )
-      LIMIT 1
+
+      UNION
+
+      SELECT artist AS artist_name
+      FROM relics
+      WHERE ${verifiedCreatorPiUid}::text IS NULL
+        AND ${verifiedCreatorEmail}::text IS NOT NULL
+        AND LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail}
     `;
-    creatorArtistName = String(profiles[0]?.artist_name || "").trim();
+
+    ownsSubmittedArtist = creatorArtists.some((creatorArtist) => {
+      const savedArtistName = String(creatorArtist.artist_name || "").trim();
+      return savedArtistName.toLowerCase() === cleanArtistName.toLowerCase();
+    });
   } catch (error) {
     console.error("Merch artist ownership lookup failed:", error);
-    return res.status(500).json({ error: "Failed to verify artist profile" });
+    return res.status(500).json({ error: "Failed to verify artist ownership" });
   }
-  if (!creatorArtistName || creatorArtistName.toLowerCase() !== cleanArtistName.toLowerCase()) {
+
+  if (!ownsSubmittedArtist) {
     return res.status(403).json({
-      error: "Merch artist must match your saved creator profile"
+      error: "No artist profile or verified release matches this account and artist name"
     });
   }
+
+  if (action === "check_artist_ownership") {
+  return res.status(200).json({ success: true });
+}
 
   const productPrice = Number(pricePi);
   const productQuantity = Number(quantity);
