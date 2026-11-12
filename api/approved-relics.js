@@ -153,6 +153,13 @@ const relicsWithSignedImages =
         }))
     );
 
+            res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=600");
+        return res.status(200).json({
+            success: true,
+            relics: relicsWithSignedImages
+        });
+
+
         return res.status(200).json({
             success: true,
             relics: relicsWithSignedImages

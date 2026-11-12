@@ -91,6 +91,13 @@ if (
                 }
             );
 
+                    res.setHeader("Cache-Control", "public, max-age=1800, s-maxage=1800");
+        return res.status(200).json({
+            success: true,
+            imageUrl: imageUrl
+        });
+
+
         return res.status(200).json({
             success: true,
             imageUrl: imageUrl
