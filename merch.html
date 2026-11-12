@@ -613,10 +613,10 @@ html {
 <button
   type="button"
   id="buyMerchButton"
-  disabled
 >
-  π BUY WITH PI — COMING SOON
+  π BUY WITH PI
 </button>
+
 
   </div>
 </div>
@@ -808,6 +808,17 @@ modalGallery.style.display = "none";
   sizeContainer.style.display = sizes.length > 0 ? "block" : "none";
 
 productModal.style.display = "flex";
+  const buyBtn = document.getElementById("buyMerchButton");
+  if (buyBtn) {
+    if (Number(product.quantity) < 1) {
+      buyBtn.disabled = true;
+      buyBtn.textContent = "OUT OF STOCK";
+    } else {
+      buyBtn.disabled = false;
+      buyBtn.textContent = "π BUY WITH PI";
+    }
+  }
+
   
 const galleryImages = [];
 
