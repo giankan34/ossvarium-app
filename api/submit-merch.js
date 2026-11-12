@@ -513,9 +513,10 @@ if (req.method === "GET") {
     });
   }
 
-    // Bind merch to the authenticated creator's saved profile or verified releases.
+      // Bind merch to the authenticated creator's saved profile or verified releases.
   // Never trust the submitted artistName as proof of ownership.
   let ownsSubmittedArtist = false;
+  let matchedArtistName = cleanArtistName;
 
   try {
     const creatorArtists = await sql`
@@ -534,15 +535,26 @@ if (req.method === "GET") {
 
       SELECT artist AS artist_name
       FROM relics
-      WHERE ${verifiedCreatorPiUid}::text IS NULL
-        AND ${verifiedCreatorEmail}::text IS NOT NULL
-        AND LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail}
+      WHERE (
+        (${verifiedCreatorPiUid}::text IS NOT NULL
+          AND creator_pi_uid = ${verifiedCreatorPiUid})
+        OR
+        (${verifiedCreatorPiUid}::text IS NULL
+          AND ${verifiedCreatorEmail}::text IS NOT NULL
+          AND LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail})
+      )
+      AND status <> 'rejected'
     `;
 
-    ownsSubmittedArtist = creatorArtists.some((creatorArtist) => {
+    const matched = creatorArtists.find((creatorArtist) => {
       const savedArtistName = String(creatorArtist.artist_name || "").trim();
       return savedArtistName.toLowerCase() === cleanArtistName.toLowerCase();
     });
+
+    if (matched) {
+      ownsSubmittedArtist = true;
+      matchedArtistName = String(matched.artist_name || "").trim();
+    }
   } catch (error) {
     console.error("Merch artist ownership lookup failed:", error);
     return res.status(500).json({ error: "Failed to verify artist ownership" });
@@ -553,6 +565,7 @@ if (req.method === "GET") {
       error: "No artist profile or verified release matches this account and artist name"
     });
   }
+
 
   if (action === "check_artist_ownership") {
   return res.status(200).json({ success: true });
@@ -642,9 +655,9 @@ if (req.method === "GET") {
     });
   }
 
-  if (productPhotos.length === 0 || productPhotos.length > 8) {
+  if (productPhotos.length === 0 || productPhotos.length > 10) {
     return res.status(400).json({
-      error: "Upload between 1 and 8 product photos"
+      error: "Upload between 1 and 10 product photos"
     });
   }
 
@@ -759,7 +772,7 @@ if (
       status
     )
     VALUES (
-      ${creatorArtistName},
+      ${matchedArtistName},
       ${verifiedCreatorPiUid},
       ${verifiedCreatorEmail},
       ${cleanProductName},
