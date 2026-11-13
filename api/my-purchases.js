@@ -40,7 +40,6 @@ function createDownloadTicket(payload) {
     return `${data}.${signature}`;
 }
 
-
 function verifyDownloadTicket(ticket) {
 
     if (!ticket) {
@@ -121,196 +120,129 @@ module.exports = async function handler(req, res) {
     }
 
     // ---------------------------------
-// REDEEM SECURE DOWNLOAD TICKET
-// ---------------------------------
+    // REDEEM SECURE DOWNLOAD TICKET
+    // ---------------------------------
 
-if (req.query.ticket) {
+    if (req.query.ticket) {
 
-    const ticketData =
-        verifyDownloadTicket(
-            req.query.ticket
-        );
+        const ticketData =
+            verifyDownloadTicket(
+                req.query.ticket
+            );
 
-    if (!ticketData) {
-        return res.status(401).json({
-            error:
-                "Invalid or expired download ticket"
-        });
-    }
-
-    const {
-    purchaseId,
-    relicId,
-    trackTitle,
-    audioKey,
-    allowDownload
-} = ticketData;
-
-if (
-    !purchaseId ||
-    !relicId ||
-    !trackTitle ||
-    !audioKey ||
-    allowDownload !== true ||
-    !audioKey.startsWith("uploads/")
-) {
-    return res.status(403).json({
-        error: "Invalid download ticket"
-    });
-}
-
-
-    try {
-
-        const sql =
-    neon(process.env.POSTGRES_URL);
-
-const claimedPurchase = await sql`
-    UPDATE purchases
-    SET downloaded_at = NOW()
-    WHERE id = ${purchaseId}
-      AND relic_id = ${relicId}
-      AND track_title = ${trackTitle}
-      AND downloaded_at IS NULL
-    RETURNING id;
-`;
-
-if (claimedPurchase.length === 0) {
-    return res.status(403).json({
-        error: "Download already used"
-    });
-}
-
-        const s3 =
-            new S3Client({
-
-                endpoint:
-                    process.env
-                        .AWS_ENDPOINT_URL_S3,
-
-                region:
-                    process.env
-                        .AWS_REGION,
-
-                credentials: {
-
-                    accessKeyId:
-                        process.env
-                            .AWS_ACCESS_KEY_ID,
-
-                    secretAccessKey:
-                        process.env
-                            .AWS_SECRET_ACCESS_KEY
-                },
-
-                forcePathStyle: true
+        if (!ticketData) {
+            return res.status(401).json({
+                error: "Invalid or expired download ticket"
             });
-
-        const command =
-            new GetObjectCommand({
-                Bucket:
-                    "ossvarium-private-audio",
-                Key:
-                    audioKey
-            });
-
-        const object =
-            await s3.send(command);
-
-        const chunks = [];
-
-        for await (
-            const chunk of object.Body
-        ) {
-            chunks.push(chunk);
         }
 
-        const audioBuffer =
-            Buffer.concat(chunks);
+        const {
+            purchaseId,
+            relicId,
+            trackTitle,
+            audioKey,
+            allowDownload
+        } = ticketData;
 
-        const downloadFileName =
-            `${trackTitle
-                .replace(
-                    /[^a-zA-Z0-9._-]/g,
-                    "_"
-                )
-            }.mp3`;
+        if (
+            !purchaseId ||
+            !relicId ||
+            !trackTitle ||
+            !audioKey ||
+            allowDownload !== true ||
+            !audioKey.startsWith("uploads/")
+        ) {
+            return res.status(403).json({
+                error: "Invalid download ticket"
+            });
+        }
 
-        res.setHeader(
-            "Cache-Control",
-            "no-store, no-cache, must-revalidate, private"
-        );
+        try {
 
-        res.setHeader(
-            "Pragma",
-            "no-cache"
-        );
+            const sql =
+                neon(process.env.POSTGRES_URL);
 
-        res.setHeader(
-            "Expires",
-            "0"
-        );
+            // Record download activity without blocking future downloads
+            await sql`
+                UPDATE purchases
+                SET downloaded_at = NOW()
+                WHERE id = ${purchaseId}
+                  AND relic_id = ${relicId}
+                  AND track_title = ${trackTitle};
+            `;
 
-        res.setHeader(
-            "Content-Type",
-            "audio/mpeg"
-    );
+            const s3 =
+                new S3Client({
+                    endpoint:
+                        process.env.AWS_ENDPOINT_URL_S3,
+                    region:
+                        process.env.AWS_REGION,
+                    credentials: {
+                        accessKeyId:
+                            process.env.AWS_ACCESS_KEY_ID,
+                        secretAccessKey:
+                            process.env.AWS_SECRET_ACCESS_KEY
+                    },
+                    forcePathStyle: true
+                });
 
-        res.setHeader(
-            "Content-Disposition",
-            `attachment; filename="${downloadFileName}"`
-        );
+            const downloadFileName =
+                `${trackTitle.replace(/[^a-zA-Z0-9._-]/g, "_")}.mp3`;
 
-        res.setHeader(
-            "Content-Length",
-            audioBuffer.length
-        );
+            const command =
+                new GetObjectCommand({
+                    Bucket:
+                        "ossvarium-private-audio",
+                    Key:
+                        audioKey,
+                    ResponseContentDisposition:
+                        `attachment; filename="${downloadFileName}"`,
+                    ResponseContentType:
+                        "audio/mpeg"
+                });
 
-        res.setHeader(
-            "X-Content-Type-Options",
-            "nosniff"
-        );
+            const presignedDownloadUrl =
+                await getSignedUrl(s3, command, {
+                    expiresIn: 300
+                });
 
-        return res
-            .status(200)
-            .send(audioBuffer);
+            return res.redirect(302, presignedDownloadUrl);
 
-    } catch (error) {
+        } catch (error) {
 
-        console.error(
-            "OSSVARIUM ticket download error:",
-            error
-        );
+            console.error(
+                "OSSVARIUM ticket download error:",
+                error
+            );
 
-        return res.status(500).json({
-            error:
-                "Failed to download relic"
-        });
+            return res.status(500).json({
+                error: "Failed to download relic"
+            });
+        }
     }
-}
 
-const sql =
-            neon(process.env.POSTGRES_URL);
+    const sql =
+        neon(process.env.POSTGRES_URL);
 
-        const relicId =
-            req.query.relicId;
+    const relicId =
+        req.query.relicId;
 
-        const trackTitle =
-            req.query.trackTitle;
+    const trackTitle =
+        req.query.trackTitle;
 
-        const mode =
-            req.query.mode || "stream";
+    const mode =
+        req.query.mode || "stream";
 
-        const isPublicMediaRequest =
-    mode === "stream";
+    const isPublicMediaRequest =
+        mode === "stream";
 
     const authHeader =
-    req.headers.authorization;
+        req.headers.authorization;
 
-const accessToken =
-    authHeader?.startsWith("Bearer ")
-        ? authHeader.substring(7)
-        : null;
+    const accessToken =
+        authHeader?.startsWith("Bearer ")
+            ? authHeader.substring(7)
+            : null;
 
     try {
 
@@ -320,35 +252,34 @@ const accessToken =
 
         let userUid = null;
 
-if (!isPublicMediaRequest) {
+        if (!isPublicMediaRequest) {
 
-    if (!accessToken) {
-        return res.status(401).json({
-            error: "Missing Pi access token"
-        });
-    }
-
-    const meResponse =
-        await axios.get(
-            "https://api.minepi.com/v2/me",
-            {
-                headers: {
-                    Authorization:
-                        `Bearer ${accessToken}`
-                }
+            if (!accessToken) {
+                return res.status(401).json({
+                    error: "Missing Pi access token"
+                });
             }
-        );
 
-    userUid =
-        meResponse.data?.uid;
+            const meResponse =
+                await axios.get(
+                    "https://api.minepi.com/v2/me",
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${accessToken}`
+                        }
+                    }
+                );
 
-    if (!userUid) {
-        return res.status(401).json({
-            error: "Invalid Pi user"
-        });
-    }
-}
-        
+            userUid =
+                meResponse.data?.uid;
+
+            if (!userUid) {
+                return res.status(401).json({
+                    error: "Invalid Pi user"
+                });
+            }
+        }
 
         // ---------------------------------
         // NORMAL MODE:
@@ -358,16 +289,16 @@ if (!isPublicMediaRequest) {
         if (!relicId || !trackTitle) {
 
             const purchases = await sql`
-    SELECT
-        relic_id,
-        track_title,
-        amount_pi,
-        created_at,
-        downloaded_at
-    FROM purchases
-    WHERE user_uid = ${userUid}
-    ORDER BY created_at DESC;
-`;
+                SELECT
+                    relic_id,
+                    track_title,
+                    amount_pi,
+                    created_at,
+                    downloaded_at
+                FROM purchases
+                WHERE user_uid = ${userUid}
+                ORDER BY created_at DESC;
+            `;
 
             return res.status(200).json({
                 success: true,
@@ -378,7 +309,6 @@ if (!isPublicMediaRequest) {
         // ---------------------------------
         // PROTECTED AUDIO MODE
         // ---------------------------------
-
 
         // ---------------------------------
         // LOAD RELIC
@@ -422,54 +352,46 @@ if (!isPublicMediaRequest) {
 
         if (mode === "download") {
 
-    if (!userUid) {
-        return res.status(401).json({
-            error: "Pi authentication required"
-        });
-    }
+            if (!userUid) {
+                return res.status(401).json({
+                    error: "Pi authentication required"
+                });
+            }
 
-    const purchaseRows = await sql`
-        SELECT
-            id,
-            downloaded_at
-        FROM purchases
-        WHERE user_uid = ${userUid}
-          AND relic_id = ${relicId}
-          AND track_title = ${trackTitle}
-        ORDER BY created_at DESC
-        LIMIT 1;
-    `;
+            const purchaseRows = await sql`
+                SELECT
+                    id,
+                    downloaded_at
+                FROM purchases
+                WHERE user_uid = ${userUid}
+                  AND relic_id = ${relicId}
+                  AND track_title = ${trackTitle}
+                ORDER BY created_at DESC
+                LIMIT 1;
+            `;
 
-    if (purchaseRows.length === 0) {
-        return res.status(403).json({
-            error: "Track purchase required"
-        });
-    }
+            if (purchaseRows.length === 0) {
+                return res.status(403).json({
+                    error: "Track purchase required"
+                });
+            }
 
-    if (purchaseRows[0].downloaded_at) {
-        return res.status(403).json({
-            error: "Download already used"
-        });
-    }
-
-    downloadPurchaseId = purchaseRows[0].id;
-
-}
-
+            downloadPurchaseId = purchaseRows[0].id;
+        }
 
         // ------------------------------
-// PAID TRACK OWNERSHIP CHECK
-// Free tracks do not require purchase
-// ------------------------------
+        // PAID TRACK OWNERSHIP CHECK
+        // Free tracks do not require purchase
+        // ------------------------------
 
         if (
-    mode === "download" &&
-    track.allowDownload !== true
-) {
-    return res.status(403).json({
-        error: "Download not allowed"
-    });
-}
+            mode === "download" &&
+            track.allowDownload !== true
+        ) {
+            return res.status(403).json({
+                error: "Download not allowed"
+            });
+        }
 
         // ---------------------------------
         // SAFETY:
@@ -492,89 +414,76 @@ if (!isPublicMediaRequest) {
 
         const s3 =
             new S3Client({
-
                 endpoint:
-                    process.env
-                        .AWS_ENDPOINT_URL_S3,
-
+                    process.env.AWS_ENDPOINT_URL_S3,
                 region:
-                    process.env
-                        .AWS_REGION,
-
+                    process.env.AWS_REGION,
                 credentials: {
-
                     accessKeyId:
-                        process.env
-                            .AWS_ACCESS_KEY_ID,
-
+                        process.env.AWS_ACCESS_KEY_ID,
                     secretAccessKey:
-                        process.env
-                            .AWS_SECRET_ACCESS_KEY
+                        process.env.AWS_SECRET_ACCESS_KEY
                 },
-
                 forcePathStyle: true
             });
 
+        // ---------------------------------
+        // CREATE SECURE DOWNLOAD TICKET
+        // ---------------------------------
 
-// ---------------------------------
-// CREATE SECURE DOWNLOAD TICKET
-// ---------------------------------
+        if (mode === "download") {
 
-if (mode === "download") {
+            const downloadTicket =
+                createDownloadTicket({
+                    purchaseId: downloadPurchaseId,
+                    relicId,
+                    trackTitle,
+                    audioKey: track.audio,
+                    allowDownload: true,
+                    exp:
+                        Date.now() +
+                        (2 * 60 * 1000)
+                });
 
-    const downloadTicket =
-    createDownloadTicket({
-        purchaseId: downloadPurchaseId,
-        relicId,
-        trackTitle,
-        audioKey: track.audio,
-        allowDownload: true,
-        exp:
-            Date.now() +
-            (2 * 60 * 1000)
-    });
+            const downloadUrl =
+                `/api/my-purchases?ticket=${encodeURIComponent(
+                    downloadTicket
+                )}`;
 
-    const downloadUrl =
-        `/api/my-purchases?ticket=${encodeURIComponent(
-            downloadTicket
-        )}`;
-
-    return res.status(200).json({
-        success: true,
-        downloadUrl
-    });
-}
-
-// ---------------------------------
-// NORMAL PROTECTED STREAM MODE
-// ---------------------------------
-
-const command =
-    new GetObjectCommand({
-
-        Bucket:
-            "ossvarium-private-audio",
-
-        Key:
-            track.audio
-    });
-
-const audioUrl =
-    await getSignedUrl(
-        s3,
-        command,
-        {
-            expiresIn: 300
+            return res.status(200).json({
+                success: true,
+                downloadUrl
+            });
         }
-    );
 
-return res.status(200).json({
-    success: true,
-    owned: true,
-    audioUrl: audioUrl,
-    expiresIn: 300
-});            
-       
+        // ---------------------------------
+        // NORMAL PROTECTED STREAM MODE
+        // ---------------------------------
+
+        const command =
+            new GetObjectCommand({
+                Bucket:
+                    "ossvarium-private-audio",
+                Key:
+                    track.audio
+            });
+
+        const audioUrl =
+            await getSignedUrl(
+                s3,
+                command,
+                {
+                    expiresIn: 300
+                }
+            );
+
+        return res.status(200).json({
+            success: true,
+            owned: true,
+            audioUrl: audioUrl,
+            expiresIn: 300
+        });
+
     } catch (error) {
 
         console.error(
@@ -586,14 +495,12 @@ return res.status(200).json({
             error.response?.status === 401
         ) {
             return res.status(401).json({
-                error:
-                    "Invalid Pi authentication"
+                error: "Invalid Pi authentication"
             });
         }
 
         return res.status(500).json({
-            error:
-                "Failed to load protected content"
+            error: "Failed to load protected content"
         });
     }
 };

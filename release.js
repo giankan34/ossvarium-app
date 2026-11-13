@@ -1215,47 +1215,31 @@ async function updateOwnedTracks() {
         // SUPPORT button must disappear
         // ---------------------------------
 
-        button.remove();
+                button.remove();
 
-        // ---------------------------------
-        // DOWNLOAD ALREADY USED
-        // Nothing else should appear
-        // ---------------------------------
+        // Show RELIC OWNED label
+        if (
+            !trackEntry.querySelector(
+                ".track-owned-label"
+            )
+        ) {
+            const ownedLabel =
+                document.createElement("span");
 
-        if (purchase.downloaded_at) {
-    const existingDownload =
-        trackEntry.querySelector(
-            ".track-download-btn"
-        );
+            ownedLabel.className =
+                "track-owned-label";
 
-    if (existingDownload) {
-        existingDownload.remove();
-    }
+            ownedLabel.textContent =
+                "☠ RELIC OWNED ☠";
 
-    if (
-        !trackEntry.querySelector(
-            ".track-owned-label"
-        )
-    ) {
-        const ownedLabel =
-            document.createElement("span");
-
-        ownedLabel.className =
-            "track-owned-label";
-
-        ownedLabel.textContent =
-            "☠ RELIC OWNED ☠";
-
-        trackEntry.appendChild(
-            ownedLabel
-        );
-    }
-
-    return;
-}
+            trackEntry.appendChild(
+                ownedLabel
+            );
+        }
 
         // ---------------------------------
         // PURCHASED + DOWNLOAD AVAILABLE
+        // Allow downloading anytime for verified owner
         // ---------------------------------
 
         const track =
@@ -1265,9 +1249,9 @@ async function updateOwnedTracks() {
                     item.title === trackTitle
             );
 
-        if (!track) {
-    return;
-}
+        if (!track || track.allowDownload !== true) {
+            return;
+        }
 
         if (
             trackEntry.querySelector(
@@ -1308,40 +1292,24 @@ async function updateOwnedTracks() {
                 downloadButton.textContent =
                     "☠ PREPARING RELIC... ☠";
 
-                const success =
-                    await downloadOwnedTrack(
-                        trackTitle
-                    );
+                await downloadOwnedTrack(
+                    trackTitle
+                );
 
-                if (success) {
+                setTimeout(() => {
+                    downloadButton.disabled =
+                        false;
 
-    downloadButton.remove();
-
-    const ownedLabel =
-        document.createElement("span");
-
-    ownedLabel.className =
-        "track-owned-label";
-
-    ownedLabel.textContent =
-        "☠ RELIC OWNED ☠";
-
-    trackEntry.appendChild(
-        ownedLabel
-    );
-
-    return;
-}
-
-                downloadButton.disabled =
-                    false;
-
-                downloadButton.textContent =
-                    "☠ DOWNLOAD RELIC ☠";
+                    downloadButton.textContent =
+                        "☠ DOWNLOAD RELIC ☠";
+                }, 3000);
             }
         );
-    });
+
+            });
 }
+
+
 
 async function downloadOwnedTrack(trackTitle) {
 
