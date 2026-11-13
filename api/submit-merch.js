@@ -351,16 +351,13 @@ return res.status(201).json({
   let verifiedCreatorEmail = null;
   let verifiedCreatorPiUid = null;
 
-  if (!creatorSessionHeader && !authHeader.startsWith("Bearer ")) {
+    if (!creatorSessionHeader && !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       error: "Creator authentication required"
     });
   }
 
-    if (
-  creatorSessionHeader &&
-  !authHeader.startsWith("Bearer ")
-) {
+  if (creatorSessionHeader) {
     try {
       const [payload, signature] = creatorSessionHeader.split(".");
 
@@ -400,13 +397,15 @@ return res.status(201).json({
         .toLowerCase();
 
     } catch (error) {
-      return res.status(401).json({
-        error: "Invalid or expired creator session"
-      });
+      if (!authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({
+          error: "Invalid or expired creator session"
+        });
+      }
     }
   }
 
-    if (authHeader.startsWith("Bearer ")) {
+  if (authHeader.startsWith("Bearer ")) {
     try {
       const accessToken = authHeader.substring(7);
 
@@ -435,6 +434,34 @@ return res.status(201).json({
       return res.status(401).json({
         error: "Invalid Pi authentication"
       });
+    }
+  }
+
+  if (verifiedCreatorPiUid && verifiedCreatorEmail) {
+    try {
+      await sql`
+        UPDATE merch_products
+        SET creator_pi_uid = ${verifiedCreatorPiUid}
+        WHERE LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail}
+        AND (creator_pi_uid IS NULL OR creator_pi_uid = ${""});
+      `;
+      await sql`
+        UPDATE relics
+        SET creator_pi_uid = ${verifiedCreatorPiUid}
+        WHERE (
+          LOWER(TRIM(COALESCE(contact_email, ""))) = ${verifiedCreatorEmail}
+          OR LOWER(TRIM(COALESCE(creator_email, ""))) = ${verifiedCreatorEmail}
+        )
+        AND (creator_pi_uid IS NULL OR creator_pi_uid = ${""});
+      `;
+      await sql`
+        UPDATE artist_profiles
+        SET creator_pi_uid = ${verifiedCreatorPiUid}
+        WHERE LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail}
+        AND (creator_pi_uid IS NULL OR creator_pi_uid = ${""});
+      `;
+    } catch (merchLinkErr) {
+      console.warn("OSSVARIUM merch link notice:", merchLinkErr.message);
     }
   }
 
@@ -519,15 +546,14 @@ if (req.method === "GET") {
   let matchedArtistName = cleanArtistName;
 
   try {
-    const creatorArtists = await sql`
+        const creatorArtists = await sql`
       SELECT artist_name
       FROM artist_profiles
       WHERE (
         (${verifiedCreatorPiUid}::text IS NOT NULL
           AND creator_pi_uid = ${verifiedCreatorPiUid})
         OR
-        (${verifiedCreatorPiUid}::text IS NULL
-          AND ${verifiedCreatorEmail}::text IS NOT NULL
+        (${verifiedCreatorEmail}::text IS NOT NULL
           AND LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail})
       )
 
@@ -539,12 +565,15 @@ if (req.method === "GET") {
         (${verifiedCreatorPiUid}::text IS NOT NULL
           AND creator_pi_uid = ${verifiedCreatorPiUid})
         OR
-        (${verifiedCreatorPiUid}::text IS NULL
-          AND ${verifiedCreatorEmail}::text IS NOT NULL
-          AND LOWER(TRIM(creator_email)) = ${verifiedCreatorEmail})
+        (${verifiedCreatorEmail}::text IS NOT NULL
+          AND (
+            LOWER(TRIM(COALESCE(creator_email, ""))) = ${verifiedCreatorEmail}
+            OR LOWER(TRIM(COALESCE(contact_email, ""))) = ${verifiedCreatorEmail}
+          ))
       )
       AND status <> 'rejected'
     `;
+
 
     const matched = creatorArtists.find((creatorArtist) => {
       const savedArtistName = String(creatorArtist.artist_name || "").trim();

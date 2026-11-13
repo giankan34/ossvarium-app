@@ -305,6 +305,12 @@ if (typeof Pi !== "undefined") {
   });
 }
 
+const isPiBrowser = /PiBrowser/i.test(navigator.userAgent);
+const merchEmailConnection = document.getElementById("merchEmailConnection");
+if (isPiBrowser && merchEmailConnection) {
+  merchEmailConnection.style.display = "none";
+}
+
   const photosInput = document.getElementById("photos");
   const photoPreview = document.getElementById("photoPreview");
 
@@ -536,19 +542,16 @@ async function uploadMerchImage(file) {
 
   const response = await fetch("/api/audio-upload-url", {
     method: "POST",
-    headers: {
-    "Content-Type": "application/json",
-    ...(merchCreatorPiAccessToken
-        ? {
-            "Authorization":
-                `Bearer ${merchCreatorPiAccessToken}`
-        }
-        : merchCreatorSession
-            ? {
-                "x-creator-session": merchCreatorSession
-            }
-            : {})
-},
+        headers: {
+      "Content-Type": "application/json",
+      ...(merchCreatorPiAccessToken
+        ? { Authorization: `Bearer ${merchCreatorPiAccessToken}` }
+        : {}),
+      ...(merchCreatorSession
+        ? { "x-creator-session": merchCreatorSession }
+        : {})
+    },
+
     body: JSON.stringify({
       fileName: file.name,
       contentType: file.type,
@@ -622,14 +625,16 @@ try {
 
   const ownershipResponse = await fetch("/api/submit-merch", {
   method: "POST",
-  headers: {
+      headers: {
     "Content-Type": "application/json",
     ...(merchCreatorPiAccessToken
       ? { Authorization: `Bearer ${merchCreatorPiAccessToken}` }
-      : creatorSession
-        ? { "x-creator-session": creatorSession }
-        : {})
+      : {}),
+    ...(creatorSession
+      ? { "x-creator-session": creatorSession }
+      : {})
   },
+
   body: JSON.stringify({
     action: "check_artist_ownership",
     artistName: document.getElementById("artistName").value.trim()
@@ -669,18 +674,16 @@ const merchSubmission = {
 
 const response = await fetch("/api/submit-merch", {
   method: "POST",
-  headers: {
+    headers: {
     "Content-Type": "application/json",
     ...(merchCreatorPiAccessToken
-      ? {
-          Authorization: `Bearer ${merchCreatorPiAccessToken}`
-        }
-      : creatorSession
-        ? {
-            "x-creator-session": creatorSession
-          }
-        : {})
+      ? { Authorization: `Bearer ${merchCreatorPiAccessToken}` }
+      : {}),
+    ...(creatorSession
+      ? { "x-creator-session": creatorSession }
+      : {})
   },
+
   body: JSON.stringify(merchSubmission)
 });
 

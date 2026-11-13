@@ -141,6 +141,66 @@
 
             </div>
 
+                        <div
+                id="linkBandEmailSection"
+                style="display:none; margin-top:20px; padding:15px; border:1px dashed #555; background:rgba(0,0,0,0.3); border-radius:6px;">
+
+                <p class="submission-text" style="font-weight:600; margin-bottom:6px; color:#e0e0e0;">
+                    ⚔ LINK BAND EMAIL (CLAIM PAST RELEASES)
+                </p>
+
+                <p class="submission-text" style="font-size:0.85rem; color:#aaa; margin-bottom:12px;">
+                    Did you previously submit releases with an email address? Link your email to merge your past catalog and merch with this Pi account.
+                </p>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                    <input
+                        type="email"
+                        id="linkBandEmail"
+                        placeholder="ENTER YOUR BAND EMAIL"
+                        style="flex:1; min-width:200px;"
+                    >
+                    <button
+                        type="button"
+                        id="sendLinkCode"
+                        class="submit-btn"
+                        style="margin:0;">
+                        SEND CODE
+                    </button>
+                </div>
+
+                <div
+                    id="linkCodeSection"
+                    style="display:none; margin-top:12px;">
+
+                    <input
+                        type="text"
+                        id="linkVerificationCode"
+                        placeholder="6-DIGIT CODE"
+                        inputmode="numeric"
+                        maxlength="6"
+                        style="max-width:180px;"
+                    >
+
+                    <button
+                        type="button"
+                        id="verifyLinkCode"
+                        class="submit-btn"
+                        style="margin-top:8px;">
+                        ⚔ VERIFY & LINK RELEASES
+                    </button>
+
+                </div>
+
+                <div
+                    id="linkEmailStatus"
+                    class="submission-text"
+                    style="margin-top:8px;">
+                </div>
+
+            </div>
+
+
             <div
     id="artistProfileSection"
     style="display:none; margin-top:30px;">
@@ -194,6 +254,9 @@
             version: "2.0"
         });
 
+                const isPiBrowser = /PiBrowser/i.test(navigator.userAgent);
+
+
         let creatorPiAuth = null;
 
 const connectButton =
@@ -231,6 +294,36 @@ const verifyCreatorCode =
 
 const creatorEmailStatus =
     document.getElementById("creatorEmailStatus");
+
+    const creatorEmailLogin =
+    document.getElementById("creatorEmailLogin");
+
+const linkBandEmailSection =
+    document.getElementById("linkBandEmailSection");
+
+const linkBandEmail =
+    document.getElementById("linkBandEmail");
+
+const sendLinkCode =
+    document.getElementById("sendLinkCode");
+
+const linkCodeSection =
+    document.getElementById("linkCodeSection");
+
+const linkVerificationCode =
+    document.getElementById("linkVerificationCode");
+
+const verifyLinkCode =
+    document.getElementById("verifyLinkCode");
+
+const linkEmailStatus =
+    document.getElementById("linkEmailStatus");
+
+// In Pi Browser, hide standalone email login to comply with Pi Network ecosystem rules
+if (isPiBrowser && creatorEmailLogin) {
+    creatorEmailLogin.style.display = "none";
+}
+
 
     sendCreatorCode.addEventListener(
     "click",
@@ -404,6 +497,11 @@ connectButton.addEventListener(
 
             artistProfileSection.style.display = "block";
 
+                        if (linkBandEmailSection) {
+                linkBandEmailSection.style.display = "block";
+            }
+
+
             await loadMyRelics();
             await loadMyMerch();
 
@@ -414,8 +512,14 @@ connectButton.addEventListener(
                 error
             );
 
-            creatorStatus.textContent =
-                "COULD NOT LOAD YOUR RELICS";
+                        if (!isPiBrowser) {
+                creatorStatus.textContent =
+                    "Pi login is available in the Pi Browser mobile app. On desktop, please use your creator email below.";
+            } else {
+                creatorStatus.textContent =
+                    "COULD NOT LOAD YOUR RELICS";
+            }
+
 
             connectButton.disabled = false;
             connectButton.textContent =
@@ -424,6 +528,86 @@ connectButton.addEventListener(
 
     }
 );
+
+if (sendLinkCode) {
+    sendLinkCode.addEventListener("click", async function () {
+        const email = (linkBandEmail.value || "").trim().toLowerCase();
+        if (!email) {
+            linkEmailStatus.textContent = "ENTER YOUR BAND EMAIL";
+            return;
+        }
+        try {
+            sendLinkCode.disabled = true;
+            sendLinkCode.textContent = "SENDING...";
+            const response = await fetch("/api/submit-relic", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "send_email_verification",
+                    email: email
+                })
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || "COULD NOT SEND VERIFICATION CODE");
+            }
+            linkCodeSection.style.display = "block";
+            linkEmailStatus.textContent = "⚔ VERIFICATION CODE SENT TO " + email.toUpperCase();
+        } catch (error) {
+            console.error("OSSVARIUM link email code error:", error);
+            linkEmailStatus.textContent = error.message || "COULD NOT SEND CODE";
+        } finally {
+            sendLinkCode.disabled = false;
+            sendLinkCode.textContent = "SEND CODE";
+        }
+    });
+}
+
+if (verifyLinkCode) {
+    verifyLinkCode.addEventListener("click", async function () {
+        const email = (linkBandEmail.value || "").trim().toLowerCase();
+        const code = (linkVerificationCode.value || "").trim();
+        if (!email || !code) {
+            linkEmailStatus.textContent = "ENTER EMAIL AND VERIFICATION CODE";
+            return;
+        }
+        try {
+            verifyLinkCode.disabled = true;
+            verifyLinkCode.textContent = "LINKING...";
+            const headers = { "Content-Type": "application/json" };
+            if (creatorPiAuth?.accessToken) {
+                headers.Authorization = "Bearer " + creatorPiAuth.accessToken;
+            }
+            const response = await fetch("/api/submit-relic", {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify({
+                    action: "verify_email_code",
+                    email: email,
+                    code: code
+                })
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || "COULD NOT VERIFY CODE");
+            }
+            if (result.creatorSession) {
+                localStorage.setItem("ossvariumCreatorSession", result.creatorSession);
+            }
+            linkEmailStatus.textContent = "⚔ SUCCESS: PAST RELEASES LINKED TO YOUR PI ACCOUNT!";
+            linkCodeSection.style.display = "none";
+            await loadMyRelics();
+            await loadMyMerch();
+        } catch (error) {
+            console.error("OSSVARIUM verify link error:", error);
+            linkEmailStatus.textContent = error.message || "COULD NOT VERIFY CODE";
+        } finally {
+            verifyLinkCode.disabled = false;
+            verifyLinkCode.textContent = "⚔ VERIFY & LINK RELEASES";
+        }
+    });
+}
+
 
 async function uploadCreatorTrackAudio(file) {
 
@@ -577,14 +761,17 @@ async function loadMyMerch() {
   const creatorSession = localStorage.getItem("ossvariumCreatorSession");
   const headers = {};
 
-  if (creatorPiAuth?.accessToken) {
+    if (creatorPiAuth?.accessToken) {
     headers.Authorization = `Bearer ${creatorPiAuth.accessToken}`;
-  } else if (creatorSession) {
+  }
+  if (creatorSession) {
     headers["x-creator-session"] = creatorSession;
-  } else {
+  }
+  if (!headers.Authorization && !headers["x-creator-session"]) {
     merchContainer.textContent = "Connect your Pi account or verify your email.";
     return;
   }
+
 
   try {
     const response = await fetch("/api/submit-merch", {

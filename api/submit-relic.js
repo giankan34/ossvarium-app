@@ -160,6 +160,38 @@ if (
         WHERE id = ${verification[0].id};
     `;
 
+        let linkedPiUid = null;
+    const verifyAuthHeader = req.headers.authorization || "";
+    if (verifyAuthHeader.startsWith("Bearer ")) {
+        const verifyAccessToken = verifyAuthHeader.substring(7);
+        try {
+            const piResponse = await fetch("https://api.minepi.com/v2/me", {
+                headers: { Authorization: `Bearer ${verifyAccessToken}` }
+            });
+            if (piResponse.ok) {
+                const piUser = await piResponse.json();
+                if (piUser?.uid) {
+                    linkedPiUid = String(piUser.uid);
+                    await sql`
+                        UPDATE relics
+                        SET creator_pi_uid = ${linkedPiUid}
+                        WHERE LOWER(contact_email) = ${email}
+                        AND (creator_pi_uid IS NULL OR creator_pi_uid = ${""});
+                    `;
+                    await sql`
+                        UPDATE artist_profiles
+                        SET creator_pi_uid = ${linkedPiUid}
+                        WHERE LOWER(creator_email) = ${email}
+                        AND (creator_pi_uid IS NULL OR creator_pi_uid = ${""});
+                    `;
+                }
+            }
+        } catch (piErr) {
+            console.warn("OSSVARIUM Pi linking notice:", piErr.message);
+        }
+    }
+
+
     const sessionExpiresAt =
     Date.now() + 24 * 60 * 60 * 1000;
 
@@ -207,10 +239,8 @@ const hasPiAuthorization =
         req.headers.authorization || ""
     ).startsWith("Bearer ");
 
-if (
-    creatorSessionHeader &&
-    !hasPiAuthorization
-) {
+if (creatorSessionHeader) {
+
 
     try {
 
@@ -288,10 +318,13 @@ if (
             error
         );
 
-        return res.status(401).json({
-            error:
-                "Invalid or expired creator session"
-        });
+                if (!hasPiAuthorization) {
+            return res.status(401).json({
+                error:
+                    "Invalid or expired creator session"
+            });
+        }
+
     }
 }
 
@@ -342,6 +375,26 @@ if (authHeader.startsWith("Bearer ")) {
         });
     }
 }
+
+if (verifiedCreatorPiUid && verifiedCreatorEmail) {
+    try {
+        await sql`
+            UPDATE relics
+            SET creator_pi_uid = ${verifiedCreatorPiUid}
+            WHERE LOWER(contact_email) = ${verifiedCreatorEmail}
+            AND (creator_pi_uid IS NULL OR creator_pi_uid = ${""});
+        `;
+        await sql`
+            UPDATE artist_profiles
+            SET creator_pi_uid = ${verifiedCreatorPiUid}
+            WHERE LOWER(creator_email) = ${verifiedCreatorEmail}
+            AND (creator_pi_uid IS NULL OR creator_pi_uid = ${""});
+        `;
+    } catch (autoLinkErr) {
+        console.warn("OSSVARIUM auto-link notice:", autoLinkErr.message);
+    }
+}
+
 
 // ---------------------------------
 // MY RELICS (GET)
