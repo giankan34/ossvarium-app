@@ -686,7 +686,7 @@ releases[
                 <img
                 class="release-cover"
                 src="${release.cover}"
-                alt="${release.release}">
+                alt="${release.release}"
                     loading="lazy"
     decoding="async">
 
