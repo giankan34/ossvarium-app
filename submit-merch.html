@@ -231,14 +231,30 @@
       <label for="description">DESCRIPTION</label>
       <textarea id="description" required></textarea>
 
-      <label for="pricePi">PRICE (Pi)</label>
-      <input
-        id="pricePi"
-        type="number"
-        min="0.01"
-        step="0.01"
-        required
-      >
+            <div class="merch-price-converter" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+        <div>
+          <label for="priceEur" style="font-size: 11px; letter-spacing: 1px; color: #a58a7f; display: block; margin-bottom: 4px;">PRICE (€ EUR)</label>
+          <input
+            id="priceEur"
+            type="number"
+            min="0.01"
+            step="0.1"
+            placeholder="e.g. 15.00 €"
+          >
+        </div>
+        <div>
+          <label for="pricePi" style="font-size: 11px; letter-spacing: 1px; color: #a58a7f; display: block; margin-bottom: 4px;">PRICE (Pi)</label>
+          <input
+            id="pricePi"
+            type="number"
+            min="0.01"
+            step="0.01"
+            placeholder="Price in Pi"
+            required
+          >
+        </div>
+      </div>
+
 
       <label for="quantity">AVAILABLE QUANTITY</label>
       <input
@@ -310,6 +326,48 @@ const merchEmailConnection = document.getElementById("merchEmailConnection");
 if (isPiBrowser && merchEmailConnection) {
   merchEmailConnection.style.display = "none";
 }
+
+let currentPiRateEur = null;
+
+async function initMerchPiRate() {
+  try {
+    const res = await fetch("/api/pi-rate");
+    const data = await res.json();
+    if (data.success && data.piEur && data.piEur > 0) {
+      currentPiRateEur = Number(data.piEur);
+    }
+  } catch (err) {
+    console.warn("Could not load Pi rate:", err);
+  }
+
+  const priceEur = document.getElementById("priceEur");
+  const pricePi = document.getElementById("pricePi");
+
+  if (priceEur && pricePi) {
+    priceEur.addEventListener("input", () => {
+      if (!currentPiRateEur || currentPiRateEur <= 0) return;
+      const eurVal = parseFloat(priceEur.value);
+      if (!isNaN(eurVal) && eurVal > 0) {
+        pricePi.value = (eurVal / currentPiRateEur).toFixed(2);
+      } else if (priceEur.value === "") {
+        pricePi.value = "";
+      }
+    });
+
+    pricePi.addEventListener("input", () => {
+      if (!currentPiRateEur || currentPiRateEur <= 0) return;
+      const piVal = parseFloat(pricePi.value);
+      if (!isNaN(piVal) && piVal > 0) {
+        priceEur.value = (piVal * currentPiRateEur).toFixed(2);
+      } else if (pricePi.value === "") {
+        priceEur.value = "";
+      }
+    });
+  }
+}
+
+initMerchPiRate();
+
 
   const photosInput = document.getElementById("photos");
   const photoPreview = document.getElementById("photoPreview");
