@@ -288,9 +288,12 @@ matches.map((item,index)=>`
 href="release.html?id=${index}"
 class="search-card">
 
-    <img
+        <img
     src="${item.cover}"
-    class="search-cover">
+    class="search-cover"
+    loading="lazy"
+    decoding="async">
+
 
     <div>
 
@@ -811,10 +814,13 @@ style="text-decoration:none;">
 
         ${release.cover
 ? `
-    <img
+        <img
     src="${release.cover}"
     class="release-cover collection-cover"
-    alt="${release.release}">
+    alt="${release.release}"
+    loading="lazy"
+    decoding="async">
+
 `
 : `
     <div class="release-cover no-cover">
@@ -1111,10 +1117,12 @@ async function loadReleaseOfTheDay(){
 
     ${release.cover
 ? `
-    <img
+        <img
 src="${release.cover}"
 class="release-day-cover"
->
+loading="lazy"
+decoding="async">
+
 `
 : `
     <div class="release-cover no-cover">

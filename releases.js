@@ -229,6 +229,9 @@ style="text-decoration:none;">
     class="featured-cover"
     src="${topRelease.cover}"
     alt="${topRelease.release}">
+        loading="lazy"
+    decoding="async">
+
 `
 : `
     <div class="featured-cover featured-cover-fallback">
@@ -285,6 +288,9 @@ style="text-decoration:none;">
     class="featured-cover"
     src="${releases[0].cover}"
     alt="${releases[0].release}">
+        loading="lazy"
+    decoding="async">
+
 `
 : `
     <div class="featured-cover featured-cover-fallback">
@@ -343,6 +349,9 @@ releaseContainer.innerHTML += `
     class="hall-cover"
     src="${topThree[0].cover}"
     alt="${topThree[0].release}">
+        loading="lazy"
+    decoding="async">
+
 `
 : `
     <div class="hall-cover no-cover">
@@ -381,6 +390,9 @@ releaseContainer.innerHTML += `
     class="hall-cover"
     src="${topThree[1].cover}"
     alt="${topThree[1].release}">
+        loading="lazy"
+    decoding="async">
+
 `
 : `
     <div class="hall-cover no-cover">
@@ -421,6 +433,9 @@ releaseContainer.innerHTML += `
     class="hall-cover"
     src="${topThree[2].cover}"
     alt="${topThree[2].release}">
+        loading="lazy"
+    decoding="async">
+
 `
 : `
     <div class="hall-cover no-cover">
@@ -540,6 +555,9 @@ releases[
     class="featured-cover"
     src="${featuredArtist.cover}"
     alt="${featuredArtist.artist}">
+        loading="lazy"
+    decoding="async">
+
 `
 : `
     <div class="featured-cover no-cover">
@@ -669,6 +687,9 @@ releases[
                 class="release-cover"
                 src="${release.cover}"
                 alt="${release.release}">
+                    loading="lazy"
+    decoding="async">
+
                 `
                 : `
                 <div class="release-cover no-cover">
