@@ -170,6 +170,12 @@
 
 </div>
 
+<div class="pi-rate-banner" id="piRateBanner" style="margin: 15px 0 20px; padding: 12px 14px; border: 1px solid #5e2a24; background: rgba(20, 10, 10, 0.7); display: flex; align-items: center; justify-content: space-between; font-size: 13px;">
+    <span>⚡ <strong>LIVE PI RATE:</strong> <span id="piRateText" style="color: #f1c40f;">Loading exchange rate...</span></span>
+    <span style="font-size: 11px; opacity: 0.7; letter-spacing: 1px;">Auto EUR ⇄ Pi</span>
+</div>
+
+
                 <label>Tracklist</label>
 
 <div id="trackBuilder">
@@ -190,12 +196,17 @@
     type="hidden"
     class="track-audio">
 
-        <input
-    type="number"
-    class="track-price"
-    min="0"
-    step="0.01"
-    placeholder="Suggested Support (Pi)">
+        <div class="track-price-converter" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <div>
+        <label style="font-size: 11px; letter-spacing: 1px; color: #a58a7f; display: block; margin-bottom: 4px;">PRICE (€ EUR)</label>
+        <input type="number" class="track-price-eur" min="0" step="0.1" placeholder="e.g. 1.50 €">
+    </div>
+    <div>
+        <label style="font-size: 11px; letter-spacing: 1px; color: #a58a7f; display: block; margin-bottom: 4px;">SUPPORT (Pi)</label>
+        <input type="number" class="track-price" min="0" step="0.01" placeholder="Suggested Support (Pi)">
+    </div>
+</div>
+
 
 <label class="track-sale-option">
 
@@ -221,14 +232,17 @@
 
 </button>
 
-                <label for="supportPi">Suggested Artist Support (Pi)</label>
-
-<input
-    type="number"
-    id="supportPi"
-    min="0"
-    step="0.01"
-    placeholder="Example: 2">
+<label for="supportPi">Suggested Artist Support</label>
+<div class="release-price-converter" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+    <div>
+        <label style="font-size: 11px; letter-spacing: 1px; color: #a58a7f; display: block; margin-bottom: 4px;">PRICE (€ EUR)</label>
+        <input type="number" id="supportEur" min="0" step="0.5" placeholder="e.g. 5.00 €">
+    </div>
+    <div>
+        <label style="font-size: 11px; letter-spacing: 1px; color: #a58a7f; display: block; margin-bottom: 4px;">SUPPORT (Pi)</label>
+        <input type="number" id="supportPi" min="0" step="0.01" placeholder="Suggested Support (Pi)">
+    </div>
+</div>
 
 
 <div class="submission-text">
@@ -320,68 +334,118 @@ connectPiCreatorButton.addEventListener(
 
     }
 );
+
+let currentPiRateEur = null;
+
+async function initPiRate() {
+    const rateText = document.getElementById("piRateText");
+    try {
+        const res = await fetch("/api/pi-rate");
+        if (!res.ok) throw new Error("Rate request failed");
+        const data = await res.json();
+        if (data && data.piEur) {
+            currentPiRateEur = Number(data.piEur);
+            if (rateText) {
+                rateText.innerHTML = `1 Pi ≈ <strong>${currentPiRateEur.toFixed(4)} €</strong> <span style="opacity:0.7;">(Kraken / CoinGecko)</span>`;
+            }
+        } else {
+            throw new Error("Invalid rate");
+        }
+    } catch (err) {
+        console.warn("Pi rate unavailable:", err);
+        if (rateText) {
+            rateText.textContent = "Rate unavailable — enter Pi directly";
+        }
+    }
+}
+
+function bindTrackPriceConversion(row) {
+    const eurInput = row.querySelector(".track-price-eur");
+    const piInput = row.querySelector(".track-price");
+    if (!eurInput || !piInput) return;
+
+    eurInput.addEventListener("input", function() {
+        if (!currentPiRateEur || currentPiRateEur <= 0) return;
+        const eurVal = parseFloat(eurInput.value);
+        if (!isNaN(eurVal) && eurVal > 0) {
+            piInput.value = (eurVal / currentPiRateEur).toFixed(2);
+        } else if (eurInput.value === "") {
+            piInput.value = "";
+        }
+    });
+
+    piInput.addEventListener("input", function() {
+        if (!currentPiRateEur || currentPiRateEur <= 0) return;
+        const piVal = parseFloat(piInput.value);
+        if (!isNaN(piVal) && piVal > 0) {
+            eurInput.value = (piVal * currentPiRateEur).toFixed(2);
+        } else if (piInput.value === "") {
+            eurInput.value = "";
+        }
+    });
+}
+
+function initPriceConverters() {
+    initPiRate();
+    document.querySelectorAll(".track-submit-row").forEach(bindTrackPriceConversion);
+
+    const supportEurInput = document.getElementById("supportEur");
+    const supportPiInput = document.getElementById("supportPi");
+    if (supportEurInput && supportPiInput) {
+        supportEurInput.addEventListener("input", function() {
+            if (!currentPiRateEur || currentPiRateEur <= 0) return;
+            const eurVal = parseFloat(supportEurInput.value);
+            if (!isNaN(eurVal) && eurVal > 0) {
+                supportPiInput.value = (eurVal / currentPiRateEur).toFixed(2);
+            } else if (supportEurInput.value === "") {
+                supportPiInput.value = "";
+            }
+        });
+
+        supportPiInput.addEventListener("input", function() {
+            if (!currentPiRateEur || currentPiRateEur <= 0) return;
+            const piVal = parseFloat(supportPiInput.value);
+            if (!isNaN(piVal) && piVal > 0) {
+                supportEurInput.value = (piVal * currentPiRateEur).toFixed(2);
+            } else if (supportPiInput.value === "") {
+                supportEurInput.value = "";
+            }
+        });
+    }
+}
+
+initPriceConverters();
+
  
- document
-.getElementById("addTrackButton")
-.addEventListener("click", function(){
-
-    const builder =
-        document.getElementById("trackBuilder");
-
-    const row =
-        document.createElement("div");
-
-    row.className =
-        "track-submit-row";
+ document.getElementById("addTrackButton").addEventListener("click", function(){
+    const builder = document.getElementById("trackBuilder");
+    const row = document.createElement("div");
+    row.className = "track-submit-row";
 
     row.innerHTML = `
+        <input type="text" class="track-title" placeholder="Track title">
+        <input type="file" class="track-audio-file" accept="audio/mpeg,.mp3">
+        <input type="hidden" class="track-audio">
 
-        <input
-            type="text"
-            class="track-title"
-            placeholder="Track title">
-
-            <input
-    type="file"
-    class="track-audio-file"
-    accept="audio/mpeg,.mp3">
-
-<input
-    type="hidden"
-    class="track-audio">
-
+        <div style="display: flex; gap: 10px; margin: 8px 0;">
+            <input type="number" class="track-price-eur" min="0" step="0.01" placeholder="EUR (€)" style="flex: 1;">
+            <input type="number" class="track-price" min="0" step="0.01" placeholder="Suggested Support (Pi)" style="flex: 1;">
+        </div>
 
         <label class="track-sale-option">
+            <input type="checkbox" class="track-allow-download">
+            <span>MAKE TRACK DOWNLOADABLE</span>
+        </label>
 
-            <input
-    type="number"
-    class="track-price"
-    min="0"
-    step="0.01"
-    placeholder="Suggested Support (Pi)">
-
-<label class="track-sale-option">
-
-    <input
-        type="checkbox"
-        class="track-allow-download"
-
-    <span>MAKE TRACK DOWNLOADABLE</span>
-
-</label>
-
-        <button
-            type="button"
-            class="submit-btn remove-track">
-
+        <button type="button" class="submit-btn remove-track">
             REMOVE TRACK
-
         </button>
     `;
 
     builder.appendChild(row);
-
+    bindTrackPriceConversion(row);
 });
+
 
 
 document.addEventListener(
