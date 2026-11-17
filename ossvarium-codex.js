@@ -13,75 +13,22 @@ let currentPage = Number(localStorage.getItem("ossvariumCodexPage")) || 0;
 let archivesOpen = false;
 
 // ---------------------------------
-// PAGE TURN SOUND (Web Audio API)
+// PAGE TURN SOUND (Real Recorded MP3)
 // ---------------------------------
+const pageTurnAudio = new Audio('assets/audio/page-flip.mp3');
+pageTurnAudio.preload = 'auto';
+
 function playPageTurnSound() {
     try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        if (!window._codexAudioCtx) {
-            window._codexAudioCtx = new AudioCtx();
-        }
-        const ctx = window._codexAudioCtx;
-        if (ctx.state === "suspended") {
-            ctx.resume();
-        }
-
-        const now = ctx.currentTime;
-
-        // 1. Τριβή χαρτιού / περγαμηνής
-        const duration = 0.28 + Math.random() * 0.05;
-        const bufferSize = Math.floor(ctx.sampleRate * duration);
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-
-        let lastOut = 0.0;
-        for (let i = 0; i < bufferSize; i++) {
-            const white = Math.random() * 2 - 1;
-            lastOut = (lastOut + 0.05 * white) / 1.05;
-            data[i] = lastOut * 3.0 + white * 0.12;
-        }
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.Q.value = 1.6;
-        const baseFreq = 950 + Math.random() * 200;
-        filter.frequency.setValueAtTime(baseFreq, now);
-        filter.frequency.exponentialRampToValueAtTime(baseFreq * 1.8, now + duration * 0.4);
-        filter.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, now + duration);
-
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.22, now + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-        noise.start(now);
-
-        // 2. Απαλό "χτύπημα" προσγείωσης της σελίδας
-        const osc = ctx.createOscillator();
-        const oscGain = ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(140 + Math.random() * 20, now + 0.08);
-        osc.frequency.exponentialRampToValueAtTime(40, now + duration);
-
-        oscGain.gain.setValueAtTime(0.001, now + 0.08);
-        oscGain.gain.linearRampToValueAtTime(0.08, now + 0.11);
-        oscGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-
-        osc.connect(oscGain);
-        oscGain.connect(ctx.destination);
-        osc.start(now + 0.08);
-        osc.stop(now + duration);
+        pageTurnAudio.currentTime = 0;
+        pageTurnAudio.playbackRate = 0.95 + Math.random() * 0.10; // τυχαία διακύμανση για ρεαλισμό
+        pageTurnAudio.volume = 0.85;
+        pageTurnAudio.play().catch(() => {});
     } catch (e) {
-        console.warn("Codex sound error:", e);
+        // Αποφυγή σφάλματος αν μπλοκαριστεί από autoplay restrictions
     }
 }
+
 
 
 // OPEN ARCHIVES
