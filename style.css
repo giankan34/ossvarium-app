@@ -4469,3 +4469,228 @@ body.codex-entering::before{
     height: 100%;
     border: none;
 }
+
+/* =========================================
+   ARTIST PAGE - RITUAL VAULT (GALLERY & LIGHTBOX)
+   ========================================= */
+.ritual-vault-box {
+    margin-top: 35px;
+    padding: 24px 18px;
+    text-align: center;
+}
+
+.ritual-vault-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 14px;
+    margin-top: 15px;
+}
+
+@media (min-width: 600px) {
+    .ritual-vault-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+    }
+}
+
+.ritual-vault-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border: 1px solid rgba(137, 65, 50, 0.65);
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #0a0404;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ritual-vault-item:hover,
+.ritual-vault-item:focus {
+    transform: translateY(-2px);
+    border-color: #a83226;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(168, 50, 38, 0.4);
+    outline: none;
+}
+
+.ritual-vault-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.ritual-vault-item:hover img,
+.ritual-vault-item:focus img {
+    transform: scale(1.08);
+}
+
+.ritual-vault-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 60%);
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 8px;
+    transition: opacity 0.25s ease;
+}
+
+.ritual-vault-item:hover .ritual-vault-overlay,
+.ritual-vault-item:focus .ritual-vault-overlay {
+    opacity: 1;
+}
+
+.ritual-vault-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    color: #e6b89c;
+    text-shadow: 0 0 10px rgba(168, 50, 38, 0.8);
+    pointer-events: none;
+}
+
+.ritual-vault-caption {
+    font-size: 11px;
+    color: #ddd;
+    text-shadow: 0 1px 4px #000;
+    max-width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: 'Cinzel', serif;
+}
+
+/* --- LIGHTBOX MODAL --- */
+.ritual-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.ritual-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 2, 2, 0.94);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.ritual-lightbox-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 95vw;
+    max-height: 90vh;
+}
+
+.ritual-lightbox-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 85vw;
+    max-height: 85vh;
+}
+
+.ritual-lightbox-stage img {
+    max-width: 82vw;
+    max-height: 72vh;
+    object-fit: contain;
+    border: 1px solid #782319;
+    border-radius: 6px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(120, 35, 25, 0.35);
+    background: #000;
+    display: block;
+}
+
+.ritual-lightbox-meta {
+    margin-top: 10px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+}
+
+.ritual-lightbox-counter {
+    display: block;
+    font-size: 12px;
+    color: #b05c50;
+    letter-spacing: 2px;
+}
+
+.ritual-lightbox-caption {
+    display: block;
+    font-size: 14px;
+    color: #e0d0c0;
+    margin-top: 4px;
+}
+
+.ritual-lightbox-close {
+    position: absolute;
+    top: -42px;
+    right: 0;
+    background: none;
+    border: none;
+    color: #c43b2b;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 6px 10px;
+    transition: color 0.2s, transform 0.2s;
+    font-family: inherit;
+}
+
+.ritual-lightbox-close:hover {
+    color: #ff6b5a;
+    transform: scale(1.15);
+}
+
+.ritual-lightbox-nav {
+    background: rgba(18, 8, 8, 0.75);
+    border: 1px solid #782319;
+    border-radius: 50%;
+    color: #e6b89c;
+    font-size: 22px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0 12px;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    user-select: none;
+}
+
+.ritual-lightbox-nav:hover {
+    background: #782319;
+    color: #fff;
+    border-color: #a83226;
+    transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    .ritual-lightbox-nav {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+        margin: 0 4px;
+    }
+    .ritual-lightbox-stage img {
+        max-width: 78vw;
+        max-height: 65vh;
+    }
+}

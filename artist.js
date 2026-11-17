@@ -34,6 +34,170 @@ function extractYouTubeVideoId(url) {
   return null;
 }
 
+function extractArtistPhotos(artist) {
+  if (!artist) return [];
+  const rawList = [];
+
+  const candidates = [
+    artist.photos,
+    artist.gallery,
+    artist.vault,
+    artist.links && artist.links.photos,
+    artist.links && artist.links.gallery,
+    artist.links && artist.links.vault
+  ];
+
+  for (let i = 0; i < candidates.length; i++) {
+    const cand = candidates[i];
+    if (!cand) continue;
+    if (Array.isArray(cand)) {
+      for (let j = 0; j < cand.length; j++) rawList.push(cand[j]);
+    } else if (typeof cand === "string") {
+      const parts = cand.split(/[\r\n,]+/).map(function(s) { return s.trim(); }).filter(Boolean);
+      for (let j = 0; j < parts.length; j++) rawList.push(parts[j]);
+    }
+  }
+
+  const photos = [];
+  const seenUrls = new Set();
+
+  for (let i = 0; i < rawList.length; i++) {
+    const item = rawList[i];
+    let url = "";
+    let caption = "";
+
+    if (typeof item === "string") {
+      url = item.trim();
+    } else if (item && typeof item === "object") {
+      url = String(item.url || item.src || item.image || "").trim();
+      caption = String(item.caption || item.title || item.desc || "").trim();
+    }
+
+    if (!url) continue;
+
+    try {
+      const parsed = new URL(url, window.location.origin);
+      if (["http:", "https:"].includes(parsed.protocol) || url.startsWith("./") || url.startsWith("/")) {
+        if (!seenUrls.has(url)) {
+          seenUrls.add(url);
+          photos.push({
+            url: url,
+            caption: caption
+          });
+        }
+      }
+    } catch (e) {}
+  }
+
+  return photos;
+}
+
+function initRitualVaultLightbox(photos, artistName) {
+  if (!photos || photos.length === 0) return;
+
+  let currentIndex = 0;
+  let lightbox = document.getElementById("ritualLightbox");
+
+  if (!lightbox) {
+    lightbox = document.createElement("div");
+    lightbox.id = "ritualLightbox";
+    lightbox.className = "ritual-lightbox";
+    lightbox.style.display = "none";
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("aria-modal", "true");
+    lightbox.innerHTML = [
+      '<div class="ritual-lightbox-backdrop" id="ritualLightboxBackdrop"></div>',
+      '<div class="ritual-lightbox-content">',
+      '  <button type="button" class="ritual-lightbox-close" id="ritualLightboxClose" aria-label="Close">✕</button>',
+      '  <button type="button" class="ritual-lightbox-nav prev" id="ritualLightboxPrev" aria-label="Previous">❮</button>',
+      '  <div class="ritual-lightbox-stage">',
+      '    <img id="ritualLightboxImg" src="" alt="Ritual Vault Photo">',
+      '    <div class="ritual-lightbox-meta">',
+      '      <span id="ritualLightboxCounter" class="ritual-lightbox-counter"></span>',
+      '      <span id="ritualLightboxCaption" class="ritual-lightbox-caption"></span>',
+      '    </div>',
+      '  </div>',
+      '  <button type="button" class="ritual-lightbox-nav next" id="ritualLightboxNext" aria-label="Next">❯</button>',
+      '</div>'
+    ].join("\\n");
+    document.body.appendChild(lightbox);
+  }
+
+  const imgEl = document.getElementById("ritualLightboxImg");
+  const counterEl = document.getElementById("ritualLightboxCounter");
+  const captionEl = document.getElementById("ritualLightboxCaption");
+  const closeBtn = document.getElementById("ritualLightboxClose");
+  const prevBtn = document.getElementById("ritualLightboxPrev");
+  const nextBtn = document.getElementById("ritualLightboxNext");
+  const backdrop = document.getElementById("ritualLightboxBackdrop");
+
+  function showPhoto(index) {
+    if (index < 0) index = photos.length - 1;
+    if (index >= photos.length) index = 0;
+    currentIndex = index;
+
+    const p = photos[currentIndex];
+    imgEl.src = p.url;
+    imgEl.alt = p.caption || (artistName + " Ritual Photo");
+    counterEl.textContent = "⚔ " + (currentIndex + 1) + " / " + photos.length + " ⚔";
+    if (p.caption) {
+      captionEl.textContent = p.caption;
+      captionEl.style.display = "block";
+    } else {
+      captionEl.textContent = "";
+      captionEl.style.display = "none";
+    }
+  }
+
+  function openLightbox(index) {
+    showPhoto(index);
+    lightbox.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    lightbox.style.display = "none";
+    document.body.style.overflow = "";
+    imgEl.src = "";
+  }
+
+  closeBtn.onclick = closeLightbox;
+  backdrop.onclick = closeLightbox;
+
+  prevBtn.onclick = function(e) {
+    e.stopPropagation();
+    showPhoto(currentIndex - 1);
+  };
+
+  nextBtn.onclick = function(e) {
+    e.stopPropagation();
+    showPhoto(currentIndex + 1);
+  };
+
+  document.addEventListener("keydown", function(e) {
+    if (lightbox.style.display !== "flex") return;
+    if (e.key === "Escape") closeLightbox();
+    if (e.key === "ArrowLeft") showPhoto(currentIndex - 1);
+    if (e.key === "ArrowRight") showPhoto(currentIndex + 1);
+  });
+
+  const items = document.querySelectorAll(".ritual-vault-item");
+  items.forEach(function(item) {
+    const handler = function() {
+      const idx = parseInt(item.getAttribute("data-vault-index"), 10);
+      if (!isNaN(idx)) openLightbox(idx);
+    };
+    item.onclick = handler;
+    item.onkeydown = function(e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handler();
+      }
+    };
+  });
+}
+
+
 
 function safeArtistUrl(value) {
   try {
@@ -83,6 +247,9 @@ if (artistMerchLink && artistName) {
 
         const artist =
         artistReleases[0];
+
+        const artistPhotos = extractArtistPhotos(artist);
+
 
         const totalArtistSupporters =
     artistReleases.reduce(
@@ -301,6 +468,28 @@ ${(() => {
 `;
 })()}
 
+${(() => {
+    if (!artistPhotos || artistPhotos.length === 0) return "";
+    return `
+<div class="submission-box ritual-vault-box">
+    <h2>☠ RITUAL VAULT ☠</h2>
+    <div class="ritual-vault-grid" id="ritualVaultGrid">
+        ${artistPhotos.map((photo, idx) => `
+            <div class="ritual-vault-item" data-vault-index="${idx}" tabindex="0" role="button" aria-label="Open photo ${idx + 1}">
+                <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.caption || artist.artist + ' Ritual Photo')}" loading="lazy">
+                <div class="ritual-vault-overlay">
+                    <span class="ritual-vault-icon">👁</span>
+                    ${photo.caption ? `<div class="ritual-vault-caption">${escapeHtml(photo.caption)}</div>` : ''}
+                </div>
+            </div>
+        `).join("")}
+    </div>
+</div>
+`;
+})()}
+
+
+
 
 
 <div class="submission-box" id="artistMerchSection" style="display:none;">
@@ -397,6 +586,8 @@ ${artist.links?.liveShows ? `
 </div>
 
         `;
+
+        initRitualVaultLightbox(artistPhotos, artist.artist);
 
         try {
 
