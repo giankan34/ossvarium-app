@@ -12,6 +12,29 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function extractYouTubeVideoId(url) {
+  if (!url) return null;
+  try {
+    const parsed = new URL(String(url).trim());
+    if (parsed.hostname === "youtu.be") {
+      return parsed.pathname.slice(1).split("/")[0] || null;
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      if (parsed.pathname === "/watch") {
+        return parsed.searchParams.get("v");
+      }
+      if (parsed.pathname.startsWith("/embed/")) {
+        return parsed.pathname.split("/")[2] || null;
+      }
+      if (parsed.pathname.startsWith("/shorts/")) {
+        return parsed.pathname.split("/")[2] || null;
+      }
+    }
+  } catch (err) {}
+  return null;
+}
+
+
 function safeArtistUrl(value) {
   try {
     const url = new URL(String(value || "").trim());
@@ -259,6 +282,25 @@ ${artist.similar && artist.similar.length ? `
 </div>
 
 ` : ''}
+
+${(() => {
+    const videoId = extractYouTubeVideoId(artist.links?.youtube || artist.links?.video);
+    if (!videoId) return "";
+    return `
+<div class="submission-box ritual-video-box">
+    <h2>☠ RITUAL TRANSMISSION ☠</h2>
+    <div class="ritual-video-wrapper">
+        <iframe
+            src="https://www.youtube-nocookie.com/embed/${escapeHtml(videoId)}?rel=0"
+            title="Ritual Transmission"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+</div>
+`;
+})()}
+
 
 
 <div class="submission-box" id="artistMerchSection" style="display:none;">
