@@ -142,6 +142,7 @@ function initRitualVaultLightbox(photos, artistName) {
       '  <button type="button" class="ritual-lightbox-nav next" id="ritualLightboxNext" aria-label="Next">❯</button>',
       '</div>'
         ].join("");
+        document.body.appendChild(lightbox);
     window.openRitualVaultLightbox = openLightbox;
 
   }
