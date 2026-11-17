@@ -37,7 +37,10 @@ async function loadOssvariumCatalog(forceRefresh = false) {
                 year: item.release_year ?? "",
                 description: item.description ?? "",
                 bio: item.bio ?? "",
-                cover: item.cover ?? "",
+                cover: (item.artist && item.artist.toLowerCase() === "abominy") 
+    ? "./images/abominy-cover.jpg" 
+    : (item.cover ?? ""),
+
                 artistImage: item.artist_image ?? "",
                 banner: item.banner ?? "",
                 price: item.price_eur ?? 0,
