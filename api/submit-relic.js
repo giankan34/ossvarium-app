@@ -1680,6 +1680,15 @@ if (verifiedCreatorPiUid) {
             });
         }
 
+                let submittedPhotos = [];
+        if (Array.isArray(req.body.photos)) {
+            submittedPhotos = req.body.photos;
+        } else if (Array.isArray(req.body.vaultPhotos)) {
+            submittedPhotos = req.body.vaultPhotos;
+        } else if (req.body.links?.photos && Array.isArray(req.body.links.photos)) {
+            submittedPhotos = req.body.links.photos;
+        }
+
         const links = {
             bandcamp: bandcamp || "",
             spotify: spotify || "",
@@ -1688,8 +1697,10 @@ if (verifiedCreatorPiUid) {
             facebook: facebook || "",
             website: website || "",
             merch: merch || "",
-            liveShows: liveShows || ""
+            liveShows: liveShows || "",
+            photos: submittedPhotos
         };
+
 
         const inserted = await sql`
             INSERT INTO relics (

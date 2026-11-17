@@ -131,6 +131,52 @@ const signPublicImage = async (objectKey) => {
     );
 };
 
+const signLinks = async (links) => {
+    if (!links || typeof links !== "object") {
+        return links;
+    }
+
+    const rawPhotos = links.photos || links.gallery || links.vault;
+    if (!rawPhotos) {
+        return links;
+    }
+
+    let photoList = [];
+    if (Array.isArray(rawPhotos)) {
+        photoList = rawPhotos;
+    } else if (typeof rawPhotos === "string") {
+        photoList = rawPhotos.split(/[\r\n,]+/).map(s => s.trim()).filter(Boolean);
+    }
+
+    const signedPhotos = await Promise.all(
+        photoList.map(async (item) => {
+            if (typeof item === "string") {
+                if (item.startsWith("artist-images/")) {
+                    return await signPublicImage(item);
+                }
+                return item;
+            }
+            if (item && typeof item === "object") {
+                const url = String(item.url || item.src || item.image || "").trim();
+                if (url.startsWith("artist-images/")) {
+                    const signedUrl = await signPublicImage(url);
+                    return {
+                        ...item,
+                        url: signedUrl
+                    };
+                }
+            }
+            return item;
+        })
+    );
+
+    return {
+        ...links,
+        photos: signedPhotos
+    };
+};
+
+
 const relicsWithSignedImages =
     await Promise.all(
         relics.map(async (relic) => ({
@@ -149,18 +195,18 @@ const relicsWithSignedImages =
             banner:
                 await signPublicImage(
                     relic.banner
+                ),
+
+                links:
+                await signLinks(
+                    relic.links
                 )
+
         }))
     );
 
-            res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=600");
-        return res.status(200).json({
-            success: true,
-            relics: relicsWithSignedImages
-        });
-
-
-        return res.status(200).json({
+    res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=600");
+     return res.status(200).json({
             success: true,
             relics: relicsWithSignedImages
         });

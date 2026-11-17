@@ -2050,6 +2050,37 @@ editArtistProfileButton.textContent =
   placeholder="https://..."
 >
 
+            <div style="margin-top:24px; padding:16px; border:1px solid #444; background:rgba(10,10,10,0.6); border-radius:6px;">
+                <h3 style="margin-top:0; color:#c5a059; font-size:1rem; letter-spacing:1px; text-align:center;">
+                    ⚔ RITUAL VAULT PHOTOS (CAROUSEL & GALLERY)
+                </h3>
+                <p style="font-size:0.8rem; color:#aaa; margin:0 0 12px; line-height:1.4; text-align:center;">
+                    Feature band portraits, live ritual photos, and artwork in your artist page carousel. Upload photo files, paste direct image URLs, or both!
+                </p>
+
+                <label style="margin-top:10px; font-weight:bold;">UPLOAD PHOTO FILES (MULTIPLE)</label>
+                <input
+                    type="file"
+                    id="profileVaultFiles"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp"
+                >
+                <div id="profileVaultFilesStatus" style="font-size:0.8rem; color:#888; margin-top:4px;"></div>
+
+                <label style="margin-top:14px; font-weight:bold;">OR PASTE EXTERNAL PHOTO URLS (ONE PER LINE)</label>
+                <textarea
+                    id="profileVaultUrls"
+                    rows="3"
+                    placeholder="https://example.com/band-photo-1.jpg&#10;https://example.com/live-ritual.jpg"
+                ></textarea>
+
+                <div id="profileVaultExistingSection" style="margin-top:14px;">
+                    <label style="margin-bottom:6px; font-weight:bold;">CURRENT VAULT PHOTOS (<span id="profileVaultCount">0</span>)</label>
+                    <div id="profileVaultGrid" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;"></div>
+                </div>
+            </div>
+
+
             <button
                 type="button"
                 id="saveArtistProfileButton"
@@ -2064,13 +2095,71 @@ editArtistProfileButton.textContent =
             </div>
         `;
 
-        artistProfileEditor.style.display =
+                artistProfileEditor.style.display =
             "block";
 
-            const saveArtistProfileButton =
-    document.getElementById(
-        "saveArtistProfileButton"
-    );
+        let profileVaultPhotos = [];
+        const rawVaultPhotos = links.photos || profile.photos || links.vault || links.gallery || [];
+        if (typeof rawVaultPhotos === "string") {
+            profileVaultPhotos = rawVaultPhotos.split(/[\r\n,]+/).map(s => s.trim()).filter(Boolean);
+        } else if (Array.isArray(rawVaultPhotos)) {
+            profileVaultPhotos = rawVaultPhotos.map(item => {
+                if (typeof item === "string") return item.trim();
+                if (item && typeof item === "object") return String(item.url || item.src || "").trim();
+                return "";
+            }).filter(Boolean);
+        }
+
+        function renderProfileVaultGrid() {
+            const grid = document.getElementById("profileVaultGrid");
+            const countSpan = document.getElementById("profileVaultCount");
+            if (!grid || !countSpan) return;
+
+            countSpan.textContent = profileVaultPhotos.length;
+            if (profileVaultPhotos.length === 0) {
+                grid.innerHTML = '<div style="font-size:0.8rem; color:#666; font-style:italic;">No photos in your vault yet. Add photos above and save!</div>';
+                return;
+            }
+
+            grid.innerHTML = profileVaultPhotos.map((photo, idx) => {
+                const isUrl = photo.startsWith("http://") || photo.startsWith("https://") || photo.startsWith("data:");
+                return `
+                    <div style="position:relative; width:85px; height:85px; border:1px solid #555; background:#111; border-radius:4px; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                        ${isUrl ? `<img src="${escapeHtml(photo)}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="font-size:0.65rem; color:#c5a059; padding:4px; word-break:break-all;">📷 S3 Photo</div>`}
+                        <button type="button" data-photo-idx="${idx}" class="remove-vault-photo-btn" style="position:absolute; top:2px; right:2px; background:rgba(180,0,0,0.85); color:#fff; border:none; border-radius:3px; width:20px; height:20px; cursor:pointer; font-size:11px; line-height:20px; padding:0; text-align:center;">✕</button>
+                    </div>
+                `;
+            }).join("");
+
+            grid.querySelectorAll(".remove-vault-photo-btn").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const index = Number(this.getAttribute("data-photo-idx"));
+                    profileVaultPhotos.splice(index, 1);
+                    renderProfileVaultGrid();
+                });
+            });
+        }
+
+        renderProfileVaultGrid();
+
+        const profileVaultFilesInput = document.getElementById("profileVaultFiles");
+        const profileVaultFilesStatus = document.getElementById("profileVaultFilesStatus");
+        if (profileVaultFilesInput && profileVaultFilesStatus) {
+            profileVaultFilesInput.addEventListener("change", function() {
+                if (this.files && this.files.length > 0) {
+                    profileVaultFilesStatus.textContent = `⚔ ${this.files.length} file(s) selected to upload on save.`;
+                    profileVaultFilesStatus.style.color = "#c5a059";
+                } else {
+                    profileVaultFilesStatus.textContent = "";
+                }
+            });
+        }
+
+        const saveArtistProfileButton =
+            document.getElementById(
+                "saveArtistProfileButton"
+            );
 
 const artistProfileStatus =
     document.getElementById(
@@ -2116,6 +2205,32 @@ if (bannerFile) {
     bannerObjectKey =
         await uploadImage(bannerFile);
 }
+
+            const vaultFiles = document.getElementById("profileVaultFiles")?.files || [];
+            const newUploadedVaultKeys = [];
+
+            if (vaultFiles.length > 0) {
+                for (let i = 0; i < vaultFiles.length; i++) {
+                    saveArtistProfileButton.textContent = `⚔ UPLOADING PHOTO (${i + 1}/${vaultFiles.length})...`;
+                    const uploadedKey = await uploadImage(vaultFiles[i]);
+                    if (uploadedKey) {
+                        newUploadedVaultKeys.push(uploadedKey);
+                    }
+                }
+            }
+
+            const vaultUrlsVal = document.getElementById("profileVaultUrls")?.value || "";
+            const newVaultUrls = vaultUrlsVal
+                .split(/[\r\n]+/)
+                .map(u => u.trim())
+                .filter(u => u.length > 0);
+
+            const finalVaultPhotos = [
+                ...profileVaultPhotos,
+                ...newUploadedVaultKeys,
+                ...newVaultUrls
+            ];
+
 
             const response = await fetch(
                 "/api/submit-relic",
@@ -2220,9 +2335,11 @@ if (bannerFile) {
                                     .value
                                     .trim(),
 
-                            merch: document.getElementById("profileMerch").value.trim(),
-                            liveShows: document.getElementById("profileLiveShows").value.trim()
+                           merch: document.getElementById("profileMerch").value.trim(),
+liveShows: document.getElementById("profileLiveShows").value.trim(),
+photos: finalVaultPhotos
                         }
+
                     })
                 }
             );
@@ -2240,8 +2357,15 @@ if (bannerFile) {
             creatorArtistProfile =
                 result.profile;
 
+                            profileVaultPhotos = finalVaultPhotos;
+            if (document.getElementById("profileVaultFiles")) document.getElementById("profileVaultFiles").value = "";
+            if (document.getElementById("profileVaultUrls")) document.getElementById("profileVaultUrls").value = "";
+            if (document.getElementById("profileVaultFilesStatus")) document.getElementById("profileVaultFilesStatus").textContent = "";
+            renderProfileVaultGrid();
+
+
             artistProfileStatus.textContent =
-                "☠ ARTIST PROFILE SAVED SUCCESSFULLY";
+                "☠ ARTIST PROFILE & RITUAL VAULT PHOTOS SAVED";
 
         } catch (error) {
 

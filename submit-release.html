@@ -132,6 +132,30 @@
   id="liveShows"
   placeholder="https://...">
 
+  <div style="margin-top:20px; padding:15px; border:1px solid #444; background:rgba(0,0,0,0.3); border-radius:4px;">
+    <h3 style="margin-top:0; color:#c5a059; font-size:1rem; letter-spacing:1px;">
+        ⚔ RITUAL VAULT PHOTOS (CAROUSEL & GALLERY)
+    </h3>
+    <p style="font-size:0.8rem; color:#aaa; margin:0 0 10px; line-height:1.4;">
+        Optional. Photos of your band, live shows, or rituals to feature in your artist page carousel. Upload photo files, paste direct image URLs, or both!
+    </p>
+
+    <label for="vaultFiles" style="margin-top:8px;">Upload Photo Files (Multiple)</label>
+    <input
+        type="file"
+        id="vaultFiles"
+        multiple
+        accept="image/jpeg,image/png,image/webp">
+    <div id="vaultFilesStatus" style="font-size:0.8rem; color:#888; margin-top:4px;"></div>
+
+    <label for="vaultUrls" style="margin-top:12px;">Or Paste Image URLs (One Per Line)</label>
+    <textarea
+        id="vaultUrls"
+        rows="3"
+        placeholder="https://example.com/live1.jpg&#10;https://example.com/promo2.jpg"></textarea>
+</div>
+
+
   <label for="publicEmail">Public Contact Email (optional)</label>
 <input
   type="email"
@@ -737,6 +761,20 @@ const bannerObjectKey =
 const coverArtworkObjectKey =
     await uploadImage(coverArtworkFile);
 
+    const vaultFiles = document.getElementById("vaultFiles")?.files || [];
+const uploadedVaultPhotos = [];
+for (let i = 0; i < vaultFiles.length; i++) {
+    const key = await uploadImage(vaultFiles[i]);
+    if (key) uploadedVaultPhotos.push(key);
+}
+const vaultUrlsText = document.getElementById("vaultUrls")?.value || "";
+const externalVaultUrls = vaultUrlsText
+    .split(/[\r\n]+/)
+    .map(u => u.trim())
+    .filter(Boolean);
+const allVaultPhotos = [...uploadedVaultPhotos, ...externalVaultUrls];
+
+
     const submission = {
     id: Date.now(),
 
@@ -766,6 +804,7 @@ const coverArtworkObjectKey =
         website:document.getElementById("website").value.trim(),
         merch:document.getElementById("merch").value.trim(),
         liveShows:document.getElementById("liveShows").value.trim(),
+        photos: allVaultPhotos,
         publicEmail: document.getElementById("publicEmail").value.trim(),
         contactEmail: document.getElementById("contactEmail").value.trim(),
         supportPi: Number(document.getElementById("supportPi").value || 0
