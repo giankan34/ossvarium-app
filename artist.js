@@ -89,6 +89,28 @@ function extractArtistPhotos(artist) {
     } catch (e) {}
   }
 
+    if (photos.length === 0 && artist) {
+    if (artist.artistImage) {
+      photos.push({
+        url: artist.artistImage,
+        caption: (artist.artist || "Artist") + " — Band Portrait"
+      });
+    }
+    if (artist.banner && artist.banner !== artist.artistImage) {
+      photos.push({
+        url: artist.banner,
+        caption: (artist.artist || "Artist") + " — Ritual Banner"
+      });
+    }
+    if (artist.cover && artist.cover !== artist.artistImage && artist.cover !== artist.banner) {
+      photos.push({
+        url: artist.cover,
+        caption: (artist.release || "Relic") + " — Cover Artwork"
+      });
+    }
+  }
+
+
   return photos;
 }
 
