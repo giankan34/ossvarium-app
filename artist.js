@@ -141,8 +141,9 @@ function initRitualVaultLightbox(photos, artistName) {
       '  </div>',
       '  <button type="button" class="ritual-lightbox-nav next" id="ritualLightboxNext" aria-label="Next">❯</button>',
       '</div>'
-    ].join("\\n");
-    document.body.appendChild(lightbox);
+        ].join("");
+    window.openRitualVaultLightbox = openLightbox;
+
   }
 
   const imgEl = document.getElementById("ritualLightboxImg");
@@ -217,6 +218,101 @@ function initRitualVaultLightbox(photos, artistName) {
       }
     };
   });
+}
+
+function initRitualVaultCarousel(photos, artistName) {
+  if (!photos || photos.length === 0) return;
+
+  const slides = document.querySelectorAll(".vault-carousel-slide");
+  const dots = document.querySelectorAll(".vault-dot");
+  const stage = document.getElementById("vaultCarouselStage");
+  const prevBtn = document.getElementById("vaultCarouselPrev");
+  const nextBtn = document.getElementById("vaultCarouselNext");
+  const box = document.getElementById("ritualVaultCarousel");
+
+  if (!stage || slides.length === 0) return;
+
+  let currentSlide = 0;
+  let timer = null;
+
+  function goToSlide(index) {
+    if (index < 0) index = slides.length - 1;
+    if (index >= slides.length) index = 0;
+    currentSlide = index;
+
+    slides.forEach(function(slide, idx) {
+      slide.classList.toggle("active", idx === currentSlide);
+    });
+
+    dots.forEach(function(dot, idx) {
+      dot.classList.toggle("active", idx === currentSlide);
+    });
+  }
+
+  function nextSlide() { goToSlide(currentSlide + 1); }
+  function prevSlide() { goToSlide(currentSlide - 1); }
+
+  function startAuto() {
+    if (photos.length <= 1) return;
+    stopAuto();
+    timer = setInterval(nextSlide, 3800);
+  }
+
+  function stopAuto() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = function(e) {
+      e.stopPropagation();
+      prevSlide();
+      startAuto();
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = function(e) {
+      e.stopPropagation();
+      nextSlide();
+      startAuto();
+    };
+  }
+
+  dots.forEach(function(dot) {
+    dot.onclick = function(e) {
+      e.stopPropagation();
+      const idx = parseInt(dot.getAttribute("data-dot-index"), 10);
+      if (!isNaN(idx)) {
+        goToSlide(idx);
+        startAuto();
+      }
+    };
+  });
+
+  if (box) {
+    box.addEventListener("mouseenter", stopAuto);
+    box.addEventListener("mouseleave", startAuto);
+  }
+
+  stage.onclick = function() {
+    if (typeof window.openRitualVaultLightbox === "function") {
+      window.openRitualVaultLightbox(currentSlide);
+    }
+  };
+
+  stage.onkeydown = function(e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (typeof window.openRitualVaultLightbox === "function") {
+        window.openRitualVaultLightbox(currentSlide);
+      }
+    }
+  };
+
+  startAuto();
 }
 
 
@@ -495,20 +591,32 @@ ${(() => {
     return `
 <div class="submission-box ritual-vault-box">
     <h2>☠ RITUAL VAULT ☠</h2>
-    <div class="ritual-vault-grid" id="ritualVaultGrid">
-        ${artistPhotos.map((photo, idx) => `
-            <div class="ritual-vault-item" data-vault-index="${idx}" tabindex="0" role="button" aria-label="Open photo ${idx + 1}">
-                <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.caption || artist.artist + ' Ritual Photo')}" loading="lazy">
-                <div class="ritual-vault-overlay">
-                    <span class="ritual-vault-icon">👁</span>
-                    ${photo.caption ? `<div class="ritual-vault-caption">${escapeHtml(photo.caption)}</div>` : ''}
+    <div class="ritual-vault-carousel" id="ritualVaultCarousel">
+        <button type="button" class="vault-carousel-btn prev" id="vaultCarouselPrev" aria-label="Previous Photo">❮</button>
+        <div class="vault-carousel-stage" id="vaultCarouselStage" tabindex="0" role="button" aria-label="Open full screen lightbox">
+            ${artistPhotos.map((photo, idx) => `
+                <div class="vault-carousel-slide ${idx === 0 ? 'active' : ''}" data-vault-index="${idx}">
+                    <img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.caption || artist.artist + ' Ritual Photo')}" loading="lazy">
+                    <div class="vault-carousel-overlay">
+                        <span class="vault-carousel-icon">👁</span>
+                        ${photo.caption ? `<div class="vault-carousel-caption">${escapeHtml(photo.caption)}</div>` : ''}
+                    </div>
                 </div>
-            </div>
+            `).join("")}
+        </div>
+        <button type="button" class="vault-carousel-btn next" id="vaultCarouselNext" aria-label="Next Photo">❯</button>
+    </div>
+    ${artistPhotos.length > 1 ? `
+    <div class="vault-carousel-dots" id="vaultCarouselDots">
+        ${artistPhotos.map((_, idx) => `
+            <button type="button" class="vault-dot ${idx === 0 ? 'active' : ''}" data-dot-index="${idx}" aria-label="Go to photo ${idx + 1}"></button>
         `).join("")}
     </div>
+    ` : ''}
 </div>
 `;
 })()}
+
 
 
 
@@ -610,6 +718,8 @@ ${artist.links?.liveShows ? `
         `;
 
         initRitualVaultLightbox(artistPhotos, artist.artist);
+        initRitualVaultCarousel(artistPhotos, artist.artist);
+
 
         try {
 
