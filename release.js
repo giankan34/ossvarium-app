@@ -924,25 +924,41 @@ function initializePlayer() {
                                     ratio = (Math.sin(Date.now() / 160 + i * 0.75) + 1) / 2;
                                 }
 
-                                const barHeight = Math.max(3, ratio * visualizer.height * 0.9);
+                                                               const barHeight = Math.max(4, ratio * visualizer.height * 0.95);
+                                const x = i * (barWidth + gap);
+                                const y = visualizer.height - barHeight;
+                                const r = Math.min(barWidth / 2, barHeight / 2);
 
-                                const gradient = ctx.createLinearGradient(
-                                    0,
-                                    visualizer.height,
-                                    0,
-                                    visualizer.height - barHeight
-                                );
-                                gradient.addColorStop(0, "#2a0505");
-                                gradient.addColorStop(0.55, "#7d1717");
-                                gradient.addColorStop(1, "#e04444");
+                                // Διαβάθμιση πηγμένου/υγρού αίματος
+                                const gradient = ctx.createLinearGradient(0, visualizer.height, 0, y);
+                                gradient.addColorStop(0, "#160002");    // Πηγμένο βαθύ κόκκινο στη βάση
+                                gradient.addColorStop(0.4, "#66000c");  // Σκούρο κόκκινο αίματος
+                                gradient.addColorStop(0.85, "#b80b1e"); // Ζωηρό αρτηριακό αίμα
+                                gradient.addColorStop(1, "#f02235");    // Έντονο φρέσκο αίμα στην κορυφή
 
                                 ctx.fillStyle = gradient;
-                                ctx.fillRect(
-                                    i * (barWidth + gap),
-                                    visualizer.height - barHeight,
-                                    barWidth,
-                                    barHeight
-                                );
+                                ctx.beginPath();
+                                if (ctx.roundRect) {
+                                    ctx.roundRect(x, y, barWidth, barHeight, [r, r, 0, 0]);
+                                } else {
+                                    ctx.moveTo(x, visualizer.height);
+                                    ctx.lineTo(x, y + r);
+                                    ctx.quadraticCurveTo(x, y, x + r, y);
+                                    ctx.lineTo(x + barWidth - r, y);
+                                    ctx.quadraticCurveTo(x + barWidth, y, x + barWidth, y + r);
+                                    ctx.lineTo(x + barWidth, visualizer.height);
+                                    ctx.closePath();
+                                }
+                                ctx.fill();
+
+                                // Υγρή λάμψη (wet specular gloss) στην κορυφή της σταγόνας
+                                if (barHeight > 10) {
+                                    ctx.fillStyle = "rgba(255, 190, 190, 0.4)";
+                                    ctx.beginPath();
+                                    ctx.arc(x + barWidth / 2, y + r * 0.8, Math.max(1, r * 0.35), 0, Math.PI * 2);
+                                    ctx.fill();
+                                }
+
                             }
                         }
 
