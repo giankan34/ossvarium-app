@@ -708,8 +708,9 @@ function initializePlayer() {
                 // CREATE NORMAL HTML AUDIO
                 // ---------------------------------
 
-                const audio =
-                    new Audio(audioSource);
+                const audio = new Audio();
+                audio.crossOrigin = "anonymous";
+                audio.src = audioSource;
 
                 currentAudio = audio;
                 currentButton = button;
@@ -863,121 +864,94 @@ function initializePlayer() {
                     );
                 }
 
+                                // ---------------------------------
+                // REAL-TIME AUDIO VISUALIZER
                 // ---------------------------------
-                // SAFE VISUALIZER
-                // NO AudioContext
-                // ---------------------------------
+
+                let analyser = null;
+                try {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) {
+                        if (!window._ossvariumAudioCtx) {
+                            window._ossvariumAudioCtx = new AudioContextClass();
+                        }
+                        if (window._ossvariumAudioCtx.state === "suspended") {
+                            window._ossvariumAudioCtx.resume();
+                        }
+                        const source = window._ossvariumAudioCtx.createMediaElementSource(audio);
+                        analyser = window._ossvariumAudioCtx.createAnalyser();
+                        analyser.fftSize = 64;
+                        analyser.smoothingTimeConstant = 0.8;
+                        source.connect(analyser);
+                        analyser.connect(window._ossvariumAudioCtx.destination);
+                    }
+                } catch (e) {
+                    console.warn("Real-time visualizer fallback:", e);
+                }
 
                 if (visualizer) {
-
-                    const ctx =
-                        visualizer.getContext("2d");
-
-                    const audioForVisualizer =
-                        audio;
+                    const ctx = visualizer.getContext("2d");
+                    const audioForVisualizer = audio;
 
                     function drawVisualizer() {
-
-                        if (
-                            currentAudio !==
-                            audioForVisualizer
-                        ) {
-
-                            ctx.clearRect(
-                                0,
-                                0,
-                                visualizer.width,
-                                visualizer.height
-                            );
-
+                        if (currentAudio !== audioForVisualizer) {
+                            ctx.clearRect(0, 0, visualizer.width, visualizer.height);
                             return;
                         }
 
-                        ctx.clearRect(
-                            0,
-                            0,
-                            visualizer.width,
-                            visualizer.height
-                        );
+                        ctx.clearRect(0, 0, visualizer.width, visualizer.height);
 
                         if (!audioForVisualizer.paused) {
-
                             const bars = 24;
                             const gap = 2;
+                            const barWidth = (visualizer.width - gap * (bars - 1)) / bars;
 
-                            const barWidth =
-                                (
-                                    visualizer.width -
-                                    gap * (bars - 1)
-                                ) / bars;
+                            let freqData = null;
+                            if (analyser) {
+                                freqData = new Uint8Array(analyser.frequencyBinCount);
+                                analyser.getByteFrequencyData(freqData);
+                            }
 
-                            for (
-                                let i = 0;
-                                i < bars;
-                                i++
-                            ) {
+                            const hasRealData = freqData && freqData.some(v => v > 0);
 
-                                const wave =
-                                    (
-                                        Math.sin(
-                                            Date.now() / 160 +
-                                            i * 0.75
-                                        ) + 1
-                                    ) / 2;
+                            for (let i = 0; i < bars; i++) {
+                                let ratio = 0;
+                                if (hasRealData) {
+                                    // Χαμηλές συχνότητες (μπάσο/kick) αριστερά, πρίμα δεξιά
+                                    const binIndex = Math.min(i, freqData.length - 1);
+                                    ratio = freqData[binIndex] / 255;
+                                } else {
+                                    ratio = (Math.sin(Date.now() / 160 + i * 0.75) + 1) / 2;
+                                }
 
-                                const barHeight =
-                                    Math.max(
-                                        3,
-                                        wave *
-                                        visualizer.height *
-                                        0.85
-                                    );
+                                const barHeight = Math.max(3, ratio * visualizer.height * 0.9);
 
-                                const gradient =
-                                    ctx.createLinearGradient(
-                                        0,
-                                        visualizer.height,
-                                        0,
-                                        visualizer.height -
-                                        barHeight
-                                    );
-
-                                gradient.addColorStop(
+                                const gradient = ctx.createLinearGradient(
                                     0,
-                                    "#2a0505"
+                                    visualizer.height,
+                                    0,
+                                    visualizer.height - barHeight
                                 );
+                                gradient.addColorStop(0, "#2a0505");
+                                gradient.addColorStop(0.55, "#7d1717");
+                                gradient.addColorStop(1, "#e04444");
 
-                                gradient.addColorStop(
-                                    0.55,
-                                    "#7d1717"
-                                );
-
-                                gradient.addColorStop(
-                                    1,
-                                    "#e04444"
-                                );
-
-                                ctx.fillStyle =
-                                    gradient;
-
+                                ctx.fillStyle = gradient;
                                 ctx.fillRect(
-                                    i *
-                                    (barWidth + gap),
-                                    visualizer.height -
-                                    barHeight,
+                                    i * (barWidth + gap),
+                                    visualizer.height - barHeight,
                                     barWidth,
                                     barHeight
                                 );
                             }
                         }
 
-                        requestAnimationFrame(
-                            drawVisualizer
-                        );
+                        requestAnimationFrame(drawVisualizer);
                     }
 
                     drawVisualizer();
                 }
+
 
                 // ---------------------------------
                 // ENDED
