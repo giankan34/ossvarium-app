@@ -129,7 +129,7 @@ if (!visitedReleases.includes(releaseId)) {
 
 }
 
-    async function renderPage(){
+        async function renderPage(){
 
     releasePage.innerHTML =
 
@@ -143,13 +143,17 @@ if (!visitedReleases.includes(releaseId)) {
  
         renderTracklist() +
 
-        renderSimilarArtists();
+        renderSimilarArtists() +
+
+        renderRitualReviews();
 
         initializePlayer();
 
        initializePurchasePanel();
 
        initializeArtistSupportButton();
+
+       initializeRitualReviews();
 
        try {
     if (!piAuth?.accessToken) {
@@ -158,6 +162,7 @@ if (!visitedReleases.includes(releaseId)) {
 
     if (piAuth?.accessToken) {
         await updateOwnedTracks();
+        updateReviewAuthStatus();
     }
 } catch (error) {
     console.error(
@@ -166,6 +171,7 @@ if (!visitedReleases.includes(releaseId)) {
     );
 }
 }
+
 
 function renderHeader(){
 
@@ -1889,3 +1895,306 @@ function addToCollection(id) {
         }
 
     }
+
+    /* =========================================
+   OSSVARIUM - RITUAL REVIEWS & TESTIMONIES LOGIC
+   ========================================= */
+
+let currentSkullRating = 5;
+
+function escapeReviewHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function renderRitualReviews() {
+    return `
+    <div class="release-card ritual-reviews-box">
+        <h2 class="ritual-reviews-title">RITUAL REVIEWS</h2>
+        <div class="ritual-subtitle">CHRONICLES OF THE UNDERGROUND FAITHFUL</div>
+
+        <div class="ritual-inscribe-card">
+            <div id="review-auth-status" class="inscribe-auth-status">
+                <span class="status-msg">Checking Pi connection...</span>
+            </div>
+
+            <div class="rating-picker-row">
+                <span class="rating-label">SKULL RATING:</span>
+                <div class="skulls-picker" id="skulls-picker">
+                    <button type="button" class="skull-btn active" data-rating="1" title="1 Skull">☠</button>
+                    <button type="button" class="skull-btn active" data-rating="2" title="2 Skulls">☠</button>
+                    <button type="button" class="skull-btn active" data-rating="3" title="3 Skulls">☠</button>
+                    <button type="button" class="skull-btn active" data-rating="4" title="4 Skulls">☠</button>
+                    <button type="button" class="skull-btn active" data-rating="5" title="5 Skulls">☠</button>
+                </div>
+                <span id="skulls-count-text" class="skulls-count-text">(5 / 5 Skulls)</span>
+            </div>
+
+            <textarea 
+                id="ritual-review-text" 
+                class="ritual-review-textarea" 
+                rows="3" 
+                maxlength="500" 
+                placeholder="Inscribe your testimony of this relic into the crypt archives..."></textarea>
+
+            <div class="inscribe-actions-row">
+                <button type="button" id="submit-ritual-review-btn" class="submit-btn ritual-inscribe-btn">
+                    INSCRIBE TESTIMONY
+                </button>
+            </div>
+
+            <div id="ritual-review-status-msg" class="ritual-review-status"></div>
+        </div>
+
+        <div class="chronicles-heading">ARCHIVED TESTIMONIES</div>
+        <div id="ritual-reviews-container" class="ritual-reviews-list">
+            <div class="reviews-loading-text">Summoning chronicles from the crypt...</div>
+        </div>
+    </div>
+    `;
+}
+
+function updateSkullPickerUI(rating) {
+    currentSkullRating = rating;
+    const picker = document.getElementById('skulls-picker');
+    const countText = document.getElementById('skulls-count-text');
+    if (!picker) return;
+
+    const buttons = picker.querySelectorAll('.skull-btn');
+    buttons.forEach((btn) => {
+        const btnRating = parseInt(btn.getAttribute('data-rating'), 10);
+        if (btnRating <= rating) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    if (countText) {
+        countText.textContent = `(${rating} / 5 Skulls)`;
+    }
+}
+
+function updateReviewAuthStatus() {
+    const authStatusEl = document.getElementById('review-auth-status');
+    if (!authStatusEl) return;
+
+    if (piAuth?.user?.username) {
+        authStatusEl.innerHTML = `
+            <span class="auth-logged-in">
+                Inscribing as <span class="auth-highlight">@${escapeReviewHtml(piAuth.user.username)}</span>
+            </span>
+        `;
+    } else {
+        authStatusEl.innerHTML = `
+            <span>Connect your Pi account to inscribe a testimony: </span>
+            <button type="button" id="connect-pi-review-btn" class="connect-pi-mini-btn">CONNECT PI</button>
+        `;
+
+        const connectBtn = document.getElementById('connect-pi-review-btn');
+        if (connectBtn) {
+            connectBtn.addEventListener('click', async () => {
+                connectBtn.disabled = true;
+                connectBtn.textContent = 'CONNECTING...';
+                try {
+                    await authenticatePiUser();
+                    updateReviewAuthStatus();
+                } catch (e) {
+                    console.error('Review Pi auth error:', e);
+                } finally {
+                    if (connectBtn) {
+                        connectBtn.disabled = false;
+                        connectBtn.textContent = 'CONNECT PI';
+                    }
+                }
+            });
+        }
+    }
+}
+
+async function loadRitualReviews() {
+    const container = document.getElementById('ritual-reviews-container');
+    if (!container || !release) return;
+
+    const targetRelicId = release.relicId || String(release.id || releaseId);
+
+    try {
+        const response = await fetch(`/api/approved-relics?action=reviews&relic_id=${encodeURIComponent(targetRelicId)}`);
+        if (!response.ok) {
+            throw new Error('Failed to summon reviews');
+        }
+
+        const data = await response.json();
+        const reviews = data.reviews || [];
+
+        if (reviews.length === 0) {
+            container.innerHTML = `
+                <div class="empty-reviews-box">
+                    <div>No testimonies have been inscribed yet.</div>
+                    <div class="empty-sub">Be the first to leave your mark upon this relic.</div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = reviews.map(r => {
+            const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }) : '';
+
+            const ratingCount = Math.max(1, Math.min(5, parseInt(r.rating, 10) || 5));
+            const skullsHtml = '☠'.repeat(ratingCount);
+
+            return `
+                <div class="review-entry-card ${r.is_verified_keeper ? 'is-keeper' : ''}">
+                    <div class="review-entry-header">
+                        <div class="review-user-info">
+                            <span class="review-username">@${escapeReviewHtml(r.pi_username || 'Anonymous')}</span>
+                            ${r.is_verified_keeper ? `<span class="verified-keeper-badge">☠ VERIFIED RELIC KEEPER</span>` : ''}
+                        </div>
+                        <div class="review-meta">
+                            <span class="review-skulls-rating" title="${ratingCount} / 5 Skulls">${skullsHtml}</span>
+                            <span class="review-date">${dateStr}</span>
+                        </div>
+                    </div>
+                    <div class="review-comment-body">${escapeReviewHtml(r.comment)}</div>
+                </div>
+            `;
+        }).join('');
+
+    } catch (err) {
+        console.error('Error loading ritual reviews:', err);
+        container.innerHTML = '<div class="reviews-error-text">The crypt archives are currently veiled. Could not load testimonies.</div>';
+    }
+}
+
+function initializeRitualReviews() {
+    currentSkullRating = 5;
+
+    // 1. Setup skull rating buttons
+    const picker = document.getElementById('skulls-picker');
+    if (picker) {
+        const buttons = picker.querySelectorAll('.skull-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const rating = parseInt(btn.getAttribute('data-rating'), 10);
+                updateSkullPickerUI(rating);
+            });
+        });
+    }
+
+    // 2. Setup auth status
+    updateReviewAuthStatus();
+
+    // 3. Load existing reviews
+    loadRitualReviews();
+
+    // 4. Setup submit button
+    const submitBtn = document.getElementById('submit-ritual-review-btn');
+    const commentInput = document.getElementById('ritual-review-text');
+    const statusMsg = document.getElementById('ritual-review-status-msg');
+
+    if (submitBtn && commentInput) {
+        submitBtn.addEventListener('click', async () => {
+            if (statusMsg) {
+                statusMsg.className = 'ritual-review-status';
+                statusMsg.textContent = '';
+            }
+
+            if (!piAuth?.accessToken) {
+                if (statusMsg) {
+                    statusMsg.className = 'ritual-review-status status-msg';
+                    statusMsg.textContent = 'Authenticating with Pi...';
+                }
+                try {
+                    await authenticatePiUser();
+                    updateReviewAuthStatus();
+                } catch (e) {
+                    console.error('Pi Auth failed:', e);
+                }
+            }
+
+            if (!piAuth?.accessToken) {
+                if (statusMsg) {
+                    statusMsg.className = 'ritual-review-status status-err';
+                    statusMsg.textContent = 'You must connect your Pi account in Pi Browser to inscribe a testimony.';
+                }
+                return;
+            }
+
+            const comment = (commentInput.value || '').trim();
+            if (comment.length < 3) {
+                if (statusMsg) {
+                    statusMsg.className = 'ritual-review-status status-err';
+                    statusMsg.textContent = 'Your testimony must be at least 3 characters long.';
+                }
+                commentInput.focus();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'INSCRIBING...';
+            if (statusMsg) {
+                statusMsg.className = 'ritual-review-status status-msg';
+                statusMsg.textContent = 'Inscribing testimony into the crypt archives...';
+            }
+
+            const targetRelicId = release.relicId || String(release.id || releaseId);
+
+            try {
+                const response = await fetch('/api/approved-relics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${piAuth.accessToken}`
+                    },
+                    body: JSON.stringify({
+                        action: 'inscribe_review',
+                        target_type: 'relic',
+                        relic_id: targetRelicId,
+                        artist_name: release.artist,
+                        rating: currentSkullRating,
+                        comment: comment
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to inscribe testimony');
+                }
+
+                commentInput.value = '';
+                updateSkullPickerUI(5);
+
+                if (statusMsg) {
+                    statusMsg.className = 'ritual-review-status status-ok';
+                    statusMsg.textContent = '☠ Your testimony has been permanently inscribed in the crypt!';
+                }
+
+                await loadRitualReviews();
+
+                setTimeout(() => {
+                    if (statusMsg) statusMsg.textContent = '';
+                }, 6000);
+
+            } catch (err) {
+                console.error('Submission error:', err);
+                if (statusMsg) {
+                    statusMsg.className = 'ritual-review-status status-err';
+                    statusMsg.textContent = err.message || 'The ritual failed. Please try again.';
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'INSCRIBE TESTIMONY';
+            }
+        });
+    }
+}

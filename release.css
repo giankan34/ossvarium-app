@@ -533,3 +533,319 @@ transform:translateY(-2px);
     opacity: 0.45;
     cursor: not-allowed;
 }
+
+/* =========================================
+   OSSVARIUM - RITUAL REVIEWS & TESTIMONIES
+   ========================================= */
+
+.ritual-reviews-box {
+    margin-top: 40px !important;
+    text-align: left !important;
+}
+
+.ritual-reviews-title {
+    text-align: center !important;
+    font-size: clamp(22px, 5vw, 30px) !important;
+    letter-spacing: 2px !important;
+    color: #e53935 !important;
+    margin-bottom: 8px !important;
+}
+
+.ritual-subtitle {
+    text-align: center !important;
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+    color: #a89595 !important;
+    margin-bottom: 24px !important;
+}
+
+.ritual-inscribe-card {
+    background: rgba(10, 6, 6, 0.75);
+    border: 1px solid rgba(138, 43, 43, 0.45);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+.inscribe-auth-status {
+    font-size: 13px;
+    margin-bottom: 14px;
+    color: #bbb;
+}
+
+.auth-logged-in {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #bbb;
+}
+
+.auth-highlight {
+    color: #f7d560;
+    font-weight: 700;
+}
+
+.connect-pi-mini-btn {
+    background: #181111;
+    color: #f7d560;
+    border: 1px solid #774433;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.connect-pi-mini-btn:hover {
+    background: #251616;
+    border-color: #f7d560;
+    box-shadow: 0 0 10px rgba(247, 213, 96, 0.25);
+}
+
+.rating-picker-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.rating-label {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    color: #c49a88;
+    font-weight: 700;
+}
+
+.skulls-picker {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.skull-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: #443535;
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: transform 0.15s ease, color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.skull-btn:hover,
+.skull-btn.active {
+    color: #e53935;
+    text-shadow: 0 0 8px rgba(229, 57, 53, 0.6);
+}
+
+.skull-btn:hover {
+    transform: scale(1.2);
+}
+
+.skulls-count-text {
+    font-size: 12px;
+    color: #887777;
+    font-family: 'Cinzel', serif;
+}
+
+.ritual-review-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(16, 9, 9, 0.85);
+    border: 1px solid rgba(138, 43, 43, 0.5);
+    border-radius: 4px;
+    padding: 12px;
+    color: #e6e6e6;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 14px;
+}
+
+.ritual-review-textarea:focus {
+    border-color: #e53935;
+    box-shadow: 0 0 10px rgba(229, 57, 53, 0.25);
+}
+
+.inscribe-actions-row {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ritual-inscribe-btn {
+    min-width: 190px !important;
+    padding: 11px 20px !important;
+    font-size: 12px !important;
+}
+
+.ritual-review-status {
+    margin-top: 12px;
+    font-size: 13px;
+    min-height: 20px;
+}
+
+.status-ok {
+    color: #55d882;
+    font-weight: 600;
+}
+
+.status-err {
+    color: #ff5555;
+    font-weight: 600;
+}
+
+.status-msg {
+    color: #f7d560;
+}
+
+.chronicles-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: #d3a07e;
+    margin-top: 20px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(138, 43, 43, 0.3);
+    text-align: center;
+}
+
+.ritual-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.review-entry-card {
+    background: rgba(14, 8, 8, 0.7);
+    border: 1px solid rgba(94, 42, 36, 0.5);
+    border-radius: 5px;
+    padding: 14px 18px;
+    transition: border-color 0.2s ease;
+}
+
+.review-entry-card:hover {
+    border-color: rgba(158, 83, 61, 0.7);
+}
+
+.review-entry-card.is-keeper {
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    background: linear-gradient(180deg, rgba(22, 13, 10, 0.85) 0%, rgba(13, 7, 7, 0.9) 100%);
+    box-shadow: inset 0 0 16px rgba(212, 175, 55, 0.05);
+}
+
+.review-entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.review-user-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.review-username {
+    font-weight: 700;
+    color: #e6e6e6;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+.verified-keeper-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(138, 43, 43, 0.25));
+    border: 1px solid #d4af37;
+    color: #f7d560;
+    padding: 2px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 3px;
+    text-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
+}
+
+.review-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+}
+
+.review-skulls-rating {
+    color: #e53935;
+    letter-spacing: 2px;
+    font-size: 14px;
+    text-shadow: 0 0 6px rgba(229, 57, 53, 0.4);
+}
+
+.review-date {
+    color: #776666;
+    font-size: 11px;
+}
+
+.review-comment-body {
+    color: #c8b8b3;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.empty-reviews-box {
+    text-align: center;
+    padding: 24px 12px;
+    color: #887777;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.empty-reviews-box .empty-sub {
+    font-size: 11px;
+    color: #665555;
+    margin-top: 4px;
+}
+
+.reviews-loading-text,
+.reviews-error-text {
+    text-align: center;
+    padding: 16px;
+    color: #887777;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .ritual-reviews-box {
+        padding: 20px 14px !important;
+    }
+    .inscribe-actions-row {
+        justify-content: stretch;
+    }
+    .ritual-inscribe-btn {
+        width: 100% !important;
+    }
+    .review-entry-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .review-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
