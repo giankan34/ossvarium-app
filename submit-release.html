@@ -11,6 +11,149 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=UnifrakturMaguntia&display=swap"
           rel="stylesheet">
+        <style>
+        .submission-success-card {
+            background: radial-gradient(circle at top, rgba(45, 15, 15, 0.95), rgba(16, 8, 8, 0.98));
+            border: 1px solid #8f3226;
+            border-radius: 8px;
+            padding: 35px 24px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 0 35px rgba(220, 40, 40, 0.25), inset 0 0 30px rgba(0, 0, 0, 0.8);
+            animation: fadeInSuccess 0.4s ease-out;
+        }
+
+        @keyframes fadeInSuccess {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-icon {
+            font-size: 44px;
+            color: #e63939;
+            margin-bottom: 12px;
+            text-shadow: 0 0 18px rgba(230, 57, 57, 0.6);
+        }
+
+        .success-title {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: #f5c4a4;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .success-badge {
+            display: inline-block;
+            padding: 7px 18px;
+            background: rgba(140, 30, 25, 0.35);
+            border: 1px solid #b3392b;
+            border-radius: 20px;
+            color: #ff9f87;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 22px;
+            box-shadow: 0 0 12px rgba(179, 57, 43, 0.3);
+        }
+
+        .success-message {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #d1c1bd;
+            max-width: 580px;
+            margin: 0 auto 24px;
+        }
+
+        .relic-summary-box {
+            background: rgba(10, 5, 5, 0.85);
+            border: 1px solid #4a1f1b;
+            border-radius: 6px;
+            padding: 16px 20px;
+            max-width: 520px;
+            margin: 0 auto 24px;
+            text-align: left;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(80, 30, 25, 0.4);
+            font-size: 13px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #a8948e;
+            font-family: 'Cinzel', serif;
+        }
+
+        .summary-val {
+            color: #f0ddd8;
+            font-weight: 600;
+            text-align: right;
+            word-break: break-all;
+        }
+
+        .relic-id-code {
+            color: #e69138;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .success-instructions {
+            max-width: 540px;
+            margin: 0 auto 28px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #b5a29d;
+            background: rgba(30, 15, 15, 0.4);
+            padding: 14px 18px;
+            border-left: 3px solid #b3392b;
+            border-radius: 4px;
+            text-align: left;
+        }
+
+        .success-instructions strong {
+            color: #f2cfb8;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+        }
+
+        .success-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .success-action-btn {
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .success-action-btn.secondary-btn {
+            background: rgba(35, 20, 20, 0.9);
+            border-color: #66332d;
+            color: #c9b3ad;
+            cursor: pointer;
+        }
+
+        .success-action-btn.secondary-btn:hover {
+            background: rgba(55, 25, 25, 0.95);
+            border-color: #9e463a;
+            color: #f5d4cc;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -285,11 +428,73 @@
                     </label>
                 </div>
 
+                                <div id="submissionProgressStatus" style="display:none; margin: 15px 0; color: #efb58c; font-family: 'Cinzel', serif; font-size: 13px; text-align: center;">
+                    ⏳ <span id="progressStepText">Consecrating relic and encrypting archives...</span>
+                </div>
+
+
                 <button type="submit" class="submit-btn">
                     ☠ SUBMIT RELIC FOR REVIEW ☠
                 </button>
 
             </form>
+
+                        <!-- SUBMISSION SUCCESS CONFIRMATION CARD -->
+            <div id="submissionSuccessCard" class="submission-success-card" style="display: none;">
+                <div class="success-icon">☠</div>
+                <h2 class="success-title">RELIC CONSECRATED &amp; SUBMITTED</h2>
+                
+                <div class="success-badge">
+                    ⚡ STATUS: CURRENTLY IN CRYPT VAULT REVIEW
+                </div>
+
+                <p class="success-message">
+                    Your release has been successfully transmitted and safely deposited into the OSSVARIUM Crypt Archives. All audio tracks, artwork, and metadata are encrypted and pending curator inspection.
+                </p>
+
+                <div class="relic-summary-box">
+                    <div class="summary-row">
+                        <span class="summary-label">Artist / Band:</span>
+                        <span class="summary-val" id="succArtist">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Release Title:</span>
+                        <span class="summary-val" id="succRelease">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Archive Relic ID:</span>
+                        <span class="summary-val relic-id-code" id="succRelicId">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Tracks Deposited:</span>
+                        <span class="summary-val" id="succTracks">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Vault Photos:</span>
+                        <span class="summary-val" id="succPhotos">—</span>
+                    </div>
+                </div>
+
+                <div class="success-instructions">
+                    <p><strong>What happens next?</strong></p>
+                    <p>
+                        Once verified by the crypt curators, your relic will be unleashed to the public archives and made purchasable via Pi Network. You can track, manage, or edit your relics anytime from your creator sanctuary.
+                    </p>
+                </div>
+
+                <div class="success-actions">
+                    <a href="my-relics.html" class="submit-btn success-action-btn">
+                        ☠ VIEW MY RELICS DASHBOARD
+                    </a>
+                    <button type="button" id="submitAnotherBtn" class="submit-btn success-action-btn secondary-btn">
+                        + SUBMIT ANOTHER RELIC
+                    </button>
+                    <a href="index.html" class="submit-btn success-action-btn tertiary-btn">
+                        ← RETURN TO OSSVARIUM
+                    </a>
+                </div>
+            </div>
+
 
             <a href="index.html" class="back-link">
                 ← RETURN TO OSSVARIUM
@@ -673,195 +878,178 @@ document.getElementById("relicSubmissionForm")
 
     event.preventDefault();
 
-try {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : "☠ SUBMIT RELIC FOR REVIEW ☠";
+    const progressStatus = document.getElementById("submissionProgressStatus");
+    const progressText = document.getElementById("progressStepText");
 
-const trackRows =
-    [...document.querySelectorAll(
-        ".track-submit-row"
-    )];
-
-const tracks = [];
-
-for (const row of trackRows) {
-
-    const title =
-        row.querySelector(
-            ".track-title"
-        ).value.trim();
-
-    if (!title) {
-        continue;
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.6";
+        submitBtn.style.cursor = "not-allowed";
+        submitBtn.innerHTML = "⏳ CONSECRATING RELIC &amp; UPLOADING...";
     }
+    if (progressStatus) progressStatus.style.display = "block";
 
-    const audioFile =
-        row.querySelector(
-            ".track-audio-file"
-        )?.files?.[0];
+    try {
+        if (progressText) progressText.innerText = "Encrypting audio tracks & preparing vault transfer...";
 
-    const audioInput =
-        row.querySelector(
-            ".track-audio"
-        );
+        const trackRows = [...document.querySelectorAll(".track-submit-row")];
+        const tracks = [];
 
-    let audio =
-        audioInput.value.trim();
+        for (const row of trackRows) {
+            const title = row.querySelector(".track-title").value.trim();
+            if (!title) continue;
 
-    const supportPi =
-    Number(
-        row.querySelector(
-            ".track-price"
-        ).value || 0
-    );
+            const audioFile = row.querySelector(".track-audio-file")?.files?.[0];
+            const audioInput = row.querySelector(".track-audio");
+            let audio = audioInput.value.trim();
 
-const allowDownload =
-    row.querySelector(
-        ".track-allow-download"
-    ).checked;
+            const supportPi = Number(row.querySelector(".track-price").value || 0);
+            const allowDownload = row.querySelector(".track-allow-download").checked;
 
-    if (audioFile) {
+            if (audioFile) {
+                if (progressText) progressText.innerText = `Uploading audio for "${title}"...`;
+                audio = await uploadPrivateAudio(audioFile);
+                audioInput.value = audio;
+            }
 
-        audio =
-            await uploadPrivateAudio(
-                audioFile
-            );
-
-        audioInput.value =
-            audio;
-    }
-
-    tracks.push({
-
-    title: title,
-
-    audio: audio,
-
-    supportPi: supportPi,
-
-    allowDownload:
-        allowDownload
-
-});
-}
-
-const artistImageFile =
-    document.getElementById("artistImage").files[0];
-
-const bannerFile =
-    document.getElementById("banner").files[0];
-
-const coverArtworkFile =
-    document.getElementById("coverArtwork").files[0];
-
-const artistImageObjectKey =
-    await uploadImage(artistImageFile);
-
-const bannerObjectKey =
-    await uploadImage(bannerFile);
-
-const coverArtworkObjectKey =
-    await uploadImage(coverArtworkFile);
-
-    const vaultFiles = document.getElementById("vaultFiles")?.files || [];
-const uploadedVaultPhotos = [];
-for (let i = 0; i < vaultFiles.length; i++) {
-    const key = await uploadImage(vaultFiles[i]);
-    if (key) uploadedVaultPhotos.push(key);
-}
-const vaultUrlsText = document.getElementById("vaultUrls")?.value || "";
-const externalVaultUrls = vaultUrlsText
-    .split(/[\r\n]+/)
-    .map(u => u.trim())
-    .filter(Boolean);
-const allVaultPhotos = [...uploadedVaultPhotos, ...externalVaultUrls];
-
-
-    const submission = {
-    id: Date.now(),
-
-    creatorPiUid:
-        creatorPiAuth?.user?.uid || null,
-
-    creatorPiUsername:
-        creatorPiAuth?.user?.username || null,
-
-    tracks: tracks,
-        
-        artist: document.getElementById("artistName").value.trim(),
-        release: document.getElementById("releaseTitle").value.trim(),
-        country: document.getElementById("country").value.trim(),
-        genre: document.getElementById("genre").value.trim(),
-        year: document.getElementById("releaseYear").value,
-        description: document.getElementById("description").value.trim(),
-        bio:document.getElementById("bio").value.trim(),
-        artistImage: artistImageObjectKey,
-        banner: bannerObjectKey,
-        cover: coverArtworkObjectKey,
-        bandcamp:document.getElementById("bandcamp").value.trim(),
-        spotify:document.getElementById("spotify").value.trim(),
-        youtube:document.getElementById("youtube").value.trim(),
-        instagram:document.getElementById("instagram").value.trim(),
-        facebook:document.getElementById("facebook").value.trim(),
-        website:document.getElementById("website").value.trim(),
-        merch:document.getElementById("merch").value.trim(),
-        liveShows:document.getElementById("liveShows").value.trim(),
-        photos: allVaultPhotos,
-        publicEmail: document.getElementById("publicEmail").value.trim(),
-        contactEmail: document.getElementById("contactEmail").value.trim(),
-        supportPi: Number(document.getElementById("supportPi").value || 0
-    ),
-
-submittedAt: new Date().toISOString(),
-status: "pending"
-    };
-
-
-    const response = await fetch("/api/submit-relic", {
-        method: "POST",
-        headers: {
-    "Content-Type": "application/json",
-    ...(creatorPiAuth?.accessToken
-        ? {
-            "Authorization":
-                `Bearer ${creatorPiAuth.accessToken}`
+            tracks.push({
+                title: title,
+                audio: audio,
+                supportPi: supportPi,
+                allowDownload: allowDownload
+            });
         }
-        : {})
-},
-        body: JSON.stringify(submission)
-    });
 
-    const result = await response.json();
+        if (progressText) progressText.innerText = "Processing artwork & visual artifacts...";
 
-    if (!response.ok) {
-        throw new Error(
-            result.error || "Submission failed"
-        );
+        const artistImageFile = document.getElementById("artistImage").files[0];
+        const bannerFile = document.getElementById("banner").files[0];
+        const coverArtworkFile = document.getElementById("coverArtwork").files[0];
+
+        const artistImageObjectKey = await uploadImage(artistImageFile);
+        const bannerObjectKey = await uploadImage(bannerFile);
+        const coverArtworkObjectKey = await uploadImage(coverArtworkFile);
+
+        if (progressText) progressText.innerText = "Uploading Ritual Vault gallery photos...";
+
+        const vaultFiles = document.getElementById("vaultFiles")?.files || [];
+        const uploadedVaultPhotos = [];
+        for (let i = 0; i < vaultFiles.length; i++) {
+            const key = await uploadImage(vaultFiles[i]);
+            if (key) uploadedVaultPhotos.push(key);
+        }
+        const vaultUrlsText = document.getElementById("vaultUrls")?.value || "";
+        const externalVaultUrls = vaultUrlsText
+            .split(/[\r\n]+/)
+            .map(u => u.trim())
+            .filter(Boolean);
+        const allVaultPhotos = [...uploadedVaultPhotos, ...externalVaultUrls];
+
+        if (progressText) progressText.innerText = "Depositing relic into Crypt Archives...";
+
+        const submission = {
+            id: Date.now(),
+            creatorPiUid: creatorPiAuth?.user?.uid || null,
+            creatorPiUsername: creatorPiAuth?.user?.username || null,
+            tracks: tracks,
+            artist: document.getElementById("artistName").value.trim(),
+            release: document.getElementById("releaseTitle").value.trim(),
+            country: document.getElementById("country").value.trim(),
+            genre: document.getElementById("genre").value.trim(),
+            year: document.getElementById("releaseYear").value,
+            description: document.getElementById("description").value.trim(),
+            bio: document.getElementById("bio").value.trim(),
+            artistImage: artistImageObjectKey,
+            banner: bannerObjectKey,
+            cover: coverArtworkObjectKey,
+            bandcamp: document.getElementById("bandcamp").value.trim(),
+            spotify: document.getElementById("spotify").value.trim(),
+            youtube: document.getElementById("youtube").value.trim(),
+            instagram: document.getElementById("instagram").value.trim(),
+            facebook: document.getElementById("facebook").value.trim(),
+            website: document.getElementById("website").value.trim(),
+            merch: document.getElementById("merch").value.trim(),
+            liveShows: document.getElementById("liveShows").value.trim(),
+            photos: allVaultPhotos,
+            publicEmail: document.getElementById("publicEmail").value.trim(),
+            contactEmail: document.getElementById("contactEmail").value.trim(),
+            supportPi: Number(document.getElementById("supportPi").value || 0),
+            submittedAt: new Date().toISOString(),
+            status: "pending"
+        };
+
+        const response = await fetch("/api/submit-relic", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...(creatorPiAuth?.accessToken
+                    ? { "Authorization": `Bearer ${creatorPiAuth.accessToken}` }
+                    : {})
+            },
+            body: JSON.stringify(submission)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Submission failed");
+        }
+
+        // Ενημέρωση των στοιχείων στην κάρτα επιβεβαίωσης
+        const relicId = result.relic?.relic_id || result.relic?.id || "PENDING-REVIEW";
+        const artistEl = document.getElementById("succArtist");
+        const releaseEl = document.getElementById("succRelease");
+        const relicIdEl = document.getElementById("succRelicId");
+        const tracksEl = document.getElementById("succTracks");
+        const photosEl = document.getElementById("succPhotos");
+
+        if (artistEl) artistEl.innerText = submission.artist || "—";
+        if (releaseEl) releaseEl.innerText = submission.release || "—";
+        if (relicIdEl) relicIdEl.innerText = relicId;
+        if (tracksEl) tracksEl.innerText = `${tracks.length} track(s) safely vaulted`;
+        if (photosEl) photosEl.innerText = `${allVaultPhotos.length} photo(s) attached`;
+
+        // Απόκρυψη της φόρμας και των εισαγωγικών κειμένων
+        this.style.display = "none";
+        const h1Title = document.querySelector(".submission-box h1");
+        if (h1Title) h1Title.style.display = "none";
+        const introText = document.querySelector(".submission-box .submission-text");
+        if (introText) introText.style.display = "none";
+        const merchLink = document.querySelector('a[href="submit-merch.html"]');
+        if (merchLink) merchLink.style.display = "none";
+
+        // Εμφάνιση της κάρτας και ομαλό scroll σε αυτήν
+        const successCard = document.getElementById("submissionSuccessCard");
+        if (successCard) {
+            successCard.style.display = "block";
+            successCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        // Λειτουργία για το κουμπί "+ SUBMIT ANOTHER RELIC"
+        const submitAnotherBtn = document.getElementById("submitAnotherBtn");
+        if (submitAnotherBtn) {
+            submitAnotherBtn.onclick = function() {
+                window.location.reload();
+            };
+        }
+
+    } catch (error) {
+        console.error("OSSVARIUM submission error:", error);
+
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+            submitBtn.style.cursor = "pointer";
+            submitBtn.innerHTML = originalBtnText;
+        }
+        if (progressStatus) progressStatus.style.display = "none";
+
+        alert("Submission failed.\n\n" + error.message);
     }
-
-    alert(
-        "☠ RELIC SUBMITTED FOR REVIEW ☠\n\n" +
-        submission.artist +
-        " — " +
-        submission.release +
-        "\n\nArchive ID: " +
-        result.relic.relic_id
-    );
-
-    this.reset();
-
-} catch (error) {
-
-    console.error(
-        "OSSVARIUM submission error:",
-        error
-    );
-
-    alert(
-        "Submission failed.\n\n" +
-        error.message
-    );
-}
-
 });
+
 
 async function uploadMerchImage(file) {
     if (!file) {
