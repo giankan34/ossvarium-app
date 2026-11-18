@@ -128,6 +128,172 @@
   outline: 3px solid #e8b9a1;
   outline-offset: 2px;
 }
+
+    /* SUBMISSION CONFIRMATION CARD */
+    .submission-success-card {
+      background: radial-gradient(circle at top, rgba(45, 15, 15, 0.95), rgba(16, 8, 8, 0.98));
+      border: 1px solid #8f3226;
+      border-radius: 8px;
+      padding: 35px 24px;
+      margin: 25px 0;
+      text-align: center;
+      box-shadow: 0 0 35px rgba(220, 40, 40, 0.25), inset 0 0 30px rgba(0, 0, 0, 0.8);
+      animation: fadeInSuccess 0.4s ease-out;
+    }
+
+    @keyframes fadeInSuccess {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-icon {
+      font-size: 44px;
+      color: #e63939;
+      margin-bottom: 12px;
+      text-shadow: 0 0 18px rgba(230, 57, 57, 0.6);
+    }
+
+    .success-title {
+      font-size: 24px;
+      color: #f5c4a4;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .success-badge {
+      display: inline-block;
+      padding: 7px 18px;
+      background: rgba(140, 30, 25, 0.35);
+      border: 1px solid #b3392b;
+      border-radius: 20px;
+      color: #ff9f87;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      margin-bottom: 22px;
+      box-shadow: 0 0 12px rgba(179, 57, 43, 0.3);
+    }
+
+    .success-message {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #d1c1bd;
+      max-width: 580px;
+      margin: 0 auto 24px;
+    }
+
+    .relic-summary-box {
+      background: rgba(10, 5, 5, 0.85);
+      border: 1px solid #4a1f1b;
+      border-radius: 6px;
+      padding: 16px 20px;
+      max-width: 520px;
+      margin: 0 auto 24px;
+      text-align: left;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(80, 30, 25, 0.4);
+      font-size: 13px;
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      color: #a8948e;
+    }
+
+    .summary-val {
+      color: #f0ddd8;
+      font-weight: 600;
+      text-align: right;
+      word-break: break-all;
+    }
+
+    .relic-id-code {
+      color: #e69138;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .success-instructions {
+      max-width: 540px;
+      margin: 0 auto 28px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #b5a29d;
+      background: rgba(30, 15, 15, 0.4);
+      padding: 14px 18px;
+      border-left: 3px solid #b3392b;
+      border-radius: 4px;
+      text-align: left;
+    }
+
+    .success-instructions strong {
+      color: #f2cfb8;
+      letter-spacing: 1px;
+    }
+
+    .success-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .success-action-btn {
+      display: block;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-sizing: border-box;
+      padding: 15px;
+      background: linear-gradient(#832d22, #43110e);
+      border: 1px solid #a74230;
+      color: #f4d7c6;
+      text-decoration: none;
+      font: inherit;
+      letter-spacing: 2px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .success-action-btn:hover {
+      background: #a33425;
+      color: #ffffff;
+    }
+
+    .success-action-btn.secondary-btn {
+      background: rgba(35, 20, 20, 0.9);
+      border-color: #66332d;
+      color: #c9b3ad;
+    }
+
+    .success-action-btn.secondary-btn:hover {
+      background: rgba(55, 25, 25, 0.95);
+      border-color: #9e463a;
+      color: #f5d4cc;
+    }
+
+    .success-action-btn.tertiary-btn {
+      background: transparent;
+      border-color: transparent;
+      color: #8f7974;
+      font-size: 11px;
+      padding: 8px;
+    }
+
+    .success-action-btn.tertiary-btn:hover {
+      color: #d1c1bd;
+      text-decoration: underline;
+    }
+
   </style>
 </head>
 
@@ -303,11 +469,82 @@
         are agreed directly between the artist and buyer.
       </p>
 
+            <div id="submissionProgressStatus" style="display:none; margin: 15px 0; color: #efb58c; font-family: 'Cinzel', serif; font-size: 13px; text-align: center;">
+        ⏳ <span id="progressStepText">Processing merch artifacts and preparing review...</span>
+      </div>
+
+
       <button id="submitMerchButton" type="submit">
   SUBMIT MERCH FOR REVIEW
 </button>
 
     </form>
+
+        <!-- MERCH SUBMISSION SUCCESS CONFIRMATION CARD -->
+    <div id="submissionSuccessCard" class="submission-success-card" style="display: none;">
+      <div class="success-icon">☠</div>
+      <h2 class="success-title">MERCH REGISTERED &amp; SUBMITTED</h2>
+      
+      <div class="success-badge">
+        ⚡ STATUS: CURRENTLY IN CRYPT VAULT REVIEW
+      </div>
+
+      <p class="success-message">
+        Your merchandise item has been successfully transmitted and registered into the OSSVARIUM Crypt Archives. Photos, pricing, inventory, and details are safely stored and pending curator review.
+      </p>
+
+      <div class="relic-summary-box">
+        <div class="summary-row">
+          <span class="summary-label">Artist / Band:</span>
+          <span class="summary-val" id="succArtist">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Product Name:</span>
+          <span class="summary-val" id="succTitle">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Merch Item ID:</span>
+          <span class="summary-val relic-id-code" id="succMerchId">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Category:</span>
+          <span class="summary-val" id="succType">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Price:</span>
+          <span class="summary-val" id="succPrice">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Stock Quantity:</span>
+          <span class="summary-val" id="succQuantity">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Photos Attached:</span>
+          <span class="summary-val" id="succPhotos">—</span>
+        </div>
+      </div>
+
+      <div class="success-instructions">
+        <p><strong>What happens next?</strong></p>
+        <p>
+          Once approved by the crypt curators, your item will go live in the OSSVARIUM Merch Store where Pioneers can purchase it with Pi. Shipping arrangements are handled directly between you and the buyer.
+        </p>
+      </div>
+
+      <div class="success-actions">
+        <a href="my-relics.html" class="success-action-btn">
+          ☠ VIEW MY RELICS DASHBOARD
+        </a>
+        <button type="button" id="submitAnotherMerchBtn" class="success-action-btn secondary-btn">
+          + SUBMIT ANOTHER MERCH ITEM
+        </button>
+        <a href="merch.html" class="success-action-btn tertiary-btn">
+          ← VISIT MERCH STORE
+        </a>
+      </div>
+    </div>
+
+
   </main>
 
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
@@ -640,64 +877,152 @@ async function uploadMerchImage(file) {
 }
 
 // MERCH submission — authentication check
-document.getElementById("merchForm")
-  .addEventListener("submit", async function (event) {
-    event.preventDefault();
+const merchForm = document.getElementById("merchForm");
 
-    const submitButton = document.getElementById("submitMerchButton");
+merchForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
-if (submitButton.disabled) return;
+  const submitButton = document.getElementById("submitMerchButton");
+  const progressStatus = document.getElementById("submissionProgressStatus");
+  const progressText = document.getElementById("progressStepText");
+  const successCard = document.getElementById("submissionSuccessCard");
+  const creatorSession = localStorage.getItem("ossvariumCreatorSession");
 
-submitButton.disabled = true;
-submitButton.textContent = "SUBMITTING MERCH...";
+  if (submitButton.disabled) return;
 
-    const creatorSession = localStorage.getItem(
-      "ossvariumCreatorSession"
+  if (!merchCreatorPiAccessToken && !creatorSession) {
+    alert("Please connect your Pi account or verify your creator email.");
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "SUBMITTING MERCH...";
+  progressStatus.style.display = "block";
+  progressText.textContent = "Verifying artist access...";
+
+  const artistName = document.getElementById("artistName").value.trim();
+  const productName = document.getElementById("productName").value.trim();
+  const productType = document.getElementById("productType").value;
+  const description = document.getElementById("description").value.trim();
+  const pricePi = Number(document.getElementById("pricePi").value);
+  const quantity = Number(document.getElementById("quantity").value);
+  const sizes = document.getElementById("sizes").value
+    .split(",")
+    .map(size => size.trim())
+    .filter(Boolean);
+  const mainPhotoIndex = Number(
+    document.getElementById("mainPhotoIndex").value
+  );
+
+  try {
+    const authHeaders = {
+      "Content-Type": "application/json",
+      ...(merchCreatorPiAccessToken
+        ? { Authorization: `Bearer ${merchCreatorPiAccessToken}` }
+        : {}),
+      ...(creatorSession
+        ? { "x-creator-session": creatorSession }
+        : {})
+    };
+
+    const ownershipResponse = await fetch("/api/submit-merch", {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({ action: "check_artist_ownership", artistName })
+    });
+    const ownershipResult = await ownershipResponse.json();
+
+    if (!ownershipResponse.ok) {
+      throw new Error(
+        ownershipResult.error || "Artist ownership verification failed"
+      );
+    }
+
+    const photoFiles = Array.from(
+      document.getElementById("photos").files
     );
+    const photos = [];
 
-    
-if (!merchCreatorPiAccessToken && !creatorSession) {
-  alert("Please connect your Pi account or verify your creator email.");
-  submitButton.disabled = false;
-  submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
-  return;
-}
+    for (let index = 0; index < photoFiles.length; index++) {
+      progressText.textContent =
+        `Uploading product photo ${index + 1} of ${photoFiles.length}...`;
+      photos.push(await uploadMerchImage(photoFiles[index]));
+    }
 
+    progressText.textContent = "Saving your merch item for curator review...";
+    const response = await fetch("/api/submit-merch", {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({
+        artistName,
+        productName,
+        productType,
+        description,
+        pricePi,
+        quantity,
+        sizes,
+        photos,
+        mainPhotoIndex
+      })
+    });
+    const result = await response.json();
 
-    const productName = document.getElementById("productName").value.trim();
-const productType = document.getElementById("productType").value;
-const description = document.getElementById("description").value.trim();
-const pricePi = Number(document.getElementById("pricePi").value);
-const quantity = Number(document.getElementById("quantity").value);
+    if (!response.ok) {
+      throw new Error(result.error || "Merch submission failed");
+    }
 
-const sizes = document.getElementById("sizes").value
-  .split(",")
-  .map(size => size.trim())
-  .filter(Boolean);
+    const setSummary = (id, value) => {
+      const element = document.getElementById(id);
+      if (element) element.textContent = value;
+    };
 
-const mainPhotoIndex = Number(
-  document.getElementById("mainPhotoIndex").value
+    setSummary("succArtist", artistName || "—");
+    setSummary("succTitle", productName || "—");
+    setSummary(
+      "succMerchId",
+      result.merchId ? String(result.merchId) : "Submitted"
+    );
+    setSummary("succType", productType || "—");
+    setSummary("succPrice", `${pricePi} Pi`);
+    setSummary("succQuantity", String(quantity));
+    setSummary("succPhotos", String(photoFiles.length));
+
+    progressStatus.style.display = "none";
+    merchForm.style.display = "none";
+    successCard.style.display = "block";
+    successCard.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    console.error("Merch submission error:", error);
+    progressStatus.style.display = "none";
+    alert("MERCH SUBMISSION FAILED: " + error.message);
+    submitButton.disabled = false;
+    submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
+  }
+});
+
+// Allow the creator to start another merch submission
+const submitAnotherMerchButton = document.getElementById(
+  "submitAnotherMerchBtn"
 );
 
-try {
+if (submitAnotherMerchButton) {
+  submitAnotherMerchButton.addEventListener("click", function () {
+    const successCard = document.getElementById("submissionSuccessCard");
+    const submitButton = document.getElementById("submitMerchButton");
 
-  const ownershipResponse = await fetch("/api/submit-merch", {
-  method: "POST",
-      headers: {
-    "Content-Type": "application/json",
-    ...(merchCreatorPiAccessToken
-      ? { Authorization: `Bearer ${merchCreatorPiAccessToken}` }
-      : {}),
-    ...(creatorSession
-      ? { "x-creator-session": creatorSession }
-      : {})
-  },
+    merchForm.reset();
+    document.getElementById("photoPreview").innerHTML = "";
+    document.getElementById("mainPhotoIndex").value = "0";
+    document.getElementById("mainPhotoStatus").textContent =
+      "MAIN PHOTO: Photo 1";
+    successCard.style.display = "none";
+    merchForm.style.display = "block";
+    submitButton.disabled = false;
+    submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
+    merchForm.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
 
-  body: JSON.stringify({
-    action: "check_artist_ownership",
-    artistName: document.getElementById("artistName").value.trim()
-  })
-});
 
 const ownershipResult = await ownershipResponse.json();
 
@@ -762,14 +1087,6 @@ document.getElementById("mainPhotoStatus").textContent = "MAIN PHOTO: Photo 1";
 submitButton.disabled = false;
 submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
 
-} catch (error) {
-  console.error("Merch submission error:", error);
-  alert("MERCH SUBMISSION FAILED: " + error.message);
-  submitButton.disabled = false;
-  submitButton.textContent = "SUBMIT MERCH FOR REVIEW";
-}
-
-});
 
 </script>
 
