@@ -13,8 +13,11 @@ async function authenticatePiUser(){
             onIncompletePaymentFound
         );
 
+        if (piAuth?.accessToken) {
+            localStorage.setItem("ossvariumPiAccessToken", piAuth.accessToken);
+        }
 
-        return piAuth;
+    return piAuth;
 
     }catch(error){
 
@@ -1170,6 +1173,21 @@ async function updateOwnedTracks() {
 
     const purchases =
         await loadMyPurchases();
+
+         if (purchases && purchases.length > 0 && release && release.relicId) {
+        const ownsThis = purchases.some(item => item.relic_id === release.relicId);
+        if (ownsThis) {
+            let col = JSON.parse(localStorage.getItem("ossvariumCollection") || "[]");
+            if (!col.includes(release.relicId)) {
+                col.push(release.relicId);
+                localStorage.setItem("ossvariumCollection", JSON.stringify(col));
+                const colBtn = document.querySelector(".certificate-btn");
+                if (colBtn && colBtn.textContent.includes("ADD TO COLLECTION")) {
+                    colBtn.outerHTML = `<button class="certificate-btn collected-btn" disabled>✓ RELIC COLLECTED</button>`;
+                }
+            }
+        }
+    }
 
     const buyButtons =
     document.querySelectorAll(

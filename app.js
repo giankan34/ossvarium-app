@@ -30,7 +30,12 @@ async function loginWithPi() {
             "\nto the OSSVARIUM archives."
         );
 
+                await syncPurchasesWithCollection(auth.accessToken);
+
+
     } catch (error) {
+
+        
 
         console.error("Pi authentication failed:", error);
 
@@ -1638,6 +1643,77 @@ loadCatacombChallenge();
 loadCatacombStreak();
 loadCatacombLevel();
 loadQuote();
+autoSyncPiCollection();
+
+
+async function syncPurchasesWithCollection(explicitToken) {
+    const token = explicitToken || localStorage.getItem("ossvariumPiAccessToken");
+    if (!token) return;
+
+    try {
+        const response = await fetch("/api/my-purchases?mode=purchases", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+        if (data && data.success && Array.isArray(data.purchases)) {
+            let collection = JSON.parse(
+                localStorage.getItem("ossvariumCollection") || "[]"
+            );
+
+            let added = 0;
+            data.purchases.forEach(p => {
+                const rid = p.relic_id;
+                if (rid && typeof rid === "string" && rid.startsWith("OSV-") && !collection.includes(rid)) {
+                    collection.push(rid);
+                    added++;
+                }
+            });
+
+            if (added > 0) {
+                localStorage.setItem("ossvariumCollection", JSON.stringify(collection));
+                await loadCollection();
+                loadCatacombLevel();
+                loadCatacombMap();
+            }
+        }
+    } catch (err) {
+        console.warn("OSSVARIUM collection sync error:", err);
+    }
+}
+
+async function autoSyncPiCollection() {
+    const savedToken = localStorage.getItem("ossvariumPiAccessToken");
+    if (savedToken) {
+        await syncPurchasesWithCollection(savedToken);
+        return;
+    }
+
+    if (typeof Pi !== "undefined" && Pi.authenticate) {
+        try {
+            const auth = await Pi.authenticate(
+                ["username", "payments"],
+                function (payment) {}
+            );
+            if (auth && auth.accessToken) {
+                localStorage.setItem("ossvariumPiAccessToken", auth.accessToken);
+                if (auth.user) {
+                    localStorage.setItem("ossvariumPiUser", JSON.stringify({
+                        uid: auth.user.uid,
+                        username: auth.user.username
+                    }));
+                }
+                await syncPurchasesWithCollection(auth.accessToken);
+            }
+        } catch (e) {
+            console.log("Pi auto-auth skipped:", e);
+        }
+    }
+}
 
 function loadQuote(){
 
