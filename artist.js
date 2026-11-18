@@ -716,10 +716,55 @@ ${artist.links?.liveShows ? `
 
 </div>
 
+<div class="submission-box ritual-reviews-box" id="artistGuestbookSection">
+    <h2>☠ RITUAL GUESTBOOK ☠</h2>
+    <div class="ritual-subtitle">DEVOTIONS & TESTIMONIES FOR ${escapeHtml(artist.artist.toUpperCase())}</div>
+
+    <div class="ritual-inscribe-card">
+        <div id="guestbook-auth-status" class="inscribe-auth-status">
+            <span class="status-msg">Checking Pi connection...</span>
+        </div>
+
+        <div class="rating-picker-row">
+            <span class="rating-label">DEVOTION:</span>
+            <div class="skulls-picker" id="guestbook-skulls-picker">
+                <button type="button" class="skull-btn active" data-rating="1" title="1 Skull">☠</button>
+                <button type="button" class="skull-btn active" data-rating="2" title="2 Skulls">☠</button>
+                <button type="button" class="skull-btn active" data-rating="3" title="3 Skulls">☠</button>
+                <button type="button" class="skull-btn active" data-rating="4" title="4 Skulls">☠</button>
+                <button type="button" class="skull-btn active" data-rating="5" title="5 Skulls">☠</button>
+            </div>
+            <span id="guestbook-skulls-count-text" class="skulls-count-text">(5 / 5 Skulls)</span>
+        </div>
+
+        <textarea 
+            id="guestbook-review-text" 
+            class="ritual-review-textarea" 
+            rows="3" 
+            maxlength="500" 
+            placeholder="Inscribe your words of devotion for this artist into the crypt archives..."></textarea>
+
+        <div class="inscribe-actions-row">
+            <button type="button" id="submit-guestbook-btn" class="submit-btn ritual-inscribe-btn">
+                INSCRIBE DEVOTION
+            </button>
+        </div>
+
+        <div id="guestbook-status-msg" class="ritual-review-status"></div>
+    </div>
+
+    <div class="chronicles-heading">ARCHIVED DEVOTIONS</div>
+    <div id="guestbook-reviews-container" class="ritual-reviews-list">
+        <div class="reviews-loading-text">Summoning chronicles from the crypt...</div>
+    </div>
+</div>
+
+
         `;
 
         initRitualVaultLightbox(artistPhotos, artist.artist);
         initRitualVaultCarousel(artistPhotos, artist.artist);
+        initializeArtistGuestbook(artist.artist);
 
 
         try {
@@ -774,3 +819,263 @@ if (merchResponse.ok) {
 }
 
 loadArtist();
+
+/* =========================================
+   OSSVARIUM - ARTIST GUESTBOOK LOGIC
+   ========================================= */
+
+let guestbookSkullRating = 5;
+let guestbookPiAuth = null;
+
+async function authenticateGuestbookPiUser() {
+    if (typeof Pi === "undefined") {
+        console.warn("Pi SDK not loaded");
+        return null;
+    }
+    try {
+        guestbookPiAuth = await Pi.authenticate(
+            ["username", "payments"],
+            function onIncompletePaymentFound(payment) {}
+        );
+        return guestbookPiAuth;
+    } catch (error) {
+        console.error("Pi authentication failed:", error);
+        return null;
+    }
+}
+
+function updateGuestbookSkullPickerUI(rating) {
+    guestbookSkullRating = rating;
+    const picker = document.getElementById("guestbook-skulls-picker");
+    const countText = document.getElementById("guestbook-skulls-count-text");
+    if (!picker) return;
+
+    const buttons = picker.querySelectorAll(".skull-btn");
+    buttons.forEach(function(btn) {
+        const btnRating = parseInt(btn.getAttribute("data-rating"), 10);
+        if (btnRating <= rating) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+    });
+
+    if (countText) {
+        countText.textContent = "(" + rating + " / 5 Skulls)";
+    }
+}
+
+function updateGuestbookAuthStatus() {
+    const authStatusEl = document.getElementById("guestbook-auth-status");
+    if (!authStatusEl) return;
+
+    if (guestbookPiAuth && guestbookPiAuth.user && guestbookPiAuth.user.username) {
+        authStatusEl.innerHTML = `
+            <span class="auth-logged-in">
+                Inscribing as <span class="auth-highlight">@${escapeHtml(guestbookPiAuth.user.username)}</span>
+            </span>
+        `;
+    } else {
+        authStatusEl.innerHTML = `
+            <span>Connect your Pi account to inscribe a devotion: </span>
+            <button type="button" id="connect-pi-guestbook-btn" class="connect-pi-mini-btn">CONNECT PI</button>
+        `;
+
+        const connectBtn = document.getElementById("connect-pi-guestbook-btn");
+        if (connectBtn) {
+            connectBtn.addEventListener("click", async function() {
+                connectBtn.disabled = true;
+                connectBtn.textContent = "CONNECTING...";
+                try {
+                    await authenticateGuestbookPiUser();
+                    updateGuestbookAuthStatus();
+                } catch (e) {
+                    console.error("Guestbook Pi auth error:", e);
+                } finally {
+                    if (connectBtn) {
+                        connectBtn.disabled = false;
+                        connectBtn.textContent = "CONNECT PI";
+                    }
+                }
+            });
+        }
+    }
+}
+
+async function loadArtistGuestbook(artistName) {
+    const container = document.getElementById("guestbook-reviews-container");
+    if (!container || !artistName) return;
+
+    try {
+        const response = await fetch("/api/approved-relics?action=reviews&artist=" + encodeURIComponent(artistName) + "&type=artist");
+        if (!response.ok) {
+            throw new Error("Failed to summon devotions");
+        }
+
+        const data = await response.json();
+        const reviews = data.reviews || [];
+
+        if (reviews.length === 0) {
+            container.innerHTML = `
+                <div class="empty-reviews-box">
+                    <div>No devotions have been inscribed for this artist yet.</div>
+                    <div class="empty-sub">Be the first of the underground faithful to leave your mark.</div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = reviews.map(function(r) {
+            const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric"
+            }) : "";
+
+            const ratingCount = Math.max(1, Math.min(5, parseInt(r.rating, 10) || 5));
+            const skullsHtml = "☠".repeat(ratingCount);
+
+            return `
+                <div class="review-entry-card ${r.is_verified_keeper ? "is-keeper" : ""}">
+                    <div class="review-entry-header">
+                        <div class="review-user-info">
+                            <span class="review-username">@${escapeHtml(r.pi_username || "Anonymous")}</span>
+                            ${r.is_verified_keeper ? `<span class="verified-keeper-badge">☠ VERIFIED RELIC KEEPER</span>` : ""}
+                        </div>
+                        <div class="review-meta">
+                            <span class="review-skulls-rating" title="${ratingCount} / 5 Skulls">${skullsHtml}</span>
+                            <span class="review-date">${dateStr}</span>
+                        </div>
+                    </div>
+                    <div class="review-comment-body">${escapeHtml(r.comment)}</div>
+                </div>
+            `;
+        }).join("");
+
+    } catch (err) {
+        console.error("Error loading artist guestbook:", err);
+        container.innerHTML = `<div class="reviews-error-text">The crypt archives are currently veiled. Could not load devotions.</div>`;
+    }
+}
+
+function initializeArtistGuestbook(artistName) {
+    guestbookSkullRating = 5;
+
+    const picker = document.getElementById("guestbook-skulls-picker");
+    if (picker) {
+        const buttons = picker.querySelectorAll(".skull-btn");
+        buttons.forEach(function(btn) {
+            btn.addEventListener("click", function() {
+                const rating = parseInt(btn.getAttribute("data-rating"), 10);
+                updateGuestbookSkullPickerUI(rating);
+            });
+        });
+    }
+
+    if (typeof Pi !== "undefined") {
+        try {
+            Pi.init({ version: "2.0" });
+        } catch (e) {}
+    }
+    updateGuestbookAuthStatus();
+
+    loadArtistGuestbook(artistName);
+
+    const submitBtn = document.getElementById("submit-guestbook-btn");
+    const commentInput = document.getElementById("guestbook-review-text");
+    const statusMsg = document.getElementById("guestbook-status-msg");
+
+    if (submitBtn && commentInput) {
+        submitBtn.addEventListener("click", async function() {
+            if (statusMsg) {
+                statusMsg.className = "ritual-review-status";
+                statusMsg.textContent = "";
+            }
+
+            if (!guestbookPiAuth || !guestbookPiAuth.accessToken) {
+                if (statusMsg) {
+                    statusMsg.className = "ritual-review-status status-msg";
+                    statusMsg.textContent = "Authenticating with Pi...";
+                }
+                try {
+                    await authenticateGuestbookPiUser();
+                    updateGuestbookAuthStatus();
+                } catch (e) {
+                    console.error("Pi Auth failed:", e);
+                }
+            }
+
+            if (!guestbookPiAuth || !guestbookPiAuth.accessToken) {
+                if (statusMsg) {
+                    statusMsg.className = "ritual-review-status status-err";
+                    statusMsg.textContent = "You must connect your Pi account in Pi Browser to inscribe a devotion.";
+                }
+                return;
+            }
+
+            const comment = (commentInput.value || "").trim();
+            if (comment.length < 3) {
+                if (statusMsg) {
+                    statusMsg.className = "ritual-review-status status-err";
+                    statusMsg.textContent = "Your devotion must be at least 3 characters long.";
+                }
+                commentInput.focus();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "INSCRIBING...";
+            if (statusMsg) {
+                statusMsg.className = "ritual-review-status status-msg";
+                statusMsg.textContent = "Inscribing devotion into the crypt archives...";
+            }
+
+            try {
+                const response = await fetch("/api/approved-relics", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + guestbookPiAuth.accessToken
+                    },
+                    body: JSON.stringify({
+                        action: "inscribe_review",
+                        target_type: "artist",
+                        artist_name: artistName,
+                        rating: guestbookSkullRating,
+                        comment: comment
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Failed to inscribe devotion");
+                }
+
+                commentInput.value = "";
+                updateGuestbookSkullPickerUI(5);
+
+                if (statusMsg) {
+                    statusMsg.className = "ritual-review-status status-ok";
+                    statusMsg.textContent = "☠ Your devotion has been permanently inscribed in the crypt!";
+                }
+
+                await loadArtistGuestbook(artistName);
+
+                setTimeout(function() {
+                    if (statusMsg) statusMsg.textContent = "";
+                }, 6000);
+
+            } catch (err) {
+                console.error("Submission error:", err);
+                if (statusMsg) {
+                    statusMsg.className = "ritual-review-status status-err";
+                    statusMsg.textContent = err.message || "The ritual failed. Please try again.";
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "INSCRIBE DEVOTION";
+            }
+        });
+    }
+}
