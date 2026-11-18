@@ -18,13 +18,14 @@ async function loadReleases(){
         const selectedGenre =
         params.get("genre");
 
-        const filteredReleases =
+                const filteredReleases =
         selectedGenre
             ? releases.filter(
                 release =>
-                release.genre === selectedGenre
+                String(release.genre || "").trim().toLowerCase() === String(selectedGenre).trim().toLowerCase()
            )
            : releases;
+
 
            const homeReleases =
     selectedGenre
@@ -36,12 +37,21 @@ async function loadReleases(){
         const totalReleases =
         releases.length;
 
+                function formatGenreTitle(raw) {
+            if (!raw) return "Unknown";
+            return String(raw).trim()
+                .toLowerCase()
+                .split(/\s+/)
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(" ");
+        }
+
         const totalGenres =
         new Set(
             releases.map(
                 release =>
-                release.genre
-            )
+                String(release.genre || "").trim().toLowerCase()
+            ).filter(Boolean)
         ).size;
 
         const totalSupporters =
@@ -57,15 +67,18 @@ async function loadReleases(){
 
 releases.forEach((release)=>{
 
-    if(!genreCounts[release.genre]){
+    const gName = formatGenreTitle(release.genre);
 
-        genreCounts[release.genre] = 0;
+    if(!genreCounts[gName]){
+
+        genreCounts[gName] = 0;
 
     }
 
-    genreCounts[release.genre]++;
+    genreCounts[gName]++;
 
 });
+
         releaseContainer.innerHTML = "";
         releaseContainer.innerHTML += `
 
@@ -635,21 +648,24 @@ releases[
 
 }
         
-        const genres = {};
+                const genres = {};
 
         homeReleases.forEach((release)=>{
 
-            if(!genres[release.genre]){
+            const gName = formatGenreTitle(release.genre);
 
-                genres[release.genre] = [];
+            if(!genres[gName]){
+
+                genres[gName] = [];
 
             }
 
-            genres[release.genre].push(
+            genres[gName].push(
                 release
             );
 
         });
+
 
         Object.keys(genres)
         .sort()

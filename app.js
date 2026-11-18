@@ -943,40 +943,40 @@ async function loadGenres(){
     const releases =
     await loadOssvariumCatalog();
 
-    const genres =
-    [...new Set(
-        releases.map(
-            item => item.genre
-        )
-    )];
+    function formatGenre(raw) {
+        if (!raw) return "Unknown";
+        return String(raw).trim()
+            .toLowerCase()
+            .split(/\s+/)
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+    }
 
-    vault.innerHTML =
+    const genreCounts = {};
+    releases.forEach(item => {
+        const name = formatGenre(item.genre);
+        if (!genreCounts[name]) genreCounts[name] = 0;
+        genreCounts[name]++;
+    });
 
-    genres.map(genre => {
-
-        const count =
-        releases.filter(
-            item =>
-            item.genre === genre
-        ).length;
-
-        return `
+    vault.innerHTML = Object.keys(genreCounts)
+        .sort()
+        .map(genre => `
 
         <a
         class="submit-btn"
         href="genre.html?genre=${encodeURIComponent(genre)}">
 
-            ☠ ${genre} (${count})
+            ☠ ${genre} (${genreCounts[genre]})
 
         </a>
 
         <br><br>
 
-        `;
-
-    }).join("");
+        `).join("");
 
 }
+
 
 async function loadArtists(){
 
@@ -1043,12 +1043,13 @@ async function loadCatacombMap(){
         )
     ).size;
 
-    const genres =
+        const genres =
     new Set(
         releases.map(
-            item => item.genre
-        )
+            item => String(item.genre || "").trim().toLowerCase()
+        ).filter(Boolean)
     ).size;
+
 
     const countries =
     new Set(
