@@ -1,4 +1,5 @@
 const { neon } = require("@neondatabase/serverless");
+const axios = require("axios");
 
 const {
     S3Client,
@@ -116,14 +117,60 @@ module.exports = async function handler(req, res) {
             res.setHeader("Cache-Control", "no-store");
 
             try {
-                const sql = neon(process.env.POSTGRES_URL);
                 const body = req.body || {};
 
+                // ----------------------------------------------------
+                // 1. EXTRACT & VERIFY PI ACCESS TOKEN SERVER-SIDE
+                // ----------------------------------------------------
+                const authHeader = req.headers?.authorization || "";
+                let accessToken = null;
+
+                if (authHeader.startsWith("Bearer ")) {
+                    accessToken = authHeader.substring(7).trim();
+                } else if (body.accessToken && typeof body.accessToken === "string") {
+                    accessToken = body.accessToken.trim();
+                }
+
+                if (!accessToken) {
+                    return res.status(401).json({
+                        error: "Pi authentication is required to inscribe a review"
+                    });
+                }
+
+                let verifiedPiUser = null;
+                try {
+                    const meResponse = await axios.get("https://api.minepi.com/v2/me", {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`
+                        },
+                        timeout: 8000
+                    });
+                    verifiedPiUser = meResponse.data;
+                } catch (piErr) {
+                    console.error("Pi user verification failed:", piErr.response?.data || piErr.message);
+                    return res.status(401).json({
+                        error: "Invalid or expired Pi authentication session"
+                    });
+                }
+
+                const verifiedPiUid = verifiedPiUser?.uid;
+                const verifiedPiUsername = sanitizeText(
+                    String(verifiedPiUser?.username || "").replace(/^@/, ""),
+                    100
+                );
+
+                if (!verifiedPiUid || !verifiedPiUsername) {
+                    return res.status(401).json({
+                        error: "Could not verify authentic Pi user identity"
+                    });
+                }
+
+                // ----------------------------------------------------
+                // 2. VALIDATE REVIEW PAYLOAD
+                // ----------------------------------------------------
                 const target_type = body.target_type === "artist" ? "artist" : "relic";
                 const relic_id = body.relic_id ? sanitizeText(String(body.relic_id), 100) : null;
                 const artist_name = sanitizeText(String(body.artist_name || ""), 150);
-                const pi_uid = sanitizeText(String(body.pi_uid || ""), 100);
-                const pi_username = sanitizeText(String(body.pi_username || "").replace(/^@/, ""), 100);
                 const comment = sanitizeText(String(body.comment || ""), 500);
 
                 let rating = null;
@@ -138,10 +185,6 @@ module.exports = async function handler(req, res) {
                     return res.status(400).json({ error: "Artist name is required" });
                 }
 
-                if (!pi_uid || !pi_username) {
-                    return res.status(401).json({ error: "Pi authentication is required to inscribe a review" });
-                }
-
                 if (comment.length < 3) {
                     return res.status(400).json({ error: "Testimony must be at least 3 characters long" });
                 }
@@ -154,23 +197,34 @@ module.exports = async function handler(req, res) {
                     rating = 5;
                 }
 
+                const sql = neon(process.env.POSTGRES_URL);
+
+                // ----------------------------------------------------
+                // 3. RATE LIMITING (BY VERIFIED PI UID)
+                // ----------------------------------------------------
                 const recent = await sql`
                     SELECT id FROM ritual_reviews
-                    WHERE pi_uid = ${pi_uid}
+                    WHERE pi_uid = ${verifiedPiUid}
                       AND created_at > NOW() - INTERVAL '10 seconds'
                     LIMIT 1;
                 `;
 
                 if (recent.length > 0) {
-                    return res.status(429).json({ error: "Please wait a few seconds before inscribing another testimony." });
+                    return res.status(429).json({
+                        error: "Please wait a few seconds before inscribing another testimony."
+                    });
                 }
 
+                // ----------------------------------------------------
+                // 4. VERIFY "VERIFIED RELIC KEEPER" BADGE VIA PURCHASES
+                // ----------------------------------------------------
                 let isVerifiedKeeper = false;
+
                 if (target_type === "relic" && relic_id) {
                     try {
                         const purchases = await sql`
                             SELECT 1 FROM purchases
-                            WHERE user_uid = ${pi_uid}
+                            WHERE user_uid = ${verifiedPiUid}
                               AND relic_id = ${relic_id}
                             LIMIT 1;
                         `;
@@ -178,10 +232,29 @@ module.exports = async function handler(req, res) {
                             isVerifiedKeeper = true;
                         }
                     } catch (checkErr) {
-                        console.warn("Verified keeper check warning:", checkErr);
+                        console.warn("Verified keeper check warning (relic):", checkErr);
+                    }
+                } else if (target_type === "artist" && artist_name) {
+                    try {
+                        const cleanArtist = artist_name.trim().toLowerCase();
+                        const purchases = await sql`
+                            SELECT 1 FROM purchases p
+                            INNER JOIN relics r ON r.relic_id = p.relic_id
+                            WHERE p.user_uid = ${verifiedPiUid}
+                              AND LOWER(TRIM(r.artist)) = ${cleanArtist}
+                            LIMIT 1;
+                        `;
+                        if (purchases.length > 0) {
+                            isVerifiedKeeper = true;
+                        }
+                    } catch (checkErr) {
+                        console.warn("Verified keeper check warning (artist):", checkErr);
                     }
                 }
 
+                // ----------------------------------------------------
+                // 5. INSCRIBE REVIEW INTO NEON
+                // ----------------------------------------------------
                 const inserted = await sql`
                     INSERT INTO ritual_reviews (
                         target_type,
@@ -196,8 +269,8 @@ module.exports = async function handler(req, res) {
                         ${target_type},
                         ${relic_id},
                         ${artist_name},
-                        ${pi_uid},
-                        ${pi_username},
+                        ${verifiedPiUid},
+                        ${verifiedPiUsername},
                         ${rating},
                         ${comment},
                         ${isVerifiedKeeper}
