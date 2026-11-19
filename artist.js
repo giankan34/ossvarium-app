@@ -325,6 +325,57 @@ function safeArtistUrl(value) {
   } catch { return ""; }
 }
 
+const KNOWN_ARTIST_LINEUPS = {
+    "abominy": [
+        { name: "Víctor Miranda", role: "Bass, Vocals" },
+        { name: "Cristián Contreras", role: "Drums" },
+        { name: "Lleras Jorquera", role: "Guitars" },
+        { name: "Sebastián Rivera", role: "Guitars" }
+    ],
+    "krushya": [
+        { name: "Vagellis Papadopoulos", role: "Vocals, Bass, Rhythm Guitars" },
+        { name: "Chris Kalogeropoulos", role: "Lead Guitars" },
+        { name: "Hellgrinder", role: "Drums" }
+    ],
+    "necrophobic revulsion": [
+        { name: "Vasilis", role: "Vocals" },
+        { name: "Marios", role: "Guitars" },
+        { name: "Giorgos", role: "Bass" },
+        { name: "Dimitris", role: "Drums" }
+    ]
+};
+
+function extractArtistLineup(artist) {
+    if (!artist) return [];
+    const raw = artist.lineup || artist.members || artist.links?.lineup || artist.links?.members;
+    if (Array.isArray(raw) && raw.length > 0) {
+        return raw.map(item => {
+            if (typeof item === "object" && item !== null) {
+                return {
+                    name: String(item.name || item.member || "").trim(),
+                    role: String(item.role || item.instrument || "").trim()
+                };
+            }
+            if (typeof item === "string" && item.trim()) {
+                const parts = item.split(/[-–—:]/);
+                return { name: parts[0]?.trim() || "", role: parts.slice(1).join("-")?.trim() || "" };
+            }
+            return null;
+        }).filter(m => m && m.name);
+    }
+    if (typeof raw === "string" && raw.trim()) {
+        return raw.split(/\r?\n/).map(line => {
+            const clean = line.trim();
+            if (!clean) return null;
+            const parts = clean.split(/[-–—:]/);
+            return { name: parts[0]?.trim() || "", role: parts.slice(1).join("-")?.trim() || "" };
+        }).filter(m => m && m.name);
+    }
+    const artistKey = String(artist.artist || "").trim().toLowerCase();
+    return KNOWN_ARTIST_LINEUPS[artistKey] || [];
+}
+
+
 async function loadArtist(){
 
     try{
@@ -618,9 +669,28 @@ ${(() => {
 `;
 })()}
 
-
-
-
+${(() => {
+    const lineup = extractArtistLineup(artist);
+    if (!lineup || lineup.length === 0) return "";
+    return `
+<div class="submission-box ritual-lineup-box">
+    <h2>☠ RITUAL LINEUP ☠</h2>
+    <div class="submission-text">
+        <div class="ritual-lineup-grid">
+            ${lineup.map(m => `
+                <div class="ritual-member-card">
+                    <div class="ritual-member-icon">⛧</div>
+                    <div class="ritual-member-info">
+                        <div class="ritual-member-name">${escapeHtml(m.name)}</div>
+                        <div class="ritual-member-role">${escapeHtml(m.role || "Ritual Member")}</div>
+                    </div>
+                </div>
+            `).join("")}
+        </div>
+    </div>
+</div>
+`;
+})()}
 
 
 <div class="submission-box" id="artistMerchSection" style="display:none;">
