@@ -143,40 +143,28 @@ fill="none"
 </div>
 <div class="visualizer-box">
 
+  <div class="screen" id="screenText">
+    <span class="signal-pentagram">⛧</span>
+    CATACOMB FREQUENCY // 66.6 MHz
+    <span class="signal-pentagram">⛧</span>
+    <div class="frequency-subtext">LISTEN &amp; DISCOVER QUEST • THE CRYPT ORACLE</div>
+  </div>
 
-  <div
-class="screen"
-id="screenText">
+  <canvas id="visualizer"></canvas>
 
-<span class="signal-pentagram">⛧</span>
-CATACOMB SIGNAL ACTIVE
-<span class="signal-pentagram">⛧</span>
-
-</div>
-
-<canvas id="visualizer"></canvas>
-
-<div class="signal-transmission">
-
-    <div class="signal-status">
-        SEARCHING THE CATACOMBS...
+  <div class="signal-transmission">
+    <div class="signal-status" id="frequencyStatus">
+      SEARCHING THE CATACOMBS...
     </div>
 
-    <div
-        id="signalRelease"
-        class="signal-release">
-    </div>
+    <div id="signalRelease" class="signal-release"></div>
+  </div>
 
+  <button class="btn" onclick="loginWithPi()">
+    ENTER WITH PI
+  </button>
 </div>
 
-<button
-class="btn"
-onclick="loginWithPi()">
-
-ENTER WITH PI
-
-</button>
-</div>
 <div class="submission-box">
 
     <input
