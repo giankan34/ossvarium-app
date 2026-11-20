@@ -208,6 +208,16 @@
     placeholder="Short artist biography...">
 </textarea>
 
+<label for="bandLineup" style="margin-top:14px;">Band Members / Ritual Lineup (Optional)</label>
+<textarea
+    id="bandLineup"
+    rows="4"
+    placeholder="One member per line, e.g.:&#10;Víctor Miranda - Bass, Vocals&#10;Cristián Contreras - Drums&#10;Lleras Jorquera - Guitars"></textarea>
+<div style="font-size:0.8rem; color:#888; margin-top:-6px; margin-bottom:14px;">
+    Format: Name - Role / Instrument (one per line)
+</div>
+
+
 <label for="artistImage">Artist Image</label>
 <input
     type="file"
@@ -474,6 +484,12 @@
                         <span class="summary-val" id="succPhotos">—</span>
                     </div>
                 </div>
+
+                                    <div class="summary-row">
+                        <span class="summary-label">Ritual Lineup:</span>
+                        <span class="summary-val" id="succLineup">—</span>
+                    </div>
+
 
                 <div class="success-instructions">
                     <p><strong>What happens next?</strong></p>
@@ -947,6 +963,21 @@ document.getElementById("relicSubmissionForm")
             .filter(Boolean);
         const allVaultPhotos = [...uploadedVaultPhotos, ...externalVaultUrls];
 
+                const lineupText = document.getElementById("bandLineup")?.value || "";
+        const submittedLineup = lineupText
+            .split(/[\r\n]+/)
+            .map(line => line.trim())
+            .filter(Boolean)
+            .map(line => {
+                const parts = line.split(/[-–—:]/);
+                return {
+                    name: parts[0]?.trim() || "",
+                    role: parts.slice(1).join("-")?.trim() || ""
+                };
+            })
+            .filter(m => m.name);
+
+
         if (progressText) progressText.innerText = "Depositing relic into Crypt Archives...";
 
         const submission = {
@@ -973,6 +1004,7 @@ document.getElementById("relicSubmissionForm")
             merch: document.getElementById("merch").value.trim(),
             liveShows: document.getElementById("liveShows").value.trim(),
             photos: allVaultPhotos,
+            lineup: submittedLineup,
             publicEmail: document.getElementById("publicEmail").value.trim(),
             contactEmail: document.getElementById("contactEmail").value.trim(),
             supportPi: Number(document.getElementById("supportPi").value || 0),
@@ -1010,6 +1042,10 @@ document.getElementById("relicSubmissionForm")
         if (relicIdEl) relicIdEl.innerText = relicId;
         if (tracksEl) tracksEl.innerText = `${tracks.length} track(s) safely vaulted`;
         if (photosEl) photosEl.innerText = `${allVaultPhotos.length} photo(s) attached`;
+
+                const lineupEl = document.getElementById("succLineup");
+        if (lineupEl) lineupEl.innerText = submittedLineup.length > 0 ? `${submittedLineup.length} member(s) listed` : "Not provided";
+
 
         // Απόκρυψη της φόρμας και των εισαγωγικών κειμένων
         this.style.display = "none";

@@ -1689,7 +1689,37 @@ if (verifiedCreatorPiUid) {
             submittedPhotos = req.body.links.photos;
         }
 
+                let submittedLineup = [];
+        const rawLineup = req.body.lineup || req.body.links?.lineup || req.body.members;
+        if (Array.isArray(rawLineup)) {
+            submittedLineup = rawLineup.map(item => {
+                if (typeof item === "object" && item !== null) {
+                    const name = String(item.name || item.member || "").trim();
+                    const role = String(item.role || item.instrument || "").trim();
+                    return name ? { name, role } : null;
+                }
+                if (typeof item === "string" && item.trim()) {
+                    const parts = item.split(/[-–—:]/);
+                    const name = parts[0]?.trim() || "";
+                    const role = parts.slice(1).join("-")?.trim() || "";
+                    return name ? { name, role } : null;
+                }
+                return null;
+            }).filter(Boolean);
+        } else if (typeof rawLineup === "string" && rawLineup.trim()) {
+            submittedLineup = rawLineup.split(/[\r\n]+/).map(line => {
+                const clean = line.trim();
+                if (!clean) return null;
+                const parts = clean.split(/[-–—:]/);
+                const name = parts[0]?.trim() || "";
+                const role = parts.slice(1).join("-")?.trim() || "";
+                return name ? { name, role } : null;
+            }).filter(Boolean);
+        }
+
+
         const links = {
+            lineup: submittedLineup,
             bandcamp: bandcamp || "",
             spotify: spotify || "",
             youtube: youtube || "",
