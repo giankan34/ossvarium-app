@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Ritual Inquiries | OSSVARIUM</title>
+    <meta name="description" content="Commune with the Archon of Ossvarium. Inquiries for band submissions, label distribution, radio show proposals, physical orders, and Pi ecosystem collaborations.">
+    <link rel="icon" type="image/png" href="images/ui/ossvarium-crest.png">
+    <meta name="theme-color" content="#090606">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ossvarium.com/contact.html">
+    <meta property="og:title" content="Contact & Ritual Inquiries | OSSVARIUM">
+    <meta property="og:description" content="Transmit your message to the Archon. Underground music submissions, physical relics, radio pitches, and official communications.">
+    <meta property="og:image" content="https://ossvarium.com/images/ui/ossvarium-crest.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Contact & Ritual Inquiries | OSSVARIUM">
+    <meta name="twitter:description" content="Underground music submissions, physical relics, radio pitches, and official communications.">
+    <meta name="twitter:image" content="https://ossvarium.com/images/ui/ossvarium-crest.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Pirata+One&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        :root {
+            --blood-red: #8a2b2b;
+            --glowing-red: #e23a3a;
+            --dark-bg: #090606;
+            --panel-bg: rgba(20, 10, 10, 0.92);
+            --parchment: #e8d8ce;
+            --gold-accent: #c5a059;
+            --border-glow: rgba(138, 43, 43, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #060404 url('images/ui/catacomb-bg.jpg') repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            color: var(--parchment);
+            font-family: 'Cinzel', serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .contact-container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 24px 16px 80px;
+        }
+
+        .contact-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0 24px;
+            border-bottom: 1px solid rgba(138, 43, 43, 0.4);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .nav-links-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            color: var(--gold-accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--glowing-red);
+            transform: translateY(-1px);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-crest {
+            width: 80px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px rgba(226, 58, 58, 0.4));
+        }
+
+        .subtitle-freq {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            color: var(--gold-accent);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .page-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 2.2rem;
+            margin: 0 0 12px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(138, 43, 43, 0.8);
+            letter-spacing: 3px;
+        }
+
+        .page-desc {
+            font-size: 0.95rem;
+            color: #b5a49c;
+            max-width: 680px;
+            margin: 0 auto;
+            line-height: 1.6;
+            letter-spacing: 1px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 820px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .page-title {
+                font-size: 1.7rem;
+            }
+        }
+
+        .catacomb-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(138, 43, 43, 0.2);
+            position: relative;
+        }
+
+        .card-header-title {
+            font-family: 'Cinzel Decorative', cursive;
+            color: var(--gold-accent);
+            font-size: 1.25rem;
+            margin: 0 0 16px;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(138, 43, 43, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .direct-email-box {
+            background: #090303;
+            border: 1px solid #4a1818;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .email-label {
+            font-size: 0.75rem;
+            color: #888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .email-address-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .email-link {
+            color: var(--glowing-red);
+            font-size: 1.15rem;
+            text-decoration: none;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            transition: color 0.2s;
+        }
+
+        .email-link:hover {
+            color: #ff6b6b;
+            text-decoration: underline;
+        }
+
+        .copy-btn {
+            background: linear-gradient(180deg, #421212 0%, #1f0808 100%);
+            border: 1px solid var(--blood-red);
+            color: var(--parchment);
+            padding: 6px 14px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--glowing-red);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(226, 58, 58, 0.4);
+        }
+
+        .transmission-channels-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .channel-item {
+            border-left: 2px solid var(--blood-red);
+            padding-left: 14px;
+        }
+
+        .channel-name {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .channel-desc {
+            font-size: 0.82rem;
+            color: #999;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .response-seal {
+            background: rgba(138, 43, 43, 0.15);
+            border: 1px dashed rgba(197, 160, 89, 0.4);
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--gold-accent);
+            line-height: 1.5;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* FORM STYLING */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--gold-accent);
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: #090303;
+            border: 1px solid #4a1818;
+            color: #fff;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--glowing-red);
+            box-shadow: 0 0 10px rgba(226, 58, 58, 0.4);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 130px;
+            line-height: 1.5;
+        }
+
+        .form-select option {
+            background: #140a0a;
+            color: #fff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(180deg, #8a2b2b 0%, #421212 100%);
+            border: 1px solid var(--glowing-red);
+            color: #fff;
+            padding: 14px 24px;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.05rem;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(180deg, #b83737 0%, #5a1818 100%);
+            box-shadow: 0 0 20px rgba(226, 58, 58, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-status-message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .status-success {
+            background: rgba(30, 80, 40, 0.3);
+            border: 1px solid #4ade80;
+            color: #86efac;
+        }
+
+        .status-error {
+            background: rgba(120, 20, 20, 0.3);
+            border: 1px solid var(--glowing-red);
+            color: #fca5a5;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 80px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(138, 43, 43, 0.3);
+            text-align: center;
+            font-size: 0.85rem;
+            color: #777;
+            letter-spacing: 1px;
+        }
+
+        .footer-links {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--gold-accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--glowing-red);
+        }
+    </style>
+
+    <!-- Vercel Web Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+
+<div class="contact-container">
+
+    <!-- NAVIGATION BAR -->
+    <div class="contact-nav-bar">
+        <a href="index.html" class="back-link">
+            ← RETURN TO OSSVARIUM
+        </a>
+        <div class="nav-links-group">
+            <a href="radio.html" class="back-link">RADIO 📻</a>
+            <a href="catalog.html" class="back-link">CATALOG ⛧</a>
+            <a href="merch.html" class="back-link">MERCH ⚔️</a>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="page-header">
+        <img src="images/ui/ossvarium-crest.png" alt="Ossvarium Crest" class="header-crest">
+        <div class="subtitle-freq">ARCHON COMMUNION // OFFICIAL DISPATCH</div>
+        <h1 class="page-title">CONTACT & RITUAL INQUIRIES</h1>
+        <p class="page-desc">
+            Direct channels to the Ossvarium Archon. Submit underground relics, propose radio transmissions, coordinate physical consignments, or request ritual assistance.
+        </p>
+    </header>
+
+    <!-- MAIN TWO-COLUMN GRID -->
+    <div class="contact-grid">
+
+        <!-- LEFT COLUMN: DIRECT INFO & GUIDELINES -->
+        <div class="catacomb-card">
+            <h2 class="card-header-title">DIRECT CHANNELS</h2>
+
+            <div class="direct-email-box">
+                <span class="email-label">OFFICIAL SANCTUM EMAIL</span>
+                <div class="email-address-row">
+                    <a href="mailto:contact@ossvarium.com" class="email-link">contact@ossvarium.com</a>
+                    <button type="button" class="copy-btn" id="copyEmailBtn" onclick="copyContactEmail()">COPY</button>
+                </div>
+            </div>
+
+            <ul class="transmission-channels-list">
+                <li class="channel-item">
+                    <div class="channel-name">⛧ Relic & Band Submissions</div>
+                    <p class="channel-desc">Artists and underground projects seeking archive inscription. Provide streaming links, audio master, album art, and band manifest.</p>
+                </li>
+                <li class="channel-item">
+                    <div class="channel-name">📻 Catacomb Radio Transmissions</div>
+                    <p class="channel-desc">Curators, independent DJs, and occult podcasters looking to host broadcasts on Ossvarium Radio 24/7.</p>
+                </li>
+                <li class="channel-item">
+                    <div class="channel-name">⚔️ Physical Relics & Merch</div>
+                    <p class="channel-desc">Cassettes, vinyl, apparel distribution, fulfillment inquiries, and verified artisan collaborations.</p>
+                </li>
+                <li class="channel-item">
+                    <div class="channel-name">🥧 Pi Network & Technical Support</div>
+                    <p class="channel-desc">Inquiries regarding Pi Browser connectivity, Pioneer authentications, or verified purchase download recovery.</p>
+                </li>
+            </ul>
+
+            <div class="response-seal">
+                ⏳ All dispatches are scrutinized by the Archon within 24–48 solar hours.
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: TRANSMISSION FORM -->
+        <div class="catacomb-card">
+            <h2 class="card-header-title">TRANSMIT TO THE ARCHON</h2>
+
+            <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label" for="senderName">Entity / Band / Name *</label>
+                    <input type="text" id="senderName" class="form-input" placeholder="e.g. Necrophobic Revulsion or Pioneer Handle" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="senderEmail">Return Email Address *</label>
+                    <input type="email" id="senderEmail" class="form-input" placeholder="archon@domain.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="contactCategory">Inquiry Focus *</label>
+                    <select id="contactCategory" class="form-select" required>
+                        <option value="Band / Relic Submission">⛧ Band / Artist Relic Submission</option>
+                        <option value="Radio Host / DJ Pitch">📻 Radio Show or Podcast Pitch</option>
+                        <option value="Physical Merch / Order Help">⚔️ Physical Relic or Merch Inquiry</option>
+                        <option value="Label / Distro Consignment">🏛️ Label & Distro Consignment</option>
+                        <option value="Pi Network / Technical Support">🥧 Pi Browser & Technical Assistance</option>
+                        <option value="General Communion">🕯️ General Underground Communion</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="senderLink">Audio / Portfolio Link (Optional)</label>
+                    <input type="url" id="senderLink" class="form-input" placeholder="https://bandcamp.com/... or cloud audio drive">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="contactMessage">Transmission Details *</label>
+                    <textarea id="contactMessage" class="form-textarea" placeholder="Inscribe your proposal, tracklist details, order reference, or message for the Archon..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    ⛧ TRANSMIT DISPATCH ⛧
+                </button>
+
+                <div id="formStatus" class="form-status-message"></div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div>Powered by Pi Network • OSSVARIUM UNDERGROUND SANCTUM</div>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <span>•</span>
+            <a href="radio.html">Radio 24/7</a>
+            <span>•</span>
+            <a href="catalog.html">Relics</a>
+            <span>•</span>
+            <a href="merch.html">Merch</a>
+            <span>•</span>
+            <a href="privacy.html">Privacy Policy</a>
+            <span>•</span>
+            <a href="terms.html">Terms of Service</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    function copyContactEmail() {
+        const email = "contact@ossvarium.com";
+        navigator.clipboard.writeText(email).then(() => {
+            const btn = document.getElementById("copyEmailBtn");
+            const originalText = btn.textContent;
+            btn.textContent = "COPIED ⛧";
+            btn.style.color = "#4ade80";
+            btn.style.borderColor = "#4ade80";
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.color = "";
+                btn.style.borderColor = "";
+            }, 2500);
+        }).catch(() => {
+            prompt("Copy Ossvarium Sanctum Email:", "contact@ossvarium.com");
+        });
+    }
+
+    async function handleContactSubmit(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById("submitBtn");
+        const statusBox = document.getElementById("formStatus");
+        
+        const senderName = document.getElementById("senderName").value.trim();
+        const senderEmail = document.getElementById("senderEmail").value.trim();
+        const category = document.getElementById("contactCategory").value;
+        const link = document.getElementById("senderLink").value.trim();
+        const message = document.getElementById("contactMessage").value.trim();
+
+        if (!senderName || !senderEmail || !message) {
+            showStatus("Please fulfill all required fields before transmission.", false);
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "TRANSMITTING TO THE VOID...";
+        statusBox.style.display = "none";
+
+        try {
+            // Dispatch via existing backend mailer endpoint
+            const res = await fetch("/api/submit-relic", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "apply_radio_host",
+                    hostName: senderName,
+                    showTitle: `[Contact: ${category}]`,
+                    email: senderEmail,
+                    demoUrl: link || "None provided",
+                    description: `Category: ${category}\nSender: ${senderName}\nEmail: ${senderEmail}\nLink: ${link || "None"}\n\nMessage:\n${message}`
+                })
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if (res.ok && data.success) {
+                showStatus(`⛧ TRANSMISSION RECEIVED ⛧<br>Your message has been inscribed directly to the Archon (contact@ossvarium.com). You will receive a response within 24-48 solar hours.`, true);
+                e.target.reset();
+            } else {
+                throw new Error(data.error || "Server submission failed");
+            }
+        } catch (err) {
+            console.warn("Direct API dispatch fallback to mailto:", err);
+            
+            // Seamless client-side mailto fallback
+            const mailSubject = encodeURIComponent(`Ossvarium Inscription: [${category}] - ${senderName}`);
+            const mailBody = encodeURIComponent(
+                `OSSVARIUM SANCTUM TRANSMISSION\n\n` +
+                `Sender: ${senderName}\n` +
+                `Category: ${category}\n` +
+                `Contact Email: ${senderEmail}\n` +
+                `Link: ${link || "None"}\n\n` +
+                `Message:\n${message}\n`
+            );
+            
+            window.location.href = `mailto:contact@ossvarium.com?subject=${mailSubject}&body=${mailBody}`;
+            showStatus(`⛧ CLIENT TRANSMISSION PREPARED ⛧<br>Opening your email client to send directly to contact@ossvarium.com.`, true);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "⛧ TRANSMIT DISPATCH ⛧";
+        }
+    }
+
+    function showStatus(html, isSuccess) {
+        const statusBox = document.getElementById("formStatus");
+        statusBox.innerHTML = html;
+        statusBox.className = `form-status-message ${isSuccess ? 'status-success' : 'status-error'}`;
+        statusBox.style.display = "block";
+    }
+</script>
+
+</body>
+</html>
