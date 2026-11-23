@@ -1202,7 +1202,7 @@
 
             const data = await res.json().catch(() => ({}));
             if (res.ok && data.success) {
-                alert(`⛧ TRANSMISSION RECEIVED ⛧\n\nYour pitch for "${showTitle}" has been dispatched directly to the Archon (giankan34@gmail.com). We will review your demo transmission and reach out!`);
+                alert(`⛧ TRANSMISSION RECEIVED ⛧\n\nYour pitch for "${showTitle}" has been dispatched directly to the Archon (contact@ossvarium.com). We will review your demo transmission and reach out!`);
                 closeHostModal();
                 e.target.reset();
             } else {
@@ -1220,8 +1220,8 @@
                 `Contact Email: ${hostEmail}\n` +
                 `Pi Wallet: ${hostPiWallet}\n`
             );
-            window.location.href = `mailto:giankan34@gmail.com?subject=${mailSubject}&body=${mailBody}`;
-            alert(`⛧ APPLICATION PREPARED ⛧\n\nOpening your email app to send your pitch directly to the Ossvarium Archon (giankan34@gmail.com).`);
+            window.location.href = `mailto:contact@ossvarium.com?subject=${mailSubject}&body=${mailBody}`;
+            alert(`⛧ APPLICATION PREPARED ⛧\n\nOpening your email app to send your pitch directly to the Ossvarium Archon (contact@ossvarium.com).`);
             closeHostModal();
             e.target.reset();
         } finally {

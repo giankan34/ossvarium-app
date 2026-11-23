@@ -55,7 +55,7 @@ module.exports = async function handler(req, res) {
                 if (process.env.RESEND_API_KEY) {
                     await resend.emails.send({
                         from: "OSSVARIUM <verification@ossvarium.com>",
-                        to: "giankan34@gmail.com",
+                        to: "contact@ossvarium.com",
                         reply_to: email,
                         subject: `📻 Radio Host Pitch: ${hostName} - \"${showTitle}\"`,
                         text: `NEW OSSVARIUM RADIO HOST APPLICATION\n\n` +
