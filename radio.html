@@ -1000,7 +1000,7 @@
                         country: rel.country || "Underground",
                         cover: rel.cover || "images/ui/ossvarium-crest.png",
                         audioUrl: tr.audio,
-                        relicId: rel.id || rel.relicId
+                        relicId: rel.relicId || rel.id
                     });
                 }
             });
@@ -1013,7 +1013,7 @@
         }
     }
 
-    function loadTrack(index, playImmediate = true) {
+    async function loadTrack(index, playImmediate = true) {
         if (!currentPlaylist.length) return;
         currentTrackIndex = (index + currentPlaylist.length) % currentPlaylist.length;
         const track = currentPlaylist[currentTrackIndex];
@@ -1030,11 +1030,28 @@
 
         const relicLink = document.getElementById("radioRelicLink");
         if (relicLink) {
-            relicLink.href = track.relicId ? `release.html?id=${track.relicId}` : "catalog.html";
+            relicLink.href = track.relicId ? `release.html?id=${encodeURIComponent(track.relicId)}` : "catalog.html";
         }
 
         const audio = getRadioAudio();
-        audio.src = track.audioUrl;
+        let playUrl = track.audioUrl;
+
+        // Resolve secure streaming presigned URL for private uploads
+        if (playUrl && playUrl.startsWith("uploads/")) {
+            try {
+                const streamRes = await fetch(`/api/my-purchases?relicId=${encodeURIComponent(track.relicId)}&trackTitle=${encodeURIComponent(track.title)}&mode=stream`);
+                if (streamRes.ok) {
+                    const sData = await streamRes.json();
+                    if (sData.audioUrl) {
+                        playUrl = sData.audioUrl;
+                    }
+                }
+            } catch (err) {
+                console.warn("Radio streaming URL resolve error:", err);
+            }
+        }
+
+        audio.src = playUrl;
         audio.load();
 
         if (playImmediate) {
