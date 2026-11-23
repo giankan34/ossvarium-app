@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CATACOMB RADIO // 66.6 MHz | OSSVARIUM</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Pirata+One&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        :root {
+            --blood-red: #8a2b2b;
+            --glowing-red: #e23a3a;
+            --dark-bg: #090606;
+            --panel-bg: #140a0a;
+            --parchment: #e8d8ce;
+            --gold-accent: #c5a059;
+        }
+
+        body {
+            background: #060404 url('images/ui/catacomb-bg.jpg') repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            color: var(--parchment);
+            font-family: 'Cinzel', serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .radio-container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px 16px 80px;
+        }
+
+        .radio-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0 24px;
+            border-bottom: 1px solid rgba(138, 43, 43, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            color: var(--gold-accent);
+            text-decoration: none;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--glowing-red);
+            transform: translateX(-4px);
+        }
+
+        .station-branding {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .station-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: var(--glowing-red);
+            text-shadow: 0 0 15px rgba(226, 58, 58, 0.6), 0 0 35px rgba(138, 43, 43, 0.4);
+            margin: 8px 0;
+            letter-spacing: 4px;
+        }
+
+        .station-freq {
+            font-family: 'Pirata One', cursive;
+            font-size: 1.4rem;
+            color: var(--gold-accent);
+            letter-spacing: 3px;
+        }
+
+        .on-air-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(226, 58, 58, 0.15);
+            border: 1px solid var(--glowing-red);
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: #ff5555;
+            margin-top: 10px;
+            box-shadow: 0 0 12px rgba(226, 58, 58, 0.3);
+        }
+
+        .on-air-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff2222;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ff2222;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* CONSOLE BOX */
+        .radio-console {
+            background: linear-gradient(180deg, #180a0a 0%, #0c0505 100%);
+            border: 2px solid var(--blood-red);
+            box-shadow: 0 0 30px rgba(138, 43, 43, 0.35), inset 0 0 20px rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 24px;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .console-screen {
+            background: #050202;
+            border: 1px solid #4a1818;
+            border-radius: 6px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #radioVisualizer {
+            width: 100%;
+            height: 120px;
+            display: block;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            background: rgba(10, 0, 0, 0.6);
+        }
+
+        .track-info-grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .track-info-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .current-cover-wrap {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+        }
+
+        .current-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--blood-red);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+        }
+
+        .track-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .track-status-line {
+            font-size: 0.75rem;
+            color: #888;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .current-track-title {
+            font-size: 1.4rem;
+            color: #fff;
+            margin: 0;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .current-artist-name {
+            font-size: 1.1rem;
+            color: var(--gold-accent);
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .current-album-line {
+            font-size: 0.85rem;
+            color: #bd9585;
+            margin: 0;
+        }
+
+        .track-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .meta-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: rgba(138, 43, 43, 0.3);
+            border: 1px solid rgba(138, 43, 43, 0.6);
+            color: #ddd;
+            letter-spacing: 1px;
+        }
+
+        /* PROGRESS BAR */
+        .progress-container {
+            margin: 18px 0 10px;
+        }
+
+        .progress-bar-rail {
+            width: 100%;
+            height: 8px;
+            background: #200d0d;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 1px solid #4a1818;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8a2b2b, #e23a3a);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        /* CONTROLS ROW */
+        .console-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(138, 43, 43, 0.3);
+        }
+
+        .main-btn-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .radio-btn {
+            background: linear-gradient(180deg, #421212 0%, #1f0808 100%);
+            border: 1px solid var(--blood-red);
+            color: var(--parchment);
+            padding: 10px 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-btn:hover {
+            background: linear-gradient(180deg, #6e1c1c 0%, #300a0a 100%);
+            border-color: var(--glowing-red);
+            box-shadow: 0 0 12px rgba(226, 58, 58, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .radio-btn-primary {
+            background: linear-gradient(180deg, #8a2b2b 0%, #471111 100%);
+            border-color: #e23a3a;
+            color: #fff;
+            font-weight: 700;
+            padding: 12px 28px;
+            font-size: 1rem;
+            box-shadow: 0 0 15px rgba(226, 58, 58, 0.3);
+        }
+
+        .radio-btn-primary:hover {
+            box-shadow: 0 0 22px rgba(226, 58, 58, 0.6);
+        }
+
+        .radio-action-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .relic-btn {
+            color: var(--gold-accent);
+            border-color: var(--gold-accent);
+            text-decoration: none;
+            padding: 9px 16px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 4px;
+            background: rgba(197, 160, 89, 0.08);
+            border: 1px solid var(--gold-accent);
+            transition: all 0.2s;
+        }
+
+        .relic-btn:hover {
+            background: rgba(197, 160, 89, 0.2);
+            box-shadow: 0 0 12px rgba(197, 160, 89, 0.4);
+            color: #fff;
+        }
+
+        .tip-btn {
+            background: rgba(226, 58, 58, 0.15);
+            border: 1px solid var(--glowing-red);
+            color: #ff7777;
+            padding: 9px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .tip-btn:hover {
+            background: rgba(226, 58, 58, 0.3);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(226, 58, 58, 0.5);
+        }
+
+        /* AUTO-DJ TOGGLE */
+        .autodj-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #aaa;
+            letter-spacing: 1px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .autodj-pill input {
+            accent-color: var(--glowing-red);
+            cursor: pointer;
+        }
+
+        /* SHOWS & PODCASTS SECTION */
+        .shows-section {
+            margin-top: 50px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(138, 43, 43, 0.3);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.5rem;
+            color: var(--glowing-red);
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .host-apply-btn {
+            background: transparent;
+            border: 1px dashed var(--gold-accent);
+            color: var(--gold-accent);
+            padding: 8px 16px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            cursor: pointer;
+            letter-spacing: 1.5px;
+            transition: all 0.2s;
+        }
+
+        .host-apply-btn:hover {
+            background: rgba(197, 160, 89, 0.15);
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .shows-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .show-card {
+            background: #110707;
+            border: 1px solid #3d1414;
+            border-radius: 6px;
+            padding: 16px;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .show-card:hover {
+            border-color: var(--blood-red);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .show-card.active-show {
+            border-color: var(--glowing-red);
+            box-shadow: 0 0 15px rgba(226, 58, 58, 0.3);
+        }
+
+        .show-badge {
+            font-size: 0.7rem;
+            color: var(--gold-accent);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .show-title {
+            font-size: 1.15rem;
+            color: #fff;
+            margin: 0 0 6px;
+            letter-spacing: 1px;
+        }
+
+        .show-host {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+
+        .show-desc {
+            font-size: 0.85rem;
+            color: #888;
+            line-height: 1.4;
+            margin-bottom: 16px;
+            font-family: Georgia, serif;
+        }
+
+        .show-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+        }
+
+        .show-play-btn {
+            background: #2e0d0d;
+            border: 1px solid #631b1b;
+            color: var(--parchment);
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .show-play-btn:hover {
+            background: var(--blood-red);
+            color: #fff;
+            border-color: var(--glowing-red);
+        }
+
+        /* MODAL */
+        .ritual-modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .ritual-modal-box {
+            background: #140808;
+            border: 2px solid var(--blood-red);
+            box-shadow: 0 0 35px rgba(226, 58, 58, 0.4);
+            border-radius: 8px;
+            max-width: 540px;
+            width: 100%;
+            padding: 28px;
+            position: relative;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-close-btn:hover { color: #fff; }
+
+        .modal-title {
+            font-family: 'Cinzel Decorative', cursive;
+            color: var(--glowing-red);
+            font-size: 1.4rem;
+            margin: 0 0 10px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .modal-intro {
+            font-size: 0.85rem;
+            color: #aaa;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--gold-accent);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #090303;
+            border: 1px solid #4a1818;
+            color: #fff;
+            border-radius: 4px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--glowing-red);
+            box-shadow: 0 0 8px rgba(226, 58, 58, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="radio-container">
+
+    <div class="radio-nav-bar">
+        <a href="index.html" class="back-link">
+            ← RETURN TO OSSVARIUM
+        </a>
+        <a href="catalog.html" class="back-link">
+            EXPLORE CATALOG ⛧
+        </a>
+    </div>
+
+    <div class="station-branding">
+        <div class="station-freq">CATACOMB FREQUENCY // 66.6 MHz</div>
+        <h1 class="station-title">OSSVARIUM RADIO</h1>
+        <div class="on-air-badge">
+            <span class="on-air-dot"></span>
+            <span>24/7 UNDERGROUND TRANSMISSION</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONSOLE -->
+    <div class="radio-console">
+        <div class="console-screen">
+            <canvas id="radioVisualizer"></canvas>
+
+            <div class="track-info-grid">
+                <div class="current-cover-wrap">
+                    <img id="radioCover" src="images/ui/ossvarium-crest.png" alt="Cover" class="current-cover">
+                </div>
+                <div class="track-meta">
+                    <div class="track-status-line" id="radioStatus">TUNING IN...</div>
+                    <h2 class="current-track-title" id="radioTrackTitle">Connecting to Void...</h2>
+                    <h3 class="current-artist-name" id="radioArtistName">OSSVARIUM ARCHIVE</h3>
+                    <div class="current-album-line" id="radioAlbumTitle">Live Catacomb Stream</div>
+                    
+                    <div class="track-badges">
+                        <span class="meta-badge" id="radioGenreBadge">METAL</span>
+                        <span class="meta-badge" id="radioCountryBadge">UNDERGROUND</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            <div class="progress-container">
+                <div class="progress-bar-rail" id="radioProgressBar" onclick="seekRadioAudio(event)">
+                    <div class="progress-bar-fill" id="radioProgressFill"></div>
+                </div>
+                <div class="time-display">
+                    <span id="radioCurrentTime">0:00</span>
+                    <span id="radioTotalTime">0:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="console-controls">
+            <div class="main-btn-group">
+                <button class="radio-btn radio-btn-primary" id="radioPlayBtn" onclick="toggleRadioPlay()">
+                    ▶ TUNE IN
+                </button>
+                <button class="radio-btn" onclick="nextRadioTrack()">
+                    ⏭ NEXT TRACK
+                </button>
+                <label class="autodj-pill">
+                    <input type="checkbox" id="autoDjToggle" checked>
+                    <span>Continuous 24/7 AutoDJ</span>
+                </label>
+            </div>
+
+            <div class="radio-action-group">
+                <a id="radioRelicLink" href="catalog.html" class="relic-btn" target="_blank">
+                    ⚔ BUY RELIC
+                </a>
+                <button class="tip-btn" onclick="openRadioTipModal()">
+                    🪙 TIP PRODUCER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHOWS & PODCASTS -->
+    <section class="shows-section">
+        <div class="section-header">
+            <h2 class="section-title">☠ BROADCASTS &amp; PODCASTS ☠</h2>
+            <button class="host-apply-btn" onclick="openHostModal()">
+                + HOST A SHOW ON OSSVARIUM
+            </button>
+        </div>
+
+        <div class="shows-grid" id="showsGrid">
+            <!-- Show 1 -->
+            <div class="show-card">
+                <div>
+                    <div class="show-badge">FEATURED SHOW • WEEKLY</div>
+                    <h3 class="show-title">The Catacomb Crypt Hour</h3>
+                    <div class="show-host">Host: Archon / Ossvarium Collective</div>
+                    <div class="show-desc">
+                        A deep subterranean descent into Doom, Death, Sludge and Occult underground releases across the Greek and European underground.
+                    </div>
+                </div>
+                <div class="show-card-footer">
+                    <span style="font-size:0.75rem; color:#888;">60 MIN • CURATED</span>
+                    <button class="show-play-btn" onclick="playCuratedShow('crypt-hour')">
+                        ▶ LISTEN NOW
+                    </button>
+                </div>
+            </div>
+
+            <!-- Show 2 -->
+            <div class="show-card">
+                <div>
+                    <div class="show-badge">INTERVIEWS &amp; PREVIEWS</div>
+                    <h3 class="show-title">Hellenic Necro-Frequencies</h3>
+                    <div class="show-host">Host: Underground Transmission</div>
+                    <div class="show-desc">
+                        Spotlighting independent Greek metal bands, track dissection, lyrical themes, and unreleased demo tapes.
+                    </div>
+                </div>
+                <div class="show-card-footer">
+                    <span style="font-size:0.75rem; color:#888;">45 MIN • EPISODE #04</span>
+                    <button class="show-play-btn" onclick="playCuratedShow('hellenic-necro')">
+                        ▶ LISTEN NOW
+                    </button>
+                </div>
+            </div>
+
+            <!-- Show 3 -->
+            <div class="show-card">
+                <div>
+                    <div class="show-badge">OPEN MIC PRODUCER</div>
+                    <h3 class="show-title">Raw Grind &amp; Sludge Vaults</h3>
+                    <div class="show-host">Host: Guest Broadcaster</div>
+                    <div class="show-desc">
+                        Fast, violent and unpolished underground noise. Submissions from independent tape labels and self-released cassette demos.
+                    </div>
+                </div>
+                <div class="show-card-footer">
+                    <span style="font-size:0.75rem; color:#888;">50 MIN • PODCAST</span>
+                    <button class="show-play-btn" onclick="playCuratedShow('grind-vaults')">
+                        ▶ LISTEN NOW
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- HOST APPLICATION MODAL -->
+<div class="ritual-modal-backdrop" id="hostModal">
+    <div class="ritual-modal-box">
+        <button class="modal-close-btn" onclick="closeHostModal()">&times;</button>
+        <h3 class="modal-title">⚔ HOST A RADIO SHOW ⚔</h3>
+        <p class="modal-intro">
+            Independent music producers, podcasters, and DJ curators: bring your underground show to Ossvarium Radio. Connect your audience and earn Pi tips directly.
+        </p>
+
+        <form id="hostForm" onsubmit="submitHostApplication(event)">
+            <div class="form-group">
+                <label for="hostName">Your Name / DJ Alias *</label>
+                <input type="text" id="hostName" required placeholder="e.g. Mortis DJ">
+            </div>
+            <div class="form-group">
+                <label for="showTitle">Show or Podcast Title *</label>
+                <input type="text" id="showTitle" required placeholder="e.g. Abyssal Waves #01">
+            </div>
+            <div class="form-group">
+                <label for="showGenre">Genre Focus / Style</label>
+                <input type="text" id="showGenre" placeholder="e.g. Death/Doom, Black Metal, Dungeon Synth">
+            </div>
+            <div class="form-group">
+                <label for="showLink">Audio Stream or Episode Link (Dropbox, S3, Drive, Mixcloud) *</label>
+                <input type="url" id="showLink" required placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label for="hostEmail">Contact Email *</label>
+                <input type="email" id="hostEmail" required placeholder="producer@example.com">
+            </div>
+            <div class="form-group">
+                <label for="hostPiWallet">Pi Wallet Public Key (for listener tips)</label>
+                <input type="text" id="hostPiWallet" placeholder="G...">
+            </div>
+
+            <button type="submit" class="radio-btn radio-btn-primary" style="width:100%; justify-content:center; margin-top:10px;">
+                SUBMIT TRANSMISSION PITCH
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="catalog.js"></script>
+<script>
+    // ------------------------------------------
+    // CATACOMB RADIO ENGINE
+    // ------------------------------------------
+    let radioAudio = null;
+    let radioCatalog = [];
+    let currentPlaylist = [];
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let audioCtx = null;
+    let analyser = null;
+    let mediaSource = null;
+
+    function getRadioAudio() {
+        if (!radioAudio) {
+            radioAudio = new Audio();
+            radioAudio.crossOrigin = "anonymous";
+            radioAudio.preload = "metadata";
+
+            radioAudio.addEventListener("timeupdate", () => {
+                const current = radioAudio.currentTime || 0;
+                const duration = radioAudio.duration || 0;
+                const fill = document.getElementById("radioProgressFill");
+                const curText = document.getElementById("radioCurrentTime");
+                const totText = document.getElementById("radioTotalTime");
+
+                if (fill && duration > 0) fill.style.width = `${(current / duration) * 100}%`;
+                if (curText) curText.textContent = formatTime(current);
+                if (totText) totText.textContent = formatTime(duration);
+            });
+
+            radioAudio.addEventListener("play", () => {
+                isPlaying = true;
+                const btn = document.getElementById("radioPlayBtn");
+                const stat = document.getElementById("radioStatus");
+                if (btn) btn.innerHTML = "❚❚ PAUSE";
+                if (stat) stat.textContent = "🔊 TRANSMITTING LIVE // 66.6 MHz";
+            });
+
+            radioAudio.addEventListener("pause", () => {
+                isPlaying = false;
+                const btn = document.getElementById("radioPlayBtn");
+                const stat = document.getElementById("radioStatus");
+                if (btn) btn.innerHTML = "▶ TUNE IN";
+                if (stat) stat.textContent = "SIGNAL PAUSED";
+            });
+
+            radioAudio.addEventListener("ended", () => {
+                const auto = document.getElementById("autoDjToggle");
+                if (auto && auto.checked) {
+                    playOccultStatic();
+                    setTimeout(() => {
+                        nextRadioTrack();
+                    }, 800);
+                } else {
+                    isPlaying = false;
+                    const btn = document.getElementById("radioPlayBtn");
+                    if (btn) btn.innerHTML = "▶ TUNE AGAIN";
+                }
+            });
+        }
+        return radioAudio;
+    }
+
+    function formatTime(sec) {
+        if (!sec || isNaN(sec)) return "0:00";
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function seekRadioAudio(e) {
+        const audio = getRadioAudio();
+        if (!audio.duration) return;
+        const bar = document.getElementById("radioProgressBar");
+        const rect = bar.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        audio.currentTime = ratio * audio.duration;
+    }
+
+    // Occult radio tuning noise
+    function playOccultStatic() {
+        try {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            const ctx = new AC();
+            const now = ctx.currentTime;
+            const dur = 0.7;
+
+            const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+
+            const noise = ctx.createBufferSource();
+            noise.buffer = buf;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = "bandpass";
+            filter.frequency.setValueAtTime(300, now);
+            filter.frequency.exponentialRampToValueAtTime(2500, now + 0.35);
+            filter.frequency.exponentialRampToValueAtTime(400, now + dur);
+
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            noise.start(now);
+            noise.stop(now + dur);
+        } catch (err) {}
+    }
+
+    // Connect Web Audio Analyser
+    function connectAnalyser() {
+        try {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            if (!audioCtx) audioCtx = new AC();
+            if (audioCtx.state === "suspended") audioCtx.resume();
+
+            const audio = getRadioAudio();
+            if (!mediaSource) {
+                mediaSource = audioCtx.createMediaElementSource(audio);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64;
+                mediaSource.connect(analyser);
+                analyser.connect(audioCtx.destination);
+            }
+        } catch (e) {}
+    }
+
+    // Setup Visualizer
+    const canvas = document.getElementById("radioVisualizer");
+    let vCtx = canvas ? canvas.getContext("2d") : null;
+
+    function resizeV() {
+        if (!canvas) return;
+        canvas.width = canvas.offsetWidth || 600;
+        canvas.height = canvas.offsetHeight || 120;
+    }
+    window.addEventListener("resize", resizeV);
+    resizeV();
+
+    function drawVisualizer() {
+        if (!vCtx || !canvas) return;
+        vCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const barCount = 42;
+        const barWidth = canvas.width / barCount;
+        const now = Date.now() * 0.003;
+
+        let freqData = null;
+        if (analyser && isPlaying) {
+            try {
+                freqData = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(freqData);
+            } catch (e) {}
+        }
+        const hasReal = freqData && freqData.some(v => v > 0);
+
+        for (let i = 0; i < barCount; i++) {
+            let h = 8;
+            if (isPlaying) {
+                if (hasReal) {
+                    const bin = Math.min(Math.floor((i / barCount) * freqData.length), freqData.length - 1);
+                    h = Math.max(6, (freqData[bin] / 255) * canvas.height * 0.9);
+                } else {
+                    h = 15 + Math.sin(now * 3 + i * 0.4) * 20 + Math.random() * 8;
+                }
+            } else {
+                h = 10 + Math.sin(now + i * 0.3) * 6;
+            }
+
+            const x = i * barWidth;
+            const w = Math.max(2, barWidth - 3);
+            const y = canvas.height - h;
+
+            const grad = vCtx.createLinearGradient(0, y, 0, canvas.height);
+            grad.addColorStop(0, "#ff4444");
+            grad.addColorStop(0.5, "#8a2b2b");
+            grad.addColorStop(1, "#1a0505");
+            vCtx.fillStyle = grad;
+            vCtx.fillRect(x, y, w, h);
+        }
+
+        requestAnimationFrame(drawVisualizer);
+    }
+    requestAnimationFrame(drawVisualizer);
+
+    // Initialize Radio Tracks from Ossvarium Catalog
+    async function initRadio() {
+        try {
+            radioCatalog = await loadOssvariumCatalog();
+            buildPlaylist();
+            if (currentPlaylist.length > 0) {
+                loadTrack(0, false);
+            }
+        } catch (err) {
+            console.error("Radio init error:", err);
+            document.getElementById("radioTrackTitle").textContent = "Archive Unavailable";
+        }
+    }
+
+    function buildPlaylist() {
+        currentPlaylist = [];
+        radioCatalog.forEach(rel => {
+            const tracks = Array.isArray(rel.tracks) ? rel.tracks : [];
+            tracks.forEach((tr, idx) => {
+                if (tr && tr.audio) {
+                    currentPlaylist.push({
+                        title: tr.title || `Track #${idx + 1}`,
+                        artist: rel.artist || "Unknown Artist",
+                        releaseTitle: rel.release || rel.release_title || "Relic",
+                        genre: rel.genre || "Metal",
+                        country: rel.country || "Underground",
+                        cover: rel.cover || "images/ui/ossvarium-crest.png",
+                        audioUrl: tr.audio,
+                        relicId: rel.id || rel.relicId
+                    });
+                }
+            });
+        });
+
+        // Shuffle playlist for genuine 24/7 radio feel
+        for (let i = currentPlaylist.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [currentPlaylist[i], currentPlaylist[j]] = [currentPlaylist[j], currentPlaylist[i]];
+        }
+    }
+
+    function loadTrack(index, playImmediate = true) {
+        if (!currentPlaylist.length) return;
+        currentTrackIndex = (index + currentPlaylist.length) % currentPlaylist.length;
+        const track = currentPlaylist[currentTrackIndex];
+
+        document.getElementById("radioTrackTitle").textContent = track.title;
+        document.getElementById("radioArtistName").textContent = track.artist;
+        document.getElementById("radioAlbumTitle").textContent = track.releaseTitle;
+        document.getElementById("radioGenreBadge").textContent = (track.genre || "METAL").toUpperCase();
+        document.getElementById("radioCountryBadge").textContent = (track.country || "ARCHIVE").toUpperCase();
+        
+        if (track.cover) {
+            document.getElementById("radioCover").src = track.cover;
+        }
+
+        const relicLink = document.getElementById("radioRelicLink");
+        if (relicLink) {
+            relicLink.href = track.relicId ? `release.html?id=${track.relicId}` : "catalog.html";
+        }
+
+        const audio = getRadioAudio();
+        audio.src = track.audioUrl;
+        audio.load();
+
+        if (playImmediate) {
+            connectAnalyser();
+            audio.play().catch(e => console.warn("Autoplay notice:", e));
+        }
+    }
+
+    async function toggleRadioPlay() {
+        const audio = getRadioAudio();
+        connectAnalyser();
+        if (audio.paused) {
+            if (!audio.src && currentPlaylist.length > 0) {
+                loadTrack(0, true);
+            } else {
+                await audio.play();
+            }
+        } else {
+            audio.pause();
+        }
+    }
+
+    function nextRadioTrack() {
+        playOccultStatic();
+        setTimeout(() => {
+            loadTrack(currentTrackIndex + 1, isPlaying);
+        }, 300);
+    }
+
+    function playCuratedShow(showKey) {
+        // Sample curated special broadcast selector
+        playOccultStatic();
+        document.getElementById("radioStatus").textContent = "LOADING SPECIAL TRANSMISSION...";
+        setTimeout(() => {
+            toggleRadioPlay();
+        }, 500);
+    }
+
+    function openRadioTipModal() {
+        alert("🪙 PI TIP PRODUCER\n\nSupport this broadcast with Pi! You can tip the host 0.2 Pi or enter your custom amount.");
+    }
+
+    function openHostModal() {
+        document.getElementById("hostModal").style.display = "flex";
+    }
+
+    function closeHostModal() {
+        document.getElementById("hostModal").style.display = "none";
+    }
+
+    function submitHostApplication(e) {
+        e.preventDefault();
+        const host = document.getElementById("hostName").value;
+        const title = document.getElementById("showTitle").value;
+        const email = document.getElementById("hostEmail").value;
+        const link = document.getElementById("showLink").value;
+
+        alert(`⛧ TRANSMISSION PITCH SUBMITTED ⛧\n\nThank you, ${host}! Your show "${title}" has been recorded for the Ossvarium radio lineup. We will review your link and contact you at ${email}.`);
+        closeHostModal();
+    }
+
+    // Launch on page load
+    window.addEventListener("DOMContentLoaded", initRadio);
+</script>
+
+</body>
+</html>
