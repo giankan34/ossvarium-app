@@ -1082,12 +1082,81 @@
     }
 
     function playCuratedShow(showKey) {
-        // Sample curated special broadcast selector
         playOccultStatic();
-        document.getElementById("radioStatus").textContent = "LOADING SPECIAL TRANSMISSION...";
-        setTimeout(() => {
-            toggleRadioPlay();
-        }, 500);
+        
+        let filtered = [];
+        let showTitle = "";
+
+        if (showKey === "hellenic-necro") {
+            showTitle = "HELLENIC NECRO-FREQUENCIES";
+            radioCatalog.forEach(rel => {
+                const c = (rel.country || "").toLowerCase();
+                const a = (rel.artist || "").toLowerCase();
+                if (c.includes("greece") || c.includes("hellenic") || a.includes("necrophobic") || a.includes("sunken") || a.includes("krushya")) {
+                    const tracks = Array.isArray(rel.tracks) ? rel.tracks : [];
+                    tracks.forEach((tr, idx) => {
+                        if (tr && tr.audio) {
+                            filtered.push({
+                                title: tr.title || `Track #${idx + 1}`,
+                                artist: rel.artist || "Unknown Artist",
+                                releaseTitle: rel.release || rel.release_title || "Relic",
+                                genre: rel.genre || "Metal",
+                                country: rel.country || "Greece",
+                                cover: rel.cover || "images/ui/ossvarium-crest.png",
+                                audioUrl: tr.audio,
+                                relicId: rel.relicId || rel.id
+                            });
+                        }
+                    });
+                }
+            });
+        } else if (showKey === "grind-vaults") {
+            showTitle = "RAW GRIND & SLUDGE VAULTS";
+            radioCatalog.forEach(rel => {
+                const g = (rel.genre || "").toLowerCase();
+                const a = (rel.artist || "").toLowerCase();
+                if (g.includes("grind") || g.includes("sludge") || g.includes("death") || g.includes("doom") || a.includes("krushya") || a.includes("necrophobic") || a.includes("sunken")) {
+                    const tracks = Array.isArray(rel.tracks) ? rel.tracks : [];
+                    tracks.forEach((tr, idx) => {
+                        if (tr && tr.audio) {
+                            filtered.push({
+                                title: tr.title || `Track #${idx + 1}`,
+                                artist: rel.artist || "Unknown Artist",
+                                releaseTitle: rel.release || rel.release_title || "Relic",
+                                genre: rel.genre || "Metal",
+                                country: rel.country || "Underground",
+                                cover: rel.cover || "images/ui/ossvarium-crest.png",
+                                audioUrl: tr.audio,
+                                relicId: rel.relicId || rel.id
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            showTitle = "THE CATACOMB CRYPT HOUR";
+            buildPlaylist();
+            filtered = currentPlaylist;
+        }
+
+        if (filtered.length > 0) {
+            for (let i = filtered.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+            }
+            currentPlaylist = filtered;
+            currentTrackIndex = 0;
+            
+            const statusEl = document.getElementById("radioStatus");
+            if (statusEl) statusEl.textContent = `TRANSMITTING: ${showTitle} // 66.6 MHz`;
+            
+            loadTrack(0, true);
+
+            const playerCard = document.querySelector(".radio-player-card");
+            if (playerCard) {
+                playerCard.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
     }
 
     function openRadioTipModal() {
@@ -1102,15 +1171,62 @@
         document.getElementById("hostModal").style.display = "none";
     }
 
-    function submitHostApplication(e) {
+    async function submitHostApplication(e) {
         e.preventDefault();
-        const host = document.getElementById("hostName").value;
-        const title = document.getElementById("showTitle").value;
-        const email = document.getElementById("hostEmail").value;
-        const link = document.getElementById("showLink").value;
+        const submitBtn = e.target.querySelector("button[type='submit']");
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "TRANSMITTING TO THE ARCHON...";
 
-        alert(`⛧ TRANSMISSION PITCH SUBMITTED ⛧\n\nThank you, ${host}! Your show "${title}" has been recorded for the Ossvarium radio lineup. We will review your link and contact you at ${email}.`);
-        closeHostModal();
+        const hostName = document.getElementById("hostName").value;
+        const showTitle = document.getElementById("showTitle").value;
+        const showGenre = document.getElementById("showGenre").value;
+        const showLink = document.getElementById("showLink").value;
+        const hostEmail = document.getElementById("hostEmail").value;
+        const hostPiWallet = document.getElementById("hostPiWallet").value;
+
+        try {
+            const res = await fetch("/api/submit-relic", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "apply_radio_host",
+                    hostName,
+                    showTitle,
+                    demoUrl: showLink,
+                    email: hostEmail,
+                    description: `Genre Focus: ${showGenre || "Not specified"}\nPi Wallet: ${hostPiWallet || "Not specified"}\nDemo/Audio Link: ${showLink}`
+                })
+            });
+
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.success) {
+                alert(`⛧ TRANSMISSION RECEIVED ⛧\n\nYour pitch for "${showTitle}" has been dispatched directly to the Archon (giankan34@gmail.com). We will review your demo transmission and reach out!`);
+                closeHostModal();
+                e.target.reset();
+            } else {
+                throw new Error(data.error || "Server transmission failed");
+            }
+        } catch (err) {
+            console.warn("API dispatch fallback to mailto:", err);
+            const mailSubject = encodeURIComponent(`Ossvarium Radio Host Pitch: ${hostName} - "${showTitle}"`);
+            const mailBody = encodeURIComponent(
+                `HOST APPLICATION FOR OSSVARIUM RADIO\n\n` +
+                `DJ/Host: ${hostName}\n` +
+                `Show Title: ${showTitle}\n` +
+                `Genre: ${showGenre}\n` +
+                `Demo Link: ${showLink}\n` +
+                `Contact Email: ${hostEmail}\n` +
+                `Pi Wallet: ${hostPiWallet}\n`
+            );
+            window.location.href = `mailto:giankan34@gmail.com?subject=${mailSubject}&body=${mailBody}`;
+            alert(`⛧ APPLICATION PREPARED ⛧\n\nOpening your email app to send your pitch directly to the Ossvarium Archon (giankan34@gmail.com).`);
+            closeHostModal();
+            e.target.reset();
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
     }
 
     // Launch on page load

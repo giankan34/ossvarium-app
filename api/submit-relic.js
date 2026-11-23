@@ -32,6 +32,54 @@ module.exports = async function handler(req, res) {
 
         const sql = neon(process.env.POSTGRES_URL);
 
+        // ---------------------------------
+        // RADIO HOST APPLICATION (DISPATCH TO ARCHON)
+        // ---------------------------------
+        if (
+            req.method === "POST" &&
+            req.body?.action === "apply_radio_host"
+        ) {
+            const hostName = String(req.body?.hostName || "").trim();
+            const showTitle = String(req.body?.showTitle || "").trim();
+            const email = String(req.body?.email || "").trim().toLowerCase();
+            const demoUrl = String(req.body?.demoUrl || "").trim();
+            const description = String(req.body?.description || "").trim();
+
+            if (!hostName || !email || !showTitle) {
+                return res.status(400).json({
+                    error: "Host name, show title, and contact email are required."
+                });
+            }
+
+            try {
+                if (process.env.RESEND_API_KEY) {
+                    await resend.emails.send({
+                        from: "OSSVARIUM <verification@ossvarium.com>",
+                        to: "giankan34@gmail.com",
+                        reply_to: email,
+                        subject: `📻 Radio Host Pitch: ${hostName} - \"${showTitle}\"`,
+                        text: `NEW OSSVARIUM RADIO HOST APPLICATION\n\n` +
+                              `Host/DJ: ${hostName}\n` +
+                              `Show Title: ${showTitle}\n` +
+                              `Contact Email: ${email}\n` +
+                              `Demo / Stream URL: ${demoUrl || "None provided"}\n\n` +
+                              `Details:\n${description || "None provided"}\n\n` +
+                              `Transmitted via Ossvarium Catacomb Radio.`
+                    });
+                }
+
+                return res.status(200).json({
+                    success: true,
+                    message: "Application transmitted to the Archon."
+                });
+            } catch (err) {
+                console.error("Radio host application email error:", err);
+                return res.status(500).json({
+                    error: "Failed to send email"
+                });
+            }
+        }
+
         if (
     req.method === "POST" &&
     req.body?.action === "send_email_verification"
