@@ -833,8 +833,9 @@
                 if (auto && auto.checked) {
                     playOccultStatic();
                     setTimeout(() => {
-                        nextRadioTrack();
-                    }, 800);
+                    loadTrack(currentTrackIndex + 1, true);
+                        }, 500);
+
                 } else {
                     isPlaying = false;
                     const btn = document.getElementById("radioPlayBtn");
@@ -1077,7 +1078,7 @@
     function nextRadioTrack() {
         playOccultStatic();
         setTimeout(() => {
-            loadTrack(currentTrackIndex + 1, isPlaying);
+            loadTrack(currentTrackIndex + 1, true);
         }, 300);
     }
 
