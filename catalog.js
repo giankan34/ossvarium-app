@@ -41,8 +41,13 @@ async function loadOssvariumCatalog(forceRefresh = false) {
     ? "./images/abominy-cover.jpg" 
     : (item.cover ?? ""),
 
-                artistImage: item.artist_image ?? "",
-                banner: item.banner ?? "",
+                            artistImage: (item.artist && item.artist.toLowerCase() === "sunken monolith")
+                ? "./images/sunken-monolith-logo.png"
+                : (item.artist_image ?? ""),
+            banner: (item.artist && item.artist.toLowerCase() === "sunken monolith")
+                ? "./images/sunken-monolith-banner.png"
+                : (item.banner ?? ""),
+
                 price: item.price_eur ?? 0,
                 priceEur: item.price_eur ?? 0,
                 pricePi: item.price_pi ?? 0,
