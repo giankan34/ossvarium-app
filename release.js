@@ -160,6 +160,9 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializeRitualReviews();
 
+       handleDeepLinkedTrack();
+
+
        try {
     if (!piAuth?.accessToken) {
         piAuth = await authenticatePiUser();
@@ -2336,4 +2339,37 @@ function initializeFullReleasePurchase() {
             );
         });
     });
+}
+
+function handleDeepLinkedTrack() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const targetTrack = params.get("track");
+        if (!targetTrack) return;
+
+        setTimeout(() => {
+            const trackEntries = document.querySelectorAll(".track-entry");
+            for (const entry of trackEntries) {
+                const titleEl = entry.querySelector(".track-title");
+                if (titleEl && titleEl.textContent.trim().toLowerCase() === targetTrack.trim().toLowerCase()) {
+                    entry.scrollIntoView({ behavior: "smooth", block: "center" });
+                    entry.style.transition = "all 0.5s ease";
+                    entry.style.boxShadow = "0 0 25px rgba(225, 59, 53, 0.95), inset 0 0 15px rgba(225, 59, 53, 0.35)";
+                    entry.style.border = "2px solid #e13b35";
+
+                    if (params.get("action") === "buy") {
+                        const buyBtn = entry.querySelector(".track-buy-btn");
+                        if (buyBtn && !buyBtn.disabled) {
+                            buyBtn.style.boxShadow = "0 0 20px #e13b35";
+                            buyBtn.style.transform = "scale(1.08)";
+                            buyBtn.style.transition = "transform 0.3s ease, box-shadow 0.3s ease";
+                        }
+                    }
+                    break;
+                }
+            }
+        }, 450);
+    } catch (e) {
+        console.warn("Deep link track navigation notice:", e);
+    }
 }

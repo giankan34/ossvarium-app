@@ -686,14 +686,18 @@
                 </label>
             </div>
 
-            <div class="radio-action-group">
-                <a id="radioRelicLink" href="catalog.html" class="relic-btn" target="_blank">
-                    ⚔ BUY RELIC
+                        <div class="radio-action-group">
+                <a id="radioBuyTrackLink" href="catalog.html" class="relic-btn" style="border-color:#b33939;background:rgba(179,57,57,0.2);color:#ff9e9e;">
+                    ⚡ BUY TRACK
+                </a>
+                <a id="radioRelicLink" href="catalog.html" class="relic-btn">
+                    ⚔ VIEW RELEASE
                 </a>
                 <button class="tip-btn" onclick="openRadioTipModal()">
                     🪙 TIP PRODUCER
                 </button>
             </div>
+
         </div>
     </div>
 
@@ -1032,7 +1036,8 @@
                         country: rel.country || "Underground",
                         cover: rel.cover || "images/ui/ossvarium-crest.png",
                         audioUrl: tr.audio,
-                        relicId: rel.relicId || rel.id
+                        relicId: rel.relicId || rel.id,
+                        supportPi: tr.supportPi ?? tr.pricePi ?? null
                     });
                 }
             });
@@ -1061,6 +1066,20 @@
         }
 
         updateMediaSession(track);
+
+                const buyTrackLink = document.getElementById("radioBuyTrackLink");
+        if (buyTrackLink) {
+            if (track.relicId) {
+                const price = Number(track.supportPi || 0);
+                const priceLabel = price > 0 ? ` · ${price} Pi` : "";
+                buyTrackLink.innerHTML = `⚡ BUY TRACK${priceLabel}`;
+                buyTrackLink.href = `release.html?id=${encodeURIComponent(track.relicId)}&track=${encodeURIComponent(track.title)}&action=buy`;
+                buyTrackLink.style.display = "inline-flex";
+            } else {
+                buyTrackLink.style.display = "none";
+            }
+        }
+
 
         const relicLink = document.getElementById("radioRelicLink");
         if (relicLink) {
