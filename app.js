@@ -1100,67 +1100,44 @@ async function loadCatacombMap(){
 }
 
 async function loadReleaseOfTheDay(){
-
-    const box =
-    document.getElementById(
-        "releaseOfTheDay"
-    );
-
+    const box = document.getElementById("releaseOfTheDay");
     if(!box) return;
 
-    const releases =
-    await loadOssvariumCatalog();
+    const releases = await loadOssvariumCatalog();
+    if(!releases || !releases.length) return;
 
-    const today =
-    new Date().getDate();
-
-    const release =
-    releases[
-        today % releases.length
-    ];
+    const today = new Date().getDate();
+    const release = releases[today % releases.length];
+    const targetId = release.relicId || release.id || releases.indexOf(release);
+    const genre = (release.genre || "UNDERGROUND METAL").toUpperCase();
+    const country = (release.country || "ARCHIVE").toUpperCase();
+    const price = Number(release.pricePi ?? release.price_pi ?? 0);
+    const priceBadge = price > 0 
+        ? `<div style="display:inline-block; margin-bottom:14px; padding:4px 12px; border-radius:12px; background:rgba(179,57,57,0.25); border:1px solid #b33939; color:#ff9e9e; font-size:12px; font-weight:700; letter-spacing:1px;">⚡ FULL RELEASE · ${price} Pi</div>` 
+        : "";
 
     box.innerHTML = `
-
-    ${release.cover
-? `
-        <img
-src="${release.cover}"
-class="release-day-cover"
-loading="lazy"
-decoding="async">
-
-`
-: `
-    <div class="release-cover no-cover">
-        ☠ NO COVER ART ☠
-    </div>
-`
-}
-
-    <br>
-
-    <b>${release.artist}</b>
-
-    <br>
-
-    ${release.release}
-
-    <br><br>
-
-    <a
-    class="submit-btn"
-    href="release.html?id=${
-        releases.indexOf(release)
-    }">
-
-        ⚔ ENTER TOMB ⚔
-
-    </a>
-
+        ${release.cover
+            ? `<img src="${release.cover}" class="release-day-cover" alt="${release.artist} - ${release.release}" loading="lazy" decoding="async">`
+            : `<div class="release-cover no-cover">☠ NO COVER ART ☠</div>`
+        }
+        <div style="font-size:11px; letter-spacing:2px; color:#aaa; margin-bottom:6px;">
+            [ ${genre} // ${country} ]
+        </div>
+        <div style="font-size: clamp(20px, 4.5vw, 26px); font-family:'Cinzel', serif; color:#ffffff; font-weight:700; margin-bottom:4px; text-shadow:0 0 10px rgba(255,255,255,0.2);">
+            ${release.artist}
+        </div>
+        <div style="font-size: clamp(14px, 3vw, 17px); color:#c7a3a3; font-style:italic; margin-bottom:12px;">
+            «${release.release}»
+        </div>
+        ${priceBadge}
+        <div>
+            <a class="submit-btn" href="release.html?id=${encodeURIComponent(targetId)}" style="margin:0; padding:12px 24px; font-size:14px; letter-spacing:1.5px; box-shadow:0 0 16px rgba(168,50,50,0.3);">
+                ⚔ ENTER TOMB &amp; LISTEN ⚔
+            </a>
+        </div>
     `;
-
 }
-
 async function loadArtistOfTheDay(){
 
     const box =
