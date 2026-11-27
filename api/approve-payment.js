@@ -188,7 +188,7 @@ if (
     });
 }
 
-if (metadata.purpose !== "release_purchase" && !trackTitle) {
+if (metadata.purpose === "release_purchase" && !trackTitle) {
     return res.status(400).json({
         error: "Missing track title"
     });
@@ -233,7 +233,16 @@ if (metadata.purpose === "release_purchase") {
             error: "Payment amount mismatch"
         });
     }
-} else if (metadata.purpose === "track_purchase") {
+
+    } else if (metadata.purpose === "artist_support") {
+    const paymentAmount = Number(payment.amount);
+    if (!paymentAmount || paymentAmount <= 0) {
+        return res.status(400).json({
+            error: "Invalid support amount"
+        });
+    }
+
+    }  else if (metadata.purpose === "track_purchase") {
     const track =
         Array.isArray(relic.tracks)
             ? relic.tracks.find(

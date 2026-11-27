@@ -274,14 +274,9 @@ if (metadata.purpose === "artist_support") {
         });
     }
 
-    const creatorPiUid =
-        relicRows[0].creator_pi_uid;
+        const creatorPiUid =
+        relicRows[0].creator_pi_uid || null;
 
-    if (!creatorPiUid) {
-        return res.status(400).json({
-            error: "Artist has no connected Pi account"
-        });
-    }
 
     const artistSharePi =
         Number((amountPi * 0.90).toFixed(4));
@@ -307,7 +302,7 @@ if (metadata.purpose === "artist_support") {
             ${txid},
             ${userUid},
             ${metadata.relicId},
-            ${metadata.trackTitle},
+            ${metadata.trackTitle || ""},
             ${creatorPiUid},
             ${amountPi},
             ${artistSharePi},

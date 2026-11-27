@@ -1442,6 +1442,8 @@ function createArtistSupportPayment(
         return;
     }
 
+     const artistName = release?.artist || "Artist";
+
     Pi.createPayment(
         {
             amount: amount,
@@ -1501,9 +1503,11 @@ metadata: {
                     );
                 }
 
+                                const targetName = trackTitle || artistName;
                 alert(
-                    `☠ ARTIST SUPPORTED ☠\n\n${trackTitle}\n${amount} π`
+                    `☠ TRIBUTE RECEIVED ☠\n\n${targetName}\n${amount} π\n\nThank you for fueling the underground!`
                 );
+
             },
 
             onCancel: function (paymentId) {
@@ -1689,44 +1693,114 @@ function initializeArtistSupportButton() {
         return;
     }
 
-    button.addEventListener("click", () => {
-        const creatorPiUid =
-            release?.creator_pi_uid ||
-            release?.creatorPiUid ||
-            "";
+    button.addEventListener("click", async () => {
+        const artistName = release?.artist || "Artist";
+        let chosenAmount = 0.5;
 
-        if (!creatorPiUid) {
-            alert(
-                "Artist support is not available yet. " +
-                "The artist needs to connect a Pi account first."
+        const overlay = document.createElement("div");
+        overlay.className = "purchase-overlay";
+
+        overlay.innerHTML = `
+            <div class="purchase-panel support-panel">
+                <div class="purchase-symbol">☠</div>
+
+                <h2>SUPPORT THE ARTIST</h2>
+
+                <div class="purchase-track">
+                    ${artistName}
+                </div>
+
+                <p style="font-family:'Cormorant Garamond',serif; font-size:15px; color:#a58a7f; margin:-10px 0 18px; line-height:1.4;">
+                    Direct tribute to fuel the underground. 90% goes to the artist, 10% to the Ossvarium vault.
+                </p>
+
+                <div style="display:flex; gap:8px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;">
+                    <button type="button" class="preset-tip-btn" data-val="0.2" style="background:#140808; color:#df8178; border:1px solid #772b2b; padding:7px 14px; font-family:'Cinzel',serif; font-size:12px; cursor:pointer; letter-spacing:1px; transition:all 0.2s;">0.2 π</button>
+                    <button type="button" class="preset-tip-btn active" data-val="0.5" style="background:#4f1111; color:#fff; border:1px solid #c8433d; padding:7px 14px; font-family:'Cinzel',serif; font-size:12px; cursor:pointer; letter-spacing:1px; transition:all 0.2s;">0.5 π</button>
+                    <button type="button" class="preset-tip-btn" data-val="1.0" style="background:#140808; color:#df8178; border:1px solid #772b2b; padding:7px 14px; font-family:'Cinzel',serif; font-size:12px; cursor:pointer; letter-spacing:1px; transition:all 0.2s;">1.0 π</button>
+                    <button type="button" class="preset-tip-btn" data-val="2.0" style="background:#140808; color:#df8178; border:1px solid #772b2b; padding:7px 14px; font-family:'Cinzel',serif; font-size:12px; cursor:pointer; letter-spacing:1px; transition:all 0.2s;">2.0 π</button>
+                </div>
+
+                <div style="margin-bottom:22px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <input type="number" class="support-custom-amount" min="0.01" step="0.01" value="0.5" style="width:130px; padding:8px; background:#080303; color:#f0958d; border:1px solid #8f2f2f; text-align:center; font-size:18px; font-family:'Cinzel',serif; outline:none;">
+                    <span style="color:#d24c45; font-family:'Cinzel',serif; font-size:18px;">π</span>
+                </div>
+
+                <button class="purchase-pay-btn support-confirm-btn" type="button">
+                    OFFER TRIBUTE
+                </button>
+
+                <button class="purchase-close-btn" type="button">
+                    CANCEL
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const amountInput = overlay.querySelector(".support-custom-amount");
+        const presetBtns = overlay.querySelectorAll(".preset-tip-btn");
+
+        presetBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                presetBtns.forEach(b => {
+                    b.style.background = "#140808";
+                    b.style.color = "#df8178";
+                    b.style.borderColor = "#772b2b";
+                });
+                btn.style.background = "#4f1111";
+                btn.style.color = "#fff";
+                btn.style.borderColor = "#c8433d";
+                chosenAmount = parseFloat(btn.dataset.val);
+                amountInput.value = chosenAmount;
+            });
+        });
+
+        amountInput.addEventListener("input", () => {
+            chosenAmount = parseFloat(amountInput.value) || 0;
+            presetBtns.forEach(b => {
+                if (parseFloat(b.dataset.val) === chosenAmount) {
+                    b.style.background = "#4f1111";
+                    b.style.color = "#fff";
+                    b.style.borderColor = "#c8433d";
+                } else {
+                    b.style.background = "#140808";
+                    b.style.color = "#df8178";
+                    b.style.borderColor = "#772b2b";
+                }
+            });
+        });
+
+        overlay.querySelector(".purchase-close-btn").addEventListener("click", () => {
+            overlay.remove();
+        });
+
+        overlay.querySelector(".support-confirm-btn").addEventListener("click", async () => {
+            const finalAmount = parseFloat(amountInput.value);
+            if (!finalAmount || finalAmount <= 0) {
+                alert("Please enter a valid amount of Pi.");
+                return;
+            }
+
+            if (!piAuth) {
+                piAuth = await authenticatePiUser();
+            }
+
+            if (!piAuth) {
+                alert("Pi authentication is required.");
+                return;
+            }
+
+            overlay.remove();
+            createArtistSupportPayment(
+                finalAmount,
+                "",
+                release.relicId
             );
-            return;
-        }
-
-        const amountText =
-            prompt(
-                "Enter the amount of Pi you want to support the artist with:"
-            );
-
-        if (amountText === null) {
-            return;
-        }
-
-        const amount =
-            Number(amountText);
-
-        if (!amount || amount <= 0) {
-            alert("Invalid support amount.");
-            return;
-        }
-
-        createArtistSupportPayment(
-            amount,
-            "",
-            release.relicId
-        );
+        });
     });
 }
+
 
 function initializePurchasePanel(){
 
