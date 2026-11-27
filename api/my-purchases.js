@@ -168,7 +168,7 @@ module.exports = async function handler(req, res) {
                 SET downloaded_at = NOW()
                 WHERE id = ${purchaseId}
                   AND relic_id = ${relicId}
-                  AND track_title = ${trackTitle};
+                  AND (track_title = ${trackTitle} OR track_title = '__FULL_RELEASE__');
             `;
 
             const s3 =
@@ -365,7 +365,7 @@ module.exports = async function handler(req, res) {
                 FROM purchases
                 WHERE user_uid = ${userUid}
                   AND relic_id = ${relicId}
-                  AND track_title = ${trackTitle}
+                  AND (track_title = ${trackTitle} OR track_title = '__FULL_RELEASE__')
                 ORDER BY created_at DESC
                 LIMIT 1;
             `;

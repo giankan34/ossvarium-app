@@ -176,15 +176,21 @@ const trackTitle =
 
 const validPurpose =
     metadata.purpose === "track_purchase" ||
-    metadata.purpose === "artist_support";
+    metadata.purpose === "artist_support" ||
+    metadata.purpose === "release_purchase";
 
 if (
     !validPurpose ||
-    !relicId ||
-    !trackTitle
+    !relicId
 ) {
     return res.status(400).json({
         error: "Invalid payment metadata"
+    });
+}
+
+if (metadata.purpose !== "release_purchase" && !trackTitle) {
+    return res.status(400).json({
+        error: "Missing track title"
     });
 }
 
@@ -194,7 +200,8 @@ const sql =
 const relicRows = await sql`
     SELECT
         relic_id,
-        tracks
+        tracks,
+        price_pi
     FROM relics
     WHERE relic_id = ${relicId}
       AND status = 'approved'
@@ -210,65 +217,70 @@ if (relicRows.length === 0) {
 const relic =
     relicRows[0];
 
-const track =
-    Array.isArray(relic.tracks)
-        ? relic.tracks.find(
-            item =>
-                item.title === trackTitle
-        )
-        : null;
+if (metadata.purpose === "release_purchase") {
+    const expectedPi = Number(relic.price_pi);
+    if (!expectedPi || expectedPi <= 0) {
+        return res.status(400).json({
+            error: "Release is not available for full purchase"
+        });
+    }
 
-        if (metadata.purpose === "track_purchase") {
+    const paymentAmount = Number(payment.amount);
+    const tolerance = expectedPi * 0.02;
 
-if (
-    !track ||
-    !track.supportPi ||
-    Number(track.supportPi) <= 0
-) {
-    return res.status(400).json({
-        error: "Invalid track purchase"
-    });
+    if (Math.abs(paymentAmount - expectedPi) > tolerance) {
+        return res.status(400).json({
+            error: "Payment amount mismatch"
+        });
+    }
+} else if (metadata.purpose === "track_purchase") {
+    const track =
+        Array.isArray(relic.tracks)
+            ? relic.tracks.find(
+                item =>
+                    item.title === trackTitle
+            )
+            : null;
+
+    if (
+        !track ||
+        !track.supportPi ||
+        Number(track.supportPi) <= 0
+    ) {
+        return res.status(400).json({
+            error: "Invalid track purchase"
+        });
+    }
+
+    const expectedPi =
+        Number(track.supportPi);
+
+    const paymentAmount =
+        Number(payment.amount);
+
+    if (
+        !paymentAmount ||
+        paymentAmount <= 0
+    ) {
+        return res.status(400).json({
+            error: "Invalid payment amount"
+        });
+    }
+
+    const tolerance =
+        expectedPi * 0.02;
+
+    if (
+        Math.abs(
+            paymentAmount - expectedPi
+        ) > tolerance
+    ) {
+        return res.status(400).json({
+            error: "Payment amount mismatch"
+        });
+    }
 }
 
-const expectedPi =
-    Number(track.supportPi);
-
-const paymentAmount =
-    Number(payment.amount);
-
-if (
-    !paymentAmount ||
-    paymentAmount <= 0
-) {
-    return res.status(400).json({
-        error: "Invalid payment amount"
-    });
-}
-
-const tolerance =
-    expectedPi * 0.02;
-
-if (
-    Math.abs(
-        paymentAmount - expectedPi
-    ) > tolerance
-) {
-    console.error(
-        "OSSVARIUM payment amount mismatch:",
-        {
-    relicId,
-    trackTitle,
-    expectedPi,
-    paymentAmount
-}
-    );
-
-    return res.status(400).json({
-        error: "Payment amount mismatch"
-    });
-}
-
-}
         const response = await axios.post(
             `https://api.minepi.com/v2/payments/${paymentId}/approve`,
             {},

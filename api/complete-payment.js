@@ -199,7 +199,9 @@ if (metadata.purpose === "merch_purchase") {
 
 const validPurpose =
     metadata.purpose === "track_purchase" ||
+    metadata.purpose === "release_purchase" ||
     metadata.purpose === "artist_support";
+
 
 if (
     !validPurpose ||
@@ -322,6 +324,42 @@ if (metadata.purpose === "artist_support") {
         payment: completedPayment
     });
 }
+
+if (metadata.purpose === "release_purchase") {
+    await sql`
+        INSERT INTO purchases (
+            payment_id,
+            txid,
+            user_uid,
+            relic_id,
+            track_title,
+            amount_pi,
+            artist_share_pi,
+            ossvarium_fee_pi,
+            payment_method
+        )
+        VALUES (
+            ${paymentId},
+            ${txid},
+            ${userUid},
+            ${metadata.relicId},
+            '__FULL_RELEASE__',
+            ${amountPi},
+            ${artistSharePi},
+            ${ossvariumFeePi},
+            'pi'
+        )
+        ON CONFLICT
+        DO NOTHING;
+    `;
+
+    return res.status(200).json({
+        success: true,
+        purpose: "release_purchase",
+        payment: completedPayment
+    });
+}
+
 
 const tracks = Array.isArray(relicRows[0].tracks)
     ? relicRows[0].tracks

@@ -154,6 +154,8 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializePurchasePanel();
 
+       initializeFullReleasePurchase();
+
        initializeArtistSupportButton();
 
        initializeRitualReviews();
@@ -276,6 +278,17 @@ function renderHeader(){
         </button>
 
         `}
+
+                ${Number(release.pricePi) > 0 ? `
+        <button
+        id="buy-full-release-btn"
+        class="certificate-btn"
+        style="border-color:#b33939;background:#3b1515;"
+        type="button">
+        ⚡ ACQUIRE FULL RELEASE · ${Number(release.pricePi)} Pi
+        </button>
+        ` : ""}
+
 
         <div class="ossvarium-note">
 
@@ -1174,6 +1187,16 @@ async function updateOwnedTracks() {
     const purchases =
         await loadMyPurchases();
 
+            const ownsFullRelease = purchases && purchases.some(
+        item => item.relic_id === release.relicId && item.track_title === "__FULL_RELEASE__"
+    );
+
+    const fullReleaseBtn = document.getElementById("buy-full-release-btn");
+    if (fullReleaseBtn && ownsFullRelease) {
+        fullReleaseBtn.outerHTML = `<button id="buy-full-release-btn" class="certificate-btn collected-btn" disabled>✓ FULL RELEASE OWNED</button>`;
+    }
+
+
          if (purchases && purchases.length > 0 && release && release.relicId) {
         const ownsThis = purchases.some(item => item.relic_id === release.relicId);
         if (ownsThis) {
@@ -1203,7 +1226,7 @@ async function updateOwnedTracks() {
             purchases.find(
                 item =>
                     item.relic_id === release.relicId &&
-                    item.track_title === trackTitle
+                    (item.track_title === trackTitle || item.track_title === "__FULL_RELEASE__")
             );
 
         // ---------------------------------
@@ -2215,4 +2238,102 @@ function initializeRitualReviews() {
             }
         });
     }
+}
+
+
+function initializeFullReleasePurchase() {
+    const buyReleaseBtn = document.getElementById("buy-full-release-btn");
+    if (!buyReleaseBtn) return;
+
+    buyReleaseBtn.addEventListener("click", async () => {
+        const pricePi = Number(release.pricePi || 0);
+        if (!pricePi || pricePi <= 0) {
+            alert("No Pi price configured for this full release.");
+            return;
+        }
+
+        const overlay = document.createElement("div");
+        overlay.className = "purchase-overlay";
+        overlay.innerHTML = `
+            <div class="purchase-panel">
+                <div class="purchase-symbol">✦</div>
+                <h2>ACQUIRE FULL RELEASE</h2>
+                <div class="purchase-track">${release.artist} — ${release.release}</div>
+                <div class="purchase-price">${pricePi} π</div>
+                <p style="color:#a89f91;font-size:12px;margin:10px 0;letter-spacing:1px;">Unlocks all tracks in the relic archive & grants download access</p>
+                <button class="purchase-pay-btn" type="button">PAY WITH PI</button>
+                <button class="purchase-close-btn" type="button">CANCEL</button>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        overlay.querySelector(".purchase-close-btn").addEventListener("click", () => {
+            overlay.remove();
+        });
+
+        overlay.querySelector(".purchase-pay-btn").addEventListener("click", async () => {
+            if (!piAuth) {
+                piAuth = await authenticatePiUser();
+            }
+
+            if (!piAuth) {
+                alert("Pi authentication is required.");
+                return;
+            }
+
+            Pi.createPayment(
+                {
+                    amount: pricePi,
+                    memo: `OSSVARIUM Full Release: ${release.artist} - ${release.release}`,
+                    metadata: {
+                        purpose: "release_purchase",
+                        relicId: release.relicId,
+                        trackTitle: "__FULL_RELEASE__"
+                    }
+                },
+                {
+                    onReadyForServerApproval: async function (paymentId) {
+                        const response = await fetch("/api/approve-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ paymentId: paymentId })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error("Release payment approval failed");
+                        }
+                    },
+
+                    onReadyForServerCompletion: async function (paymentId, txid) {
+                        const response = await fetch("/api/complete-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                paymentId: paymentId,
+                                txid: txid
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(result.error || "Release payment completion failed");
+                        }
+
+                        alert(`☠ FULL RELIC ACQUIRED ☠\n\n${release.artist} — ${release.release}\n${pricePi} π`);
+                        overlay.remove();
+                        await updateOwnedTracks();
+                    },
+
+                    onCancel: function () {},
+
+                    onError: function (error, payment) {
+                        console.error("Release purchase payment error:", error, payment);
+                        alert("Release purchase failed.\n\n" + (error.message || error));
+                    }
+                }
+            );
+        });
+    });
 }
