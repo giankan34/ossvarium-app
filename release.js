@@ -158,6 +158,8 @@ if (!visitedReleases.includes(releaseId)) {
 
        initializeArtistSupportButton();
 
+       initializeShareButton();
+
        initializeRitualReviews();
 
        handleDeepLinkedTrack();
@@ -292,6 +294,13 @@ function renderHeader(){
         </button>
         ` : ""}
 
+         <button
+        id="share-relic-btn"
+        class="certificate-btn"
+        style="border-color:#5c3535;background:#180b0b;color:#e8a598;margin-top:8px;"
+        type="button">
+        🔥 SHARE TO FIRESIDE & SOCIAL
+        </button>
 
         <div class="ossvarium-note">
 
@@ -1800,6 +1809,119 @@ function initializeArtistSupportButton() {
         });
     });
 }
+
+function initializeShareButton() {
+    const shareBtn = document.getElementById("share-relic-btn");
+    if (!shareBtn) return;
+
+    shareBtn.addEventListener("click", () => {
+        const relicUrl = window.location.href;
+        const artist = release?.artist || "Artist";
+        const title = release?.title || "Relic";
+        const genre = release?.genre || "Underground Metal";
+        const year = release?.year || "";
+
+        const firesidePost = `☠ DISCOVER THE UNDERGROUND ON OSSVARIUM ☠\n\nArtist: ${artist}\nRelease: ${title}${year ? ` (${year})` : ""}\nGenre: ${genre}\n\nListen & Support with Pi:\n${relicUrl}\n\n#PiNetwork #Ossvarium #Pioneers #UndergroundMusic`;
+
+        const overlay = document.createElement("div");
+        overlay.className = "purchase-overlay";
+
+        overlay.innerHTML = `
+            <div class="purchase-panel share-panel" style="max-width:440px;">
+                <div class="purchase-symbol">🔥</div>
+
+                <h2>TRANSMIT THIS RELIC</h2>
+
+                <div class="purchase-track">
+                    ${artist} — ${title}
+                </div>
+
+                <p style="font-family:'Cormorant Garamond',serif; font-size:15px; color:#a58a7f; margin:-10px 0 18px; line-height:1.4;">
+                    Spread the underground frequencies across the Pi Ecosystem and beyond.
+                </p>
+
+                <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                    <button type="button" class="fireside-copy-btn" style="background:#3b1515; color:#fff; border:1px solid #c8433d; padding:12px 14px; font-family:'Cinzel',serif; font-size:12px; cursor:pointer; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        🔥 COPY FIRESIDE FORUM POST
+                    </button>
+
+                    <div style="display:flex; gap:8px;">
+                        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(`Listen to ${artist} - ${title} on @Ossvarium:\n${relicUrl}\n#PiNetwork #Web3Music`)}" target="_blank" rel="noopener noreferrer" style="flex:1; text-decoration:none; background:#140808; color:#df8178; border:1px solid #772b2b; padding:10px 8px; font-family:'Cinzel',serif; font-size:11px; text-align:center; letter-spacing:1px; display:flex; align-items:center; justify-content:center;">
+                            ✖ SHARE ON X
+                        </a>
+
+                        <button type="button" class="native-share-btn" style="flex:1; background:#140808; color:#df8178; border:1px solid #772b2b; padding:10px 8px; font-family:'Cinzel',serif; font-size:11px; cursor:pointer; letter-spacing:1px;">
+                            📱 MORE / CHAT
+                        </button>
+                    </div>
+
+                    <button type="button" class="direct-link-btn" style="background:#0a0404; color:#a58a7f; border:1px solid #441818; padding:8px 10px; font-family:'Cinzel',serif; font-size:10px; cursor:pointer; letter-spacing:1px;">
+                        🔗 COPY DIRECT LINK
+                    </button>
+                </div>
+
+                <div class="share-copy-status" style="display:none; font-family:'Cinzel',serif; font-size:11px; color:#4caf50; margin-bottom:14px; letter-spacing:1px;">
+                    ✓ COPIED TO CLIPBOARD!
+                </div>
+
+                <button class="purchase-close-btn" type="button">
+                    CLOSE
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const statusEl = overlay.querySelector(".share-copy-status");
+        function showCopied(msg) {
+            statusEl.textContent = msg || "✓ COPIED TO CLIPBOARD!";
+            statusEl.style.display = "block";
+            setTimeout(() => {
+                statusEl.style.display = "none";
+            }, 3000);
+        }
+
+        overlay.querySelector(".fireside-copy-btn").addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(firesidePost);
+                showCopied("✓ FIRESIDE POST COPIED! PASTE IN FIRESIDE FORUM");
+            } catch (err) {
+                prompt("Copy this text for Fireside:", firesidePost);
+            }
+        });
+
+        overlay.querySelector(".direct-link-btn").addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(relicUrl);
+                showCopied("✓ LINK COPIED TO CLIPBOARD!");
+            } catch (err) {
+                prompt("Copy link:", relicUrl);
+            }
+        });
+
+        overlay.querySelector(".native-share-btn").addEventListener("click", async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `${artist} — ${title} | Ossvarium`,
+                        text: firesidePost,
+                        url: relicUrl
+                    });
+                } catch (e) {}
+            } else {
+                try {
+                    await navigator.clipboard.writeText(relicUrl);
+                    showCopied("✓ LINK COPIED TO CLIPBOARD!");
+                } catch (err) {}
+            }
+        });
+
+        overlay.querySelector(".purchase-close-btn").addEventListener("click", () => {
+            overlay.remove();
+        });
+    });
+}
+
 
 
 function initializePurchasePanel(){
