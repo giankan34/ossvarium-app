@@ -390,10 +390,30 @@
     </style>
 
     <!-- Vercel Web Analytics -->
-    <script>
-      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/insights/script.js"></script>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+
+  // Admin opt-out: visit any page with ?admin=true to permanently ignore your own visits
+  try {
+    var p = new URLSearchParams(window.location.search);
+    if (p.get('admin') === 'true' || p.get('admin') === '1' || p.get('notrack') === '1') {
+      localStorage.setItem('va-disable', 'true');
+    } else if (p.get('admin') === 'false' || p.get('admin') === '0') {
+      localStorage.removeItem('va-disable');
+    }
+  } catch (e) {}
+
+  window.va('beforeSend', function (event) {
+    try {
+      if (localStorage.getItem('va-disable') === 'true') {
+        return null;
+      }
+    } catch (e) {}
+    return event;
+  });
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+
 </head>
 <body>
 
