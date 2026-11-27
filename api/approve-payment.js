@@ -188,7 +188,7 @@ if (
     });
 }
 
-if (metadata.purpose === "release_purchase" && !trackTitle) {
+if (metadata.purpose === "track_purchase" && !trackTitle) {
     return res.status(400).json({
         error: "Missing track title"
     });
