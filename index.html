@@ -603,20 +603,11 @@ font-family:Cinzel;
 <a
     id="adminPendingLink"
     href="admin-reviews.html"
-    style="
-        display:none;
-        position:fixed;
-        right:20px;
-        bottom:20px;
-        z-index:9999;
-        padding:10px 14px;
-        border:1px solid #777;
-        background:#111;
-        color:#fff;
-        text-decoration:none;
-        font-weight:bold;
-    ">
+    onclick="window.location.href='admin-reviews.html';"
+    role="button"
+    aria-label="Admin Chamber">
 </a>
+
 
 <script>
 async function checkAdminPendingRelics() {
@@ -650,7 +641,8 @@ async function checkAdminPendingRelics() {
 
     }
 
-    link.style.display = "block";
+    link.style.display = "inline-flex";
+
 
 } else {
 
