@@ -281,6 +281,32 @@ module.exports = async function handler(req, res) {
             }
         }
 
+                    // Record pioneer login / last seen activity
+            try {
+                const username = meResponse.data?.username;
+                await sql`
+                    CREATE TABLE IF NOT EXISTS pioneer_logins (
+                        id SERIAL PRIMARY KEY,
+                        pi_uid TEXT UNIQUE NOT NULL,
+                        username TEXT,
+                        last_seen_at TIMESTAMPTZ DEFAULT NOW(),
+                        login_count INTEGER DEFAULT 1
+                    );
+                `;
+                await sql`
+                    INSERT INTO pioneer_logins (pi_uid, username, last_seen_at, login_count)
+                    VALUES (${userUid}, ${username || 'Pioneer'}, NOW(), 1)
+                    ON CONFLICT (pi_uid)
+                    DO UPDATE SET
+                        username = COALESCE(EXCLUDED.username, pioneer_logins.username),
+                        last_seen_at = NOW(),
+                        login_count = pioneer_logins.login_count + 1;
+                `;
+            } catch (pioneerLogErr) {
+                console.warn("Pioneer login log ignored:", pioneerLogErr.message);
+            }
+
+
         // ---------------------------------
         // NORMAL MODE:
         // RETURN USER PURCHASES

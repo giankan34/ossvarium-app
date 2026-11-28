@@ -163,6 +163,215 @@ if (action === "audio-preview") {
             });
         }
 
+                if (req.method === "GET" && action === "sales-overview") {
+            if (!isAdmin) {
+                return res.status(403).json({ error: "Admin access required" });
+            }
+
+            const sql = neon(process.env.POSTGRES_URL);
+
+            try {
+                await sql`
+                    CREATE TABLE IF NOT EXISTS pioneer_logins (
+                        id SERIAL PRIMARY KEY,
+                        pi_uid TEXT UNIQUE NOT NULL,
+                        username TEXT,
+                        last_seen_at TIMESTAMPTZ DEFAULT NOW(),
+                        login_count INTEGER DEFAULT 1
+                    );
+                `;
+            } catch (tableErr) {
+                console.warn("Table pioneer_logins check:", tableErr.message);
+            }
+
+            const purchasesTotals = await sql`
+                SELECT
+                    COALESCE(SUM(amount_pi), 0)::float AS total_sales_pi,
+                    COALESCE(SUM(artist_share_pi), 0)::float AS total_artist_share_pi,
+                    COALESCE(SUM(ossvarium_fee_pi), 0)::float AS total_fee_pi,
+                    COUNT(*)::int AS count_purchases,
+                    COUNT(*) FILTER (WHERE track_title = '__FULL_RELEASE__')::int AS count_full_releases,
+                    COUNT(*) FILTER (WHERE track_title != '__FULL_RELEASE__')::int AS count_tracks
+                FROM purchases;
+            `;
+
+            const supportTotals = await sql`
+                SELECT
+                    COALESCE(SUM(amount_pi), 0)::float AS total_support_pi,
+                    COALESCE(SUM(artist_share_pi), 0)::float AS total_artist_share_pi,
+                    COALESCE(SUM(ossvarium_fee_pi), 0)::float AS total_fee_pi,
+                    COUNT(*)::int AS count_supports
+                FROM artist_supports
+                WHERE status = 'completed';
+            `;
+
+            let merchTotals = [{ total_merch_pi: 0, count_merch_orders: 0 }];
+            try {
+                merchTotals = await sql`
+                    SELECT
+                        COALESCE(SUM(total_price_pi), 0)::float AS total_merch_pi,
+                        COUNT(*)::int AS count_merch_orders
+                    FROM merch_orders
+                    WHERE status = 'paid';
+                `;
+            } catch (merchErr) {
+                console.warn("Merch totals query:", merchErr.message);
+            }
+
+            const relicPurchases = await sql`
+                SELECT
+                    r.relic_id,
+                    r.artist,
+                    r.release_title,
+                    r.creator_pi_uid,
+                    r.contact_email,
+                    COALESCE(SUM(p.amount_pi), 0)::float AS purchases_gross_pi,
+                    COALESCE(SUM(p.artist_share_pi), 0)::float AS purchases_artist_pi,
+                    COALESCE(SUM(p.ossvarium_fee_pi), 0)::float AS purchases_fee_pi,
+                    COUNT(p.id)::int AS purchases_count
+                FROM relics r
+                LEFT JOIN purchases p ON p.relic_id = r.relic_id
+                GROUP BY r.relic_id, r.artist, r.release_title, r.creator_pi_uid, r.contact_email
+                ORDER BY purchases_gross_pi DESC, r.artist ASC;
+            `;
+
+            let relicSupports = [];
+            try {
+                relicSupports = await sql`
+                    SELECT
+                        relic_id,
+                        COALESCE(SUM(amount_pi), 0)::float AS support_gross_pi,
+                        COALESCE(SUM(artist_share_pi), 0)::float AS support_artist_pi,
+                        COALESCE(SUM(ossvarium_fee_pi), 0)::float AS support_fee_pi,
+                        COUNT(id)::int AS support_count
+                    FROM artist_supports
+                    WHERE status = 'completed'
+                    GROUP BY relic_id;
+                `;
+            } catch (supErr) {
+                console.warn("Relic supports query error:", supErr.message);
+            }
+
+            const supportMap = new Map();
+            relicSupports.forEach(s => supportMap.set(s.relic_id, s));
+
+            const artistBreakdown = relicPurchases.map(r => {
+                const s = supportMap.get(r.relic_id) || {
+                    support_gross_pi: 0, support_artist_pi: 0, support_fee_pi: 0, support_count: 0
+                };
+                return {
+                    relicId: r.relic_id,
+                    artist: r.artist,
+                    releaseTitle: r.release_title,
+                    creatorPiUid: r.creator_pi_uid || null,
+                    contactEmail: r.contact_email || null,
+                    grossPi: Number(((r.purchases_gross_pi || 0) + (s.support_gross_pi || 0)).toFixed(4)),
+                    artistSharePi: Number(((r.purchases_artist_pi || 0) + (s.support_artist_pi || 0)).toFixed(4)),
+                    ossvariumFeePi: Number(((r.purchases_fee_pi || 0) + (s.support_fee_pi || 0)).toFixed(4)),
+                    purchasesCount: r.purchases_count || 0,
+                    supportsCount: s.support_count || 0
+                };
+            });
+
+            let recentTransactions = [];
+            try {
+                recentTransactions = await sql`
+                    (
+                        SELECT
+                            'purchase' AS type,
+                            p.id::text AS id,
+                            p.relic_id,
+                            r.artist,
+                            r.release_title,
+                            p.track_title,
+                            p.user_uid AS buyer_uid,
+                            p.amount_pi::float AS amount_pi,
+                            p.artist_share_pi::float AS artist_share_pi,
+                            p.ossvarium_fee_pi::float AS ossvarium_fee_pi,
+                            p.txid,
+                            p.created_at
+                        FROM purchases p
+                        LEFT JOIN relics r ON r.relic_id = p.relic_id
+                    )
+                    UNION ALL
+                    (
+                        SELECT
+                            'support' AS type,
+                            s.id::text AS id,
+                            s.relic_id,
+                            r.artist,
+                            r.release_title,
+                            COALESCE(NULLIF(s.track_title, ''), 'DIRECT SUPPORT') AS track_title,
+                            s.supporter_pi_uid AS buyer_uid,
+                            s.amount_pi::float AS amount_pi,
+                            s.artist_share_pi::float AS artist_share_pi,
+                            s.ossvarium_fee_pi::float AS ossvarium_fee_pi,
+                            s.txid,
+                            s.created_at
+                        FROM artist_supports s
+                        LEFT JOIN relics r ON r.relic_id = s.relic_id
+                        WHERE s.status = 'completed'
+                    )
+                    ORDER BY created_at DESC
+                    LIMIT 50;
+                `;
+            } catch (txErr) {
+                console.warn("Recent transactions query error:", txErr.message);
+            }
+
+            let pioneerLogins = [];
+            try {
+                pioneerLogins = await sql`
+                    SELECT pi_uid, username, last_seen_at, login_count
+                    FROM pioneer_logins
+                    ORDER BY last_seen_at DESC
+                    LIMIT 50;
+                `;
+            } catch (loginQueryErr) {
+                console.warn("Pioneers query error:", loginQueryErr.message);
+            }
+
+            let knownBuyers = [];
+            try {
+                knownBuyers = await sql`
+                    SELECT
+                        user_uid,
+                        COUNT(*)::int AS orders_count,
+                        COALESCE(SUM(amount_pi), 0)::float AS total_spent_pi,
+                        MAX(created_at) AS last_order_at
+                    FROM purchases
+                    GROUP BY user_uid
+                    ORDER BY last_order_at DESC
+                    LIMIT 50;
+                `;
+            } catch (buyerQueryErr) {
+                console.warn("Buyers query error:", buyerQueryErr.message);
+            }
+
+            const pTotals = purchasesTotals[0] || {};
+            const sTotals = supportTotals[0] || {};
+            const mTotals = merchTotals[0] || {};
+
+            return res.status(200).json({
+                success: true,
+                overview: {
+                    grossPi: Number(((pTotals.total_sales_pi || 0) + (sTotals.total_support_pi || 0) + (mTotals.total_merch_pi || 0)).toFixed(4)),
+                    artistSharePi: Number(((pTotals.total_artist_share_pi || 0) + (sTotals.total_artist_share_pi || 0)).toFixed(4)),
+                    ossvariumFeePi: Number(((pTotals.total_fee_pi || 0) + (sTotals.total_fee_pi || 0)).toFixed(4)),
+                    countPurchases: pTotals.count_purchases || 0,
+                    countFullReleases: pTotals.count_full_releases || 0,
+                    countTracks: pTotals.count_tracks || 0,
+                    countSupports: sTotals.count_supports || 0,
+                    countMerchOrders: mTotals.count_merch_orders || 0
+                },
+                artistBreakdown,
+                recentTransactions,
+                pioneerLogins,
+                knownBuyers
+            });
+        }
+
+
         if (req.method === "GET" && action === "pending-merch") {
     if (!isAdmin) {
         return res.status(403).json({

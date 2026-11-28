@@ -2,97 +2,158 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relics Awaiting Judgement | OSSVARIUM</title>
-
     <link rel="stylesheet" href="style.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=UnifrakturMaguntia&display=swap"
-          rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <div
-    id="adminGate"
-    class="submission-page"
->
-    <section class="submission-box">
-
-        <h1>☠ OSSVARIUM ADMIN ☠</h1>
-
-        <p class="submission-text">
-            RESTRICTED ARCHIVE ACCESS
-        </p>
-
-        <input
-            type="password"
-            id="adminPassword"
-            placeholder="ENTER ADMIN KEY"
-            autocomplete="off"
-        >
-
-        <br><br>
-
-        <button
-            type="button"
-            class="submit-btn"
-            onclick="unlockAdmin()"
-        >
-            ⚔ ENTER THE ARCHIVES ⚔
-        </button>
-
-        <p
-            id="adminError"
-            class="submission-text"
-            style="display:none;"
-        >
-            ☠ ACCESS DENIED ☠
-        </p>
-
-    </section>
-</div>
-
-        <main
-        class="submission-page admin-dashboard"
-        id="adminContent"
-        style="display:none;"
->
-
-            <h1>
-                ☠ RELICS AWAITING JUDGEMENT ☠
-            </h1>
-
-            <p class="submission-text">
-                Submitted relics awaiting approval
-                into the OSSVARIUM archives.
+    <div id="adminGate" class="submission-page">
+        <section class="submission-box">
+            <h1>☠ OSSVARIUM ADMIN ☠</h1>
+            <p class="submission-text">RESTRICTED ARCHIVE ACCESS</p>
+            <input type="password" id="adminPassword" placeholder="ENTER ADMIN KEY" autocomplete="off">
+            <br><br>
+            <button type="button" class="submit-btn" onclick="unlockAdmin()">
+                ⚔ ENTER THE ARCHIVES ⚔
+            </button>
+            <p id="adminError" class="submission-text" style="display:none;">
+                ☠ ACCESS DENIED ☠
             </p>
+        </section>
+    </div>
 
+    <main class="submission-page admin-dashboard" id="adminContent" style="display:none;">
+
+        <div class="admin-tab-nav" style="display:flex; justify-content:center; gap:12px; margin:10px auto 30px; flex-wrap:wrap;">
+            <button type="button" class="submit-btn admin-tab-btn active" id="tabBtnJudgement" onclick="switchAdminTab('judgement')" style="margin:0; padding:10px 18px; font-size:12px; letter-spacing:1px; background:#792020; color:#fff; border:1px solid #c62828;">
+                ⚔ APPROVALS
+            </button>
+            <button type="button" class="submit-btn admin-tab-btn" id="tabBtnSales" onclick="switchAdminTab('sales')" style="margin:0; padding:10px 18px; font-size:12px; letter-spacing:1px; background:#200b0b; color:#e5b9b9; border:1px solid #592020;">
+                💰 SALES & ARTIST PAYOUTS
+            </button>
+            <button type="button" class="submit-btn admin-tab-btn" id="tabBtnUsers" onclick="switchAdminTab('users')" style="margin:0; padding:10px 18px; font-size:12px; letter-spacing:1px; background:#200b0b; color:#e5b9b9; border:1px solid #592020;">
+                👥 PIONEERS & LOGINS
+            </button>
+        </div>
+
+        <!-- TAB 1: JUDGEMENT (RELICS & MERCH) -->
+        <div id="tabJudgement" class="admin-tab-pane">
+            <h1>☠ RELICS AWAITING JUDGEMENT ☠</h1>
+            <p class="submission-text">
+                Submitted relics awaiting approval into the OSSVARIUM archives.
+            </p>
             <div id="pendingRelics"></div>
 
-            <h1 style="margin-top: 70px;">
-    ☠ MERCH AWAITING JUDGEMENT ☠
-</h1>
+            <h1 style="margin-top: 70px;">☠ MERCH AWAITING JUDGEMENT ☠</h1>
+            <p class="submission-text">
+                Submitted merchandise awaiting approval into the OSSVARIUM store.
+            </p>
+            <div id="pendingMerch"></div>
+        </div>
 
-<p class="submission-text">
-    Submitted merchandise awaiting approval
-    into the OSSVARIUM store.
-</p>
+        <!-- TAB 2: SALES & PAYOUTS -->
+        <div id="tabSales" class="admin-tab-pane" style="display:none;">
+            <h1>💰 SALES & ARTIST PAYOUTS 💰</h1>
+            <p class="submission-text">
+                Live financial ledger: total volume, 90% artist royalties owed, and 10% Ossvarium platform fees.
+            </p>
 
-<div id="pendingMerch"></div>
+            <div style="text-align:center; margin-bottom:25px;">
+                <button type="button" class="submit-btn" onclick="loadSalesOverview()" style="padding:8px 18px; font-size:11px;">
+                    🔄 REFRESH FINANCIAL DATA
+                </button>
+            </div>
 
-            <a href="index.html"
-               class="back-link">
+            <!-- OVERVIEW STATS -->
+            <div id="salesStatsContainer" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:16px; margin:20px auto 40px;">
+                <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
+                    <span style="font-size:11px; color:#aaa; letter-spacing:1px;">TOTAL GROSS VOLUME</span>
+                    <h2 id="statGrossPi" style="font-family:'Cinzel',serif; color:#d4af37; margin:10px 0 5px; font-size:26px;">-- π</h2>
+                    <small id="statOrdersCount" style="color:#888; font-size:11px;">-- total transactions</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
+                    <span style="font-size:11px; color:#aaa; letter-spacing:1px;">ARTIST ROYALTIES (90%)</span>
+                    <h2 id="statArtistSharePi" style="font-family:'Cinzel',serif; color:#4caf50; margin:10px 0 5px; font-size:26px;">-- π</h2>
+                    <small style="color:#888; font-size:11px;">Owed to creators</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
+                    <span style="font-size:11px; color:#aaa; letter-spacing:1px;">OSSVARIUM VAULT (10%)</span>
+                    <h2 id="statFeePi" style="font-family:'Cinzel',serif; color:#c62828; margin:10px 0 5px; font-size:26px;">-- π</h2>
+                    <small style="color:#888; font-size:11px;">Platform reserve</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
+                    <span style="font-size:11px; color:#aaa; letter-spacing:1px;">SALES BREAKDOWN</span>
+                    <div id="statBreakdown" style="font-size:12px; color:#e5d5d5; margin-top:10px; line-height:1.6;">
+                        --
+                    </div>
+                </div>
+            </div>
 
-                ← RETURN TO OSSVARIUM
+            <!-- ARTIST ROYALTIES TABLE -->
+            <div style="margin-top:40px;">
+                <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
+                    ☠ ARTIST ROYALTIES & PAYOUT ESTIMATES (WHAT TO PAY)
+                </h2>
+                <p style="font-size:12px; color:#aaa; text-align:left; margin-bottom:15px;">
+                    Summary of earned royalties per release. The artist receives 90% of all track sales, full release purchases, and direct tips.
+                </p>
+                <div id="artistBreakdownContainer" style="overflow-x:auto;">
+                    <p style="text-align:center; color:#888; padding:20px;">Loading artist breakdown...</p>
+                </div>
+            </div>
 
-            </a>
+            <!-- RECENT TRANSACTIONS LEDGER -->
+            <div style="margin-top:50px;">
+                <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
+                    📜 RECENT TRANSACTIONS LEDGER
+                </h2>
+                <div id="recentTransactionsContainer" style="overflow-x:auto;">
+                    <p style="text-align:center; color:#888; padding:20px;">Loading transaction ledger...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PIONEERS & LOGINS -->
+        <div id="tabUsers" class="admin-tab-pane" style="display:none;">
+            <h1>👥 PIONEERS & BUYERS 👥</h1>
+            <p class="submission-text">
+                Pioneers activity: authenticated Pi Network users and verified buyers.
+            </p>
+
+            <div style="text-align:center; margin-bottom:25px;">
+                <button type="button" class="submit-btn" onclick="loadSalesOverview()" style="padding:8px 18px; font-size:11px;">
+                    🔄 REFRESH PIONEER ACTIVITY
+                </button>
+            </div>
+
+            <!-- RECENT LOGINS -->
+            <div style="margin-top:30px;">
+                <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
+                    ⚡ RECENT PIONEER LOGINS (LAST 50)
+                </h2>
+                <div id="pioneerLoginsContainer" style="overflow-x:auto;">
+                    <p style="text-align:center; color:#888; padding:20px;">Loading pioneer logins...</p>
+                </div>
+            </div>
+
+            <!-- VERIFIED BUYERS -->
+            <div style="margin-top:50px;">
+                <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
+                    🛒 VERIFIED BUYERS & PATRONS
+                </h2>
+                <div id="knownBuyersContainer" style="overflow-x:auto;">
+                    <p style="text-align:center; color:#888; padding:20px;">Loading buyer records...</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link" style="margin-top:50px;">
+            ← RETURN TO OSSVARIUM
+        </a>
 
     </main>
 

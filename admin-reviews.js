@@ -65,6 +65,7 @@ async function unlockAdmin() {
 
         loadPendingRelics();
         loadPendingMerch();
+        loadSalesOverview();
 
     } catch (error) {
 
@@ -541,6 +542,7 @@ async function checkAdminSession() {
 
             loadPendingRelics();
             loadPendingMerch();
+            loadSalesOverview();
 
         }
 
@@ -751,5 +753,252 @@ async function reviewMerch(id, action) {
     } catch (error) {
         console.error("Merch review error:", error);
         alert("Failed to review merch: " + error.message);
+    }
+}
+
+/* ==========================================================
+   OSSVARIUM ADMIN TABS & SALES / PAYOUTS MANAGEMENT
+   ========================================================== */
+
+function switchAdminTab(tabName) {
+    const tabs = ["judgement", "sales", "users"];
+    tabs.forEach(t => {
+        const pane = document.getElementById("tab" + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById("tabBtn" + t.charAt(0).toUpperCase() + t.slice(1));
+        if (pane) {
+            pane.style.display = (t === tabName) ? "block" : "none";
+        }
+        if (btn) {
+            if (t === tabName) {
+                btn.style.background = "#792020";
+                btn.style.color = "#ffffff";
+                btn.style.borderColor = "#c62828";
+            } else {
+                btn.style.background = "#200b0b";
+                btn.style.color = "#e5b9b9";
+                btn.style.borderColor = "#592020";
+            }
+        }
+    });
+
+    if (tabName === "sales" || tabName === "users") {
+        loadSalesOverview();
+    }
+}
+
+let cachedSalesData = null;
+
+async function loadSalesOverview() {
+    try {
+        const response = await fetch("/api/admin-status?action=sales-overview", {
+            credentials: "same-origin"
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to load sales data: HTTP " + response.status);
+        }
+
+        const data = await response.json();
+        if (!data || !data.success) {
+            throw new Error(data.error || "Sales overview query failed");
+        }
+
+        cachedSalesData = data;
+        renderSalesOverview(data);
+
+    } catch (err) {
+        console.error("OSSVARIUM loadSalesOverview error:", err);
+        const artistContainer = document.getElementById("artistBreakdownContainer");
+        if (artistContainer) {
+            artistContainer.innerHTML = `<p style="color:#c62828; text-align:center; padding:20px;">⚠️ Failed to load sales ledger: ${escapeHtml(err.message)}</p>`;
+        }
+    }
+}
+
+function renderSalesOverview(data) {
+    const ov = data.overview || {};
+
+    // 1. Stat cards
+    const statGross = document.getElementById("statGrossPi");
+    const statArtistShare = document.getElementById("statArtistSharePi");
+    const statFee = document.getElementById("statFeePi");
+    const statOrders = document.getElementById("statOrdersCount");
+    const statBreakdown = document.getElementById("statBreakdown");
+
+    if (statGross) statGross.textContent = (ov.grossPi ?? 0).toFixed(4) + " π";
+    if (statArtistShare) statArtistShare.textContent = (ov.artistSharePi ?? 0).toFixed(4) + " π";
+    if (statFee) statFee.textContent = (ov.ossvariumFeePi ?? 0).toFixed(4) + " π";
+    if (statOrders) {
+        const totalCount = (ov.countPurchases || 0) + (ov.countSupports || 0) + (ov.countMerchOrders || 0);
+        statOrders.textContent = `${totalCount} total transactions`;
+    }
+    if (statBreakdown) {
+        statBreakdown.innerHTML = `
+            <div>🎵 <b>Tracks:</b> ${ov.countTracks || 0}</div>
+            <div>📀 <b>Full Releases:</b> ${ov.countFullReleases || 0}</div>
+            <div>🤝 <b>Direct Tips:</b> ${ov.countSupports || 0}</div>
+            ${ov.countMerchOrders ? `<div>👕 <b>Merch Orders:</b> ${ov.countMerchOrders}</div>` : ""}
+        `;
+    }
+
+    // 2. Artist Royalties Table
+    const artistContainer = document.getElementById("artistBreakdownContainer");
+    if (artistContainer) {
+        const list = data.artistBreakdown || [];
+        if (list.length === 0) {
+            artistContainer.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">No relics or artists recorded in the database.</p>`;
+        } else {
+            artistContainer.innerHTML = `
+                <table style="width:100%; border-collapse:collapse; background:#0d0606; border:1px solid #592020; border-radius:6px; font-size:13px; color:#e5d5d5;">
+                    <thead>
+                        <tr style="background:#200b0b; color:#e5b9b9; font-family:'Cinzel',serif;">
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">ARTIST / BAND</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">RELEASE</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:right;">GROSS (π)</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:right; color:#4caf50;">ARTIST OWED (90%)</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:right; color:#c62828;">VAULT (10%)</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:center;">SALES / TIPS</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">CREATOR INFO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${list.map(item => `
+                            <tr style="border-bottom:1px solid #220b0b;">
+                                <td style="padding:10px; font-weight:bold; color:#fff;">${escapeHtml(item.artist)}</td>
+                                <td style="padding:10px; color:#ccc;">${escapeHtml(item.releaseTitle)} <small style="color:#777;">(${escapeHtml(item.relicId)})</small></td>
+                                <td style="padding:10px; text-align:right; font-weight:bold; color:#d4af37;">${Number(item.grossPi || 0).toFixed(4)} π</td>
+                                <td style="padding:10px; text-align:right; font-weight:bold; color:#4caf50;">${Number(item.artistSharePi || 0).toFixed(4)} π</td>
+                                <td style="padding:10px; text-align:right; color:#e57373;">${Number(item.ossvariumFeePi || 0).toFixed(4)} π</td>
+                                <td style="padding:10px; text-align:center;">
+                                    ${item.purchasesCount || 0} sales | ${item.supportsCount || 0} tips
+                                </td>
+                                <td style="padding:10px; font-size:11px;">
+                                    ${item.creatorPiUid ? `<span style="color:#81c784;">UID: ${escapeHtml(item.creatorPiUid.slice(0, 12))}...</span><br>` : `<span style="color:#e57373;">No Pi UID</span><br>`}
+                                    ${item.contactEmail ? `<span style="color:#aaa;">✉ ${escapeHtml(item.contactEmail)}</span>` : ""}
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+        }
+    }
+
+    // 3. Recent Transactions Ledger
+    const txContainer = document.getElementById("recentTransactionsContainer");
+    if (txContainer) {
+        const txList = data.recentTransactions || [];
+        if (txList.length === 0) {
+            txContainer.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">No purchases or tips recorded yet.</p>`;
+        } else {
+            txContainer.innerHTML = `
+                <table style="width:100%; border-collapse:collapse; background:#0d0606; border:1px solid #592020; border-radius:6px; font-size:12px; color:#e5d5d5;">
+                    <thead>
+                        <tr style="background:#200b0b; color:#e5b9b9; font-family:'Cinzel',serif;">
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">DATE</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">TYPE</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">ITEM / TRACK</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">ARTIST</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">BUYER UID</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:right;">AMOUNT (π)</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:right; color:#4caf50;">ARTIST (90%)</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">TXID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${txList.map(tx => {
+                            const dateStr = tx.created_at ? new Date(tx.created_at).toLocaleString() : "--";
+                            let typeBadge = "";
+                            if (tx.type === "support") {
+                                typeBadge = `<span style="background:#311b92; color:#b39ddb; padding:2px 6px; border-radius:4px; font-size:10px;">TIP</span>`;
+                            } else if (tx.track_title === "__FULL_RELEASE__") {
+                                typeBadge = `<span style="background:#1b5e20; color:#a5d6a7; padding:2px 6px; border-radius:4px; font-size:10px;">FULL RELEASE</span>`;
+                            } else {
+                                typeBadge = `<span style="background:#263238; color:#cfd8dc; padding:2px 6px; border-radius:4px; font-size:10px;">TRACK</span>`;
+                            }
+
+                            return `
+                                <tr style="border-bottom:1px solid #1a0808;">
+                                    <td style="padding:8px 10px; color:#aaa; white-space:nowrap;">${escapeHtml(dateStr)}</td>
+                                    <td style="padding:8px 10px;">${typeBadge}</td>
+                                    <td style="padding:8px 10px; font-weight:bold; color:#fff;">${escapeHtml(tx.track_title === "__FULL_RELEASE__" ? (tx.release_title || "Full Release") : (tx.track_title || "--"))}</td>
+                                    <td style="padding:8px 10px; color:#ccc;">${escapeHtml(tx.artist || "--")}</td>
+                                    <td style="padding:8px 10px; font-family:monospace; font-size:11px; color:#90caf9;">${escapeHtml((tx.buyer_uid || "").slice(0, 16))}...</td>
+                                    <td style="padding:8px 10px; text-align:right; font-weight:bold; color:#d4af37;">${Number(tx.amount_pi || 0).toFixed(4)} π</td>
+                                    <td style="padding:8px 10px; text-align:right; font-weight:bold; color:#4caf50;">${Number(tx.artist_share_pi || 0).toFixed(4)} π</td>
+                                    <td style="padding:8px 10px; font-family:monospace; font-size:11px; color:#aaa;" title="${escapeHtml(tx.txid || '')}">
+                                        ${tx.txid ? `<a href="https://minepi.com/blockexplorer/tx/${encodeURIComponent(tx.txid)}" target="_blank" style="color:#ce93d8; text-decoration:none;">${escapeHtml(tx.txid.slice(0, 8))}...</a>` : "--"}
+                                    </td>
+                                </tr>
+                            `;
+                        }).join("")}
+                    </tbody>
+                </table>
+            `;
+        }
+    }
+
+    // 4. Pioneer Logins Table
+    const pioneerContainer = document.getElementById("pioneerLoginsContainer");
+    if (pioneerContainer) {
+        const pList = data.pioneerLogins || [];
+        if (pList.length === 0) {
+            pioneerContainer.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">No authenticated pioneers logged yet. Activity will appear as users authenticate and sync their collection.</p>`;
+        } else {
+            pioneerContainer.innerHTML = `
+                <table style="width:100%; border-collapse:collapse; background:#0d0606; border:1px solid #592020; border-radius:6px; font-size:12px; color:#e5d5d5;">
+                    <thead>
+                        <tr style="background:#200b0b; color:#e5b9b9; font-family:'Cinzel',serif;">
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">PIONEER USERNAME</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">PI UID</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">LAST SEEN</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:center;">LOGIN SESSIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pList.map(p => `
+                            <tr style="border-bottom:1px solid #1a0808;">
+                                <td style="padding:8px 10px; font-weight:bold; color:#81c784;">@${escapeHtml(p.username || "Pioneer")}</td>
+                                <td style="padding:8px 10px; font-family:monospace; font-size:11px; color:#aaa;">${escapeHtml(p.pi_uid)}</td>
+                                <td style="padding:8px 10px; color:#ccc;">${p.last_seen_at ? new Date(p.last_seen_at).toLocaleString() : "--"}</td>
+                                <td style="padding:8px 10px; text-align:center; font-weight:bold; color:#d4af37;">${p.login_count || 1}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+        }
+    }
+
+    // 5. Verified Buyers Table
+    const buyersContainer = document.getElementById("knownBuyersContainer");
+    if (buyersContainer) {
+        const bList = data.knownBuyers || [];
+        if (bList.length === 0) {
+            buyersContainer.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">No purchases recorded yet.</p>`;
+        } else {
+            buyersContainer.innerHTML = `
+                <table style="width:100%; border-collapse:collapse; background:#0d0606; border:1px solid #592020; border-radius:6px; font-size:12px; color:#e5d5d5;">
+                    <thead>
+                        <tr style="background:#200b0b; color:#e5b9b9; font-family:'Cinzel',serif;">
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">BUYER PI UID</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:center;">PURCHASES COUNT</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:right;">TOTAL SPENT (π)</th>
+                            <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">LAST ORDER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${bList.map(b => `
+                            <tr style="border-bottom:1px solid #1a0808;">
+                                <td style="padding:8px 10px; font-family:monospace; font-size:11px; color:#90caf9;">${escapeHtml(b.user_uid)}</td>
+                                <td style="padding:8px 10px; text-align:center; font-weight:bold; color:#fff;">${b.orders_count || 1}</td>
+                                <td style="padding:8px 10px; text-align:right; font-weight:bold; color:#d4af37;">${Number(b.total_spent_pi || 0).toFixed(4)} π</td>
+                                <td style="padding:8px 10px; color:#ccc;">${b.last_order_at ? new Date(b.last_order_at).toLocaleString() : "--"}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+        }
     }
 }
