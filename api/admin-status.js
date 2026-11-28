@@ -184,6 +184,27 @@ if (action === "audio-preview") {
                 console.warn("Table pioneer_logins check:", tableErr.message);
             }
 
+                        try {
+                await sql`
+                    CREATE TABLE IF NOT EXISTS artist_payouts (
+                        id SERIAL PRIMARY KEY,
+                        artist TEXT NOT NULL,
+                        relic_id TEXT,
+                        creator_pi_uid TEXT,
+                        amount_pi NUMERIC(14, 4) NOT NULL DEFAULT 0,
+                        amount_eur NUMERIC(14, 2) DEFAULT 0,
+                        payout_method TEXT DEFAULT 'pi',
+                        txid TEXT,
+                        notes TEXT,
+                        admin_recorded_by TEXT DEFAULT 'admin',
+                        created_at TIMESTAMPTZ DEFAULT NOW()
+                    );
+                `;
+            } catch (payoutTableErr) {
+                console.warn("Table artist_payouts check:", payoutTableErr.message);
+            }
+
+
             const purchasesTotals = await sql`
                 SELECT
                     COALESCE(SUM(amount_pi), 0)::float AS total_sales_pi,
@@ -348,15 +369,128 @@ if (action === "audio-preview") {
                 console.warn("Buyers query error:", buyerQueryErr.message);
             }
 
+                        let recordedPayouts = [];
+            try {
+                recordedPayouts = await sql`
+                    SELECT
+                        id,
+                        artist,
+                        relic_id,
+                        creator_pi_uid,
+                        amount_pi::float AS amount_pi,
+                        amount_eur::float AS amount_eur,
+                        payout_method,
+                        txid,
+                        notes,
+                        created_at
+                    FROM artist_payouts
+                    ORDER BY created_at DESC;
+                `;
+            } catch (payoutQueryErr) {
+                console.warn("Recorded payouts query error:", payoutQueryErr.message);
+            }
+
+            const totalPaidOutPi = recordedPayouts.reduce((sum, p) => sum + (Number(p.amount_pi) || 0), 0);
+
+            const payoutsByArtist = new Map();
+            recordedPayouts.forEach(p => {
+                const key = (p.artist || "").trim().toLowerCase();
+                if (!key) return;
+                const current = payoutsByArtist.get(key) || 0;
+                payoutsByArtist.set(key, current + (Number(p.amount_pi) || 0));
+            });
+
+            // Group aggregated finances per Band / Artist
+            const bandMap = new Map();
+
+            relicPurchases.forEach(r => {
+                const rawArtist = (r.artist || "Unknown Artist").trim();
+                const artistKey = rawArtist.toLowerCase();
+                const s = supportMap.get(r.relic_id) || {
+                    support_gross_pi: 0, support_artist_pi: 0, support_fee_pi: 0, support_count: 0
+                };
+
+                const relicGross = Number(((r.purchases_gross_pi || 0) + (s.support_gross_pi || 0)).toFixed(4));
+                const relicArtistShare = Number(((r.purchases_artist_pi || 0) + (s.support_artist_pi || 0)).toFixed(4));
+                const relicFee = Number(((r.purchases_fee_pi || 0) + (s.support_fee_pi || 0)).toFixed(4));
+
+                if (!bandMap.has(artistKey)) {
+                    bandMap.set(artistKey, {
+                        artist: rawArtist,
+                        creatorPiUid: r.creator_pi_uid || null,
+                        contactEmail: r.contact_email || null,
+                        releases: [],
+                        grossPi: 0,
+                        lifetimeEarnedPi: 0,
+                        ossvariumFeePi: 0,
+                        purchasesCount: 0,
+                        supportsCount: 0
+                    });
+                }
+
+                const band = bandMap.get(artistKey);
+                if (!band.creatorPiUid && r.creator_pi_uid) band.creatorPiUid = r.creator_pi_uid;
+                if (!band.contactEmail && r.contact_email) band.contactEmail = r.contact_email;
+
+                band.grossPi = Number((band.grossPi + relicGross).toFixed(4));
+                band.lifetimeEarnedPi = Number((band.lifetimeEarnedPi + relicArtistShare).toFixed(4));
+                band.ossvariumFeePi = Number((band.ossvariumFeePi + relicFee).toFixed(4));
+                band.purchasesCount += (r.purchases_count || 0);
+                band.supportsCount += (s.support_count || 0);
+
+                band.releases.push({
+                    relicId: r.relic_id,
+                    releaseTitle: r.release_title,
+                    grossPi: relicGross,
+                    artistSharePi: relicArtistShare,
+                    purchasesCount: r.purchases_count || 0,
+                    supportsCount: s.support_count || 0
+                });
+            });
+
+            recordedPayouts.forEach(p => {
+                const rawArtist = (p.artist || "").trim();
+                const artistKey = rawArtist.toLowerCase();
+                if (artistKey && !bandMap.has(artistKey)) {
+                    bandMap.set(artistKey, {
+                        artist: rawArtist,
+                        creatorPiUid: p.creator_pi_uid || null,
+                        contactEmail: null,
+                        releases: [],
+                        grossPi: 0,
+                        lifetimeEarnedPi: 0,
+                        ossvariumFeePi: 0,
+                        purchasesCount: 0,
+                        supportsCount: 0
+                    });
+                }
+            });
+
+            const bandBreakdown = Array.from(bandMap.values()).map(b => {
+                const key = b.artist.trim().toLowerCase();
+                const paidOutPi = Number((payoutsByArtist.get(key) || 0).toFixed(4));
+                const owedBalancePi = Math.max(0, Number((b.lifetimeEarnedPi - paidOutPi).toFixed(4)));
+
+                return {
+                    ...b,
+                    paidOutPi,
+                    owedBalancePi
+                };
+            }).sort((a, b) => b.owedBalancePi - a.owedBalancePi || b.lifetimeEarnedPi - a.lifetimeEarnedPi);
+
             const pTotals = purchasesTotals[0] || {};
             const sTotals = supportTotals[0] || {};
             const mTotals = merchTotals[0] || {};
+            const totalLifetimeArtistPi = Number(((pTotals.total_artist_share_pi || 0) + (sTotals.total_artist_share_pi || 0)).toFixed(4));
+            const totalOwedBalancePi = Math.max(0, Number((totalLifetimeArtistPi - totalPaidOutPi).toFixed(4)));
 
             return res.status(200).json({
                 success: true,
                 overview: {
                     grossPi: Number(((pTotals.total_sales_pi || 0) + (sTotals.total_support_pi || 0) + (mTotals.total_merch_pi || 0)).toFixed(4)),
-                    artistSharePi: Number(((pTotals.total_artist_share_pi || 0) + (sTotals.total_artist_share_pi || 0)).toFixed(4)),
+                    artistSharePi: totalLifetimeArtistPi,
+                    totalPaidOutPi: Number(totalPaidOutPi.toFixed(4)),
+                    totalOwedBalancePi: totalOwedBalancePi,
                     ossvariumFeePi: Number(((pTotals.total_fee_pi || 0) + (sTotals.total_fee_pi || 0)).toFixed(4)),
                     countPurchases: pTotals.count_purchases || 0,
                     countFullReleases: pTotals.count_full_releases || 0,
@@ -364,11 +498,14 @@ if (action === "audio-preview") {
                     countSupports: sTotals.count_supports || 0,
                     countMerchOrders: mTotals.count_merch_orders || 0
                 },
+                bandBreakdown,
                 artistBreakdown,
+                payoutHistory: recordedPayouts,
                 recentTransactions,
                 pioneerLogins,
                 knownBuyers
             });
+
         }
 
 
@@ -378,6 +515,101 @@ if (action === "audio-preview") {
             error: "Admin access required"
         });
     }
+
+        let body = req.body;
+    if (typeof body === "string") {
+        try {
+            body = JSON.parse(body);
+        } catch (_) {}
+    }
+
+    const actionPost = body?.action || req.query?.action;
+
+    if (actionPost === "record-payout") {
+        const artist = String(body?.artist || "").trim();
+        const amountPi = Number(body?.amount_pi);
+        const payoutMethod = String(body?.payout_method || "pi").trim();
+        const txid = body?.txid ? String(body.txid).trim() : null;
+        const notes = body?.notes ? String(body.notes).trim() : null;
+        const relicId = body?.relic_id ? String(body.relic_id).trim() : null;
+        const creatorPiUid = body?.creator_pi_uid ? String(body.creator_pi_uid).trim() : null;
+
+        if (!artist) {
+            return res.status(400).json({ error: "Artist name is required" });
+        }
+        if (!Number.isFinite(amountPi) || amountPi <= 0) {
+            return res.status(400).json({ error: "Amount must be a positive number" });
+        }
+
+        const sql = neon(process.env.POSTGRES_URL);
+
+        await sql`
+            CREATE TABLE IF NOT EXISTS artist_payouts (
+                id SERIAL PRIMARY KEY,
+                artist TEXT NOT NULL,
+                relic_id TEXT,
+                creator_pi_uid TEXT,
+                amount_pi NUMERIC(14, 4) NOT NULL DEFAULT 0,
+                amount_eur NUMERIC(14, 2) DEFAULT 0,
+                payout_method TEXT DEFAULT 'pi',
+                txid TEXT,
+                notes TEXT,
+                admin_recorded_by TEXT DEFAULT 'admin',
+                created_at TIMESTAMPTZ DEFAULT NOW()
+            );
+        `;
+
+        const inserted = await sql`
+            INSERT INTO artist_payouts (
+                artist,
+                relic_id,
+                creator_pi_uid,
+                amount_pi,
+                payout_method,
+                txid,
+                notes
+            )
+            VALUES (
+                ${artist},
+                ${relicId},
+                ${creatorPiUid},
+                ${amountPi},
+                ${payoutMethod},
+                ${txid},
+                ${notes}
+            )
+            RETURNING *;
+        `;
+
+        return res.status(200).json({
+            success: true,
+            payout: inserted[0]
+        });
+    }
+
+    if (actionPost === "delete-payout") {
+        const payoutId = Number(body?.payoutId || body?.id);
+        if (!Number.isSafeInteger(payoutId) || payoutId <= 0) {
+            return res.status(400).json({ error: "Invalid payout ID" });
+        }
+
+        const sql = neon(process.env.POSTGRES_URL);
+        const deleted = await sql`
+            DELETE FROM artist_payouts
+            WHERE id = ${payoutId}
+            RETURNING id, artist, amount_pi;
+        `;
+
+        if (deleted.length === 0) {
+            return res.status(404).json({ error: "Payout record not found" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            deleted: deleted[0]
+        });
+    }
+
 
     const sql = neon(process.env.POSTGRES_URL);
 

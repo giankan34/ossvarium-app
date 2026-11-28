@@ -818,6 +818,18 @@ async function loadSalesOverview() {
 function renderSalesOverview(data) {
     const ov = data.overview || {};
 
+        const statPaidOut = document.getElementById("statPaidOutPi");
+    const statOwedBalance = document.getElementById("statOwedBalancePi");
+    if (statPaidOut) statPaidOut.textContent = (ov.totalPaidOutPi ?? 0).toFixed(4) + " π";
+    if (statOwedBalance) statOwedBalance.textContent = (ov.totalOwedBalancePi ?? 0).toFixed(4) + " π";
+
+    // Band Breakdown & Payouts
+    renderBandBreakdown(data.bandBreakdown || []);
+
+    // Payouts History
+    renderPayoutHistory(data.payoutHistory || []);
+
+
     // 1. Stat cards
     const statGross = document.getElementById("statGrossPi");
     const statArtistShare = document.getElementById("statArtistSharePi");
@@ -1000,5 +1012,257 @@ function renderSalesOverview(data) {
                 </table>
             `;
         }
+    }
+}
+
+/* ==========================================================
+   OSSVARIUM BAND BALANCES & PAYOUT MODAL HANDLERS
+   ========================================================== */
+
+function renderBandBreakdown(bands) {
+    const container = document.getElementById("bandBreakdownContainer");
+    if (!container) return;
+
+    if (!bands || bands.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">No bands or artists recorded in the database.</p>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <table style="width:100%; border-collapse:collapse; background:#0d0606; border:1px solid #592020; border-radius:6px; font-size:13px; color:#e5d5d5;">
+            <thead>
+                <tr style="background:#200b0b; color:#e5b9b9; font-family:'Cinzel',serif;">
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">ARTIST / BAND</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">RELEASES</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:right;">LIFETIME 90% (π)</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:right; color:#81d4fa;">PAID OUT (π)</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:right; color:#4caf50;">OWED NOW (π)</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:center;">STATUS</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:center;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${bands.map(b => {
+                    const isPaidUp = (b.owedBalancePi || 0) <= 0.00001;
+                    const releasesText = b.releases && b.releases.length > 0
+                        ? b.releases.map(r => `${escapeHtml(r.releaseTitle)} <small style="color:#777;">(${escapeHtml(r.relicId)})</small>`).join("<br>")
+                        : "<span style='color:#777;'>No releases</span>";
+
+                    const statusBadge = isPaidUp
+                        ? `<span style="background:#1b5e20; color:#a5d6a7; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">PAID UP ✓</span>`
+                        : `<span style="background:#4a1212; border:1px solid #c62828; color:#ff8a80; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">PENDING</span>`;
+
+                    const owedDisplay = isPaidUp
+                        ? `<span style="color:#888;">0.0000 π</span>`
+                        : `<span style="color:#4caf50; font-weight:bold; font-size:15px; text-shadow:0 0 10px rgba(76,175,80,0.35);">${Number(b.owedBalancePi).toFixed(4)} π</span>`;
+
+                    const artistNameSafe = escapeHtml(b.artist);
+                    const creatorUidSafe = escapeHtml(b.creatorPiUid || "");
+
+                    return `
+                        <tr style="border-bottom:1px solid #220b0b;">
+                            <td style="padding:10px; font-weight:bold; color:#fff;">
+                                ${artistNameSafe}
+                                ${b.creatorPiUid ? `<br><small style="color:#81c784; font-weight:normal; font-family:monospace;">UID: ${escapeHtml(b.creatorPiUid.slice(0, 14))}...</small>` : (b.contactEmail ? `<br><small style="color:#aaa; font-weight:normal;">✉ ${escapeHtml(b.contactEmail)}</small>` : '')}
+                            </td>
+                            <td style="padding:10px; font-size:12px; color:#ccc;">${releasesText}</td>
+                            <td style="padding:10px; text-align:right; font-weight:bold; color:#d4af37;">${Number(b.lifetimeEarnedPi || 0).toFixed(4)} π</td>
+                            <td style="padding:10px; text-align:right; color:#81d4fa;">${Number(b.paidOutPi || 0).toFixed(4)} π</td>
+                            <td style="padding:10px; text-align:right;">${owedDisplay}</td>
+                            <td style="padding:10px; text-align:center;">${statusBadge}</td>
+                            <td style="padding:10px; text-align:center;">
+                                <button type="button" class="submit-btn" onclick="openPayoutModal('${artistNameSafe.replace(/'/g, "\\'")}', ${Number(b.owedBalancePi || 0)}, '${creatorUidSafe.replace(/'/g, "\\'")}')" style="padding:6px 14px; font-size:11px; background:${isPaidUp ? '#200b0b' : '#2e7d32'}; border-color:${isPaidUp ? '#592020' : '#4caf50'}; color:${isPaidUp ? '#aaa' : '#fff'}; cursor:pointer;">
+                                    💸 PAYOUT
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join("")}
+            </tbody>
+        </table>
+    `;
+}
+
+function renderPayoutHistory(payouts) {
+    const container = document.getElementById("payoutHistoryContainer");
+    if (!container) return;
+
+    if (!payouts || payouts.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">No artist payouts recorded yet. Click <b>PAYOUT</b> in the table above to log a payment.</p>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <table style="width:100%; border-collapse:collapse; background:#0d0606; border:1px solid #592020; border-radius:6px; font-size:12px; color:#e5d5d5;">
+            <thead>
+                <tr style="background:#200b0b; color:#e5b9b9; font-family:'Cinzel',serif;">
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">DATE</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">ARTIST / BAND</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:right; color:#4caf50;">AMOUNT (π)</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:center;">METHOD</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">TXID / REF</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:left;">NOTES</th>
+                    <th style="padding:10px; border-bottom:1px solid #592020; text-align:center;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${payouts.map(p => {
+                    const dateStr = p.created_at ? new Date(p.created_at).toLocaleString() : "--";
+                    const txLink = p.txid
+                        ? `<a href="https://minepi.com/blockexplorer/tx/${encodeURIComponent(p.txid)}" target="_blank" style="color:#ce93d8; text-decoration:none; font-family:monospace;">${escapeHtml(p.txid.slice(0, 10))}... ↗</a>`
+                        : `<span style="color:#666;">--</span>`;
+
+                    const artistSafe = escapeHtml(p.artist || "Unknown");
+
+                    return `
+                        <tr style="border-bottom:1px solid #1a0808;">
+                            <td style="padding:8px 10px; color:#aaa; white-space:nowrap;">${escapeHtml(dateStr)}</td>
+                            <td style="padding:8px 10px; font-weight:bold; color:#fff;">${artistSafe}</td>
+                            <td style="padding:8px 10px; text-align:right; font-weight:bold; color:#4caf50;">${Number(p.amount_pi || 0).toFixed(4)} π</td>
+                            <td style="padding:8px 10px; text-align:center;">
+                                <span style="background:#263238; color:#cfd8dc; padding:2px 6px; border-radius:4px; font-size:10px;">${escapeHtml((p.payout_method || 'pi').toUpperCase())}</span>
+                            </td>
+                            <td style="padding:8px 10px;">${txLink}</td>
+                            <td style="padding:8px 10px; color:#ccc; font-size:11px;">${escapeHtml(p.notes || "--")}</td>
+                            <td style="padding:8px 10px; text-align:center;">
+                                <button type="button" onclick="deletePayoutRecord(${p.id}, '${artistSafe.replace(/'/g, "\\'")}', ${Number(p.amount_pi || 0)})" style="background:#3e1212; border:1px solid #792020; color:#ff8a80; padding:3px 8px; border-radius:4px; font-size:10px; cursor:pointer;">
+                                    ❌ Undo
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join("")}
+            </tbody>
+        </table>
+    `;
+}
+
+let currentPayoutOwed = 0;
+let currentPayoutArtist = "";
+let currentPayoutCreatorUid = "";
+
+function openPayoutModal(artist, owedAmount, creatorPiUid) {
+    currentPayoutArtist = artist;
+    currentPayoutOwed = Math.max(0, Number(owedAmount || 0));
+    currentPayoutCreatorUid = creatorPiUid || "";
+
+    const modal = document.getElementById("payoutModal");
+    const artistInput = document.getElementById("payoutArtistInput");
+    const owedDisplay = document.getElementById("payoutOwedDisplay");
+    const amountInput = document.getElementById("payoutAmountInput");
+    const uidNote = document.getElementById("payoutCreatorUidNote");
+    const txidInput = document.getElementById("payoutTxidInput");
+    const notesInput = document.getElementById("payoutNotesInput");
+
+    if (artistInput) artistInput.value = artist;
+    if (owedDisplay) owedDisplay.textContent = currentPayoutOwed.toFixed(4) + " π";
+    if (amountInput) {
+        amountInput.value = currentPayoutOwed > 0 ? currentPayoutOwed.toFixed(4) : "0.5000";
+    }
+    if (uidNote) {
+        uidNote.textContent = creatorPiUid ? `Linked Pi UID: ${creatorPiUid}` : "No Pi UID linked (Guest / Manual payout)";
+    }
+    if (txidInput) txidInput.value = "";
+    if (notesInput) notesInput.value = "";
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
+}
+
+function fillFullPayoutAmount() {
+    const amountInput = document.getElementById("payoutAmountInput");
+    if (amountInput && currentPayoutOwed > 0) {
+        amountInput.value = currentPayoutOwed.toFixed(4);
+    }
+}
+
+function closePayoutModal() {
+    const modal = document.getElementById("payoutModal");
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+async function submitPayoutRecord() {
+    const amountInput = document.getElementById("payoutAmountInput");
+    const methodSelect = document.getElementById("payoutMethodSelect");
+    const txidInput = document.getElementById("payoutTxidInput");
+    const notesInput = document.getElementById("payoutNotesInput");
+    const submitBtn = document.getElementById("submitPayoutBtn");
+
+    const amount = Number(amountInput?.value);
+    if (!Number.isFinite(amount) || amount <= 0) {
+        alert("Please enter a valid positive payout amount.");
+        return;
+    }
+
+    const payload = {
+        action: "record-payout",
+        artist: currentPayoutArtist,
+        amount_pi: amount,
+        payout_method: methodSelect?.value || "pi",
+        txid: txidInput?.value?.trim() || null,
+        notes: notesInput?.value?.trim() || null,
+        creator_pi_uid: currentPayoutCreatorUid || null
+    };
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "RECORDING...";
+    }
+
+    try {
+        const response = await fetch("/api/admin-status?action=record-payout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Failed to record payout");
+        }
+
+        alert(`✅ Payout of ${amount.toFixed(4)} π recorded for ${currentPayoutArtist}!\nOwed balance has been updated.`);
+        closePayoutModal();
+        await loadSalesOverview();
+
+    } catch (err) {
+        console.error("submitPayoutRecord error:", err);
+        alert("⚠️ Failed to record payout: " + err.message);
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "☠ CONFIRM PAYOUT ☠";
+        }
+    }
+}
+
+async function deletePayoutRecord(payoutId, artist, amount) {
+    if (!confirm(`Are you sure you want to undo/delete this payout of ${Number(amount).toFixed(4)} π to ${artist}?\n\nThe amount will be restored to their owed balance.`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/admin-status?action=delete-payout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ action: "delete-payout", payoutId })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Failed to delete payout record");
+        }
+
+        alert(`✅ Payout record undone. Balance restored for ${artist}.`);
+        await loadSalesOverview();
+
+    } catch (err) {
+        console.error("deletePayoutRecord error:", err);
+        alert("⚠️ Failed to undo payout: " + err.message);
     }
 }

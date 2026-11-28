@@ -69,20 +69,30 @@
             </div>
 
             <!-- OVERVIEW STATS -->
-            <div id="salesStatsContainer" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:16px; margin:20px auto 40px;">
+            <div id="salesStatsContainer" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin:20px auto 40px;">
                 <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
                     <span style="font-size:11px; color:#aaa; letter-spacing:1px;">TOTAL GROSS VOLUME</span>
-                    <h2 id="statGrossPi" style="font-family:'Cinzel',serif; color:#d4af37; margin:10px 0 5px; font-size:26px;">-- π</h2>
+                    <h2 id="statGrossPi" style="font-family:'Cinzel',serif; color:#d4af37; margin:10px 0 5px; font-size:24px;">-- π</h2>
                     <small id="statOrdersCount" style="color:#888; font-size:11px;">-- total transactions</small>
                 </div>
                 <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
-                    <span style="font-size:11px; color:#aaa; letter-spacing:1px;">ARTIST ROYALTIES (90%)</span>
-                    <h2 id="statArtistSharePi" style="font-family:'Cinzel',serif; color:#4caf50; margin:10px 0 5px; font-size:26px;">-- π</h2>
-                    <small style="color:#888; font-size:11px;">Owed to creators</small>
+                    <span style="font-size:11px; color:#aaa; letter-spacing:1px;">LIFETIME ROYALTIES (90%)</span>
+                    <h2 id="statArtistSharePi" style="font-family:'Cinzel',serif; color:#e5b9b9; margin:10px 0 5px; font-size:24px;">-- π</h2>
+                    <small style="color:#888; font-size:11px;">All-time earned by artists</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #1a3038; border-radius:8px; padding:18px; text-align:center;">
+                    <span style="font-size:11px; color:#81d4fa; letter-spacing:1px;">TOTAL PAID OUT</span>
+                    <h2 id="statPaidOutPi" style="font-family:'Cinzel',serif; color:#4fc3f7; margin:10px 0 5px; font-size:24px;">-- π</h2>
+                    <small style="color:#888; font-size:11px;">Completed transfers</small>
+                </div>
+                <div class="stat-card" style="background:linear-gradient(145deg, #0f1c11, #081009); border:1px solid #2e7d32; border-radius:8px; padding:18px; text-align:center; box-shadow:0 0 15px rgba(46,125,50,0.25);">
+                    <span style="font-size:11px; color:#a5d6a7; letter-spacing:1px; font-weight:bold;">OUTSTANDING OWED</span>
+                    <h2 id="statOwedBalancePi" style="font-family:'Cinzel',serif; color:#4caf50; margin:10px 0 5px; font-size:26px;">-- π</h2>
+                    <small style="color:#81c784; font-size:11px;">To pay to creators</small>
                 </div>
                 <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
                     <span style="font-size:11px; color:#aaa; letter-spacing:1px;">OSSVARIUM VAULT (10%)</span>
-                    <h2 id="statFeePi" style="font-family:'Cinzel',serif; color:#c62828; margin:10px 0 5px; font-size:26px;">-- π</h2>
+                    <h2 id="statFeePi" style="font-family:'Cinzel',serif; color:#c62828; margin:10px 0 5px; font-size:24px;">-- π</h2>
                     <small style="color:#888; font-size:11px;">Platform reserve</small>
                 </div>
                 <div class="stat-card" style="background:linear-gradient(145deg, #170909, #090909); border:1px solid #592020; border-radius:8px; padding:18px; text-align:center;">
@@ -93,23 +103,54 @@
                 </div>
             </div>
 
-            <!-- ARTIST ROYALTIES TABLE -->
+            <!-- SECTION 1: BAND / ARTIST BALANCES & PAYOUTS -->
             <div style="margin-top:40px;">
-                <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
-                    ☠ ARTIST ROYALTIES & PAYOUT ESTIMATES (WHAT TO PAY)
-                </h2>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                    <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin:0; text-align:left;">
+                        ☠ BAND / ARTIST BALANCES & PAYOUTS
+                    </h2>
+                    <span style="font-size:11px; color:#81c784; border:1px solid #2e7d32; background:#0f2010; padding:4px 10px; border-radius:12px;">
+                        ✓ Zeroes out automatically upon payout
+                    </span>
+                </div>
                 <p style="font-size:12px; color:#aaa; text-align:left; margin-bottom:15px;">
-                    Summary of earned royalties per release. The artist receives 90% of all track sales, full release purchases, and direct tips.
+                    Aggregated balances per band. Click <b>PAYOUT</b> to record a payment: the amount is deducted and the owed balance zeroes out.
                 </p>
-                <div id="artistBreakdownContainer" style="overflow-x:auto;">
-                    <p style="text-align:center; color:#888; padding:20px;">Loading artist breakdown...</p>
+                <div id="bandBreakdownContainer" style="overflow-x:auto;">
+                    <p style="text-align:center; color:#888; padding:20px;">Loading band balances...</p>
                 </div>
             </div>
 
-            <!-- RECENT TRANSACTIONS LEDGER -->
+            <!-- SECTION 2: PAYOUTS HISTORY LEDGER -->
             <div style="margin-top:50px;">
                 <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
-                    📜 RECENT TRANSACTIONS LEDGER
+                    📜 PAYOUTS HISTORY LEDGER
+                </h2>
+                <p style="font-size:12px; color:#aaa; text-align:left; margin-bottom:15px;">
+                    Audit trail of all recorded artist payouts with date, amount, method, and transaction IDs.
+                </p>
+                <div id="payoutHistoryContainer" style="overflow-x:auto;">
+                    <p style="text-align:center; color:#888; padding:20px;">Loading payouts history...</p>
+                </div>
+            </div>
+
+            <!-- SECTION 3: PER-RELEASE BREAKDOWN -->
+            <div style="margin-top:50px;">
+                <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
+                    💿 PER-RELEASE DETAILED BREAKDOWN
+                </h2>
+                <p style="font-size:12px; color:#aaa; text-align:left; margin-bottom:15px;">
+                    Granular breakdown of track sales, full release purchases, and direct patron tips per individual relic.
+                </p>
+                <div id="artistBreakdownContainer" style="overflow-x:auto;">
+                    <p style="text-align:center; color:#888; padding:20px;">Loading release breakdown...</p>
+                </div>
+            </div>
+
+            <!-- SECTION 4: RECENT TRANSACTIONS LEDGER -->
+            <div style="margin-top:50px;">
+                <h2 style="font-family:'Cinzel',serif; color:#c62828; font-size:18px; letter-spacing:1px; margin-bottom:12px; text-align:left;">
+                    📜 RECENT PURCHASES & TIPS LEDGER
                 </h2>
                 <div id="recentTransactionsContainer" style="overflow-x:auto;">
                     <p style="text-align:center; color:#888; padding:20px;">Loading transaction ledger...</p>
@@ -154,6 +195,71 @@
         <a href="index.html" class="back-link" style="margin-top:50px;">
             ← RETURN TO OSSVARIUM
         </a>
+
+        <!-- RECORD PAYOUT MODAL -->
+        <div id="payoutModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;">
+            <div style="background:#140808; border:2px solid #8b1e1e; border-radius:10px; max-width:480px; width:100%; padding:24px; box-shadow:0 0 35px rgba(198,40,40,0.6); color:#e5d5d5; box-sizing:border-box;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #592020; padding-bottom:10px; margin-bottom:16px;">
+                    <h2 style="font-family:'Cinzel',serif; color:#d4af37; margin:0; font-size:19px;">
+                        💸 RECORD ARTIST PAYOUT
+                    </h2>
+                    <button type="button" onclick="closePayoutModal()" style="background:transparent; border:none; color:#aaa; font-size:22px; cursor:pointer;">✕</button>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:11px; color:#aaa; letter-spacing:1px; margin-bottom:4px;">ARTIST / BAND</label>
+                    <input id="payoutArtistInput" type="text" readonly style="width:100%; background:#200b0b; border:1px solid #592020; color:#fff; font-size:15px; font-weight:bold; padding:9px 12px; border-radius:6px; box-sizing:border-box;">
+                    <div id="payoutCreatorUidNote" style="font-size:11px; color:#81c784; margin-top:4px;"></div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                    <div>
+                        <label style="display:block; font-size:11px; color:#aaa; letter-spacing:1px; margin-bottom:4px;">CURRENT OWED</label>
+                        <div id="payoutOwedDisplay" style="font-size:16px; font-weight:bold; color:#4caf50; background:#0d180e; border:1px solid #2e7d32; padding:8px 10px; border-radius:6px;">-- π</div>
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:11px; color:#aaa; letter-spacing:1px; margin-bottom:4px;">PAYOUT METHOD</label>
+                        <select id="payoutMethodSelect" style="width:100%; background:#200b0b; border:1px solid #592020; color:#fff; font-size:13px; padding:9px; border-radius:6px; box-sizing:border-box;">
+                            <option value="pi" selected>Pi Network (Wallet)</option>
+                            <option value="eur">EUR / Bank Transfer</option>
+                            <option value="crypto">Other Crypto / Custom</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <label style="font-size:11px; color:#aaa; letter-spacing:1px;">AMOUNT TO RECORD (π)</label>
+                        <button type="button" onclick="fillFullPayoutAmount()" style="background:#2e7d32; border:none; color:#fff; font-size:10px; padding:2px 8px; border-radius:4px; cursor:pointer;">
+                            ⚡ FULL BALANCE
+                        </button>
+                    </div>
+                    <input id="payoutAmountInput" type="number" step="0.0001" min="0.0001" style="width:100%; background:#090909; border:1px solid #592020; color:#d4af37; font-size:18px; font-weight:bold; padding:9px 12px; border-radius:6px; box-sizing:border-box;">
+                    <small style="color:#888; font-size:11px; display:block; margin-top:4px;">
+                        Recording this payout will deduct this amount and immediately update the band's owed balance.
+                    </small>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:11px; color:#aaa; letter-spacing:1px; margin-bottom:4px;">TRANSACTION ID / HASH (OPTIONAL)</label>
+                    <input id="payoutTxidInput" type="text" placeholder="e.g. 5a1b3c... from Pi wallet" style="width:100%; background:#090909; border:1px solid #592020; color:#fff; font-size:12px; font-family:monospace; padding:8px 10px; border-radius:6px; box-sizing:border-box;">
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; font-size:11px; color:#aaa; letter-spacing:1px; margin-bottom:4px;">ADMIN NOTE (OPTIONAL)</label>
+                    <input id="payoutNotesInput" type="text" placeholder="e.g. Sent via Pi Browser to band wallet" style="width:100%; background:#090909; border:1px solid #592020; color:#fff; font-size:12px; padding:8px 10px; border-radius:6px; box-sizing:border-box;">
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button type="button" onclick="closePayoutModal()" style="background:#200b0b; border:1px solid #592020; color:#ccc; padding:9px 16px; border-radius:6px; font-size:12px; cursor:pointer;">
+                        CANCEL
+                    </button>
+                    <button id="submitPayoutBtn" type="button" class="submit-btn" onclick="submitPayoutRecord()" style="padding:9px 20px; font-size:12px; background:#2e7d32; border-color:#4caf50;">
+                        ☠ CONFIRM PAYOUT ☠
+                    </button>
+                </div>
+            </div>
+        </div>
 
     </main>
 
